@@ -27,8 +27,10 @@ SECRET_KEY = "django-insecure-%d$d(=tg6tengouqane%hj*_fr8r-w^g7vf@z_cmxmr!v9&)#a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "vdv-pkpass.eu.ngrok.io"]
+ALLOWED_HOSTS = ["localhost", "vdv-pkpass.eu.ngrok.io", "127.0.0.1"]
 
+# SECURITY WARNING: We know. They have lawyers.
+BARKODER_LICENSE = "0MHXR8cuvoJT62F-vUCcqMQR74K0988ixUjSf_DnucZlrv_DJTneGfAh1avJBr72P0VecEQGK5JHDH0FmfI_Lp8PdEdFGLDlQzT_axGBusQQWRt4-vYYaAyxrCvqtGWZIVN6jhCiyvQ7fndQ7oDAwhdpufGp1KH2tYFeNfif84DE8anuMEXfTOGUjN3jfEu1"
 
 # Application definition
 
