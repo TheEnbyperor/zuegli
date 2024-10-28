@@ -116,7 +116,7 @@
         </div>
     {% endif %}
     {% if flex.data.transportDocument %}
-        <div class="govuk-summary-list__row">
+    <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Documents</dt>
         <dd class="govuk-summary-list__value">
         {% for doc in flex.data.transportDocument %}
@@ -147,9 +147,10 @@
                 </div>
             </div>
         {% endfor %}
+        </dd>
+    </div>
     {% endif %}
     {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
-    </div>
 </dl>
 
 <details class="govuk-details">

@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         certificate_storage = django.core.files.storage.storages["vdv-certs"]
 
-        conn = ldap.initialize("ldap://ldap-vdv-ion.telesec.de:389")
+        conn = ldap.initialize("ldaps://ldap-vdv-ion.telesec.de:636")
 
         conn.search("ou=VDV KA,o=VDV Kernapplikations GmbH,c=de", ldap.SCOPE_SUBTREE, "(objectClass=*)", attrlist=["cn", "caCertificate"])
         certs = conn.result()[1]

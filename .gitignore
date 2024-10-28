@@ -6,3 +6,4 @@
 /vdv-certs
 /uic-data
 __pycache__
+.keyHash
