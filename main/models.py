@@ -10,7 +10,7 @@ from django.core import validators
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from . import ticket as t
-from . import vdv, uic
+from . import vdv, uic, rsp6
 
 
 def make_pass_token():
@@ -160,6 +160,32 @@ class UICTicketInstance(models.Model):
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT" or r.id == "118199"
             )]
+        )
+
+
+class RSP6TicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp6_instances")
+    issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID")
+    reference = models.CharField(max_length=20, verbose_name="Ticket reference")
+    barcode_data = models.BinaryField()
+    decoded_data = models.JSONField()
+
+    class Meta:
+        unique_together = [
+            ["reference", "issuer_id"],
+        ]
+        verbose_name = "RSP6 ticket"
+
+    def __str__(self):
+        return f"{self.issuer_id} - {self.reference}"
+
+    def as_ticket(self) -> t.RSP6Ticket:
+        config = dacite.Config(type_hooks={bytes: base64.b64decode})
+        ticket_envelope = dacite.from_dict(data_class=rsp6.Envelope, data=self.decoded_data["envelope"], config=config)
+        raw_ticket = base64.b64decode(self.decoded_data["ticket"])
+        return t.RSP6Ticket(
+            envelope=ticket_envelope,
+            raw_bytes=raw_ticket,
         )
 
 

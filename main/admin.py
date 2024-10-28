@@ -12,6 +12,11 @@ class UICTicketInstanceInline(admin.StackedInline):
     model = models.UICTicketInstance
 
 
+class RSP6TicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.RSP6TicketInstance
+
+
 class AppleRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AppleRegistration
@@ -59,6 +64,7 @@ class TicketAdmin(admin.ModelAdmin):
     inlines = [
         VDVTicketInstanceInline,
         UICTicketInstanceInline,
+        RSP6TicketInstanceInline,
         AppleRegistrationInline,
     ]
     view_on_site = True

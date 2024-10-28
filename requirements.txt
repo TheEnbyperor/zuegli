@@ -22,3 +22,4 @@ django-magiclink
 BeautifulSoup4
 PyMuPDF
 opencv-python
+base26

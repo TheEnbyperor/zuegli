@@ -144,6 +144,12 @@ STORAGES = {
             "bucket_name": "uic-data",
         }
     },
+    "rsp6-data": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": "rsp6-data",
+        }
+    },
 }
 
 PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")

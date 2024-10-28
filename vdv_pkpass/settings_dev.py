@@ -185,6 +185,12 @@ STORAGES = {
             "location": BASE_DIR / "uic-data",
         }
     },
+    "rsp6-data": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "rsp6-data",
+        }
+    },
 }
 
 LOGIN_URL = "magiclink:login"
