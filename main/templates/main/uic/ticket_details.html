@@ -97,6 +97,10 @@
     {% include "main/uic/oebb.html" with oebb=ticket.oebb_99 %}
 {% endif %}
 
+{% if ticket.db_vu %}
+    {% include "main/uic/db_vu.html" with db_vu=ticket.db_vu %}
+{% endif %}
+
 {% for record in ticket.other_records %}
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">

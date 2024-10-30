@@ -1,0 +1,282 @@
+{% load tz rics %}
+<h2 class="govuk-heading-m">Additional UIC918.3 VU-Record</h2>
+<dl class="govuk-summary-list">
+  {% if db_vu.terminal_number %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Terminal Number (BIBE)</dt>
+      <dd class="govuk-summary-list__value">{{ db_vu.terminal_number }}</dd>
+    </div>
+  {% endif %}
+  {% if db_vu.sam_number %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">SAM Number</dt>
+      <dd class="govuk-summary-list__value">{{ db_vu.sam_number }}</dd>
+    </div>
+  {% endif %}
+  {% if db_vu.traveller_count %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Number of travellers</dt>
+      <dd class="govuk-summary-list__value">{{ db_vu.traveller_count }}</dd>
+    </div>
+  {% endif %}
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Products</dt>
+    <dd class="govuk-summary-list__value">
+      {% for product in db_vu.products %}
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+              <h2 class="govuk-summary-card__title">
+                  Product #{{ forloop.counter }}
+              </h2>
+          </div>
+          <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+              {% if product.product_authorization %}
+                {% with auth=product.product_authorization %}
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Authorization</dt>
+                    <dd class="govuk-summary-list__value">
+                      <dl class="govuk-summary-list">
+                        {% if auth.authorization_number %}
+                          <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Number</dt>
+                            <dd class="govuk-summary-list__value">{{ auth.authorization_number }}</dd>
+                          </div>
+                        {% endif %}
+                        {% if auth.issuer %}
+                          <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Issuer</dt>
+                            <dd class="govuk-summary-list__value">{{ auth.issuer }} (ID: {{ auth.issuer_id }})</dd>
+                          </div>
+                        {% endif %}
+                      </dl>
+                    </dd>
+                  </div>
+                {% endwith %}
+              {% endif %}
+              {% if product.product_details %}
+                {% with details=product.product_details %}
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product Details</dt>
+                    <dd class="govuk-summary-list__value">
+                      <dl class="govuk-summary-list">
+                        {% if details.product_type %}
+                          <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Type</dt>
+                            <dd class="govuk-summary-list__value">{{ details.product_type }} (ID: {{ details.product_type_id }})</dd>
+                          </div>
+                        {% endif %}
+                        {% if details.issuer %}
+                          <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Issuer</dt>
+                            <dd class="govuk-summary-list__value">{{ details.issuer }} (ID: {{ details.issuer_id }})</dd>
+                          </div>
+                        {% endif %}
+                      </dl>
+                    </dd>
+                  </div>
+                {% endwith %}
+              {% endif %}
+              {% if product.validity_start %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">Valid from</dt>
+                  <dd class="govuk-summary-list__value">{{ product.validity_start|utc|date:"F d, Y H:i" }}</dd>
+                </div>
+              {% endif %}
+              {% if product.validity_end %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">Valid until</dt>
+                  <dd class="govuk-summary-list__value">{{ product.validity_end|utc|date:"F d, Y H:i" }}</dd>
+                </div>
+              {% endif %}
+              {% if product.cost %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">Cost</dt>
+                  <dd class="govuk-summary-list__value">{{ product.cost }} EUR</dd>
+                </div>
+              {% endif %}
+              {% if product.sequence_number %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">Sequence Number</dt>
+                  <dd class="govuk-summary-list__value">{{ product.sequence_number }}</dd>
+                </div>
+              {% endif %}
+              {% if product.tag_fields %}
+                {% for tag_field in product.tag_fields %}
+                  <div class="govuk-summary-list__row">
+                    {% if tag_field.field_type == 218 %}
+                      <dt class="govuk-summary-list__key"><em>TAG "Grundlegende Daten_neu"</em>: Static Data</dt>
+                      <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% if tag_field.payment_type != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Payment Type</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.payment_type }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.passenger_fare_category != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Passenger Fare Category</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.passenger_fare_category }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.travelers_standard %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key"><em>TAG "Mitsnahme"</em>: Travelers (Standard)</dt>
+                                  <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                      <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Traveler Type</dt>
+                                        <dd class="govuk-summary-list__value">{{ tag_field.travelers_standard.passenger_type }}</dd>
+                                      </div>
+                                      <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Traveler Count</dt>
+                                        <dd class="govuk-summary-list__value">{{ tag_field.travelers_standard.passenger_count }}</dd>
+                                      </div>
+                                    </dl>
+                                  </dd>
+                                </dt>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.travelers_other %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key"><em>TAG "Mitsnahme"</em>: Travelers (Other)</dt>
+                                  <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                      <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Traveler Type</dt>
+                                        <dd class="govuk-summary-list__value">{{ tag_field.travelers_other.passenger_type }}</dd>
+                                      </div>
+                                      <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Traveler Count</dt>
+                                        <dd class="govuk-summary-list__value">{{ tag_field.travelers_other.passenger_count }}</dd>
+                                      </div>
+                                    </dl>
+                                  </dd>
+                                </dt>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.transport_category != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Transport Category</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.transport_category }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.service_class != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel class</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.service_class }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.price_brut %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Price</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.price_brut }} EUR</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.price_vat %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Value Added Tax</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.price_vat }}%</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.price_level %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Price</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.price_level }}%</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.internal_product_number %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Internal Product Number</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.internal_product_number }}%</dd>
+                              </div>
+                            {% endif %}
+                        </dl>
+                      </dd>
+                    {% elif tag_field.field_type == 219 %}
+                      <dt class="govuk-summary-list__key"><em>TAG "Fahrgast"</em>: Passenger Data</dt>
+                      <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% if tag_field.passenger_gender != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Passenger Gender (Raw)</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.passenger_gender }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.passenger_dob %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Passenger DOB</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.passenger_dob|date:"SHORT_DATE_FORMAT" }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.passenger_name %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Passenger Name</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.passenger_name }}</dd>
+                              </div>
+                            {% endif %}
+                        </dl>
+                      </dd>
+                    {% elif tag_field.field_type == 224 %}
+                      <dt class="govuk-summary-list__key"><em>TAG "Identifikationsmedium"</em>: ID Data</dt>
+                      <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% if tag_field.id_type != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">ID Type</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.id_type }}</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.id_number != None %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">ID Number</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.id_number }}</dd>
+                              </div>
+                            {% endif %}
+                        </dl>
+                      </dd>
+                    {% elif tag_field.field_type == 220 %}
+                      <dt class="govuk-summary-list__key"><em>TAG "Liste"</em>: Validity Area</dt>
+                      <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% if tag_field.organization %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Area Organization</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.organization }} (ID: {{ tag_field.organization_id }})</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.field_typecode %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Coverage Type</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.field_type_definition }} (ID: {{ tag_field.field_typecode }})</dd>
+                              </div>
+                            {% endif %}
+                            {% if tag_field.field_data %}
+                              <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Zone</dt>
+                                <dd class="govuk-summary-list__value">{{ tag_field.field_data.name }} (ID: {{ tag_field.field_data_id }})</dd>
+                              </div>
+                            {% endif %}
+                        </dl>
+                      </dd>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </dl>
+          </div>
+        </div>
+      {% endfor %}
+    </dd>
+  </div>
+</dl>
+
+<details class="govuk-details">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">Raw data</span>
+    </summary>
+    <div class="govuk-details__text">
+        <pre>{{ db_vu|pprint }}</pre>
+    </div>
+</details>
