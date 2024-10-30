@@ -190,9 +190,9 @@ def make_pkpass(ticket_obj: models.Ticket):
                     validity_start = templatetags.rics.rics_valid_from(document, issued_at)
                     validity_end = templatetags.rics.rics_valid_until(document, issued_at)
 
+                    pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
                     if ticket_obj.ticket_type != ticket_obj.TYPE_DEUTCHLANDTICKET:
-                        pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                     if "fromStationNum" in document and "toStationNum" in document:
                         pass_type = "boardingPass"
