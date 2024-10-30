@@ -113,6 +113,7 @@ class VDVTicketInstance(models.Model):
     def as_ticket(self) -> t.VDVTicket:
         config = dacite.Config(type_hooks={bytes: base64.b64decode})
         raw_ticket = base64.b64decode(self.decoded_data["ticket"])
+
         return t.VDVTicket(
             root_ca=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["root_ca"], config=config),
             issuing_ca=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["issuing_ca"], config=config),
@@ -147,6 +148,7 @@ class UICTicketInstance(models.Model):
 
     def as_ticket(self) -> t.UICTicket:
         config = dacite.Config(type_hooks={bytes: base64.b64decode})
+
         ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
         return t.UICTicket(
             raw_bytes=self.barcode_data,
@@ -157,8 +159,9 @@ class UICTicketInstance(models.Model):
             db_bl=t.parse_ticket_uic_db_bl(ticket_envelope),
             cd_ut=t.parse_ticket_uic_cd_ut(ticket_envelope),
             oebb_99=t.parse_ticket_uic_oebb_99(ticket_envelope),
+            db_vu=t.parse_ticket_uic_db_vu(ticket_envelope),
             other_records=[r for r in ticket_envelope.records if not (
-                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT" or r.id == "118199"
+                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT" or r.id == "118199" or r.id == "0080VU"
             )]
         )
 

@@ -70,6 +70,7 @@ class UICTicket:
     db_bl: typing.Optional[uic.db.DBRecordBL]
     cd_ut: typing.Optional[uic.cd.CDRecordUT]
     oebb_99: typing.Optional[uic.oebb.OeBBRecord99]
+    db_vu: typing.Optional[uic.db_vu.DBRecordVU]
     other_records: typing.List[uic.envelope.Record]
 
     @property
@@ -513,6 +514,19 @@ def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic
             exception=traceback.format_exc()
         )
 
+def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope) -> typing.Optional[uic.db_vu.DBRecordVU]:
+    vu_record = next(filter(lambda r: r.id == "0080VU" and r.version == 1, ticket_envelope.records), None)
+    if not vu_record:
+        return None
+
+    try:
+        return uic.db_vu.DBRecordVU.parse(vu_record.data, vu_record.version)
+    except uic.db_vu.DBVUException:
+        raise TicketError(
+            title="Invalid DB VU Record",
+            message="The DB VU record is invalid - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
 
 def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[uic.oebb.OeBBRecord99]:
     oebb_record = next(filter(lambda r: r.id == "118199" and r.version == 1, ticket_envelope.records), None)
@@ -547,6 +561,7 @@ def parse_ticket_uic(ticket_bytes: bytes) -> UICTicket:
         layout=parse_ticket_uic_layout(ticket_envelope),
         flex=parse_ticket_uic_flex(ticket_envelope),
         db_bl=parse_ticket_uic_db_bl(ticket_envelope),
+        db_vu=parse_ticket_uic_db_vu(ticket_envelope),
         cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
         oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
         other_records=[r for r in ticket_envelope.records if not (
