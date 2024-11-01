@@ -9,3 +9,5 @@
 /yarn.lock
 /.gitignore
 /kube
+tickeos.py
+parsed_licenses.lcs

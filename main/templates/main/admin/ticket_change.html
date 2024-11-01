@@ -1,0 +1,8 @@
+{% extends "admin/change_form.html" %}
+{% load admin_urls %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+
+    <li><a href='{% url opts|admin_urlname:"force_update" object_id %}'>Force update</a></li>
+{% endblock %}

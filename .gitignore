@@ -6,3 +6,5 @@
 /vdv-certs
 /uic-data
 __pycache__
+tickeos.py
+parsed_licenses.lcs
