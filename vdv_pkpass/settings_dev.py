@@ -27,8 +27,10 @@ SECRET_KEY = "django-insecure-%d$d(=tg6tengouqane%hj*_fr8r-w^g7vf@z_cmxmr!v9&)#a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "vdv-pkpass.eu.ngrok.io"]
+ALLOWED_HOSTS = ["localhost", "vdv-pkpass.eu.ngrok.io", "127.0.0.1"]
 
+# SECURITY WARNING: We know. They have lawyers.
+BARKODER_LICENSE = "0MHXR8cuvoJT62F-vUCcqMQR74K0988ixUjSf_DnucZlrv_DJTneGfAh1avJBr72P0VecEQGK5JHDH0FmfI_Lp8PdEdFGLDlQzT_axGBusQQWRt4-vYYaAyxrCvqtGWZIVN6jhCiyvQ7fndQ7oDAwhdpufGp1KH2tYFeNfif84DE8anuMEXfTOGUjN3jfEu1"
 
 # Application definition
 
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "crispy_forms_gds",
+    "magiclink",
     "main"
 ]
 
@@ -52,6 +55,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    'magiclink.backends.MagicLinkBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = "vdv_pkpass.urls"
@@ -179,7 +187,39 @@ STORAGES = {
             "location": BASE_DIR / "uic-data",
         }
     },
+    "rsp6-data": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "rsp6-data",
+        }
+    },
 }
+
+LOGIN_URL = "magiclink:login"
+LOGIN_REDIRECT_URL = "account"
+LOGOUT_REDIRECT_URL = "index"
+
+MAGICLINK_LOGIN_TEMPLATE_NAME = "registration/magic_login.html"
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "registration/magic_sent.html"
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "registration/magic_failed.html"
+MAGICLINK_SIGNUP_TEMPLATE_NAME = "registration/magic_signup.html"
+MAGICLINK_EMAIL_SUBJECT = "VDV PKPass Login"
+MAGICLINK_EMAIL_TEMPLATE_NAME_TEXT = "registration/magic_email.txt"
+MAGICLINK_EMAIL_TEMPLATE_NAME_HTML = "registration/magic_email.html"
+MAGICLINK_REQUIRE_SIGNUP = True
+MAGICLINK_IGNORE_EMAIL_CASE = True
+MAGICLINK_EMAIL_AS_USERNAME = True
+MAGICLINK_ALLOW_SUPERUSER_LOGIN = False
+MAGICLINK_ALLOW_STAFF_LOGIN = False
+MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
+MAGICLINK_REQUIRE_SAME_BROWSER = False
+MAGICLINK_REQUIRE_SAME_IP = False
+MAGICLINK_ANONYMIZE_IP = False
+MAGICLINK_TOKEN_USES = 1
+MAGICLINK_AUTH_TIMEOUT = 900
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = "VDV PKPass <noreply@magicalcodewit.ch>"
 
 LOGGING = {
     'version': 1,

@@ -5,6 +5,8 @@
 /node_modules
 /vdv-certs
 /uic-data
+/rsp6-data
 __pycache__
+.keyHash
 tickeos.py
 parsed_licenses.lcs

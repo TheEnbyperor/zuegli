@@ -22,20 +22,27 @@
             </div>
         {% endif %}
     {% endwith %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Issuer RICS</dt>
-        <dd class="govuk-summary-list__value"><code>{{ flex.data.issuingDetail.issuerNum }}</code></dd>
-    </div>
-    {% with org=flex.data.issuingDetail.issuerNum|rics %}
-        {% if org %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Issuer</dt>
-                <dd class="govuk-summary-list__value">
-                    {% include 'main/rics.html' with org=org %}
-                </dd>
-            </div>
-        {% endif %}
-    {% endwith %}
+    {% if flex.data.issuingDetail.issuerNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer RICS</dt>
+            <dd class="govuk-summary-list__value"><code>{{ flex.data.issuingDetail.issuerNum }}</code></dd>
+        </div>
+        {% with org=flex.data.issuingDetail.issuerNum|rics %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issuer</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include 'main/rics.html' with org=org %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% elif flex.data.issuingDetail.issuerName %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer</dt>
+            <dd class="govuk-summary-list__value">{{ flex.data.issuingDetail.issuerName }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Issuing time</dt>
         <dd class="govuk-summary-list__value">{{ flex.issuing_time|utc|date:"F d, Y H:i" }} UTC</dd>
@@ -109,7 +116,7 @@
         </div>
     {% endif %}
     {% if flex.data.transportDocument %}
-        <div class="govuk-summary-list__row">
+    <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Documents</dt>
         <dd class="govuk-summary-list__value">
         {% for doc in flex.data.transportDocument %}
@@ -140,6 +147,17 @@
                 </div>
             </div>
         {% endfor %}
-    {% endif %}
+        </dd>
     </div>
+    {% endif %}
+    {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
 </dl>
+
+<details class="govuk-details">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">Raw data</span>
+    </summary>
+    <div class="govuk-details__text">
+        <pre>{{ flex|pprint }}</pre>
+    </div>
+</details>

@@ -3,6 +3,8 @@ package ch.magicalcodewit.vdv.aztec;
 import boofcv.abst.fiducial.AztecCodePreciseDetector;
 import boofcv.alg.fiducial.aztec.AztecCode;
 import boofcv.alg.fiducial.qrcode.PackedBits8;
+import boofcv.factory.shape.ConfigPolygonDetector;
+import boofcv.factory.shape.ConfigPolygonFromContour;
 import boofcv.factory.fiducial.ConfigAztecCode;
 import boofcv.factory.fiducial.FactoryFiducial;
 import boofcv.io.image.ConvertBufferedImage;
@@ -46,7 +48,7 @@ public class Main {
         PackedBits8 paddedBits = PackedBits8.wrap(marker.corrected, marker.messageWordCount*marker.getWordBitCount());
         PackedBits8 bits = new PackedBits8();
         if (!removeExtraBits(marker.getWordBitCount(), marker.messageWordCount, paddedBits, bits)) {
-            System.exit(-2);
+            System.exit(-3);
             return;
         }
 

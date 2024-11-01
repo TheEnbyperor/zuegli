@@ -1,0 +1,66 @@
+{% extends "main/base.html" %}
+{% load static crispy_forms_tags rics %}
+
+{% block title %}Account - VDV to Apple Wallet{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <a href="/" class="govuk-back-link">Back</a>
+        <h1 class="govuk-heading-xl">My Account</h1>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Forename</dt>
+                <dd class="govuk-summary-list__value">{{ user.first_name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Surname</dt>
+                <dd class="govuk-summary-list__value">{{ user.last_name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Email</dt>
+                <dd class="govuk-summary-list__value">{{ user.email }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">DB Account</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_db_authenticated %}
+                        <p class="govuk-body"><code>{{ user.account.db_account_id }}</code></p>
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary"
+                               href="{% url 'db_login' %}">Reauthenticate</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'db_logout' %}">Unlink</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'db_login' %}">Login with DB</a>
+                        <p class="govuk-body-s">Logging in with DB isn't required for subscription tickets.</p>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">SaarVV Account</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_saarvv_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'saarvv_login' %}">Reauthenticate</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'saarvv_logout' %}">Unlink</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'saarvv_login' %}">Login with SaarVV</a>
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-l">Tickets</h2>
+        {% if tickets.count %}
+            <ul class="govuk-list govuk-list--spaced">
+                {% for ticket in tickets.all %}
+                    <li>
+                        <a href="{% url 'ticket' ticket.pk %}" class="govuk-link">#{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="govuk-body">No tickets</p>
+        {% endif %}
+    </div>
+{% endblock %}

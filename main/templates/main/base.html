@@ -12,32 +12,137 @@
     <link href='{% static "govuk/govuk-frontend-5.6.0.min.css" %}' rel="stylesheet">
     <link href='{% static "main/style.css" %}' rel="stylesheet">
 
-    <meta name="description" content="Turn your German public transport ticket into an Apple Wallet pass.">
+    <meta name="description" content="Turn your public transport tickets into an Apple Wallet passes.">
 </head>
 <body class="govuk-template__body ">
 <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
 {% block body_start %}
 {% endblock body_start %}
-<header class="govuk-header" data-module="govuk-header">
+<header class="govuk-header govuk-header--full-width-border" data-module="govuk-header">
     <div class="govuk-header__container govuk-width-container">
-        <div class="govuk-header__content">
-            <a href="{% url 'index' %}" class="govuk-header__link govuk-header__service-name">
-                VDV to Apple Wallet
-            </a>
-        </div>
+        <a href="{% url 'index' %}" class="govuk-header__link govuk-header__service-name">
+            VDV to Apple Wallet
+        </a>
     </div>
 </header>
+{% with request.resolver_match.url_name as url_name %}
+    <div class="govuk-service-navigation" data-module="govuk-service-navigation">
+        <div class="govuk-width-container">
+            <div class="govuk-service-navigation__container">
+                {% if user.is_authenticated %}
+                    <span class="govuk-service-navigation__service-name">
+                    Hi {{ user.get_short_name }}!
+                </span>
+                {% endif %}
+                <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                    <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
+                            aria-controls="navigation" hidden>
+                        Menu
+                    </button>
+                    <ul class="govuk-service-navigation__list" id="navigation">
+                        <li class="govuk-service-navigation__item{% if url_name == 'index' %} govuk-service-navigation__item--active{% endif %}">
+                            <a class="govuk-service-navigation__link" href="{% url 'index' %}">
+                                Home
+                            </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' %} govuk-service-navigation__item--active{% endif %}">
+                                <a class="govuk-service-navigation__link" href="{% url 'account' %}">
+                                    Account
+                                </a>
+                            </li>
+                            <li class="govuk-service-navigation__item">
+                                <a class="govuk-service-navigation__link"
+                                   href="{% url 'magiclink:logout' %}?next={{ request.path }}">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="govuk-service-navigation__item{% if url_name == 'login' %} govuk-service-navigation__item--active{% endif %}">
+                                <a class="govuk-service-navigation__link"
+                                   href="{% url 'magiclink:login' %}?next={{ request.path }}">
+                                    Login
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' %}
+                <div class="govuk-service-navigation__container">
+                    <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
+                        <button type="button"
+                                class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
+                                aria-controls="navigation" hidden>
+                            Menu
+                        </button>
+                        <ul class="govuk-service-navigation__list" id="navigation">
+                            <li class="govuk-service-navigation__item{% if url_name == 'account' %} govuk-service-navigation__item--active{% endif %}">
+                                <a class="govuk-service-navigation__link" href="{% url 'account' %}">
+                                    Account home
+                                </a>
+                            </li>
+                            {% if user.is_authenticated and user.account.is_db_authenticated %}
+                                <li class="govuk-service-navigation__item{% if url_name == 'db_account' %} govuk-service-navigation__item--active{% endif %}">
+                                    <a class="govuk-service-navigation__link" href="{% url 'db_account' %}" aria-current="true">
+                                        DB Account
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="govuk-service-navigation__item{% if url_name == 'db_abo' %} govuk-service-navigation__item--active{% endif %}">
+                                <a class="govuk-service-navigation__link " href="{% url 'db_abo' %}">
+                                    DB Subscriptions
+                                </a>
+                            </li>
+                            {% if user.is_authenticated and user.account.is_saarvv_authenticated %}
+                                <li class="govuk-service-navigation__item{% if url_name == 'saarvv_account' %} govuk-service-navigation__item--active{% endif %}">
+                                    <a class="govuk-service-navigation__link" href="{% url 'saarvv_account' %}">
+                                        SaarVV Account
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endwith %}
 <div class="govuk-width-container">
     <div class="govuk-phase-banner">
         <p class="govuk-phase-banner__content">
             <strong class="govuk-tag govuk-phase-banner__content__tag">Beta</strong>
             <span class="govuk-phase-banner__text">
-              This is a new service - it may break in any number of ways. Please report any issues you find.
+              This is a new service - it may break in any number of ways. Please report any issues you find!
             </span>
         </p>
     </div>
 </div>
 <main class="govuk-main-wrapper" id="content" role="main">
+    {% if messages %}
+        <div class="govuk-width-container">
+            {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="govuk-error-summary" data-module="govuk-error-summary">
+                        <div role="alert">
+                            <h2 class="govuk-error-summary__title">Error</h2>
+                            <div class="govuk-error-summary__body">
+                                {{ message.message }}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="govuk-notification-banner govuk-notification-banner--{{ message.level_tag }}"
+                         role="region"
+                         data-module="govuk-notification-banner">
+                        <div class="govuk-notification-banner__content">
+                            {{ message.message }}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
     {% block content %}{% endblock content %}
 </main>
 <footer class="govuk-footer">
@@ -48,22 +153,30 @@
                     Not affiliated with the Verband Deutscher Verkehrsunternehmen (VDV) or any of its members.
                 </div>
                 <div class="govuk-footer__meta-custom">
-                    <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend">GOV.UK Design System</a>
+                    <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK Design System</a>
                     used under license.
                 </div>
                 <span class="govuk-footer__licence-description">
-                    Licensed under the MIT license. &copy; <a class="govuk-footer__link" href="https://magicalcodewit.ch">Q Misell</a>, {% now "Y" %}
+                    Licensed under the <a href="https://eupl.eu" class="govuk-footer__link" target="_blank">EUPL v1.2</a>.
                 </span>
             </div>
-            </div>
+            <div class="govuk-footer__meta-item">
+                <a
+                  class="govuk-footer__link govuk-footer__copyright-logo"
+                  href="https://magicalcodewit.ch">
+                  &copy; Q Misell, {% now "Y" %}
+                </a>
+              </div>
         </div>
+    </div>
     </div>
 </footer>
 <script type="module" src='{% static "govuk/govuk-frontend-5.6.0.min.js" %}'></script>
 <script type="module">
-    import { initAll } from '{% static "govuk/govuk-frontend-5.6.0.min.js" %}'
+    import {initAll} from '{% static "govuk/govuk-frontend-5.6.0.min.js" %}'
+
     initAll()
 </script>
-<script src='{% static "zxing/index.min.js" %}'></script>
+<script src="{% static "barkoder/barkoder-umd.js" %}"></script>
 </body>
 </html>

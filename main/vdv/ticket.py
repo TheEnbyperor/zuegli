@@ -5,7 +5,14 @@ import ber_tlv.tlv
 import re
 from . import util, org_id
 
-NAME_TYPE_1_RE = re.compile(r"^(?P<start>\w*)(?P<len>\d+)(?P<end>\w*)$")
+NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
+
+
+@dataclasses.dataclass
+class Context:
+    account_forename: typing.Optional[str]
+    account_surname: typing.Optional[str]
+
 
 @dataclasses.dataclass
 class VDVTicket:
@@ -74,7 +81,7 @@ class VDVTicket:
         return out
 
     @classmethod
-    def parse(cls, data: bytes):
+    def parse(cls, data: bytes, context: Context) -> "VDVTicket":
         if len(data) < 111:
             raise util.VDVException("Invalid VDV ticket length")
 
@@ -92,7 +99,7 @@ class VDVTicket:
         product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
 
         offset_1 = parser.get_offset()
-        common_transaction_data, data = data[offset_1:offset_1+17], data[offset_1+17:]
+        common_transaction_data, data = data[offset_1:offset_1 + 17], data[offset_1 + 17:]
 
         try:
             parser = ber_tlv.tlv.Tlv.Parser(data, [], 0)
@@ -106,7 +113,7 @@ class VDVTicket:
         product_transaction_data = ber_tlv.tlv.Tlv.parse(product_transaction_data[1], False, False)
 
         offset_2 = parser.get_offset()
-        ticket_issue_data, data = data[offset_2:offset_2+12], data[offset_2+12:]
+        ticket_issue_data, data = data[offset_2:offset_2 + 12], data[offset_2 + 12:]
 
         trailer = data[-5:]
 
@@ -135,14 +142,14 @@ class VDVTicket:
             sam_version=ticket_issue_data[4],
             sam_sequence_number_2=int.from_bytes(ticket_issue_data[5:9], 'big'),
             sam_id=int.from_bytes(ticket_issue_data[9:12], 'big'),
-            product_data=list(map(cls.parse_product_data_element, product_data)),
+            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
             product_transaction_data=product_transaction_data
         )
 
     @staticmethod
-    def parse_product_data_element(elm):
+    def parse_product_data_element(elm, context: Context) -> typing.Any:
         if elm[0] == 0xDB:
-            return PassengerData.parse(elm[1])
+            return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
             return SpacialValidity.parse(elm[1])
         else:
@@ -197,11 +204,13 @@ class VDVTicket:
     def location_org_name_opt(self):
         return map_org_id(self.location_org_id, True)
 
+
 class Gender(enum.Enum):
     Unspecified = 0
     Male = 1
     Female = 2
     Diverse = 3
+
 
 @dataclasses.dataclass
 class PassengerData:
@@ -210,32 +219,77 @@ class PassengerData:
     gender: Gender
     date_of_birth: util.Date
     forename: str
+    original_forename: typing.Optional[str]
     surname: str
+    original_surname: typing.Optional[str]
 
     def __str__(self):
         return f"Passenger: forename={self.forename}, surname={self.surname}, date_of_birth={self.date_of_birth}, gender={self.gender}"
 
     @classmethod
-    def parse(cls, data: bytes):
+    def parse(cls, data: bytes, context: Context) -> "PassengerData":
         if len(data) < 5:
             raise util.VDVException("Invalid passenger data element")
 
         name = data[5:].decode("iso-8859-1", "replace")
         forename = ""
+        original_forename = None
+        original_surname = None
         if "#" in name:
             forename, surname = name.split("#", 1)
+            if context.account_forename and context.account_forename.startswith(forename):
+                forename = context.account_forename
+            if context.account_surname and context.account_surname.startswith(surname):
+                surname = context.account_surname
         elif "@" in name:
             forename, surname = name.split("@", 1)
-            if forename_match := NAME_TYPE_1_RE.fullmatch(forename):
+            new_forename = []
+            new_surname = []
+            while forename_match := NAME_TYPE_1_RE.match(forename):
+                forename = forename[forename_match.end():]
                 forename_start = forename_match.group("start")
                 forename_end = forename_match.group("end")
                 forename_len = int(forename_match.group("len"))
-                forename = f"{forename_start}{'_'*forename_len}{forename_end}"
-            if surname_match := NAME_TYPE_1_RE.fullmatch(surname):
+                new_forename.append(f"{forename_start}{'_' * forename_len}{forename_end}")
+
+            while surname_match := NAME_TYPE_1_RE.match(surname):
+                surname = surname[surname_match.end():]
                 surname_start = surname_match.group("start")
                 surname_end = surname_match.group("end")
                 surname_len = int(surname_match.group("len"))
-                surname = f"{surname_start}{'_'*surname_len}{surname_end}"
+                new_surname.append(f"{surname_start}{'_' * surname_len}{surname_end}")
+
+            if new_forename:
+                forename = " ".join(new_forename)
+                if context.account_forename and len(context.account_forename) == len(forename):
+                    if (
+                            context.account_forename.startswith(forename[0]) and
+                            context.account_forename.endswith(forename[-1])
+                    ) or (
+                            (context.account_forename.startswith(forename[0]) or
+                             context.account_forename.endswith(forename[-1])) and
+                            len(forename) == 2
+                    ) or (
+                            len(forename) == 1
+                    ):
+                        original_forename = forename
+                        forename = context.account_forename
+
+            if new_surname:
+                surname = " ".join(new_surname)
+                if context.account_surname and len(context.account_surname) == len(surname):
+                    if (
+                            context.account_surname.startswith(surname[0]) and
+                            context.account_surname.endswith(surname[-1])
+                    ) or (
+                            (context.account_surname.startswith(surname[0]) or
+                             context.account_surname.endswith(surname[-1])) and
+                            len(surname) == 2
+                    ) or (
+                            len(surname) == 1
+                    ):
+                        original_surname = surname
+                        surname = context.account_surname
         else:
             surname = name
 
@@ -243,8 +297,11 @@ class PassengerData:
             gender=Gender(data[0]),
             date_of_birth=util.Date.from_bytes(data[1:5]),
             forename=forename,
-            surname=surname
+            surname=surname,
+            original_forename=original_forename,
+            original_surname=original_surname
         )
+
 
 @dataclasses.dataclass
 class SpacialValidity:
@@ -263,7 +320,7 @@ class SpacialValidity:
             return cls(
                 definition_type=data[0],
                 organization_id=int.from_bytes(data[1:3], 'big'),
-                area_ids=[int.from_bytes(data[i:i+2], 'big') for i in range(3, len(data), 2)]
+                area_ids=[int.from_bytes(data[i:i + 2], 'big') for i in range(3, len(data), 2)]
             )
         else:
             return UnknownSpacialValidity(
@@ -276,6 +333,7 @@ class SpacialValidity:
 
     def organization_name_opt(self):
         return map_org_id(self.organization_id, True)
+
 
 @dataclasses.dataclass
 class UnknownSpacialValidity:

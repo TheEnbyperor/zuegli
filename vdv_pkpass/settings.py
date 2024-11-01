@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "crispy_forms_gds",
+    "magiclink",
     "main"
 ]
 
@@ -44,6 +45,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+AUTHENTICATION_BACKENDS = [
+    'magiclink.backends.MagicLinkBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 ROOT_URLCONF = "vdv_pkpass.urls"
@@ -138,17 +144,32 @@ STORAGES = {
             "bucket_name": "uic-data",
         }
     },
+    "rsp6-data": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": "rsp6-data",
+        }
+    },
 }
 
 PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")
 PKPASS_KEY_LOCATION = os.getenv("PKPASS_KEY_LOCATION")
 
-with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
-    WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
-with open(PKPASS_CERTIFICATE_LOCATION, "rb") as f:
-    PKPASS_CERTIFICATE = cryptography.x509.load_pem_x509_certificate(f.read())
-with open(PKPASS_KEY_LOCATION, "rb") as f:
-    PKPASS_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
+try:
+    with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
+        WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
+except FileNotFoundError:
+    WWDR_CERTIFICATE = None
+try:
+    with open(PKPASS_CERTIFICATE_LOCATION, "rb") as f:
+        PKPASS_CERTIFICATE = cryptography.x509.load_pem_x509_certificate(f.read())
+except FileNotFoundError:
+    PKPASS_CERTIFICATE = None
+try:
+    with open(PKPASS_KEY_LOCATION, "rb") as f:
+        PKPASS_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
+except FileNotFoundError:
+    PKPASS_KEY = None
 
 PKPASS_CONF = {
     "organization_name": os.getenv("PKPASS_ORGANIZATION_NAME"),
@@ -157,6 +178,40 @@ PKPASS_CONF = {
 }
 
 AZTEC_JAR_PATH = BASE_DIR / "aztec-1.0.jar"
+
+LOGIN_URL = "magiclink:login"
+LOGIN_REDIRECT_URL = "account"
+LOGOUT_REDIRECT_URL = "index"
+
+MAGICLINK_LOGIN_TEMPLATE_NAME = "registration/magic_login.html"
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "registration/magic_sent.html"
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "registration/magic_failed.html"
+MAGICLINK_SIGNUP_TEMPLATE_NAME = "registration/magic_signup.html"
+MAGICLINK_EMAIL_SUBJECT = "VDV PKPass Login"
+MAGICLINK_EMAIL_TEMPLATE_NAME_TEXT = "registration/magic_email.txt"
+MAGICLINK_EMAIL_TEMPLATE_NAME_HTML = "registration/magic_email.html"
+MAGICLINK_REQUIRE_SIGNUP = True
+MAGICLINK_IGNORE_EMAIL_CASE = True
+MAGICLINK_EMAIL_AS_USERNAME = True
+MAGICLINK_ALLOW_SUPERUSER_LOGIN = False
+MAGICLINK_ALLOW_STAFF_LOGIN = False
+MAGICLINK_IGNORE_IS_ACTIVE_FLAG = False
+MAGICLINK_REQUIRE_SAME_BROWSER = False
+MAGICLINK_REQUIRE_SAME_IP = False
+MAGICLINK_ANONYMIZE_IP = False
+MAGICLINK_TOKEN_USES = 1
+MAGICLINK_AUTH_TIMEOUT = 900
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mx2.postal.as207960.net"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "q-misell/main"
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = "VDV PKPass <noreply@magicalcodewit.ch>"
+
+# SECURITY WARNING: We know. They have lawyers.
+BARKODER_LICENSE = "0MHXR8cuvoJT62F-vUCcqMQR74K0988ixUjSf_DnucZlrv_DJTneGfAh1avJBr72P0VecEQGK5JHDH0FmfI_Lp8PdEdFGLDlQzT_axGBusQQWRt4-vYYaAyxrCvqtGWZIVN6jhCiyvQ7fndQ7oDAwhdpufGp1KH2tYFeNfif84DE8anuMEXfTOGUjN3jfEu1"
 
 LOGGING = {
     'version': 1,

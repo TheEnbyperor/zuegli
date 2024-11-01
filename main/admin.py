@@ -17,12 +17,45 @@ class UICTicketInstanceInline(admin.StackedInline):
     model = models.UICTicketInstance
 
 
+class RSP6TicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.RSP6TicketInstance
+
+
 class AppleRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AppleRegistration
     readonly_fields = [
         "device",
         "ticket",
+    ]
+
+
+class TicketAccountInline(admin.StackedInline):
+    extra = 0
+    model = models.Ticket
+    fk_name = "account"
+    readonly_fields = [
+        "pkpass_authentication_token",
+        "last_updated",
+    ]
+
+
+class TicketDBSubscriptionInline(admin.StackedInline):
+    extra = 0
+    model = models.Ticket
+    fk_name = "db_subscription"
+    readonly_fields = [
+        "pkpass_authentication_token",
+        "last_updated",
+    ]
+
+
+class DBSubscriptionInline(admin.StackedInline):
+    extra = 0
+    model = models.DBSubscription
+    readonly_fields = [
+        "device_token"
     ]
 
 
@@ -36,9 +69,20 @@ class TicketAdmin(admin.ModelAdmin):
     inlines = [
         VDVTicketInstanceInline,
         UICTicketInstanceInline,
+        RSP6TicketInstanceInline,
         AppleRegistrationInline,
     ]
     view_on_site = True
+    list_display = [
+        "id",
+        "ticket_type",
+        "last_updated"
+    ]
+    date_hierarchy = "last_updated"
+    list_filter = [
+        "ticket_type",
+    ]
+    search_fields = ["id"]
     change_form_template = "main/admin/ticket_change.html"
 
     def get_urls(self):
@@ -73,4 +117,31 @@ class AppleDeviceAdmin(admin.ModelAdmin):
     ]
     inlines = [
         AppleRegistrationInline,
+    ]
+
+
+@admin.register(models.Account)
+class AccountAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        "user",
+        "db_token",
+        "db_token_expires_at",
+        "db_refresh_token",
+        "db_token_expires_at",
+        "saarvv_token",
+        "saarvv_device_id",
+    ]
+    inlines = [
+        TicketAccountInline,
+        DBSubscriptionInline,
+    ]
+
+
+@admin.register(models.DBSubscription)
+class DBSubscriptionAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        "device_token"
+    ]
+    inlines = [
+        TicketDBSubscriptionInline
     ]

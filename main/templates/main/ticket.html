@@ -1,12 +1,12 @@
 {% extends "main/base.html" %}
 {% load static %}
 
-{% block title %}Ticket {{ ticket_id }} - VDV to Apple Wallet{% endblock title %}
+{% block title %}Ticket {{ ticket.public_id }} - VDV to Apple Wallet{% endblock title %}
 
 {% block content %}
     <div class="govuk-width-container">
     <h1 class="govuk-heading-xl">
-        Ticket #{{ ticket_id }}
+        Ticket #{{ ticket.public_id }}
         <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
     </h1>
 
@@ -43,9 +43,9 @@
             <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-button govuk-button--start govuk-button--inverse govuk-!-margin-0">Download</a>
         </div>
     </div>
-    </div>
+</div>
 
-    <div class="govuk-!-margin-7">
+<div class="govuk-!-margin-7">
     <h2 class="govuk-heading-l">Ticket details</h2>
     {% if not ticket.vdv_instances.count and not ticket.uic_instances.count %}
         <p class="govuk-body">No instances found for this ticket.</p>
@@ -81,6 +81,6 @@
             {% endwith %}
         {% endfor %}
     {% endif %}
-    </div>
+</div>
 
 {% endblock content %}
