@@ -18,7 +18,7 @@ def decode(img_data: bytes):
     assert cfg_response.get_result() == Barkoder.ConfigResult.OK
     config = cfg_response.get_config()
 
-    config.decodingSpeed = Barkoder.DecodingSpeed.Normal
+    config.decodingSpeed = Barkoder.DecodingSpeed.Slow
     assert config.set_enabled_decoders([
         Barkoder.DecoderType.Aztec,
         Barkoder.DecoderType.AztecCompact,
@@ -33,7 +33,7 @@ def decode(img_data: bytes):
         raise AztecError("Unable to read image")
 
     height, width = img.shape[:2]
-    results = Barkoder.Barkoder.DecodeImageMemory(config, img, height, width)
+    results = Barkoder.Barkoder.DecodeImageMemory(config, img, width, height)
 
     if len(results) > 0:
         return bytes(results[0].binaryData)
