@@ -19,8 +19,9 @@ def update_all():
         else:
             logging.info(f"Not updating DB subscription {abo.device_token} - not due for refresh")
 
-        for t in abo.tickets.all():
-            apn.notify_ticket_if_renewed(t)
+        if abo.pk:
+            for t in abo.tickets.all():
+                apn.notify_ticket_if_renewed(t)
 
 
 def update_abo_tickets(abo: models.DBSubscription):
