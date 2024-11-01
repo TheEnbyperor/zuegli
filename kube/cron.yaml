@@ -7,7 +7,7 @@ metadata:
     app: vdv-pkpass
     part: db-abo
 spec:
-  schedule: "0 * * * *"
+  schedule: "7 * * * *"
   jobTemplate:
     spec:
       template:

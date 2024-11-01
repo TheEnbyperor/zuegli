@@ -24,25 +24,16 @@ def notify_ticket(ticket: "models.Ticket"):
 def notify_ticket_if_renewed(ticket: "models.Ticket"):
     now = timezone.now()
     current_ticket_valid_from = None
-    previous_ticket_valid_until = None
-    uic_tickets = ticket.uic_instances.filter(
-        Q(validity_start__lt=now) | Q(validity_start__isnull=True)
-    )
+    uic_tickets = ticket.uic_instances.filter(validity_start__lt=now)
     if uic_tickets.count() != 0:
-        if uic_tickets.count() > 1:
-            current_ticket_valid_from = uic_tickets[0].validity_start
-            previous_ticket_valid_until = uic_tickets[1].validity_end
-
-    vdv_tickets = ticket.vdv_instances.filter(
-        Q(validity_start__lt=now) | Q(validity_start__isnull=True)
-    )
-    if vdv_tickets.count() != 0:
-        if vdv_tickets.count() > 1:
+        current_ticket_valid_from = uic_tickets[0].validity_start
+    else:
+        vdv_tickets = ticket.vdv_instances.filter(validity_start__lt=now)
+        if vdv_tickets.count() != 0:
             current_ticket_valid_from = vdv_tickets[0].validity_start
-            previous_ticket_valid_until = vdv_tickets[1].validity_end
 
-    if current_ticket_valid_from and previous_ticket_valid_until:
-        if current_ticket_valid_from < now and previous_ticket_valid_until < now:
+    if current_ticket_valid_from:
+        if current_ticket_valid_from > ticket.last_updated:
             ticket.last_updated = now
             ticket.save()
             notify_ticket(ticket)

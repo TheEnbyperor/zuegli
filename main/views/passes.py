@@ -118,9 +118,12 @@ def ticket_pkpass(request, pk):
 
 def make_pkpass(ticket_obj: models.Ticket):
     now = timezone.now()
-    ticket_instance: models.UICTicketInstance = ticket_obj.uic_instances.filter(
-        ~Q(validity_end__lt=now) | Q(validity_end__isnull=True),
-    ).order_by("validity_start").first()
+    ticket_instance: models.UICTicketInstance = ticket_obj.uic_instances\
+        .filter(validity_end__lt=now).order_by("validity_start").first()
+    if not ticket_instance:
+        ticket_instance = ticket_obj.uic_instances.filter(
+            ~Q(validity_end__lt=now) | Q(validity_end__isnull=True),
+            ).order_by("validity_start").first()
     if not ticket_instance:
         ticket_instance = ticket_obj.uic_instances.order_by("-validity_end").first()
     pkp = pkpass.PKPass()
@@ -807,9 +810,12 @@ def make_pkpass(ticket_obj: models.Ticket):
             "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
     else:
-        ticket_instance: models.VDVTicketInstance = ticket_obj.vdv_instances.filter(
-            ~Q(validity_end__lt=now) | Q(validity_end__isnull=True),
-        ).order_by("validity_start").first()
+        ticket_instance: models.VDVTicketInstance = ticket_obj.vdv_instances\
+            .filter(validity_end__lt=now).order_by("validity_start").first()
+        if not ticket_instance:
+            ticket_instance = ticket_obj.vdv_instances.filter(
+                ~Q(validity_end__lt=now) | Q(validity_end__isnull=True),
+                ).order_by("validity_start").first()
         if not ticket_instance:
             ticket_instance = ticket_obj.vdv_instances.order_by("-validity_end").first()
         if ticket_instance:
