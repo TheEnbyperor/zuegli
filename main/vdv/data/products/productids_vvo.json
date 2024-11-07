@@ -1,0 +1,1136 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "6013_50012",
+      "text": "Fähre Einzelfahrt"
+    },
+    {
+      "key": "6013_50100",
+      "text": "Fähre 10er-Karte"
+    },
+    {
+      "key": "6013_50112",
+      "text": "Fähre Einzelfahrt Rad inkl. Fahrer"
+    },
+    {
+      "key": "6013_50118",
+      "text": "DVB Ausweis Mitarbeiter"
+    },
+    {
+      "key": "6013_50200",
+      "text": "Fähre 10er-Karte Fahrzeug inkl. Fahrer"
+    },
+    {
+      "key": "6013_50212",
+      "text": "Fähre Einzelfahrt Fzg inkl. Fahrer"
+    },
+    {
+      "key": "6013_50218",
+      "text": "DVB Ausweis ehemaliger Mitarbeiter"
+    },
+    {
+      "key": "6013_50300",
+      "text": "Bergbahn 12er-Karte"
+    },
+    {
+      "key": "6013_50312",
+      "text": "Fähre Einzelfahrt Fzg inkl. Fahrer rabattiert"
+    },
+    {
+      "key": "6013_50318",
+      "text": "DVB Ausweis Familienangehöriger"
+    },
+    {
+      "key": "6013_50412",
+      "text": "Fähre Hin-Rückfahrt"
+    },
+    {
+      "key": "6013_50512",
+      "text": "Fähre Hin-Rückfahrt Rad inkl. Fahrer"
+    },
+    {
+      "key": "6013_50518",
+      "text": "DVB Ausweis Familienangehöriger ermäßigt"
+    },
+    {
+      "key": "6013_50612",
+      "text": "Fähre Hin-Rückfahrt Fzg inkl. Fahrer"
+    },
+    {
+      "key": "6013_50712",
+      "text": "Bergbahn Einzelfahrt"
+    },
+    {
+      "key": "6013_50812",
+      "text": "Bergbahn Hin-Rückfahrt"
+    },
+    {
+      "key": "6013_55012",
+      "text": "Fähre Einzelfahrt ermäßigt"
+    },
+    {
+      "key": "6013_55100",
+      "text": "Fähre 10er-Karte ermäßigt"
+    },
+    {
+      "key": "6013_55112",
+      "text": "Fähre Einzelfahrt Rad inkl. Fahrer ermäßigt"
+    },
+    {
+      "key": "6013_55300",
+      "text": "Bergbahn 12er-Karte ermäßigt"
+    },
+    {
+      "key": "6013_55312",
+      "text": "Fähre Hin-Rückfahrt Fzg inkl. Fahrer rabattiert"
+    },
+    {
+      "key": "6013_55412",
+      "text": "Fähre Hin-Rückfahrt ermäßigt"
+    },
+    {
+      "key": "6013_55512",
+      "text": "Fähre Hin-Rückfahrt Rad inkl. Fahrer ermäßigt"
+    },
+    {
+      "key": "6013_55712",
+      "text": "Bergbahn Einzelfahrt ermäßigt"
+    },
+    {
+      "key": "6013_55812",
+      "text": "Bergbahn Hin-Rückfahrt ermäßigt"
+    },
+    {
+      "key": "6013_56612",
+      "text": "Bergbahn Einzelfahrt Familie"
+    },
+    {
+      "key": "6013_56812",
+      "text": "Bergbahn Hin-Rückfahrt Familie"
+    },
+    {
+      "key": "6013_57612",
+      "text": "Bergbahn Einzelfahrt Gruppe"
+    },
+    {
+      "key": "6013_57812",
+      "text": "Bergbahn Hin- und Rückfahrt Gruppe"
+    },
+    {
+      "key": "6060_9998",
+      "text": "JobTicket Deutschlandticket"
+    },
+    {
+      "key": "6060_9999",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "6060_10012",
+      "text": "Einzelfahrt PS 1"
+    },
+    {
+      "key": "6060_10014",
+      "text": "Einzelfahrt PS Dresden"
+    },
+    {
+      "key": "6060_10016",
+      "text": "Einzelfahrt PS 2"
+    },
+    {
+      "key": "6060_10018",
+      "text": "Einzelfahrt PS 3"
+    },
+    {
+      "key": "6060_10020",
+      "text": "Einzelfahrt PS 4"
+    },
+    {
+      "key": "6060_10102",
+      "text": "4er-Karte Kurzstrecke"
+    },
+    {
+      "key": "6060_10112",
+      "text": "Einzelfahrt PS 1 Li. 398"
+    },
+    {
+      "key": "6060_10116",
+      "text": "Einzelfahrt PS 2 Li. 398"
+    },
+    {
+      "key": "6060_10118",
+      "text": "Einzelfahrt PS 3 Li. 398"
+    },
+    {
+      "key": "6060_10120",
+      "text": "Einzelfahrt PS 4 Li. 398"
+    },
+    {
+      "key": "6060_10200",
+      "text": "4er-Karte PS 1 - PS 4"
+    },
+    {
+      "key": "6060_10312",
+      "text": "4er-Karte Dresden Pass PS 1"
+    },
+    {
+      "key": "6060_10520",
+      "text": "WerkstattTicket"
+    },
+    {
+      "key": "6060_15012",
+      "text": "Einzelfahrt ermäßigt PS 1"
+    },
+    {
+      "key": "6060_15014",
+      "text": "Einzelfahrt ermäßigt PS Dresden"
+    },
+    {
+      "key": "6060_15016",
+      "text": "Einzelfahrt ermäßigt PS 2"
+    },
+    {
+      "key": "6060_15018",
+      "text": "Einzelfahrt ermäßigt PS 3"
+    },
+    {
+      "key": "6060_15020",
+      "text": "Einzelfahrt ermäßigt PS 4"
+    },
+    {
+      "key": "6060_15112",
+      "text": "Einzelfahrt ermäßigt PS 1 Li. 398"
+    },
+    {
+      "key": "6060_15116",
+      "text": "Einzelfahrt ermäßigt PS 2 Li. 398"
+    },
+    {
+      "key": "6060_15118",
+      "text": "Einzelfahrt ermäßigt PS 3 Li. 398"
+    },
+    {
+      "key": "6060_15120",
+      "text": "Einzelfahrt ermäßigt PS 4 Li. 398"
+    },
+    {
+      "key": "6060_15200",
+      "text": "4er-Karte ermäßigt PS 1 - PS 4"
+    },
+    {
+      "key": "6060_20012",
+      "text": "Tageskarte PS A"
+    },
+    {
+      "key": "6060_20016",
+      "text": "Tageskarte PS B"
+    },
+    {
+      "key": "6060_20020",
+      "text": "Tageskarte PS D"
+    },
+    {
+      "key": "6060_20094",
+      "text": "Tageskarte PS Elbe-Labe"
+    },
+    {
+      "key": "6060_20120",
+      "text": "NachtTicket PS D"
+    },
+    {
+      "key": "6060_20212",
+      "text": "Familientageskarte PS A"
+    },
+    {
+      "key": "6060_20216",
+      "text": "Familientageskarte PS B"
+    },
+    {
+      "key": "6060_20220",
+      "text": "Familientageskarte PS D"
+    },
+    {
+      "key": "6060_20294",
+      "text": "Familientageskarte PS Elbe-Labe"
+    },
+    {
+      "key": "6060_20312",
+      "text": "Kleingruppenkarte PS A"
+    },
+    {
+      "key": "6060_20316",
+      "text": "Kleingruppenkarte PS B"
+    },
+    {
+      "key": "6060_20320",
+      "text": "Kleingruppenkarte PS D"
+    },
+    {
+      "key": "6060_20394",
+      "text": "Kleingruppenkarte PS Elbe-Labe"
+    },
+    {
+      "key": "6060_20412",
+      "text": "Fahrradtageskarte PS A"
+    },
+    {
+      "key": "6060_20420",
+      "text": "Fahrradtageskarte PS D"
+    },
+    {
+      "key": "6060_20494",
+      "text": "Fahrradtageskarte PS Elbe-Labe"
+    },
+    {
+      "key": "6060_20512",
+      "text": "Übergang 1.Klasse Tageskarte PS A"
+    },
+    {
+      "key": "6060_20520",
+      "text": "Übergang 1.Klasse Tageskarte PS D"
+    },
+    {
+      "key": "6060_20650",
+      "text": "Tageskarte PS Stadt Hoyerswerda"
+    },
+    {
+      "key": "6060_20720",
+      "text": "Tageskarte PS D (FAIRTIQ)"
+    },
+    {
+      "key": "6060_20820",
+      "text": "Tageskarte PS D (FAIRTIQ+Zeitkarte)"
+    },
+    {
+      "key": "6060_25012",
+      "text": "Tageskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_25016",
+      "text": "Tageskarte ermäßigt PS B"
+    },
+    {
+      "key": "6060_25020",
+      "text": "Tageskarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_25512",
+      "text": "Übergang 1.Klasse Tageskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_25520",
+      "text": "Übergang 1.Klasse Tageskarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_25612",
+      "text": "Schülergruppe PS A"
+    },
+    {
+      "key": "6060_25616",
+      "text": "Schülergruppe PS B"
+    },
+    {
+      "key": "6060_25620",
+      "text": "Schülergruppe PS D"
+    },
+    {
+      "key": "6060_25720",
+      "text": "Tageskarte ermäßigt PS D (FAIRTIQ)"
+    },
+    {
+      "key": "6060_25820",
+      "text": "Tageskarte ermäßigt PS D (FAIRTIQ+Zeitkarte)"
+    },
+    {
+      "key": "6060_30004",
+      "text": "Wochenkarte PS A"
+    },
+    {
+      "key": "6060_30012",
+      "text": "Wochenkarte PS A"
+    },
+    {
+      "key": "6060_30014",
+      "text": "Wochenkarte PS A1"
+    },
+    {
+      "key": "6060_30016",
+      "text": "Wochenkarte PS B"
+    },
+    {
+      "key": "6060_30018",
+      "text": "Wochenkarte PS C"
+    },
+    {
+      "key": "6060_30020",
+      "text": "Wochenkarte PS D"
+    },
+    {
+      "key": "6060_30120",
+      "text": "Übergang 1.Klasse Wochenkarte PS D"
+    },
+    {
+      "key": "6060_30204",
+      "text": "Monatskarte PS A"
+    },
+    {
+      "key": "6060_30212",
+      "text": "Monatskarte PS A"
+    },
+    {
+      "key": "6060_30214",
+      "text": "Monatskarte PS A1"
+    },
+    {
+      "key": "6060_30216",
+      "text": "Monatskarte PS B"
+    },
+    {
+      "key": "6060_30218",
+      "text": "Monatskarte PS C"
+    },
+    {
+      "key": "6060_30220",
+      "text": "Monatskarte PS D"
+    },
+    {
+      "key": "6060_30320",
+      "text": "Übergang 1.Klasse Monatskarte PS D"
+    },
+    {
+      "key": "6060_30414",
+      "text": "Monatskarte Dresden Pass PS A1"
+    },
+    {
+      "key": "6060_30504",
+      "text": "9-Uhr-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30512",
+      "text": "9-Uhr-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30514",
+      "text": "9-Uhr-Monatskarte PS A1"
+    },
+    {
+      "key": "6060_30516",
+      "text": "9-Uhr-Monatskarte PS B"
+    },
+    {
+      "key": "6060_30518",
+      "text": "9-Uhr-Monatskarte PS C"
+    },
+    {
+      "key": "6060_30520",
+      "text": "9-Uhr-Monatskarte PS D"
+    },
+    {
+      "key": "6060_30616",
+      "text": "Deutschlandticket Plus ICE/IC"
+    },
+    {
+      "key": "6060_30620",
+      "text": "Deutschlandticket Plus Mitnahme"
+    },
+    {
+      "key": "6060_30704",
+      "text": "Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30712",
+      "text": "Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30714",
+      "text": "Abo-Monatskarte PS A1"
+    },
+    {
+      "key": "6060_30716",
+      "text": "Abo-Monatskarte PS B"
+    },
+    {
+      "key": "6060_30718",
+      "text": "Abo-Monatskarte PS C"
+    },
+    {
+      "key": "6060_30720",
+      "text": "Abo-Monatskarte PS D"
+    },
+    {
+      "key": "6060_30814",
+      "text": "Abo-Monatskarte Dresden Pass PS A1"
+    },
+    {
+      "key": "6060_30816",
+      "text": "Abo-Monatskarte Dresden Pass PS B"
+    },
+    {
+      "key": "6060_30904",
+      "text": "9-Uhr-Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30912",
+      "text": "9-Uhr-Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_30914",
+      "text": "9-Uhr-Abo-Monatskarte PS A1"
+    },
+    {
+      "key": "6060_30916",
+      "text": "9-Uhr-Abo-Monatskarte PS B"
+    },
+    {
+      "key": "6060_30918",
+      "text": "9-Uhr-Abo-Monatskarte PS C"
+    },
+    {
+      "key": "6060_30920",
+      "text": "9-Uhr-Abo-Monatskarte PS D"
+    },
+    {
+      "key": "6060_31220",
+      "text": "Fahrradmonatskarte"
+    },
+    {
+      "key": "6060_31304",
+      "text": "JobTicket PS A"
+    },
+    {
+      "key": "6060_31312",
+      "text": "JobTicket PS A"
+    },
+    {
+      "key": "6060_31314",
+      "text": "JobTicket PS A1"
+    },
+    {
+      "key": "6060_31316",
+      "text": "JobTicket PS B"
+    },
+    {
+      "key": "6060_31318",
+      "text": "JobTicket PS C"
+    },
+    {
+      "key": "6060_31320",
+      "text": "JobTicket PS D"
+    },
+    {
+      "key": "6060_31404",
+      "text": "9-Uhr-Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_31412",
+      "text": "9-Uhr-Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_31414",
+      "text": "9-Uhr-Abo-Monatskarte PS A1"
+    },
+    {
+      "key": "6060_31416",
+      "text": "9-Uhr-Abo-Monatskarte PS B"
+    },
+    {
+      "key": "6060_31418",
+      "text": "9-Uhr-Abo-Monatskarte PS C"
+    },
+    {
+      "key": "6060_31420",
+      "text": "9-Uhr-Abo-Monatskarte PS D"
+    },
+    {
+      "key": "6060_31512",
+      "text": "Wochenkarte PS A Li. 398"
+    },
+    {
+      "key": "6060_31516",
+      "text": "Wochenkarte PS B Li. 398"
+    },
+    {
+      "key": "6060_31518",
+      "text": "Wochenkarte PS C Li. 398"
+    },
+    {
+      "key": "6060_31520",
+      "text": "Wochenkarte PS D Li. 398"
+    },
+    {
+      "key": "6060_31612",
+      "text": "Monatskarte PS A Li. 398"
+    },
+    {
+      "key": "6060_31616",
+      "text": "Monatskarte PS B Li. 398"
+    },
+    {
+      "key": "6060_31618",
+      "text": "Monatskarte PS C  Li. 398"
+    },
+    {
+      "key": "6060_31620",
+      "text": "Monatskarte PS D Li. 398"
+    },
+    {
+      "key": "6060_32320",
+      "text": "Übergang 1.Klasse Abo-Monatskarte PS D"
+    },
+    {
+      "key": "6060_32504",
+      "text": "Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_32512",
+      "text": "Abo-Monatskarte PS A"
+    },
+    {
+      "key": "6060_32514",
+      "text": "Abo-Monatskarte PS A1"
+    },
+    {
+      "key": "6060_32516",
+      "text": "Abo-Monatskarte PS B"
+    },
+    {
+      "key": "6060_32518",
+      "text": "Abo-Monatskarte PS C"
+    },
+    {
+      "key": "6060_32520",
+      "text": "Abo-Monatskarte PS D"
+    },
+    {
+      "key": "6060_35004",
+      "text": "Wochenkarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35012",
+      "text": "Wochenkarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35014",
+      "text": "Wochenkarte ermäßigt PS A1"
+    },
+    {
+      "key": "6060_35016",
+      "text": "Wochenkarte ermäßigt PS B"
+    },
+    {
+      "key": "6060_35018",
+      "text": "Wochenkarte ermäßigt PS C"
+    },
+    {
+      "key": "6060_35020",
+      "text": "Wochenkarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_35204",
+      "text": "Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35212",
+      "text": "Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35214",
+      "text": "Monatskarte ermäßigt PS A1"
+    },
+    {
+      "key": "6060_35216",
+      "text": "Monatskarte ermäßigt PS B"
+    },
+    {
+      "key": "6060_35218",
+      "text": "Monatskarte ermäßigt PS C"
+    },
+    {
+      "key": "6060_35220",
+      "text": "Monatskarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_35420",
+      "text": "AzubiTicket Sachsen"
+    },
+    {
+      "key": "6060_35620",
+      "text": "AzubiTicket Sachsen"
+    },
+    {
+      "key": "6060_35704",
+      "text": "Abo-Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35712",
+      "text": "Abo-Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_35714",
+      "text": "Abo-Monatskarte ermäßigt PS A1"
+    },
+    {
+      "key": "6060_35716",
+      "text": "Abo-Monatskarte ermäßigt PS B"
+    },
+    {
+      "key": "6060_35718",
+      "text": "Abo-Monatskarte ermäßigt PS C"
+    },
+    {
+      "key": "6060_35720",
+      "text": "Abo-Monatskarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_36020",
+      "text": "VVO-Bildungsticket"
+    },
+    {
+      "key": "6060_36021",
+      "text": "VVO-Bildungsticket + LK BZ"
+    },
+    {
+      "key": "6060_36120",
+      "text": "VVO-Bildungsticket"
+    },
+    {
+      "key": "6060_36121",
+      "text": "VVO-Bildungsticket + LK BZ"
+    },
+    {
+      "key": "6060_36204",
+      "text": "Abo-Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_36212",
+      "text": "Abo-Monatskarte ermäßigt PS A"
+    },
+    {
+      "key": "6060_36214",
+      "text": "Abo-Monatskarte ermäßigt PS A1"
+    },
+    {
+      "key": "6060_36216",
+      "text": "Abo-Monatskarte ermäßigt PS B"
+    },
+    {
+      "key": "6060_36218",
+      "text": "Abo-Monatskarte ermäßigt PS C"
+    },
+    {
+      "key": "6060_36220",
+      "text": "Abo-Monatskarte ermäßigt PS D"
+    },
+    {
+      "key": "6060_36304",
+      "text": "JobTicket ermäßigt PS A"
+    },
+    {
+      "key": "6060_36312",
+      "text": "JobTicket ermäßigt PS A"
+    },
+    {
+      "key": "6060_36314",
+      "text": "JobTicket ermäßigt PS A1"
+    },
+    {
+      "key": "6060_36316",
+      "text": "JobTicket ermäßigt PS B"
+    },
+    {
+      "key": "6060_36318",
+      "text": "JobTicket ermäßigt PS C"
+    },
+    {
+      "key": "6060_36320",
+      "text": "JobTicket ermäßigt PS D"
+    },
+    {
+      "key": "6060_36512",
+      "text": "Wochenkarte ermäßigt PS A Li. 398"
+    },
+    {
+      "key": "6060_36516",
+      "text": "Wochenkarte ermäßigt PS B Li. 398"
+    },
+    {
+      "key": "6060_36518",
+      "text": "Wochenkarte ermäßigt PS C Li. 398"
+    },
+    {
+      "key": "6060_36520",
+      "text": "Wochenkarte ermäßigt PS D Li. 398"
+    },
+    {
+      "key": "6060_36612",
+      "text": "Monatskarte ermäßigt PS A Li. 398"
+    },
+    {
+      "key": "6060_36616",
+      "text": "Monatskarte ermäßigt PS B Li. 398"
+    },
+    {
+      "key": "6060_36618",
+      "text": "Monatskarte ermäßigt PS C Li. 398"
+    },
+    {
+      "key": "6060_36620",
+      "text": "Monatskarte ermäßigt PS D Li. 398"
+    },
+    {
+      "key": "6060_40320",
+      "text": "Semesterticket VVO"
+    },
+    {
+      "key": "6060_40398",
+      "text": "Semesterticket VVO+SPNV Sachsen"
+    },
+    {
+      "key": "6068_183",
+      "text": "EURO-NEISSE-Ticket+ für 2 Personen"
+    },
+    {
+      "key": "6068_184",
+      "text": "EURO-NEISSE-Ticket+ für 3 Personen"
+    },
+    {
+      "key": "6068_185",
+      "text": "EURO-NEISSE-Ticket+ für 4 Personen"
+    },
+    {
+      "key": "6068_186",
+      "text": "EURO-NEISSE-Ticket+ für 5 Personen"
+    },
+    {
+      "key": "6068_187",
+      "text": "Tageskarte 2 Personen"
+    },
+    {
+      "key": "6068_188",
+      "text": "Tageskarte 3 Personen"
+    },
+    {
+      "key": "6068_189",
+      "text": "Tageskarte 4 Personen"
+    },
+    {
+      "key": "6068_190",
+      "text": "Tageskarte 5 Personen Verbund"
+    },
+    {
+      "key": "6068_191",
+      "text": "18-Uhr-Abendkarte"
+    },
+    {
+      "key": "6068_192",
+      "text": "Tageskarte 1 Person Relation"
+    },
+    {
+      "key": "6068_198",
+      "text": "9-Uhr-Monatskarte"
+    },
+    {
+      "key": "6068_203",
+      "text": "AzubiTicket ZVON-Schulstandort"
+    },
+    {
+      "key": "6068_208",
+      "text": "Einzelfahrt ermäßigt"
+    },
+    {
+      "key": "6068_211",
+      "text": "Einzelfahrt"
+    },
+    {
+      "key": "6068_213",
+      "text": "Monatskarte Fahrrad o. Hund"
+    },
+    {
+      "key": "6068_215",
+      "text": "Tageskarte Fahrrad o. Hund"
+    },
+    {
+      "key": "6068_216",
+      "text": "AzubiTicket ZVON-Schulstandort (Jahreszahlweise)"
+    },
+    {
+      "key": "6068_219",
+      "text": "JobTicket Abo-Monatskarte"
+    },
+    {
+      "key": "6068_220",
+      "text": "JobTicket Abo-Monatskarte ermäßigt"
+    },
+    {
+      "key": "6068_225",
+      "text": "Monatskarte ermäßigt"
+    },
+    {
+      "key": "6068_226",
+      "text": "JobTicket Jahreskarte"
+    },
+    {
+      "key": "6068_227",
+      "text": "JobTicket Jahreskarte ermäßigt"
+    },
+    {
+      "key": "6068_228",
+      "text": "Monatskarte"
+    },
+    {
+      "key": "6068_231",
+      "text": "Monatskarte für Senioren"
+    },
+    {
+      "key": "6068_237",
+      "text": "Schülergruppe"
+    },
+    {
+      "key": "6068_242",
+      "text": "KOMM-RUM-Ticket2"
+    },
+    {
+      "key": "6068_243",
+      "text": "KOMM-RUM-Ticket"
+    },
+    {
+      "key": "6068_244",
+      "text": "Tageskarte ermäßigt"
+    },
+    {
+      "key": "6068_247",
+      "text": "Tageskarte 1 Person Verbund"
+    },
+    {
+      "key": "6068_257",
+      "text": "Wochenkarte ermäßigt"
+    },
+    {
+      "key": "6068_259",
+      "text": "Wochenkarte"
+    },
+    {
+      "key": "6068_261",
+      "text": "EURO-NEISSE-Ticket Fahrrad o. Hund"
+    },
+    {
+      "key": "6068_265",
+      "text": "EURO-NEISSE-Ticket+ für 1 Person"
+    },
+    {
+      "key": "6068_276",
+      "text": "Monatskarte VVO-ZVON"
+    },
+    {
+      "key": "6068_277",
+      "text": "Monatskarte ermäßigt VVO-ZVON"
+    },
+    {
+      "key": "6068_278",
+      "text": "Wochenkarte VVO-ZVON"
+    },
+    {
+      "key": "6068_279",
+      "text": "Wochenkarte ermäßigt VVO-ZVON"
+    },
+    {
+      "key": "6068_284",
+      "text": "Tageskarte 1 Person Relation Verbund"
+    },
+    {
+      "key": "6068_290",
+      "text": "Abo-Monatskarte VVO-ZVON"
+    },
+    {
+      "key": "6068_291",
+      "text": "Abo-Monatskarte ermäßigt VVO-ZVON"
+    },
+    {
+      "key": "6068_292",
+      "text": "JobTicket VVO-ZVON"
+    },
+    {
+      "key": "6068_293",
+      "text": "JobTicket ermäßigt VVO-ZVON"
+    },
+    {
+      "key": "6068_300",
+      "text": "Abo-Monatskarte ermäßigt"
+    },
+    {
+      "key": "6068_302",
+      "text": "Abo-Monatskarte"
+    },
+    {
+      "key": "6068_304",
+      "text": "9-Uhr-Abo-Monatskarte"
+    },
+    {
+      "key": "6068_306",
+      "text": "Abo-Monatskarte für Senioren"
+    },
+    {
+      "key": "6068_307",
+      "text": "Jahreskarte für Senioren"
+    },
+    {
+      "key": "6068_308",
+      "text": "Jahreskarte ermäßigt"
+    },
+    {
+      "key": "6068_309",
+      "text": "Partnerkarte für Senioren"
+    },
+    {
+      "key": "6068_310",
+      "text": "Jahreskarte"
+    },
+    {
+      "key": "6068_368",
+      "text": "BildungsTicket + LK BZ"
+    },
+    {
+      "key": "6068_546",
+      "text": "EURO-NEISSE-Ticket+ für 1 Person 3 Tage"
+    },
+    {
+      "key": "6068_548",
+      "text": "EURO-NEISSE-Ticket+ für 2 Personen 3 Tage"
+    },
+    {
+      "key": "6068_550",
+      "text": "EURO-NEISSE-Ticket+ für 3 Personen 3 Tage"
+    },
+    {
+      "key": "6068_552",
+      "text": "EURO-NEISSE-Ticket+ für 4 Personen 3 Tage"
+    },
+    {
+      "key": "6068_554",
+      "text": "EURO-NEISSE-Ticket+ für 5 Personen 3 Tage"
+    },
+    {
+      "key": "6068_556",
+      "text": "Tageskarte 5 Personen"
+    },
+    {
+      "key": "6068_560",
+      "text": "BildungsTicket"
+    },
+    {
+      "key": "6068_5183",
+      "text": "EURO-NEISSE-Ticket+ für 2 Personen"
+    },
+    {
+      "key": "6068_5184",
+      "text": "EURO-NEISSE-Ticket+ für 3 Personen"
+    },
+    {
+      "key": "6068_5185",
+      "text": "EURO-NEISSE-Ticket+ für 4 Personen"
+    },
+    {
+      "key": "6068_5186",
+      "text": "EURO-NEISSE-Ticket+ für 5 Personen"
+    },
+    {
+      "key": "6068_5187",
+      "text": "Tageskarte 2 Personen"
+    },
+    {
+      "key": "6068_5188",
+      "text": "Tageskarte 3 Personen"
+    },
+    {
+      "key": "6068_5189",
+      "text": "Tageskarte 4 Personen"
+    },
+    {
+      "key": "6068_5190",
+      "text": "Tageskarte 5 Personen Verbund"
+    },
+    {
+      "key": "6068_5192",
+      "text": "Tageskarte 1 Person Relation"
+    },
+    {
+      "key": "6068_5208",
+      "text": "Einzelfahrt ermäßigt"
+    },
+    {
+      "key": "6068_5211",
+      "text": "Einzelfahrt"
+    },
+    {
+      "key": "6068_5215",
+      "text": "Tageskarte Fahrrad o. Hund"
+    },
+    {
+      "key": "6068_5228",
+      "text": "Monatskarte"
+    },
+    {
+      "key": "6068_5231",
+      "text": "Monatskarte für Senioren"
+    },
+    {
+      "key": "6068_5244",
+      "text": "Tageskarte ermäßigt"
+    },
+    {
+      "key": "6068_5247",
+      "text": "Tageskarte 1 Person Verbund"
+    },
+    {
+      "key": "6068_5259",
+      "text": "Wochenkarte"
+    },
+    {
+      "key": "6068_5261",
+      "text": "EURO-NEISSE-Ticket Fahrrad o. Hund"
+    },
+    {
+      "key": "6068_5265",
+      "text": "EURO-NEISSE-Ticket+ für 1 Person"
+    },
+    {
+      "key": "6068_5284",
+      "text": "Tageskarte 1 Person Relation Verbund"
+    },
+    {
+      "key": "6068_5546",
+      "text": "EURO-NEISSE-Ticket+ für 1 Person 3 Tage"
+    },
+    {
+      "key": "6068_5548",
+      "text": "EURO-NEISSE-Ticket+ für 2 Personen 3 Tage"
+    },
+    {
+      "key": "6068_5550",
+      "text": "EURO-NEISSE-Ticket+ für 3 Personen 3 Tage"
+    },
+    {
+      "key": "6068_5552",
+      "text": "EURO-NEISSE-Ticket+ für 4 Personen 3 Tage"
+    },
+    {
+      "key": "6068_5554",
+      "text": "EURO-NEISSE-Ticket+ für 5 Personen 3 Tage"
+    },
+    {
+      "key": "6068_5556",
+      "text": "Tageskarte 5 Personen"
+    },
+    {
+      "key": "6068_9998",
+      "text": "JobTicket Deutschlandticket"
+    },
+    {
+      "key": "6068_9999",
+      "text": "Deutschlandticket"
+    }
+  ]
+}

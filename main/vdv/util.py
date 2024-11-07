@@ -60,7 +60,9 @@ class DateTime:
         return f"{self.year:04d}-{self.month:02d}-{self.day:02d} {self.hour:02d}:{self.minute:02d}:{self.second:02d}"
 
     def as_datetime(self):
-        return VDV_TZ.localize(datetime.datetime(self.year, self.month, self.day, self.hour, self.minute, self.second))
+        dt = datetime.datetime(self.year, self.month, self.day, self.hour % 24, self.minute, self.second)
+        dt += datetime.timedelta(days=self.hour // 24)
+        return VDV_TZ.localize(dt)
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "DateTime":

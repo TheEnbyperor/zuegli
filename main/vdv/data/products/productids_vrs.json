@@ -1,0 +1,1792 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "102_121894",
+      "text": "10TageFlexTicket 1a"
+    },
+    {
+      "key": "102_121896",
+      "text": "10TageFlexTicket 1b"
+    },
+    {
+      "key": "102_121898",
+      "text": "10TageFlexTicket 2a"
+    },
+    {
+      "key": "102_121900",
+      "text": "10TageFlexTicket 2b"
+    },
+    {
+      "key": "102_121902",
+      "text": "10TageFlexTicket 3"
+    },
+    {
+      "key": "102_121904",
+      "text": "10TageFlexTicket 4"
+    },
+    {
+      "key": "102_121906",
+      "text": "10TageFlexTicket 5"
+    },
+    {
+      "key": "102_121908",
+      "text": "10TageFlexTicket 6"
+    },
+    {
+      "key": "102_121910",
+      "text": "10TageFlexTicket 7"
+    },
+    {
+      "key": "102_20012",
+      "text": "Dienstfahrausweis"
+    },
+    {
+      "key": "102_20574",
+      "text": "SemesterTicket"
+    },
+    {
+      "key": "102_20696",
+      "text": "DualTicket"
+    },
+    {
+      "key": "102_20712",
+      "text": "Erweiterung VRS zum Ticket 1000 Abo VRR"
+    },
+    {
+      "key": "102_20714",
+      "text": "Erweiterung VRS zum Ticket 1000 9 Uhr Abo VRR"
+    },
+    {
+      "key": "102_20716",
+      "text": "Erweiterung VRS zum Ticket 2000 Abo VRR"
+    },
+    {
+      "key": "102_20718",
+      "text": "Erweiterung VRS zum Ticket 2000 9 Uhr Abo VRR"
+    },
+    {
+      "key": "102_20720",
+      "text": "Erweiterung VRS zum BärenTicket VRR"
+    },
+    {
+      "key": "102_20722",
+      "text": "Erweiterung VRS zum FirmenTicket VRR"
+    },
+    {
+      "key": "102_20724",
+      "text": "Erweiterung VRS zum YoungTicket Plus VRR"
+    },
+    {
+      "key": "102_20730",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20732",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20734",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20736",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20738",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20740",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20742",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20744",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20746",
+      "text": "JobTicketLight"
+    },
+    {
+      "key": "102_20842",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20870",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20872",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20874",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20876",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20878",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20880",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20882",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20890",
+      "text": "SchülerTicket VRR-Erweiterung"
+    },
+    {
+      "key": "102_20892",
+      "text": "SchülerTicket VRR-Erweiterung"
+    },
+    {
+      "key": "102_20896",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_20900",
+      "text": "KombiTicket VRS"
+    },
+    {
+      "key": "102_20922",
+      "text": "KombiTicket Koelnmesse"
+    },
+    {
+      "key": "102_20982",
+      "text": "Einzeleintrittskarte"
+    },
+    {
+      "key": "102_20986",
+      "text": "Familieneintrittskarte"
+    },
+    {
+      "key": "102_20990",
+      "text": "Kölner Zoo Erwachsene"
+    },
+    {
+      "key": "102_20992",
+      "text": "Kölner Zoo Kind"
+    },
+    {
+      "key": "102_20994",
+      "text": "Kölner Zoo Schüler/Student/Azubi"
+    },
+    {
+      "key": "102_21004",
+      "text": "MuseumsTicket"
+    },
+    {
+      "key": "102_21006",
+      "text": "MuseumsTicket Familie"
+    },
+    {
+      "key": "102_21008",
+      "text": "Bayer 04 Einzeleintrittskarte"
+    },
+    {
+      "key": "102_21010",
+      "text": "1. FC Köln Einzeleintrittskarte"
+    },
+    {
+      "key": "102_21012",
+      "text": "KEC Einzeleintrittskarte"
+    },
+    {
+      "key": "102_21014",
+      "text": "Fernbus EinzelTicket"
+    },
+    {
+      "key": "102_21170",
+      "text": "KombiTicket KVB Event- und Aboplusfahrten"
+    },
+    {
+      "key": "102_21172",
+      "text": "KombiTicket Personalversammlung KSK Köln"
+    },
+    {
+      "key": "102_21174",
+      "text": "KombiTicket KulturStadt Leverkusen"
+    },
+    {
+      "key": "102_21190",
+      "text": "KombiTicket Phantasialand"
+    },
+    {
+      "key": "102_21212",
+      "text": "KombiTicket Museum Card Einzelkarte Stadt Köln"
+    },
+    {
+      "key": "102_21214",
+      "text": "KombiTicket Museum Card Familienkarte Stadt Köln"
+    },
+    {
+      "key": "102_21240",
+      "text": "Pützchens Markt Bonn Erwachsene"
+    },
+    {
+      "key": "102_21242",
+      "text": "Pützchens Markt Bonn Kind"
+    },
+    {
+      "key": "102_21244",
+      "text": "Pützchens Markt RSK Erwachsene"
+    },
+    {
+      "key": "102_21246",
+      "text": "Pützchens Markt RSK Kind"
+    },
+    {
+      "key": "102_21278",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_21280",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_21282",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_21286",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_21288",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_21322",
+      "text": "KombiTicket KölnCard 24 Std 1 P. Stadtgebiet Köln"
+    },
+    {
+      "key": "102_21326",
+      "text": "KombiTicket KölnCard 24 Std 5 P. Stadtgebiet Köln"
+    },
+    {
+      "key": "102_21330",
+      "text": "KombiTicket KölnCard 48 Std 1 P. Stadtgebiet Köln"
+    },
+    {
+      "key": "102_21334",
+      "text": "KombiTicket KölnCard 48 Std 5 P. Stadtgebiet Köln"
+    },
+    {
+      "key": "102_21390",
+      "text": "WelcomCard Bonn Stadtgebiet 24 Std."
+    },
+    {
+      "key": "102_21392",
+      "text": "WelcomCard Bonn erweiterte Region Bonn"
+    },
+    {
+      "key": "102_21394",
+      "text": "WelcomCard Bonn erweitertes VRS-Netz"
+    },
+    {
+      "key": "102_21418",
+      "text": "WelcomCard Bonn Fam./Gru. Stadtgebiet Bonn"
+    },
+    {
+      "key": "102_21420",
+      "text": "WelcomCard Bonn Fam./Gru. erweiterte Region Bonn"
+    },
+    {
+      "key": "102_21422",
+      "text": "WelcomCard Bonn Fam./Gru. erweitertes VRS Netz"
+    },
+    {
+      "key": "102_21704",
+      "text": "24StundenTicket 1 Person 1a"
+    },
+    {
+      "key": "102_21706",
+      "text": "24StundenTicket 1 Person 1b"
+    },
+    {
+      "key": "102_21708",
+      "text": "24StundenTicket 1 Person 2a"
+    },
+    {
+      "key": "102_21710",
+      "text": "24StundenTicket 1 Person 2b"
+    },
+    {
+      "key": "102_21712",
+      "text": "24StundenTicket 1 Person 3"
+    },
+    {
+      "key": "102_21714",
+      "text": "24StundenTicket 1 Person 4"
+    },
+    {
+      "key": "102_21716",
+      "text": "24StundenTicket 1 Person 5"
+    },
+    {
+      "key": "102_21718",
+      "text": "24StundenTicket 1 Person 6"
+    },
+    {
+      "key": "102_21720",
+      "text": "24StundenTicket 1 Person 7"
+    },
+    {
+      "key": "102_21722",
+      "text": "24StundenTicket 5 Personen 1a"
+    },
+    {
+      "key": "102_21724",
+      "text": "24StundenTicket 5 Personen 1b"
+    },
+    {
+      "key": "102_21726",
+      "text": "24StundenTicket 5 Personen 2a"
+    },
+    {
+      "key": "102_21728",
+      "text": "24StundenTicket 5 Personen 2b"
+    },
+    {
+      "key": "102_21730",
+      "text": "24StundenTicket 5 Personen 3"
+    },
+    {
+      "key": "102_21732",
+      "text": "24StundenTicket 5 Personen 4"
+    },
+    {
+      "key": "102_21734",
+      "text": "24StundenTicket 5 Personen 5"
+    },
+    {
+      "key": "102_21736",
+      "text": "24StundenTicket 5 Personen 6"
+    },
+    {
+      "key": "102_21738",
+      "text": "24StundenTicket 5 Personen 7"
+    },
+    {
+      "key": "102_21740",
+      "text": "24StundenTicket 1 Person 1a"
+    },
+    {
+      "key": "102_21742",
+      "text": "24StundenTicket 1 Person 1b"
+    },
+    {
+      "key": "102_21744",
+      "text": "24StundenTicket 1 Person 2a"
+    },
+    {
+      "key": "102_21746",
+      "text": "24StundenTicket 1 Person 2b"
+    },
+    {
+      "key": "102_21748",
+      "text": "24StundenTicket 1 Person 3"
+    },
+    {
+      "key": "102_21750",
+      "text": "24StundenTicket 1 Person 4"
+    },
+    {
+      "key": "102_21752",
+      "text": "24StundenTicket 1 Person 5"
+    },
+    {
+      "key": "102_21754",
+      "text": "24StundenTicket 1 Person 6"
+    },
+    {
+      "key": "102_21756",
+      "text": "24StundenTicket 1 Person 7"
+    },
+    {
+      "key": "102_21758",
+      "text": "24StundenTicket 5 Personen 1a"
+    },
+    {
+      "key": "102_21760",
+      "text": "24StundenTicket 5 Personen 1b"
+    },
+    {
+      "key": "102_21762",
+      "text": "24StundenTicket 5 Personen 2a"
+    },
+    {
+      "key": "102_21764",
+      "text": "24StundenTicket 5 Personen 2b"
+    },
+    {
+      "key": "102_21766",
+      "text": "24StundenTicket 5 Personen 3"
+    },
+    {
+      "key": "102_21768",
+      "text": "24StundenTicket 5 Personen 4"
+    },
+    {
+      "key": "102_21770",
+      "text": "24StundenTicket 5 Personen 5"
+    },
+    {
+      "key": "102_21772",
+      "text": "24StundenTicket 5 Personen 6"
+    },
+    {
+      "key": "102_21774",
+      "text": "24StundenTicket 5 Personen 7"
+    },
+    {
+      "key": "102_21776",
+      "text": "WochenTicket 1a"
+    },
+    {
+      "key": "102_21778",
+      "text": "WochenTicket 1b"
+    },
+    {
+      "key": "102_21780",
+      "text": "WochenTicket 2a"
+    },
+    {
+      "key": "102_21782",
+      "text": "WochenTicket 2b"
+    },
+    {
+      "key": "102_21784",
+      "text": "WochenTicket 3"
+    },
+    {
+      "key": "102_21786",
+      "text": "WochenTicket 4"
+    },
+    {
+      "key": "102_21788",
+      "text": "WochenTicket 5"
+    },
+    {
+      "key": "102_21790",
+      "text": "WochenTicket 6"
+    },
+    {
+      "key": "102_21792",
+      "text": "WochenTicket 7"
+    },
+    {
+      "key": "102_21794",
+      "text": "MonatsTicket 1a"
+    },
+    {
+      "key": "102_21796",
+      "text": "MonatsTicket 1b"
+    },
+    {
+      "key": "102_21798",
+      "text": "MonatsTicket 2a"
+    },
+    {
+      "key": "102_21800",
+      "text": "MonatsTicket 2b"
+    },
+    {
+      "key": "102_21802",
+      "text": "MonatsTicket 3"
+    },
+    {
+      "key": "102_21804",
+      "text": "MonatsTicket 4"
+    },
+    {
+      "key": "102_21806",
+      "text": "MonatsTicket 5"
+    },
+    {
+      "key": "102_21808",
+      "text": "MonatsTicket 6"
+    },
+    {
+      "key": "102_21810",
+      "text": "MonatsTicket 7"
+    },
+    {
+      "key": "102_21812",
+      "text": "Formel9Ticket 1a"
+    },
+    {
+      "key": "102_21814",
+      "text": "Formel9Ticket 1b"
+    },
+    {
+      "key": "102_21816",
+      "text": "Formel9Ticket 2a"
+    },
+    {
+      "key": "102_21818",
+      "text": "Formel9Ticket 2b"
+    },
+    {
+      "key": "102_21820",
+      "text": "Formel9Ticket 3"
+    },
+    {
+      "key": "102_21822",
+      "text": "Formel9Ticket 4"
+    },
+    {
+      "key": "102_21824",
+      "text": "Formel9Ticket 5"
+    },
+    {
+      "key": "102_21826",
+      "text": "1. Klasse-Zuschlag Woche 1a"
+    },
+    {
+      "key": "102_21828",
+      "text": "1. Klasse-Zuschlag Woche 1b"
+    },
+    {
+      "key": "102_21830",
+      "text": "1. Klasse-Zuschlag Woche 2a"
+    },
+    {
+      "key": "102_21832",
+      "text": "1. Klasse-Zuschlag Woche 2b"
+    },
+    {
+      "key": "102_21834",
+      "text": "1. Klasse-Zuschlag Woche 3"
+    },
+    {
+      "key": "102_21836",
+      "text": "1. Klasse-Zuschlag Woche 4"
+    },
+    {
+      "key": "102_21838",
+      "text": "1. Klasse-Zuschlag Woche 5"
+    },
+    {
+      "key": "102_21840",
+      "text": "1. Klasse-Zuschlag Woche 6"
+    },
+    {
+      "key": "102_21842",
+      "text": "1. Klasse-Zuschlag Woche 7"
+    },
+    {
+      "key": "102_21844",
+      "text": "1. Klasse-Zuschlag Monat 1a"
+    },
+    {
+      "key": "102_21846",
+      "text": "1. Klasse-Zuschlag Monat 1b"
+    },
+    {
+      "key": "102_21848",
+      "text": "1. Klasse-Zuschlag Monat 2a"
+    },
+    {
+      "key": "102_21850",
+      "text": "1. Klasse-Zuschlag Monat 2b"
+    },
+    {
+      "key": "102_21852",
+      "text": "1. Klasse-Zuschlag Monat 3"
+    },
+    {
+      "key": "102_21854",
+      "text": "1. Klasse-Zuschlag Monat 4"
+    },
+    {
+      "key": "102_21856",
+      "text": "1. Klasse-Zuschlag Monat 5"
+    },
+    {
+      "key": "102_21858",
+      "text": "1. Klasse-Zuschlag Monat 6"
+    },
+    {
+      "key": "102_21860",
+      "text": "1. Klasse-Zuschlag Monat 7"
+    },
+    {
+      "key": "102_21862",
+      "text": "SB60-Zuschlag Woche"
+    },
+    {
+      "key": "102_21864",
+      "text": "SB60-Zuschlag Monat"
+    },
+    {
+      "key": "102_21866",
+      "text": "SB60-Zuschlag Woche"
+    },
+    {
+      "key": "102_21868",
+      "text": "SB60-Zuschlag Monat"
+    },
+    {
+      "key": "102_21870",
+      "text": "MonatsTicket Fahrrad"
+    },
+    {
+      "key": "102_21872",
+      "text": "MonatsTicket Fahrrad"
+    },
+    {
+      "key": "102_21874",
+      "text": "MonatsTicket Bonnausweis Flex"
+    },
+    {
+      "key": "102_21912",
+      "text": "OnDemandVerkehr Zuschlag Kind"
+    },
+    {
+      "key": "102_23176",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23178",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23180",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23182",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23184",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23186",
+      "text": "SchülerTicket"
+    },
+    {
+      "key": "102_23992",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_23994",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24000",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24010",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24012",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24020",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24028",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24030",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24040",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24050",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24080",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24082",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24200",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24220",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24240",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24280",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24292",
+      "text": "KVB PartnerTicket (aktiv) KVB-Linien"
+    },
+    {
+      "key": "102_24294",
+      "text": "KVB PartnerTicket (Rentenempfänger) KVB-Linien"
+    },
+    {
+      "key": "102_24296",
+      "text": "HGK PartnerTicket (aktiv) KVB-Linien"
+    },
+    {
+      "key": "102_24298",
+      "text": "HGK PartnerTicket (Rentenempfänger) KVB-Linien"
+    },
+    {
+      "key": "102_24302",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24304",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24314",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24316",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24322",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24324",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_24366",
+      "text": "JobTicket"
+    },
+    {
+      "key": "102_24368",
+      "text": "JobTicket VRS-Erweiterung"
+    },
+    {
+      "key": "102_24416",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_25302",
+      "text": "EinzelTicket Erwachsene Kurzstrecke"
+    },
+    {
+      "key": "102_25304",
+      "text": "EinzelTicket Erwachsene 1a"
+    },
+    {
+      "key": "102_25306",
+      "text": "EinzelTicket Erwachsene 1b"
+    },
+    {
+      "key": "102_25308",
+      "text": "EinzelTicket Erwachsene 2a"
+    },
+    {
+      "key": "102_25310",
+      "text": "EinzelTicket Erwachsene 2b"
+    },
+    {
+      "key": "102_25312",
+      "text": "EinzelTicket Erwachsene 3"
+    },
+    {
+      "key": "102_25314",
+      "text": "EinzelTicket Erwachsene 4"
+    },
+    {
+      "key": "102_25316",
+      "text": "EinzelTicket Erwachsene 5"
+    },
+    {
+      "key": "102_25322",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "102_25324",
+      "text": "EinzelTicket Erwachsene 6"
+    },
+    {
+      "key": "102_25326",
+      "text": "EinzelTicket Erwachsene 7"
+    },
+    {
+      "key": "102_25406",
+      "text": "EinzelTicket Erw. inkl. Zuschlag SB60 Handy"
+    },
+    {
+      "key": "102_25452",
+      "text": "EinzelTicket Fahrrad"
+    },
+    {
+      "key": "102_25502",
+      "text": "EinzelTicket Kind Kurzstrecke"
+    },
+    {
+      "key": "102_25504",
+      "text": "EinzelTicket Kind 1a"
+    },
+    {
+      "key": "102_25506",
+      "text": "EinzelTicket Kind 1b"
+    },
+    {
+      "key": "102_25508",
+      "text": "EinzelTicket Kind 2a"
+    },
+    {
+      "key": "102_25510",
+      "text": "EinzelTicket Kind 2b"
+    },
+    {
+      "key": "102_25512",
+      "text": "EinzelTicket Kind 3"
+    },
+    {
+      "key": "102_25514",
+      "text": "EinzelTicket Kind 4"
+    },
+    {
+      "key": "102_25516",
+      "text": "EinzelTicket Kind 5"
+    },
+    {
+      "key": "102_25522",
+      "text": "EinzelTicket Kind 6"
+    },
+    {
+      "key": "102_25524",
+      "text": "EinzelTicket Kind 7"
+    },
+    {
+      "key": "102_25606",
+      "text": "EinzelTicket Kind inkl. Zuschlag SB60 Handy"
+    },
+    {
+      "key": "102_25620",
+      "text": "EinzelTicket Erwachsene Kurzstrecke"
+    },
+    {
+      "key": "102_25622",
+      "text": "EinzelTicket Erwachsene 1a"
+    },
+    {
+      "key": "102_25624",
+      "text": "EinzelTicket Erwachsene 1b"
+    },
+    {
+      "key": "102_25626",
+      "text": "EinzelTicket Erwachsene 2a"
+    },
+    {
+      "key": "102_25628",
+      "text": "EinzelTicket Erwachsene 2b"
+    },
+    {
+      "key": "102_25630",
+      "text": "EinzelTicket Erwachsene 3"
+    },
+    {
+      "key": "102_25632",
+      "text": "EinzelTicket Erwachsene 4"
+    },
+    {
+      "key": "102_25634",
+      "text": "EinzelTicket Erwachsene 5"
+    },
+    {
+      "key": "102_25636",
+      "text": "EinzelTicket Erwachsene 6"
+    },
+    {
+      "key": "102_25638",
+      "text": "EinzelTicket Erwachsene 7"
+    },
+    {
+      "key": "102_25640",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "102_25670",
+      "text": "AbsolventenTicket"
+    },
+    {
+      "key": "102_25702",
+      "text": "4erTicket Erwachsene 1a"
+    },
+    {
+      "key": "102_25704",
+      "text": "4erTicket Erwachsene 1b"
+    },
+    {
+      "key": "102_25706",
+      "text": "4erTicket Erwachsene 2a"
+    },
+    {
+      "key": "102_25708",
+      "text": "4erTicket Erwachsene 2b"
+    },
+    {
+      "key": "102_25710",
+      "text": "4erTicket Erwachsene 3"
+    },
+    {
+      "key": "102_25712",
+      "text": "4erTicket Erwachsene 4"
+    },
+    {
+      "key": "102_25714",
+      "text": "4erTicket Erwachsene 5"
+    },
+    {
+      "key": "102_25722",
+      "text": "4erTicket Erwachsene 6"
+    },
+    {
+      "key": "102_25724",
+      "text": "4erTicket Erwachsene 7"
+    },
+    {
+      "key": "102_25774",
+      "text": "4erTicket Erwachsene Kurzstrecke"
+    },
+    {
+      "key": "102_25802",
+      "text": "4erTicket zur Fahrradmitnahme"
+    },
+    {
+      "key": "102_25902",
+      "text": "4erTicket Kinder 1a"
+    },
+    {
+      "key": "102_25904",
+      "text": "4erTicket Kinder 1b"
+    },
+    {
+      "key": "102_25906",
+      "text": "4erTicket Kinder 2a"
+    },
+    {
+      "key": "102_25908",
+      "text": "4erTicket Kinder 2b"
+    },
+    {
+      "key": "102_25910",
+      "text": "4erTicket Kinder 3"
+    },
+    {
+      "key": "102_25912",
+      "text": "4erTicket Kinder 4"
+    },
+    {
+      "key": "102_25914",
+      "text": "4erTicket Kinder 5"
+    },
+    {
+      "key": "102_25922",
+      "text": "4erTicket Kinder 6"
+    },
+    {
+      "key": "102_25924",
+      "text": "4erTicket Kinder 7"
+    },
+    {
+      "key": "102_25974",
+      "text": "4erTicket Kinder Kurzstrecke"
+    },
+    {
+      "key": "102_26794",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26796",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26798",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26800",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26802",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26804",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26806",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26808",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26810",
+      "text": "WochenTicket"
+    },
+    {
+      "key": "102_26812",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26814",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26816",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26818",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26820",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26822",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26824",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26826",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26828",
+      "text": "MonatsTicket"
+    },
+    {
+      "key": "102_26830",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26832",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26834",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26836",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26838",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26840",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26842",
+      "text": "Formel9Ticket"
+    },
+    {
+      "key": "102_26926",
+      "text": "MonatsTicket Kölnpass"
+    },
+    {
+      "key": "102_27124",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27126",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27128",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27130",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27132",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27134",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27136",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27138",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27140",
+      "text": "MonatsTicket Azubi"
+    },
+    {
+      "key": "102_27222",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27224",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27226",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27228",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27230",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27232",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27234",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27242",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27244",
+      "text": "StarterTicket"
+    },
+    {
+      "key": "102_27246",
+      "text": "AzubiTicket"
+    },
+    {
+      "key": "102_27502",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27504",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27506",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27508",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27510",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27512",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27516",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27524",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27526",
+      "text": "MonatsTicket Abo"
+    },
+    {
+      "key": "102_27620",
+      "text": "EinzelTicket Kind Kurzstrecke"
+    },
+    {
+      "key": "102_27622",
+      "text": "EinzelTicket Kind 1a"
+    },
+    {
+      "key": "102_27624",
+      "text": "EinzelTicket Kind 1b"
+    },
+    {
+      "key": "102_27626",
+      "text": "EinzelTicket Kind 2a"
+    },
+    {
+      "key": "102_27628",
+      "text": "EinzelTicket Kind 2b"
+    },
+    {
+      "key": "102_27630",
+      "text": "EinzelTicket Kind 3"
+    },
+    {
+      "key": "102_27632",
+      "text": "EinzelTicket Kind 4"
+    },
+    {
+      "key": "102_27634",
+      "text": "EinzelTicket Kind 5"
+    },
+    {
+      "key": "102_27636",
+      "text": "EinzelTicket Kind 6"
+    },
+    {
+      "key": "102_27638",
+      "text": "EinzelTicket Kind 7"
+    },
+    {
+      "key": "102_27642",
+      "text": "1. Klasse-Zuschlag Einzel 1a"
+    },
+    {
+      "key": "102_27644",
+      "text": "1. Klasse-Zuschlag Einzel 1b"
+    },
+    {
+      "key": "102_27646",
+      "text": "1. Klasse-Zuschlag Einzel 2a"
+    },
+    {
+      "key": "102_27648",
+      "text": "1. Klasse-Zuschlag Einzel 2b"
+    },
+    {
+      "key": "102_27650",
+      "text": "1. Klasse-Zuschlag Einzel 3"
+    },
+    {
+      "key": "102_27652",
+      "text": "1. Klasse-Zuschlag Einzel 4"
+    },
+    {
+      "key": "102_27654",
+      "text": "1. Klasse-Zuschlag Einzel 5"
+    },
+    {
+      "key": "102_27656",
+      "text": "1. Klasse-Zuschlag Einzel 6"
+    },
+    {
+      "key": "102_27658",
+      "text": "1. Klasse-Zuschlag Einzel 7"
+    },
+    {
+      "key": "102_27682",
+      "text": "EinzelTicket Fahrrad"
+    },
+    {
+      "key": "102_27692",
+      "text": "SB60-Zuschlag Einzel Erwachsene"
+    },
+    {
+      "key": "102_27694",
+      "text": "SB60-Zuschlag Einzel Kind"
+    },
+    {
+      "key": "102_27802",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27804",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27806",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27808",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27810",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27812",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27814",
+      "text": "PrimaTicket"
+    },
+    {
+      "key": "102_27902",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27904",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27906",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27908",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27910",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27912",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27916",
+      "text": "Formel9Ticket Abo"
+    },
+    {
+      "key": "102_27942",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27944",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27946",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27948",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27950",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27952",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27956",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27960",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27962",
+      "text": "Aktiv60Ticket"
+    },
+    {
+      "key": "102_27964",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_27966",
+      "text": "GroßkundenTicket"
+    },
+    {
+      "key": "102_28114",
+      "text": "CSD-Ticket"
+    },
+    {
+      "key": "102_28116",
+      "text": "Karnevals-Ticket"
+    },
+    {
+      "key": "102_28118",
+      "text": "CSD-Ticket"
+    },
+    {
+      "key": "102_28120",
+      "text": "Karnevals-Ticket"
+    },
+    {
+      "key": "102_28502",
+      "text": "AST Erwachsene Gemeinde"
+    },
+    {
+      "key": "102_28504",
+      "text": "AST Kinder Gemeinde"
+    },
+    {
+      "key": "102_28508",
+      "text": "AST Zuschlag für Zeitticketinhaber Gemeinde"
+    },
+    {
+      "key": "102_28510",
+      "text": "AST Polizei und Bundespolizei NRW in Uniform Gemeinde"
+    },
+    {
+      "key": "102_28512",
+      "text": "AST Freifahrberechtigte Nr.8 VRS-Tarif Gemeinde"
+    },
+    {
+      "key": "102_28514",
+      "text": "AST Gepäckzuschlag Gemeinde"
+    },
+    {
+      "key": "102_28522",
+      "text": "AST Erwachsene Nachbarort"
+    },
+    {
+      "key": "102_28524",
+      "text": "AST Kinder Nachbarort"
+    },
+    {
+      "key": "102_28528",
+      "text": "AST Zuschlag für Zeitticketinhaber Nachbarort"
+    },
+    {
+      "key": "102_28530",
+      "text": "AST Polizei und Bundespolizei NRW in Uniform Nachbarort"
+    },
+    {
+      "key": "102_28532",
+      "text": "AST Freifahrberechtigte Nr.8 VRS-Tarif Nachbarort"
+    },
+    {
+      "key": "102_28534",
+      "text": "AST Gepäckzuschlag Nachbarort"
+    },
+    {
+      "key": "102_28602",
+      "text": "HotelTicket Geltungsbereich Köln / Bonn"
+    },
+    {
+      "key": "102_28604",
+      "text": "HotelTicket Geltungsbereich VRS-Netz"
+    },
+    {
+      "key": "102_28612",
+      "text": "KongressTicket Geltungsbereich Köln / Bonn"
+    },
+    {
+      "key": "102_28614",
+      "text": "KongressTicket Geltungsbereich VRS Netz"
+    },
+    {
+      "key": "102_28622",
+      "text": "GästeCard Nationalpark Eifel AVV-/ VRS-Netz"
+    },
+    {
+      "key": "102_28630",
+      "text": "QueerCityPass 24 Stunden 1 Person"
+    },
+    {
+      "key": "102_28632",
+      "text": "QueerCityPass 24 Stunden 5 Personen"
+    },
+    {
+      "key": "102_28634",
+      "text": "QueerCityPass 48 Stunden 1 Person"
+    },
+    {
+      "key": "102_28636",
+      "text": "QueerCityPass 48 Stunden 5 Personen"
+    },
+    {
+      "key": "102_28700",
+      "text": "4erTicket MobilPass 1a"
+    },
+    {
+      "key": "102_28702",
+      "text": "4erTicket MobilPass 1b"
+    },
+    {
+      "key": "102_28704",
+      "text": "4erTicket MobilPass 2a"
+    },
+    {
+      "key": "102_28706",
+      "text": "4erTicket MobilPass 2b"
+    },
+    {
+      "key": "102_28708",
+      "text": "4erTicket MobilPass 3"
+    },
+    {
+      "key": "102_28710",
+      "text": "4erTicket MobilPass 4"
+    },
+    {
+      "key": "102_28712",
+      "text": "4erTicket MobilPass 5"
+    },
+    {
+      "key": "102_28814",
+      "text": "MonatsTicket MobilPass Abo 1b"
+    },
+    {
+      "key": "102_28816",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28818",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28820",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28822",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28824",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28826",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28828",
+      "text": "MonatsTicket Mobilpass"
+    },
+    {
+      "key": "102_28830",
+      "text": "MonatsTicket MobilPass Abo 1a"
+    },
+    {
+      "key": "102_28832",
+      "text": "MonatsTicket MobilPass Abo 2a"
+    },
+    {
+      "key": "102_28834",
+      "text": "MonatsTicket MobilPass Abo 2b"
+    },
+    {
+      "key": "102_28836",
+      "text": "MonatsTicket MobilPass Abo 3"
+    },
+    {
+      "key": "102_28838",
+      "text": "MonatsTicket MobilPass Abo 4"
+    },
+    {
+      "key": "102_28840",
+      "text": "MonatsTicket MobilPass Abo 5"
+    },
+    {
+      "key": "102_29002",
+      "text": "1. Klasse-Zuschlag Einzel 1a"
+    },
+    {
+      "key": "102_29004",
+      "text": "1. Klasse-Zuschlag Einzel 1b"
+    },
+    {
+      "key": "102_29006",
+      "text": "1. Klasse-Zuschlag Einzel 2a"
+    },
+    {
+      "key": "102_29008",
+      "text": "1. Klasse-Zuschlag Einzel 2b"
+    },
+    {
+      "key": "102_29010",
+      "text": "1. Klasse-Zuschlag Einzel 3"
+    },
+    {
+      "key": "102_29012",
+      "text": "1. Klasse-Zuschlag Einzel 4"
+    },
+    {
+      "key": "102_29014",
+      "text": "1. Klasse-Zuschlag Einzel 5"
+    },
+    {
+      "key": "102_29020",
+      "text": "1. Klasse-Zuschlag Einzel 6"
+    },
+    {
+      "key": "102_29022",
+      "text": "1. Klasse-Zuschlag Einzel 7"
+    },
+    {
+      "key": "102_29112",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29114",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29116",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29118",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29120",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29122",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29126",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29130",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29132",
+      "text": "1. Klasse-Zuschlag Monat Abo"
+    },
+    {
+      "key": "102_29176",
+      "text": "SB60-Zuschlag Einzel Erwachsene"
+    },
+    {
+      "key": "102_29178",
+      "text": "SB60-Zuschlag Einzel Kind"
+    },
+    {
+      "key": "102_29192",
+      "text": "SB60-Zuschlag Abo"
+    },
+    {
+      "key": "102_29998",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30000",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30002",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30004",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30006",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30008",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30010",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30012",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30014",
+      "text": "1. Klasse-Zuschlag Woche"
+    },
+    {
+      "key": "102_30016",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30018",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30020",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30022",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30024",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30026",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30028",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30030",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_30032",
+      "text": "1. Klasse-Zuschlag Monat"
+    },
+    {
+      "key": "102_9995",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "102_9996",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "102_9998",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "102_9999",
+      "text": "Deutschlandticket"
+    }
+  ]
+}

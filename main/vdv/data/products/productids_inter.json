@@ -1,0 +1,28 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "9999",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "9998",
+      "text": "Deutschlandticket\n(Jobticket)"
+    },
+    {
+      "key": "9997",
+      "text": "Deutschlandticket\n(Startkarte)"
+    },
+    {
+      "key": "9996",
+      "text": "Deutschlandticket\n(Semesterticket)"
+    },
+    {
+      "key": "9995",
+      "text": "Deutschlandticket\n(Schülerticket)"
+    }
+  ]
+}

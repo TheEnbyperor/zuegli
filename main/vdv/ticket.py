@@ -3,7 +3,7 @@ import enum
 import typing
 import ber_tlv.tlv
 import re
-from . import util, org_id
+from . import util, org_id, product_id
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
@@ -35,8 +35,8 @@ class VDVTicket:
     sam_sequence_number_2: int
     sam_version: int
     sam_id: int
-    product_data: typing.List
-    product_transaction_data: typing.List
+    product_data: typing.List["ELEMENT"]
+    product_transaction_data: bytes
 
     def __str__(self):
         out = "VDVTicket:\n" \
@@ -110,8 +110,6 @@ class VDVTicket:
         if product_transaction_data[0] != 0x8A:
             raise util.VDVException("Not a VDV ticket")
 
-        product_transaction_data = ber_tlv.tlv.Tlv.parse(product_transaction_data[1], False, False)
-
         offset_2 = parser.get_offset()
         ticket_issue_data, data = data[offset_2:offset_2 + 12], data[offset_2 + 12:]
 
@@ -143,13 +141,17 @@ class VDVTicket:
             sam_sequence_number_2=int.from_bytes(ticket_issue_data[5:9], 'big'),
             sam_id=int.from_bytes(ticket_issue_data[9:12], 'big'),
             product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
-            product_transaction_data=product_transaction_data
+            product_transaction_data=product_transaction_data[1]
         )
 
     @staticmethod
     def parse_product_data_element(elm, context: Context) -> typing.Any:
         if elm[0] == 0xDB:
             return PassengerData.parse(elm[1], context)
+        elif elm[0] == 0xDA:
+            return BasicData.parse(elm[1])
+        elif elm[0] == 0xE0:
+            return IdentificationMedium.parse(elm[1])
         elif elm[0] == 0xDC:
             return SpacialValidity.parse(elm[1])
         else:
@@ -163,13 +165,17 @@ class VDVTicket:
         elif self.product_number == 9997:
             return "Startkarte Deutschlandticket"
         elif self.product_number == 9996:
-            return "Semesterticket Deutschlandticket Upgrade"
-        elif self.product_number == 9995:
             return "Deutschlandsemesterticket"
+        elif self.product_number == 9995:
+            return "Deutschlandschülerticket"
         else:
-            if opt:
-                return None
-            return f"{self.product_org_name()}:{self.product_number}"
+            product_id_map = product_id.get_product_id_list()
+            if name := product_id_map.get((self.product_org_id, self.product_number)):
+                return name
+            else:
+                if opt:
+                    return None
+                return f"{self.product_org_name()}:{self.product_number}"
 
     def product_name_opt(self):
         return self.product_name(True)
@@ -192,17 +198,269 @@ class VDVTicket:
     def kvp_org_name_opt(self):
         return map_org_id(self.kvp_org_id, True)
 
+    def terminal_type_name(self, opt=False):
+        if self.terminal_type == 0:
+            return "Unbestimmt"
+        elif self.terminal_type == 1:
+            return "Erfassungsterminal für CICO/BIBO"
+        elif self.terminal_type == 2:
+            return "Verkaufsautomat (z. B. Berechtigungen)"
+        elif self.terminal_type == 3:
+            return "Kontrollterminal (mobil, personalbedient)"
+        elif self.terminal_type == 4:
+            return "Kartenausgabeterminal"
+        elif self.terminal_type == 5:
+            return "Kartenrückgabeterminal Einstiegskontrollgerät"
+        elif self.terminal_type == 6:
+            return "Entwerter"
+        elif self.terminal_type == 7:
+            return "Multifunktionsterminal (kundenbedient)"
+        elif self.terminal_type == 8:
+            return "Informationsterminal Ladeterminal"
+        elif self.terminal_type == 9:
+            return "für ÖPV-Werteinheiten"
+        elif self.terminal_type == 13:
+            return "Terminal beim Massenpersonalisierer 13"
+        elif self.terminal_type == 14:
+            return "Servicestelle (personalbedient)"
+        elif self.terminal_type == 15:
+            return "Fahrerterminal (Verkauf und Kontrolle)"
+        elif self.terminal_type == 16:
+            return "HandyTicketserver"
+        elif self.terminal_type == 17:
+            return "eOnline Ticketserver"
+        elif self.terminal_type == 18:
+            return "Verkaufsautomat mobil (kundenbedient)"
+        elif self.terminal_type == 19:
+            return "Kontrollterminalmobil (personalbedient)"
+        else:
+            if opt:
+                return None
+            return f"Unknown ({self.terminal_type})"
+
+    def terminal_type_name_opt(self):
+        return self.terminal_type_name(True)
+
     def terminal_owner_name(self):
         return map_org_id(self.terminal_owner_id)
 
     def terminal_owner_name_opt(self):
         return map_org_id(self.terminal_owner_id, True)
 
+    def location_type_name(self, opt=False):
+        if self.location_type == 0:
+            return "Bushaltestelle"
+        elif self.location_type == 1:
+            return "U-Bahn- (Metro-)Station"
+        elif self.location_type == 2:
+            return "Bahnhof (Eisenbahn)"
+        elif self.location_type == 3:
+            return "Straßenbahn- (TRAM-) Haltestelle"
+        elif self.location_type == 11:
+            return "Verkaufsstelle"
+        elif self.location_type == 16:
+            return "Gebiet (auch für Zone)"
+        elif self.location_type == 17:
+            return "Korridor"
+        elif self.location_type == 200:
+            return "Haltestelle allgemein für Haltestellen im Fahrplansinne, unabhängig vom Verkehrsmittel"
+        elif self.location_type == 201:
+            return "Massenpersonalisierer"
+        elif self.location_type == 202:
+            return "areaList_ID"
+        elif self.location_type == 203:
+            return "im Fahrzeug/Zug"
+        elif self.location_type == 204:
+            return "TouchPoint"
+        elif self.location_type == 205:
+            return "im Fahrzeug der Linie"
+        elif self.location_type == 206:
+            return "im Fahrzeug der Zugnummer"
+        elif self.location_type == 207:
+            return "Teilzone"
+        elif self.location_type == 208:
+            return "neutrale Zone"
+        elif self.location_type == 213:
+            return "im Fahrzeug an Haltestelle"
+        elif self.location_type == 214:
+            return "Ereignisort"
+        elif self.location_type == 215:
+            return "Ticketserver"
+        elif self.location_type == 251:
+            return "Ortsteil"
+        elif self.location_type == 252:
+            return "Gemeinde (Gemeindekennziffer)"
+        elif self.location_type == 253:
+            return "Kreis"
+        elif self.location_type == 254:
+            return "Land"
+        elif self.location_type == 255:
+            return "keine Angabe"
+        else:
+            if opt:
+                return None
+            return f"Unknown ({self.terminal_type})"
+
+    def location_type_name_opt(self):
+        return self.location_type_name(True)
+
     def location_org_name(self):
         return map_org_id(self.location_org_id)
 
     def location_org_name_opt(self):
         return map_org_id(self.location_org_id, True)
+
+@dataclasses.dataclass
+class BasicData:
+    TYPE = "basic-data"
+
+    payment_type: int
+    passenger_type: int
+    first_additional_travelers: typing.Optional["Mitnahme"]
+    second_additional_travelers: typing.Optional["Mitnahme"]
+    transport_category: int
+    service_class: int
+    price_base: str
+    vat_rate: int
+    price_level: int
+    internal_product_number: int
+
+    @classmethod
+    def parse(cls, data: bytes) -> "BasicData":
+        return cls(
+            payment_type=data[0],
+            passenger_type=data[1],
+            first_additional_travelers=Mitnahme(data[2], data[3]) if data[2] else None,
+            second_additional_travelers=Mitnahme(data[4], data[5]) if data[4] else None,
+            transport_category=data[6],
+            service_class=data[7],
+            price_base=f"{int.from_bytes(data[8:11]) / 100:.2f}",
+            vat_rate=int.from_bytes(data[11:13]),
+            price_level=data[13],
+            internal_product_number=int.from_bytes(data[14:17], "big"),
+        )
+
+    def payment_type_name_opt(self):
+        if self.payment_type == 0:
+            return None
+        elif self.payment_type == 1:
+            return "Bar"
+        elif self.payment_type == 2:
+            return "Kreditkarte"
+        elif self.payment_type == 3:
+            return "POB/PEB"
+        elif self.payment_type == 6:
+            return "EC-Karte / Lastschrift"
+        elif self.payment_type == 7:
+            return "Rechnung"
+        elif self.payment_type == 8:
+            return "Werteinheiten"
+        elif self.payment_type == 14:
+            return "Gutschein"
+        elif self.payment_type == 17:
+            return "ECcash"
+        elif self.payment_type == 24:
+            return "GeldKarte"
+        elif self.payment_type == 25:
+            return "Mastercard"
+        elif self.payment_type == 26:
+            return "Visa"
+        elif self.payment_type == 27:
+            return "HandyTicket Konto"
+        elif self.payment_type == 28:
+            return "Mobilfunkrechnung"
+        else:
+            return None
+
+    @staticmethod
+    def map_passenger_type(t: int):
+        if t == 0:
+            return None
+        elif t == 1:
+            return "Erwachsener"
+        elif t == 2:
+            return "Kind"
+        elif t == 3:
+            return "Student"
+        elif t == 5:
+            return "Behinderter nicht weiter spezifiziert"
+        elif t == 6:
+            return "Sehbehinderter"
+        elif t == 7:
+            return "Hörgeschädigter"
+        elif t == 8:
+            return "Arbeitsloser/Sozialhilfeempfänger"
+        elif t == 9:
+            return "Personal"
+        elif t == 10:
+            return "Militärangehöriger"
+        elif t == 17:
+            return "Kostenpflichtiges Tier"
+        elif t == 19:
+            return "Schüler"
+        elif t == 20:
+            return "Azubi"
+        elif t == 25:
+            return "Senior"
+        elif t == 64:
+            return "Ermäßigt"
+        elif t == 65:
+            return "Fahrrad"
+        elif t == 66:
+            return "Hund"
+
+    def passenger_type_name_opt(self):
+        return self.map_passenger_type(self.passenger_type)
+
+    def service_class_name(self):
+        if self.service_class == 1:
+            return "1. Klasse"
+        elif self.service_class == 2:
+            return "2. Klasse"
+        else:
+            return f"Unknown ({self.service_class})"
+
+@dataclasses.dataclass
+class Mitnahme:
+    passenger_type: int
+    passenger_count: int
+
+    def __init__(self, t: int, c: int):
+        self.passenger_type = t
+        self.passenger_count = c
+
+    def passenger_type_name_opt(self):
+        return BasicData.map_passenger_type(self.passenger_type)
+
+@dataclasses.dataclass
+class IdentificationMedium:
+    TYPE = "identification-medium"
+
+    id_type: int
+    id_number: str
+
+    @classmethod
+    def parse(cls, data: bytes) -> "IdentificationMedium":
+        return cls(
+            id_type=data[0],
+            id_number=data[1:].decode("iso-8859-15", "replace"),
+        )
+
+    def type_name_opt(self):
+        if self.id_type == 69:
+            return "Girocard der deutschen Kreditwirtschaft (EC-Karte)"
+        elif self.id_type == 75:
+            return "Kreditkarte"
+        elif self.id_type == 80:
+            return "Personalausweis"
+        elif self.id_type == 84:
+            return "Telefonnummer"
+        elif self.id_type == 90:
+            return "Sozialpass"
+        elif self.id_type == 83:
+            return "Schüler-/Studentenausweis"
+        else:
+            return None
 
 
 class Gender(enum.Enum):
@@ -217,7 +475,7 @@ class PassengerData:
     TYPE = "passenger-data"
 
     gender: Gender
-    date_of_birth: util.Date
+    date_of_birth: typing.Optional[util.Date]
     forename: str
     original_forename: typing.Optional[str]
     surname: str
@@ -231,7 +489,7 @@ class PassengerData:
         if len(data) < 5:
             raise util.VDVException("Invalid passenger data element")
 
-        name = data[5:].decode("iso-8859-1", "replace")
+        name = data[5:].decode("iso-8859-15", "replace")
         forename = ""
         original_forename = None
         original_surname = None
@@ -295,7 +553,7 @@ class PassengerData:
 
         return cls(
             gender=Gender(data[0]),
-            date_of_birth=util.Date.from_bytes(data[1:5]),
+            date_of_birth=util.Date.from_bytes(data[1:5]) if all(d != 0 for d in data[1:5]) else None,
             forename=forename,
             surname=surname,
             original_forename=original_forename,
@@ -316,7 +574,7 @@ class SpacialValidity:
 
     @classmethod
     def parse(cls, data: bytes):
-        if data[0] == 0x0F:
+        if data[0] in (0x0F, 0x10):
             return cls(
                 definition_type=data[0],
                 organization_id=int.from_bytes(data[1:3], 'big'),
@@ -368,6 +626,11 @@ class UnknownElement:
     def data_hex(self):
         return ":".join(f"{self.value[i]:02x}" for i in range(len(self.value)))
 
+
+ELEMENT = typing.Union[
+    BasicData, PassengerData, SpacialValidity, IdentificationMedium,
+    UnknownSpacialValidity, UnknownElement
+]
 
 def map_org_id(code: int, opt=False):
     org, is_test = org_id.get_org(code)

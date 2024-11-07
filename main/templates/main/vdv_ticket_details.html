@@ -118,8 +118,18 @@
         <dt class="govuk-summary-list__key">Terminal</dt>
         <dd class="govuk-summary-list__value">
             <dl class="govuk-summary-list govuk-summary-list--no-border">
+                {% with type_name=ticket.ticket.terminal_type_name_opt %}
+                    {% if type_name %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Type</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ type_name }}
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Type</dt>
+                    <dt class="govuk-summary-list__key">Type Code</dt>
                     <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.terminal_type }}</code></dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -150,8 +160,18 @@
         <dt class="govuk-summary-list__key">Location</dt>
         <dd class="govuk-summary-list__value">
             <dl class="govuk-summary-list govuk-summary-list--no-border">
+                {% with type_name=ticket.ticket.location_type_name_opt %}
+                    {% if type_name %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Type</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ type_name }}
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Type</dt>
+                    <dt class="govuk-summary-list__key">Type Code</dt>
                     <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.location_type }}</code></dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -203,99 +223,7 @@
 </dl>
 
 <h3 class="govuk-heading-s">Product Data</h3>
-{% if ticket.ticket.product_data %}
-    {% for elm in ticket.ticket.product_data %}
-        {% if elm.TYPE == "passenger-data" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Passenger data</h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Forename</dt>
-                            <dd class="govuk-summary-list__value">
-                                {{ elm.forename }}
-                                {% if elm.original_forename %}({{ elm.original_forename }}){% endif %}
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Surname</dt>
-                            <dd class="govuk-summary-list__value">
-                                {{ elm.surname }}
-                                {% if elm.original_surname %}({{ elm.original_surname }}){% endif %}
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Date of birth</dt>
-                            <dd class="govuk-summary-list__value">{{ elm.date_of_birth.as_date|date:"F d, Y" }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Gender</dt>
-                            <dd class="govuk-summary-list__value">{{ elm.gender.name }}</dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-        {% elif elm.TYPE == "spacial-validity" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Spacial validity</h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        {% with org_name=elm.organization_name_opt %}
-                            {% if org_name %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Organisation Name</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {{ org_name }}
-                                    </dd>
-                                </div>
-                            {% endif %}
-                        {% endwith %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Organisation ID</dt>
-                            <dd class="govuk-summary-list__value">
-                                <code>{{ elm.organization_id }}</code>
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Areas</dt>
-                            <dd class="govuk-summary-list__value">
-                                <ul class="govuk-list">
-                                    {% for area in elm.area_ids %}
-                                        <li><code>{{ area }}</code></li>
-                                    {% endfor %}
-                                </ul>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-        {% elif elm.TYPE == "unknown-spacial-validity" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Unknown spacial validity <code>{{ elm.type_hex }}</code></h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
-                </div>
-            </div>
-        {% elif elm.TYPE == "unknown" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Unknown element <code>{{ elm.tag_hex }}</code></h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
-                </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-{% else %}
-    <p class="govuk-body">N/A</p>
-{% endif %}
+{% include "main/vdv_elements.html" with elements=ticket.ticket.product_data %}
 
 <h3 class="govuk-heading-s">Product Transaction Data</h3>
 {% if ticket.ticket.product_transaction_data %}

@@ -1,0 +1,1020 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "6072_10001",
+      "text": "Einzel-Ticket Erw. Flugs-Ticket"
+    },
+    {
+      "key": "6072_10002",
+      "text": "Einzel-Ticket Kin. Flugs-Ticket"
+    },
+    {
+      "key": "6072_10004",
+      "text": "Einzel-Ticket Erw. PS K"
+    },
+    {
+      "key": "6072_10005",
+      "text": "Einzel-Ticket Kin. PS K"
+    },
+    {
+      "key": "6072_10006",
+      "text": "Einzel-Ticket Erw. City XL AC"
+    },
+    {
+      "key": "6072_10007",
+      "text": "Einzel-Ticket Erw. City XL Dür."
+    },
+    {
+      "key": "6072_10008",
+      "text": "Einzel-Ticket Kin. City XL Dür."
+    },
+    {
+      "key": "6072_10009",
+      "text": "City-Tarif Simm. Einzel"
+    },
+    {
+      "key": "6072_10010",
+      "text": "City-Tarif Stolb. Einzel"
+    },
+    {
+      "key": "6072_10011",
+      "text": "Einzel-Ticket Erw. CTarif Düren"
+    },
+    {
+      "key": "6072_10012",
+      "text": "City-Tarif Roetgen Einzel"
+    },
+    {
+      "key": "6072_10013",
+      "text": "Einzel-Ticket Erw. PS 1"
+    },
+    {
+      "key": "6072_10014",
+      "text": "Einzel-Ticket Erw. PS 2"
+    },
+    {
+      "key": "6072_10015",
+      "text": "Einzel-Ticket Erw. PS 3"
+    },
+    {
+      "key": "6072_10016",
+      "text": "Einzel-Ticket Erw. PS 4"
+    },
+    {
+      "key": "6072_10017",
+      "text": "Einzel-Ticket Kin. PS 1"
+    },
+    {
+      "key": "6072_10018",
+      "text": "Einzel-Ticket Kin. PS 2"
+    },
+    {
+      "key": "6072_10019",
+      "text": "Einzel-Ticket Kin. PS 3"
+    },
+    {
+      "key": "6072_10020",
+      "text": "Einzel-Ticket Kin. PS 4"
+    },
+    {
+      "key": "6072_10021",
+      "text": "Einzel-Ticket Erw. R 1/2"
+    },
+    {
+      "key": "6072_10022",
+      "text": "Einzel-Ticket Erw. R 3"
+    },
+    {
+      "key": "6072_10023",
+      "text": "Einzel-Ticket Kin. 6-14 Jahre R 1/2"
+    },
+    {
+      "key": "6072_10024",
+      "text": "Einzel-Ticket Kin. 6-14 Jahre R 3"
+    },
+    {
+      "key": "6072_10025",
+      "text": "Einzel-Ticket Erw. PS H2"
+    },
+    {
+      "key": "6072_10026",
+      "text": "Einzel-Ticket Erw. PS H3"
+    },
+    {
+      "key": "6072_10027",
+      "text": "Einzel-Ticket Kin. PS H2"
+    },
+    {
+      "key": "6072_10028",
+      "text": "Einzel-Ticket Kin. PS H3"
+    },
+    {
+      "key": "6072_10029",
+      "text": "Einzel-Ticket Erw. PS 1Ü"
+    },
+    {
+      "key": "6072_10030",
+      "text": "Einzel-Ticket Erw. PS 2Ü"
+    },
+    {
+      "key": "6072_10031",
+      "text": "Einzel-Ticket Erw. PS 3Ü"
+    },
+    {
+      "key": "6072_10032",
+      "text": "Einzel-Ticket Erw. PS 4Ü"
+    },
+    {
+      "key": "6072_10033",
+      "text": "Einzel-Ticket Kin. PS 1Ü"
+    },
+    {
+      "key": "6072_10034",
+      "text": "Einzel-Ticket Kin. PS 2Ü"
+    },
+    {
+      "key": "6072_10035",
+      "text": "Einzel-Ticket Kin. PS 3Ü"
+    },
+    {
+      "key": "6072_10036",
+      "text": "Einzel-Ticket Kin. PS 4Ü"
+    },
+    {
+      "key": "6072_10037",
+      "text": "Einzel-Ticket Erw. PS R1"
+    },
+    {
+      "key": "6072_10038",
+      "text": "Einzel-Ticket Erw. PS R2"
+    },
+    {
+      "key": "6072_10039",
+      "text": "Einzel-Ticket Erw. PS R3"
+    },
+    {
+      "key": "6072_10040",
+      "text": "Einzel-Ticket Kin. PS R1"
+    },
+    {
+      "key": "6072_10041",
+      "text": "Einzel-Ticket Kin. PS R2"
+    },
+    {
+      "key": "6072_10042",
+      "text": "Einzel-Ticket Kin. PS R3"
+    },
+    {
+      "key": "6072_10043",
+      "text": "Anschluss-Ticket AVV Gesamt"
+    },
+    {
+      "key": "6072_10044",
+      "text": "Einzel-Ticket Fahrrad"
+    },
+    {
+      "key": "6072_10045",
+      "text": "Einzel Zusatz 1. Klasse"
+    },
+    {
+      "key": "6072_10046",
+      "text": "4Fahrten City XL Dür. Erw."
+    },
+    {
+      "key": "6072_10047",
+      "text": "4Fahrten City XL Dür. Kin."
+    },
+    {
+      "key": "6072_10048",
+      "text": "City-Tarif Stolb. 4Fahrten"
+    },
+    {
+      "key": "6072_10050",
+      "text": "4Fahrten-Ticket Erw. City XL AC"
+    },
+    {
+      "key": "6072_10051",
+      "text": "4Fahrten-Ticket Erw. Flugs-Ticket"
+    },
+    {
+      "key": "6072_10052",
+      "text": "4Fahrten-Ticket Erw. PS K"
+    },
+    {
+      "key": "6072_10053",
+      "text": "4Fahrten-Ticket Erw. PS 1"
+    },
+    {
+      "key": "6072_10054",
+      "text": "4Fahrten-Ticket Erw. PS 2"
+    },
+    {
+      "key": "6072_10055",
+      "text": "4Fahrten-Ticket Erw. PS 3"
+    },
+    {
+      "key": "6072_10056",
+      "text": "4Fahrten-Ticket Erw. PS 4"
+    },
+    {
+      "key": "6072_10057",
+      "text": "4Fahrten-Ticket Kin. Flugs-Ticket"
+    },
+    {
+      "key": "6072_10058",
+      "text": "4Fahrten-Ticket Kin. PS K"
+    },
+    {
+      "key": "6072_10059",
+      "text": "4Fahrten-Ticket Kin. PS 1"
+    },
+    {
+      "key": "6072_10060",
+      "text": "4Fahrten-Ticket Kin. PS 2"
+    },
+    {
+      "key": "6072_10061",
+      "text": "4Fahrten-Ticket Kin. PS 3"
+    },
+    {
+      "key": "6072_10062",
+      "text": "4Fahrten-Ticket Kin. PS 4"
+    },
+    {
+      "key": "6072_10063",
+      "text": "4Fahrten Erw.Ticket PS H2"
+    },
+    {
+      "key": "6072_10064",
+      "text": "4Fahrten Erw.Ticket PS H3"
+    },
+    {
+      "key": "6072_10065",
+      "text": "4Fahrten Erw.Ticket PS 1Ü"
+    },
+    {
+      "key": "6072_10066",
+      "text": "4Fahrten Erw.Ticket PS 2Ü"
+    },
+    {
+      "key": "6072_10067",
+      "text": "4Fahrten Erw.Ticket PS 3Ü"
+    },
+    {
+      "key": "6072_10068",
+      "text": "4Fahrten Erw.Ticket PS 4Ü"
+    },
+    {
+      "key": "6072_10069",
+      "text": "4Fahrten-Ticket Kin. PS 1Ü"
+    },
+    {
+      "key": "6072_10070",
+      "text": "4Fahrten-Ticket Kin. PS 2Ü"
+    },
+    {
+      "key": "6072_10071",
+      "text": "4Fahrten-Ticket Kin. PS 3Ü"
+    },
+    {
+      "key": "6072_10072",
+      "text": "4Fahrten-Ticket Kin. PS 4Ü"
+    },
+    {
+      "key": "6072_10073",
+      "text": "4Fahrten Erw.Ticket PS R1"
+    },
+    {
+      "key": "6072_10074",
+      "text": "4Fahrten Erw.Ticket PS R2"
+    },
+    {
+      "key": "6072_10075",
+      "text": "4Fahrten Erw.Ticket PS R3"
+    },
+    {
+      "key": "6072_10076",
+      "text": "City-Tarif Simm. 4Fahrten"
+    },
+    {
+      "key": "6072_10077",
+      "text": "City-Tarif Eschweiler Einzel"
+    },
+    {
+      "key": "6072_10078",
+      "text": "City-Tarif Baesweiler Einzel"
+    },
+    {
+      "key": "6072_19000",
+      "text": "easyConnect Einzel-Ticket"
+    },
+    {
+      "key": "6072_19001",
+      "text": "easyConnect Einzel-Ticket (ABO)"
+    },
+    {
+      "key": "6072_19002",
+      "text": "easyConnect Einzel-Ticket (Studierende)"
+    },
+    {
+      "key": "6072_20000",
+      "text": "24hTicket 1Pers. PS 1"
+    },
+    {
+      "key": "6072_20001",
+      "text": "24hTicket 1Pers. PS 2"
+    },
+    {
+      "key": "6072_20002",
+      "text": "24hTicket 1Pers. PS 3"
+    },
+    {
+      "key": "6072_20003",
+      "text": "24hTicket 1Pers. PS 4"
+    },
+    {
+      "key": "6072_20004",
+      "text": "24hTicket 1Pers. Krs Düren"
+    },
+    {
+      "key": "6072_20005",
+      "text": "24hTicket 1Pers. Krs Heinsberg"
+    },
+    {
+      "key": "6072_20006",
+      "text": "24hTicket 5 Pers. PS 1"
+    },
+    {
+      "key": "6072_20007",
+      "text": "24hTicket 5 Pers. PS 2"
+    },
+    {
+      "key": "6072_20008",
+      "text": "24hTicket 5 Pers. PS 3"
+    },
+    {
+      "key": "6072_20009",
+      "text": "24hTicket 5 Pers. PS 4"
+    },
+    {
+      "key": "6072_20010",
+      "text": "24hTicket 5 Pers. Krs Düren"
+    },
+    {
+      "key": "6072_20011",
+      "text": "24hTicket 5 Pers. Krs Heinsberg"
+    },
+    {
+      "key": "6072_20012",
+      "text": "24hTicket 1Pers. R 1-3"
+    },
+    {
+      "key": "6072_20013",
+      "text": "24hTicket 5 Pers. R 1-3"
+    },
+    {
+      "key": "6072_20014",
+      "text": "24hTicket 1Pers. PS 2Ü"
+    },
+    {
+      "key": "6072_20015",
+      "text": "24hTicket 1Pers. PS 3Ü"
+    },
+    {
+      "key": "6072_20016",
+      "text": "24hTicket 1Pers. PS 4Ü"
+    },
+    {
+      "key": "6072_20017",
+      "text": "24hTicket 5 Pers. PS 2Ü"
+    },
+    {
+      "key": "6072_20018",
+      "text": "24hTicket 5 Pers. PS 3Ü"
+    },
+    {
+      "key": "6072_20019",
+      "text": "24hTicket 5 Pers. PS 4Ü"
+    },
+    {
+      "key": "6072_20020",
+      "text": "24hTicket Fahrrad"
+    },
+    {
+      "key": "6072_20021",
+      "text": "euregioticket"
+    },
+    {
+      "key": "6072_20022",
+      "text": "euregioticket Fahrrad"
+    },
+    {
+      "key": "6072_20023",
+      "text": "Welcome-Ticket Einzel"
+    },
+    {
+      "key": "6072_20024",
+      "text": "BVB-KombiTicket AVV"
+    },
+    {
+      "key": "6072_20025",
+      "text": "AVV-Karnevals-Ticket"
+    },
+    {
+      "key": "6072_30000",
+      "text": "Wochen-Ticket PS 1"
+    },
+    {
+      "key": "6072_30001",
+      "text": "Wochen-Ticket PS 2"
+    },
+    {
+      "key": "6072_30002",
+      "text": "Wochen-Ticket PS 3"
+    },
+    {
+      "key": "6072_30003",
+      "text": "Wochen-Ticket PS 4"
+    },
+    {
+      "key": "6072_30004",
+      "text": "Wochen-Ticket PS H2"
+    },
+    {
+      "key": "6072_30005",
+      "text": "Wochen-Ticket PS H3"
+    },
+    {
+      "key": "6072_30006",
+      "text": "Wochen-Ticket PS H4"
+    },
+    {
+      "key": "6072_30007",
+      "text": "Wochen-Ticket PS 2Ü"
+    },
+    {
+      "key": "6072_30008",
+      "text": "Wochen-Ticket PS 3Ü"
+    },
+    {
+      "key": "6072_30009",
+      "text": "Wochen-Ticket PS 4Ü"
+    },
+    {
+      "key": "6072_30010",
+      "text": "Wochen-Ticket PS R2"
+    },
+    {
+      "key": "6072_30011",
+      "text": "Wochen-Ticket PS R3"
+    },
+    {
+      "key": "6072_30012",
+      "text": "Woche Zusatz 1. Klasse"
+    },
+    {
+      "key": "6072_30013",
+      "text": "Monats-Ticket CTarif Düren"
+    },
+    {
+      "key": "6072_30014",
+      "text": "Monats-Ticket übertr. City XL AC"
+    },
+    {
+      "key": "6072_30015",
+      "text": "Monats-Ticket übertr. PS 1A"
+    },
+    {
+      "key": "6072_30016",
+      "text": "Monats-Ticket übertr. PS 1B"
+    },
+    {
+      "key": "6072_30017",
+      "text": "Monats-Ticket übertr. PS 1C"
+    },
+    {
+      "key": "6072_30018",
+      "text": "Monats-Ticket übertr. PS 2"
+    },
+    {
+      "key": "6072_30019",
+      "text": "Monats-Ticket übertr. PS 3"
+    },
+    {
+      "key": "6072_30020",
+      "text": "Monats-Ticket übertr. PS 4"
+    },
+    {
+      "key": "6072_30021",
+      "text": "Monats-Ticket Erw. R 1/2"
+    },
+    {
+      "key": "6072_30022",
+      "text": "Monats-Ticket Erw. R 3"
+    },
+    {
+      "key": "6072_30023",
+      "text": "Monats-Ticket übertr. PS H2"
+    },
+    {
+      "key": "6072_30024",
+      "text": "Monats-Ticket übertr. PS H3"
+    },
+    {
+      "key": "6072_30025",
+      "text": "Monats-Ticket übertr. PS H4"
+    },
+    {
+      "key": "6072_30026",
+      "text": "Monats-Ticket übertr. PS 2Ü"
+    },
+    {
+      "key": "6072_30027",
+      "text": "Monats-Ticket übertr. PS 3Ü"
+    },
+    {
+      "key": "6072_30028",
+      "text": "Monats-Ticket übertr. PS 4Ü"
+    },
+    {
+      "key": "6072_30029",
+      "text": "Monats-Ticket übertr. PS R2"
+    },
+    {
+      "key": "6072_30030",
+      "text": "Monats-Ticket übertr. PS R3"
+    },
+    {
+      "key": "6072_30031",
+      "text": "Anschlusstick. Schül., Ausz., Stud. R 1-3"
+    },
+    {
+      "key": "6072_30032",
+      "text": "Schüler-Ticket PS 1A"
+    },
+    {
+      "key": "6072_30033",
+      "text": "Schüler-Ticket PS 1B"
+    },
+    {
+      "key": "6072_30034",
+      "text": "Schüler-Ticket PS 1C"
+    },
+    {
+      "key": "6072_30035",
+      "text": "Schüler-Ticket PS 2"
+    },
+    {
+      "key": "6072_30036",
+      "text": "Schüler-Ticket PS 3"
+    },
+    {
+      "key": "6072_30037",
+      "text": "Schüler-Ticket PS 4"
+    },
+    {
+      "key": "6072_30038",
+      "text": "Schüler-Ticket PS 2Ü"
+    },
+    {
+      "key": "6072_30039",
+      "text": "Schüler-Ticket PS 3Ü"
+    },
+    {
+      "key": "6072_30040",
+      "text": "Schüler-Ticket PS 4Ü"
+    },
+    {
+      "key": "6072_30041",
+      "text": "Fun-Ticket Monats-Ticket"
+    },
+    {
+      "key": "6072_30042",
+      "text": "Azubi-Ticket"
+    },
+    {
+      "key": "6072_30043",
+      "text": "Mobil-Ticket Krs. Düren"
+    },
+    {
+      "key": "6072_30044",
+      "text": "Mobil-Ticket Krs. Heinsberg"
+    },
+    {
+      "key": "6072_30045",
+      "text": "Mobil-Ticket StRegion AC"
+    },
+    {
+      "key": "6072_30046",
+      "text": "Monats-Ticket Fahrrad"
+    },
+    {
+      "key": "6072_30047",
+      "text": "Monat Zusatz 1. Klasse"
+    },
+    {
+      "key": "6072_30048",
+      "text": "Monats-Ticket pers. PS 1A"
+    },
+    {
+      "key": "6072_30049",
+      "text": "Monats-Ticket pers. PS 1B"
+    },
+    {
+      "key": "6072_30050",
+      "text": "Monats-Ticket pers. PS 1C"
+    },
+    {
+      "key": "6072_30051",
+      "text": "Monats-Ticket pers. PS 2"
+    },
+    {
+      "key": "6072_30052",
+      "text": "Monats-Ticket pers. PS 3"
+    },
+    {
+      "key": "6072_30053",
+      "text": "Monats-Ticket pers. PS 4"
+    },
+    {
+      "key": "6072_30054",
+      "text": "Monats-Ticket pers. PS 2Ü"
+    },
+    {
+      "key": "6072_30055",
+      "text": "Monats-Ticket pers. PS 3Ü"
+    },
+    {
+      "key": "6072_30056",
+      "text": "Monats-Ticket pers. PS 4Ü"
+    },
+    {
+      "key": "6072_30057",
+      "text": "Monats-Ticket pers. PS H2"
+    },
+    {
+      "key": "6072_30058",
+      "text": "Monats-Ticket pers. PS H3"
+    },
+    {
+      "key": "6072_30059",
+      "text": "Monats-Ticket pers. PS H4"
+    },
+    {
+      "key": "6072_30060",
+      "text": "Monats-Ticket pers. PS R2"
+    },
+    {
+      "key": "6072_30061",
+      "text": "Monats-Ticket pers. PS R3"
+    },
+    {
+      "key": "6072_30062",
+      "text": "Monats-Ticket pers. City XL AC"
+    },
+    {
+      "key": "6072_40000",
+      "text": "Aktiv-ABO"
+    },
+    {
+      "key": "6072_40002",
+      "text": "Fun-Ticket Abo"
+    },
+    {
+      "key": "6072_40003",
+      "text": "AVV-Job-Ticket"
+    },
+    {
+      "key": "6072_40006",
+      "text": "Jahreskarte R1/2"
+    },
+    {
+      "key": "6072_40007",
+      "text": "Jahreskarte R3"
+    },
+    {
+      "key": "6072_40008",
+      "text": "Anschluss R1-3"
+    },
+    {
+      "key": "6072_40009",
+      "text": "School&Fun-Ticket"
+    },
+    {
+      "key": "6072_40019",
+      "text": "AVV-Semester-Ticket"
+    },
+    {
+      "key": "6072_40025",
+      "text": "SJK PS 1A"
+    },
+    {
+      "key": "6072_40026",
+      "text": "SJK PS 1B"
+    },
+    {
+      "key": "6072_40027",
+      "text": "SJK PS 1C"
+    },
+    {
+      "key": "6072_40028",
+      "text": "SJK PS 2"
+    },
+    {
+      "key": "6072_40029",
+      "text": "SJK PS 3"
+    },
+    {
+      "key": "6072_40030",
+      "text": "SJK PS 4"
+    },
+    {
+      "key": "6072_40040",
+      "text": "SJK PS 2Ü"
+    },
+    {
+      "key": "6072_40041",
+      "text": "SJK PS 3Ü"
+    },
+    {
+      "key": "6072_40042",
+      "text": "SJK PS 4Ü"
+    },
+    {
+      "key": "6072_40043",
+      "text": "AVV-Job-Ticket Azubi"
+    },
+    {
+      "key": "6072_40048",
+      "text": "PROFI-Ticket LH PS 1C"
+    },
+    {
+      "key": "6072_40049",
+      "text": "PROFI-Ticket LH PS 2"
+    },
+    {
+      "key": "6072_40050",
+      "text": "PROFI-Ticket LH PS 3"
+    },
+    {
+      "key": "6072_40051",
+      "text": "PROFI-Ticket LH PS 4"
+    },
+    {
+      "key": "6072_40054",
+      "text": "PROFI-Ticket LH Azubi PS 1C"
+    },
+    {
+      "key": "6072_40055",
+      "text": "PROFI-Ticket LH Azubi PS 2"
+    },
+    {
+      "key": "6072_40056",
+      "text": "PROFI-Ticket LH Azubi PS 3"
+    },
+    {
+      "key": "6072_40057",
+      "text": "PROFI-Ticket LH Azubi PS 4"
+    },
+    {
+      "key": "6072_40090",
+      "text": "Monats-Abo pers. PS 1A"
+    },
+    {
+      "key": "6072_40091",
+      "text": "Monats-Abo pers. PS 1B"
+    },
+    {
+      "key": "6072_40092",
+      "text": "Monats-Abo pers. PS 1C"
+    },
+    {
+      "key": "6072_40093",
+      "text": "Monats-Abo pers. PS 2"
+    },
+    {
+      "key": "6072_40094",
+      "text": "Monats-Abo pers. PS 3"
+    },
+    {
+      "key": "6072_40095",
+      "text": "Monats-Abo pers. PS 4"
+    },
+    {
+      "key": "6072_40097",
+      "text": "Monats-Abo übertr. PS 1A"
+    },
+    {
+      "key": "6072_40098",
+      "text": "Monats-Abo übertr. PS 1B"
+    },
+    {
+      "key": "6072_40099",
+      "text": "Monats-Abo übertr. PS 1C"
+    },
+    {
+      "key": "6072_40100",
+      "text": "Monats-Abo übertr. PS 2"
+    },
+    {
+      "key": "6072_40101",
+      "text": "Monats-Abo übertr. PS 3"
+    },
+    {
+      "key": "6072_40102",
+      "text": "Monats-Abo übertr. PS 4"
+    },
+    {
+      "key": "6072_40104",
+      "text": "Schüler-ABO PS 1A"
+    },
+    {
+      "key": "6072_40105",
+      "text": "Schüler-ABO PS 1B"
+    },
+    {
+      "key": "6072_40106",
+      "text": "Schüler-ABO PS 1C"
+    },
+    {
+      "key": "6072_40107",
+      "text": "Schüler-ABO PS 2"
+    },
+    {
+      "key": "6072_40108",
+      "text": "Schüler-ABO PS 3"
+    },
+    {
+      "key": "6072_40109",
+      "text": "Schüler-ABO PS 4"
+    },
+    {
+      "key": "6072_40114",
+      "text": "Monats-ABO Zusatz 1. Kl."
+    },
+    {
+      "key": "6072_40115",
+      "text": "Monats-Abo übertr. PS H2"
+    },
+    {
+      "key": "6072_40116",
+      "text": "Monats-Abo übertr. PS H3"
+    },
+    {
+      "key": "6072_40117",
+      "text": "Monats-Abo übertr. PS H4"
+    },
+    {
+      "key": "6072_40118",
+      "text": "Monats-Abo übertr. PS 2Ü"
+    },
+    {
+      "key": "6072_40119",
+      "text": "Monats-Abo übertr. PS 3Ü"
+    },
+    {
+      "key": "6072_40120",
+      "text": "Monats-Abo übertr. PS 4Ü"
+    },
+    {
+      "key": "6072_40121",
+      "text": "Schüler-ABO PS 2Ü"
+    },
+    {
+      "key": "6072_40122",
+      "text": "Schüler-ABO PS 3Ü"
+    },
+    {
+      "key": "6072_40123",
+      "text": "Schüler-ABO PS 4Ü"
+    },
+    {
+      "key": "6072_40129",
+      "text": "Monats-Abo pers. PS 2Ü"
+    },
+    {
+      "key": "6072_40130",
+      "text": "Monats-Abo pers. PS 3Ü"
+    },
+    {
+      "key": "6072_40131",
+      "text": "Monats-Abo pers. PS 4Ü"
+    },
+    {
+      "key": "6072_40158",
+      "text": "PROFI-Ticket City-XL Aachen"
+    },
+    {
+      "key": "6072_40159",
+      "text": "PROFI-Ticket Azubi City-XL Aachen"
+    },
+    {
+      "key": "6072_40160",
+      "text": "Dienstfahrausweis"
+    },
+    {
+      "key": "6072_40172",
+      "text": "Monats-Abo übertr. PS R2"
+    },
+    {
+      "key": "6072_40173",
+      "text": "Monats-Abo übertr. PS R3"
+    },
+    {
+      "key": "6072_40174",
+      "text": "Fun-Ticket Wegberg Abo"
+    },
+    {
+      "key": "6072_40197",
+      "text": "Erg. AVV für VRS-Job"
+    },
+    {
+      "key": "6072_40209",
+      "text": "Azubi-ABO"
+    },
+    {
+      "key": "6072_40228",
+      "text": "Erg. AVV für VRR-Job"
+    },
+    {
+      "key": "6072_40229",
+      "text": "Job-Ticket Split"
+    },
+    {
+      "key": "6072_40252",
+      "text": "Erg. AVV für VRS-Job MG JN"
+    },
+    {
+      "key": "6072_40258",
+      "text": "Monats-Abo pers. PS H2"
+    },
+    {
+      "key": "6072_40259",
+      "text": "Monats-Abo pers. PS H3"
+    },
+    {
+      "key": "6072_40260",
+      "text": "Monats-Abo pers. PS H4"
+    },
+    {
+      "key": "6072_40261",
+      "text": "Monats-Abo pers. PS R2"
+    },
+    {
+      "key": "6072_40262",
+      "text": "Monats-Abo pers. PS R3"
+    },
+    {
+      "key": "6072_40264",
+      "text": "Erg. AVV Kragenbereich für VRR-Job"
+    },
+    {
+      "key": "6072_40265",
+      "text": "Mobil-ABO StRegion AC"
+    },
+    {
+      "key": "6072_40266",
+      "text": "Schüler-Ergänzung AVV"
+    },
+    {
+      "key": "6072_90000",
+      "text": "eezy avv Erw. 2. Kl."
+    },
+    {
+      "key": "6072_90001",
+      "text": "eezy avv Kind 2. Kl."
+    },
+    {
+      "key": "6072_90002",
+      "text": "eezy avv Erw. 1. Kl."
+    },
+    {
+      "key": "6072_90003",
+      "text": "eezy avv Kind 1. Kl."
+    },
+    {
+      "key": "6072_90004",
+      "text": "eezy avv Fahrrad"
+    },
+    {
+      "key": "6072_9995",
+      "text": "Deutschlandticket Schüler"
+    },
+    {
+      "key": "6072_9996",
+      "text": "Deutschlandticket Semesterticket-Upgrade"
+    },
+    {
+      "key": "6072_9997",
+      "text": "Deutschlandticket Startkarte"
+    },
+    {
+      "key": "6072_9999",
+      "text": "Deutschlandticket"
+    }
+  ]
+}

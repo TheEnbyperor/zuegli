@@ -514,13 +514,13 @@ def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic
             exception=traceback.format_exc()
         )
 
-def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope) -> typing.Optional[uic.db_vu.DBRecordVU]:
+def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> typing.Optional[uic.db_vu.DBRecordVU]:
     vu_record = next(filter(lambda r: r.id == "0080VU" and r.version == 1, ticket_envelope.records), None)
     if not vu_record:
         return None
 
     try:
-        return uic.db_vu.DBRecordVU.parse(vu_record.data, vu_record.version)
+        return uic.db_vu.DBRecordVU.parse(vu_record.data, vu_record.version, context)
     except uic.db_vu.DBVUException:
         raise TicketError(
             title="Invalid DB VU Record",
@@ -543,7 +543,7 @@ def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[u
         )
 
 
-def parse_ticket_uic(ticket_bytes: bytes) -> UICTicket:
+def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTicket:
     try:
         ticket_envelope = uic.Envelope.parse(ticket_bytes)
     except uic.util.UICException:
@@ -561,7 +561,7 @@ def parse_ticket_uic(ticket_bytes: bytes) -> UICTicket:
         layout=parse_ticket_uic_layout(ticket_envelope),
         flex=parse_ticket_uic_flex(ticket_envelope),
         db_bl=parse_ticket_uic_db_bl(ticket_envelope),
-        db_vu=parse_ticket_uic_db_vu(ticket_envelope),
+        db_vu=parse_ticket_uic_db_vu(ticket_envelope, context),
         cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
         oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
         other_records=[r for r in ticket_envelope.records if not (
@@ -608,15 +608,16 @@ def parse_ticket_rsp6(ticket_bytes: bytes) -> RSP6Ticket:
 
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
         typing.Union[VDVTicket, UICTicket, RSP6Ticket]:
+    context = vdv.ticket.Context(
+        account_forename=account.user.first_name if account else None,
+        account_surname=account.user.last_name if account else None,
+    )
     if ticket_bytes[:3] == b"#UT":
-        return parse_ticket_uic(ticket_bytes)
+        return parse_ticket_uic(ticket_bytes, context)
     elif ticket_bytes[:2] == b"06":
         return parse_ticket_rsp6(ticket_bytes)
     else:
-        return parse_ticket_vdv(ticket_bytes, vdv.ticket.Context(
-            account_forename=account.user.first_name if account else None,
-            account_surname=account.user.last_name if account else None,
-        ))
+        return parse_ticket_vdv(ticket_bytes, context)
 
 
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
