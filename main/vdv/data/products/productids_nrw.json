@@ -1,0 +1,440 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "6212_10002",
+      "text": "SchönerTagTicket NRW Single 2. Klasse"
+    },
+    {
+      "key": "6212_10004",
+      "text": "SchönerTagTicket NRW 5 Personen 2. Klasse"
+    },
+    {
+      "key": "6212_10006",
+      "text": "SchöneFahrtTicket NRW Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10008",
+      "text": "SchöneFahrtTicket NRW Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10010",
+      "text": "FahrradTagesTicket NRW"
+    },
+    {
+      "key": "6212_10014",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 1. Klasse BC25"
+    },
+    {
+      "key": "6212_10016",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 1. Klasse BC50"
+    },
+    {
+      "key": "6212_10018",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 2. Klasse BC25"
+    },
+    {
+      "key": "6212_10020",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 2. Klasse BC50"
+    },
+    {
+      "key": "6212_10022",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 1. Klasse BC25"
+    },
+    {
+      "key": "6212_10024",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 1. Klasse BC50"
+    },
+    {
+      "key": "6212_10026",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 1. Klasse BC25"
+    },
+    {
+      "key": "6212_10028",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 1. Klasse BC50"
+    },
+    {
+      "key": "6212_10030",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 2. Klasse BC25"
+    },
+    {
+      "key": "6212_10032",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 2. Klasse BC50"
+    },
+    {
+      "key": "6212_10034",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 1. Klasse BC25"
+    },
+    {
+      "key": "6212_10036",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 1. Klasse BC50"
+    },
+    {
+      "key": "6212_10038",
+      "text": "SchöneReiseTicket NRW Gruppe Einzelfahrt Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_10058",
+      "text": "Übergangsticket 1. Klasse"
+    },
+    {
+      "key": "6212_10060",
+      "text": "NRWplus Einzelfahrt Erw."
+    },
+    {
+      "key": "6212_10066",
+      "text": "NRWplus Einzelfahrt Ki."
+    },
+    {
+      "key": "6212_10072",
+      "text": "NRWplus Hin&Rück Erw."
+    },
+    {
+      "key": "6212_10078",
+      "text": "NRWplus Hin&Rück Ki."
+    },
+    {
+      "key": "6212_10084",
+      "text": "NRWplus Monat ICE"
+    },
+    {
+      "key": "6212_10088",
+      "text": "NRWplus Monat ICE Abo"
+    },
+    {
+      "key": "6212_10090",
+      "text": "TeilnehmerTicket NRW 2. Klasse bis 500 Teilnehmer"
+    },
+    {
+      "key": "6212_10092",
+      "text": "TeilnehmerTicket NRW 2. Klasse ab 500 Teilnehmer"
+    },
+    {
+      "key": "6212_10102",
+      "text": "SchöneFerienTicket NRW Sommerferien 2. Klasse"
+    },
+    {
+      "key": "6212_10104",
+      "text": "SchöneFerienTicket NRW Osterferien 2. Klasse"
+    },
+    {
+      "key": "6212_10106",
+      "text": "SchöneFerienTicket NRW Herbstferien 2. Klasse"
+    },
+    {
+      "key": "6212_10108",
+      "text": "SchöneFerienTicket NRW Winterferien 2. Klasse"
+    },
+    {
+      "key": "6212_10110",
+      "text": "SchöneFerienTicket NRW Pfingstferien 2. Klasse"
+    },
+    {
+      "key": "6212_10202",
+      "text": "SemesterTicket NRW 2. Klasse"
+    },
+    {
+      "key": "6212_10204",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_10302",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10304",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 2. Klasse BC25"
+    },
+    {
+      "key": "6212_10306",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Erw. 2. Klasse BC50"
+    },
+    {
+      "key": "6212_10308",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10310",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 2. Klasse BC25"
+    },
+    {
+      "key": "6212_10312",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 2. Klasse BC50"
+    },
+    {
+      "key": "6212_10314",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10320",
+      "text": "SchöneReiseTicket NRW Gruppe Hin&Rück Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10322",
+      "text": "SchöneReiseTicket NRW Gruppe Einzelfahrt Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10324",
+      "text": "SchöneReiseTicket NRW Gruppe Hin&Rück Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10330",
+      "text": "SchöneReiseTicket NRW Hin&Rück Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_10332",
+      "text": "SchöneReiseTicket NRW Einzelfahrt Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_10334",
+      "text": "SchöneReiseTicket NRW Gruppe Hin&Rück Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_10336",
+      "text": "SchöneReiseTicket NRW Gruppe Einzelfahrt Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_10338",
+      "text": "SchöneReiseTicket NRW Gruppe Hin&Rück Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_10340",
+      "text": "SchöneReiseTicket NRW Gruppe Einzelfahrt Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10344",
+      "text": "SchöneWocheTicket NRW 1. Klasse"
+    },
+    {
+      "key": "6212_10346",
+      "text": "SchönerMonatTicket NRW 1. Klasse"
+    },
+    {
+      "key": "6212_10348",
+      "text": "SchönerMonatTicket NRW Abo 1. Klasse"
+    },
+    {
+      "key": "6212_10402",
+      "text": "SchöneWocheTicket NRW 2. Klasse"
+    },
+    {
+      "key": "6212_10452",
+      "text": "SchönerMonatTicket NRW 2. Klasse"
+    },
+    {
+      "key": "6212_10454",
+      "text": "SchönerMonatTicket NRW Abo 2. Klasse"
+    },
+    {
+      "key": "6212_10508",
+      "text": "SchönerMonatTicket NRW Abo 2. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_10510",
+      "text": "SchönerMonatTicket NRW Abo 1. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_10512",
+      "text": "SchönerMonatTicket NRW Schüler Abo 2. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_10514",
+      "text": "SchönerMonatTicket NRW Schüler 2. Klasse"
+    },
+    {
+      "key": "6212_10516",
+      "text": "SchönerMonatTicket NRW Schüler Abo 2. Klasse"
+    },
+    {
+      "key": "6212_10520",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10534",
+      "text": "SchöneReiseTicket NRW Hin&Rück Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_10588",
+      "text": "SchönesJahrTicket NRW 1. Klasse"
+    },
+    {
+      "key": "6212_10590",
+      "text": "SchönesJahrTicket NRW Abo 1. Klasse"
+    },
+    {
+      "key": "6212_10600",
+      "text": "SchönesJahrTicket NRW 2. Klasse"
+    },
+    {
+      "key": "6212_10602",
+      "text": "SchönesJahrTicket NRW Abo 2. Klasse"
+    },
+    {
+      "key": "6212_10604",
+      "text": "SchönesJahrTicket NRW Abo 2. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_10606",
+      "text": "SchönesJahrTicket NRW Abo 1. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_10780",
+      "text": "EinfachWeiterTicket NRW Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_10782",
+      "text": "EinfachWeiterTicket NRW Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_10784",
+      "text": "EinfachWeiterTicket NRW Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_10786",
+      "text": "EinfachWeiterTicket NRW Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_20400",
+      "text": "NRWupgradeAzubi 2. Klasse"
+    },
+    {
+      "key": "6212_20402",
+      "text": "NRWupgradeAzubi Differenzbetrag"
+    },
+    {
+      "key": "6212_20500",
+      "text": "Schöne60Ticket NRW 2. Klasse"
+    },
+    {
+      "key": "6212_20502",
+      "text": "Schöne60Ticket NRW 1. Klasse"
+    },
+    {
+      "key": "6212_20504",
+      "text": "Schöne60Ticket NRW Abo Differenzbetrag"
+    },
+    {
+      "key": "6212_20506",
+      "text": "Schöne60Ticket NRW 1. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_20600",
+      "text": "JobTicket NRW Abo (integriert) 2. Klasse"
+    },
+    {
+      "key": "6212_20602",
+      "text": "JobTicket NRW Abo (integriert) 2. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_20604",
+      "text": "JobTicket NRW Abo (integriert) 1. Klasse"
+    },
+    {
+      "key": "6212_20608",
+      "text": "JobTicket NRW Abo (integriert) 1. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_20610",
+      "text": "JobTicket NRW Abo (eigenständig) 2. Klasse"
+    },
+    {
+      "key": "6212_20612",
+      "text": "JobTicket NRW Abo (eigenständig) 2. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_20614",
+      "text": "JobTicket NRW Abo (eigenständig) 1. Klasse"
+    },
+    {
+      "key": "6212_20616",
+      "text": "JobTicket NRW Abo (eigenständig) 1. Klasse Differenzbetrag"
+    },
+    {
+      "key": "6212_20700",
+      "text": "NRWupgradeFahrrad"
+    },
+    {
+      "key": "6212_20704",
+      "text": "NRWupgrade1.Klasse"
+    },
+    {
+      "key": "6212_30000",
+      "text": "eezy.nrw Fahrt 1 Erwachsener"
+    },
+    {
+      "key": "6212_30002",
+      "text": "eezy.nrw Fahrt 2 Erwachsene"
+    },
+    {
+      "key": "6212_30004",
+      "text": "eezy.nrw Fahrt 3 Erwachsene"
+    },
+    {
+      "key": "6212_30006",
+      "text": "eezy.nrw Fahrt 4 Erwachsene"
+    },
+    {
+      "key": "6212_30008",
+      "text": "eezy.nrw Fahrt 5 Erwachsene"
+    },
+    {
+      "key": "6212_30010",
+      "text": "eezy.nrw Fahrt 6 Erwachsene"
+    },
+    {
+      "key": "6212_30012",
+      "text": "eezy.nrw Fahrt 7 Erwachsene"
+    },
+    {
+      "key": "6212_30014",
+      "text": "eezy.nrw Fahrt 8 Erwachsene"
+    },
+    {
+      "key": "6212_30016",
+      "text": "eezy.nrw Fahrt 9 Erwachsene"
+    },
+    {
+      "key": "6212_30018",
+      "text": "eezy.nrw Fahrt 10 Erwachsene"
+    },
+    {
+      "key": "6212_30020",
+      "text": "eezy.nrw Fahrt 11 Erwachsene"
+    },
+    {
+      "key": "6212_40000",
+      "text": "eezy.nrw Erw. 2. Klasse"
+    },
+    {
+      "key": "6212_40002",
+      "text": "eezy.nrw Ki. 2. Klasse"
+    },
+    {
+      "key": "6212_40004",
+      "text": "eezy.nrw Erw. 1. Klasse"
+    },
+    {
+      "key": "6212_40006",
+      "text": "eezy.nrw Ki. 1. Klasse"
+    },
+    {
+      "key": "6212_40008",
+      "text": "eezy.nrw Fahrrad"
+    },
+    {
+      "key": "6212_50000",
+      "text": "9-Euro-Ticket Juni"
+    },
+    {
+      "key": "6212_50002",
+      "text": "9-Euro-Ticket Juli"
+    },
+    {
+      "key": "6212_50004",
+      "text": "9-Euro-Ticket August"
+    }
+  ]
+}

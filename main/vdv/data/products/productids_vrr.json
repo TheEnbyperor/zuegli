@@ -1,0 +1,208 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "70_10570",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "70_10572",
+      "text": "10erTicket"
+    },
+    {
+      "key": "70_10574",
+      "text": "4erTicket"
+    },
+    {
+      "key": "70_10576",
+      "text": "EinzelTicket Kind"
+    },
+    {
+      "key": "70_10578",
+      "text": "4erTicket Kind"
+    },
+    {
+      "key": "70_10592",
+      "text": "ZusatzTicket"
+    },
+    {
+      "key": "70_10594",
+      "text": "4erZusatzTicket"
+    },
+    {
+      "key": "70_10600",
+      "text": "Ticket1000"
+    },
+    {
+      "key": "70_10602",
+      "text": "Ticket1000 Abo"
+    },
+    {
+      "key": "70_10604",
+      "text": "Ticket1000 9 Uhr"
+    },
+    {
+      "key": "70_10606",
+      "text": "Ticket1000 Abo 9 Uhr"
+    },
+    {
+      "key": "70_10610",
+      "text": "Ticket2000"
+    },
+    {
+      "key": "70_10612",
+      "text": "Ticket2000 Abo"
+    },
+    {
+      "key": "70_10614",
+      "text": "Ticket2000 9 Uhr"
+    },
+    {
+      "key": "70_10616",
+      "text": "Ticket2000 Abo 9 Uhr"
+    },
+    {
+      "key": "70_10652",
+      "text": "YoungTicketPLUS"
+    },
+    {
+      "key": "70_10660",
+      "text": "SchokoTicket"
+    },
+    {
+      "key": "70_10680",
+      "text": "FirmenTicket"
+    },
+    {
+      "key": "70_10684",
+      "text": "BärenTicket"
+    },
+    {
+      "key": "70_10690",
+      "text": "SozialTicket Abo"
+    },
+    {
+      "key": "70_10694",
+      "text": "Fahrrad Monatsticket"
+    },
+    {
+      "key": "70_10700",
+      "text": "SemesterTicket VRR"
+    },
+    {
+      "key": "70_10712",
+      "text": "Fahrrad Aboticket"
+    },
+    {
+      "key": "70_10722",
+      "text": "30-Tage 1.-Klasse-MonatsTicket"
+    },
+    {
+      "key": "70_10724",
+      "text": "1.-Klasse-Monatsticket Abo"
+    },
+    {
+      "key": "70_10726",
+      "text": "1.Klasse Monatsticket"
+    },
+    {
+      "key": "70_10728",
+      "text": "1.Klasse Aboticket"
+    },
+    {
+      "key": "70_10770",
+      "text": "30-Tage Ticket1000"
+    },
+    {
+      "key": "70_10772",
+      "text": "30-Tage Ticket1000 9 Uhr"
+    },
+    {
+      "key": "70_10774",
+      "text": "30-Tage Ticket2000"
+    },
+    {
+      "key": "70_10776",
+      "text": "30-Tage Ticket2000 9 Uhr"
+    },
+    {
+      "key": "70_10784",
+      "text": "24-StundenTicket"
+    },
+    {
+      "key": "70_10786",
+      "text": "48-StundenTicket"
+    },
+    {
+      "key": "70_10790",
+      "text": "4-StundenTicket"
+    },
+    {
+      "key": "70_10796",
+      "text": "VRR-Erweiterung zu VRS-Ticket"
+    },
+    {
+      "key": "70_10798",
+      "text": "VRR-Erweiterung zu AVV-Ticket"
+    },
+    {
+      "key": "70_10924",
+      "text": "FahrradTicket"
+    },
+    {
+      "key": "70_10926",
+      "text": "FahrradTicketFlex25"
+    },
+    {
+      "key": "70_10928",
+      "text": "FahrradTicketFlex35"
+    },
+    {
+      "key": "70_10930",
+      "text": "EinzelTicket (Flex25)"
+    },
+    {
+      "key": "70_10932",
+      "text": "EinzelTicket (Flex35)"
+    },
+    {
+      "key": "70_10934",
+      "text": "24-StundenTicket (FlexJob)"
+    },
+    {
+      "key": "70_10942",
+      "text": "Schüler-Ergänzung VRR"
+    },
+    {
+      "key": "70_10948",
+      "text": "SozialTicket"
+    },
+    {
+      "key": "70_11008",
+      "text": "HappyHourTicket"
+    },
+    {
+      "key": "70_11115",
+      "text": "AnrufSammelTaxi voll"
+    },
+    {
+      "key": "70_11116",
+      "text": "AnrufSammelTaxi ermäßigt"
+    },
+    {
+      "key": "70_9996",
+      "text": "Deutschlandticket Semesterticket-Upgrade"
+    },
+    {
+      "key": "70_9998",
+      "text": "Deutschlandticket Job"
+    },
+    {
+      "key": "70_9999",
+      "text": "Deutschlandticket"
+    }
+  ]
+}

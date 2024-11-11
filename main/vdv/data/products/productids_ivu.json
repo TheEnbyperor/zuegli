@@ -1,0 +1,56 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "39052_8001",
+      "text": "PEB eTicket"
+    },
+    {
+      "key": "39052_8002",
+      "text": "PEB Kurzzeitticket"
+    },
+    {
+      "key": "39052_8003",
+      "text": "PEB Zeitkarte Tag"
+    },
+    {
+      "key": "39052_8004",
+      "text": "PEB Zeitkarte Woche"
+    },
+    {
+      "key": "39052_8005",
+      "text": "PEB Zeitkarte Monat"
+    },
+    {
+      "key": "39052_9003",
+      "text": "90 Minuten WEB"
+    },
+    {
+      "key": "39052_10600",
+      "text": "eTicket Tag"
+    },
+    {
+      "key": "39052_10700",
+      "text": "eTicket Monat"
+    },
+    {
+      "key": "39052_10802",
+      "text": "PEB Kurzzeitticket"
+    },
+    {
+      "key": "39052_10803",
+      "text": "PEB Tagesticket"
+    },
+    {
+      "key": "39052_10804",
+      "text": "PEB Wochenticket"
+    },
+    {
+      "key": "39052_10805",
+      "text": "PEB Monatsticket"
+    }
+  ]
+}

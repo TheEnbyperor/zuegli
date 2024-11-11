@@ -1,0 +1,241 @@
+{% if elements %}
+    {% for elm in elements %}
+        {% if elm.TYPE == "basic-data" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Basic data</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% if elm.payment_type %}
+                            {% with type_name=elm.payment_type_name_opt %}
+                                {% if type_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Payment Type</dt>
+                                        <dd class="govuk-summary-list__value">{{ type_name }}</dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Payment Type Code</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.payment_type }}</code></dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.passenger_type %}
+                            {% with type_name=elm.passenger_type_name_opt %}
+                                {% if type_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Passenger Type</dt>
+                                        <dd class="govuk-summary-list__value">{{ type_name }}</dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Passenger Type Code</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.passenger_type }}</code></dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.first_additional_travelers %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Additional Traveler #1</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        {% with type_name=elm.first_additional_travelers.passenger_type_name_opt %}
+                                            {% if type_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Passenger Type</dt>
+                                                    <dd class="govuk-summary-list__value">{{ type_name }}</dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Passenger Type Code</dt>
+                                            <dd class="govuk-summary-list__value"><code>{{ elm.first_additional_travelers.passenger_type }}</code></dd>
+                                        </div>
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Count</dt>
+                                            <dd class="govuk-summary-list__value"><code>{{ elm.first_additional_travelers.passenger_count }}</code></dd>
+                                        </div>
+                                    </dl>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.second_additional_travelers %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Additional Traveler #2</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        {% with type_name=elm.second_additional_travelers.passenger_type_name_opt %}
+                                            {% if type_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Passenger Type</dt>
+                                                    <dd class="govuk-summary-list__value">{{ type_name }}</dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Passenger Type Code</dt>
+                                            <dd class="govuk-summary-list__value"><code>{{ elm.second_additional_travelers.passenger_type }}</code></dd>
+                                        </div>
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Count</dt>
+                                            <dd class="govuk-summary-list__value"><code>{{ elm.second_additional_travelers.passenger_count }}</code></dd>
+                                        </div>
+                                    </dl>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.transport_category %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Transport Category</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.transport_category }}</code></dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.service_class %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Service Class</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.service_class_name }}</dd>
+                            </div>
+                        {% endif %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Price Base</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.price_base }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">VAT</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.vat_rate }}%</dd>
+                        </div>
+                        {% if elm.price_level %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Price Level</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.price_level }}</code></dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.internal_product_number %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Internal Product Number</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.internal_product_number }}</code></dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "identification-medium" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Identification medium</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% with type_name=elm.type_name_opt %}
+                            {% if type_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type</dt>
+                                    <dd class="govuk-summary-list__value">{{ type_name }}</dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Type Code</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ elm.id_type }}</code></dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Number</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ elm.id_number }}</code></dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "passenger-data" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Passenger data</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Forename</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.forename }}
+                                {% if elm.original_forename %}({{ elm.original_forename }}){% endif %}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Surname</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.surname }}
+                                {% if elm.original_surname %}({{ elm.original_surname }}){% endif %}
+                            </dd>
+                        </div>
+                        {% if elm.date_of_birth %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Date of birth</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.date_of_birth.as_date|date:"F d, Y" }}</dd>
+                            </div>
+                        {% endif %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Gender</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.gender.name }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "spacial-validity" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Spacial validity</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% with org_name=elm.organization_name_opt %}
+                            {% if org_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Organisation Name</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ org_name }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ elm.organization_id }}</code>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Areas</dt>
+                            <dd class="govuk-summary-list__value">
+                                <ul class="govuk-list">
+                                    {% for area in elm.area_ids %}
+                                        <li><code>{{ area }}</code></li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "unknown-spacial-validity" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Unknown spacial validity <code>{{ elm.type_hex }}</code></h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
+                </div>
+            </div>
+        {% elif elm.TYPE == "unknown" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Unknown element <code>{{ elm.tag_hex }}</code></h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <p class="govuk-body">N/A</p>
+{% endif %}

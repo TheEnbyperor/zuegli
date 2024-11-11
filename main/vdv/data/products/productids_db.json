@@ -1,0 +1,96 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "6262_2000",
+      "text": "City-Ticket"
+    },
+    {
+      "key": "6263_1000",
+      "text": "City-mobil Einzelfahrt"
+    },
+    {
+      "key": "6263_1001",
+      "text": "City-mobil Tageskarte"
+    },
+    {
+      "key": "6263_1002",
+      "text": "Baden-Württemberg-Ticket"
+    },
+    {
+      "key": "6263_1004",
+      "text": "Baden-Württemberg-Ticket Nacht"
+    },
+    {
+      "key": "6263_1005",
+      "text": "Bayern-Ticket"
+    },
+    {
+      "key": "6263_1007",
+      "text": "Bayern-Ticket-Nacht"
+    },
+    {
+      "key": "6263_1008",
+      "text": "Brandenburg-Berlin"
+    },
+    {
+      "key": "6263_1009",
+      "text": "Brandenburg-Berlin-Ticket"
+    },
+    {
+      "key": "6263_1010",
+      "text": "Mecklenburg-Vorpommern-Ticket"
+    },
+    {
+      "key": "6263_1011",
+      "text": "Niedersachsen-Ticket"
+    },
+    {
+      "key": "6263_1012",
+      "text": "Rheinland-Pfalz-Ticket"
+    },
+    {
+      "key": "6263_1013",
+      "text": "Rheinland-Pfalz-Ticket-Nacht"
+    },
+    {
+      "key": "6263_1014",
+      "text": "Saarland-Ticket"
+    },
+    {
+      "key": "6263_1015",
+      "text": "Saarland-Ticket-Nacht"
+    },
+    {
+      "key": "6263_1016",
+      "text": "Sachsen-Anhalt-Ticket"
+    },
+    {
+      "key": "6263_1017",
+      "text": "Sachsen-Ticket"
+    },
+    {
+      "key": "6263_1018",
+      "text": "Schleswig-Holstein-Ticket"
+    },
+    {
+      "key": "6263_1019",
+      "text": "Thüringen-Ticket"
+    },
+    {
+      "key": "6263_1200",
+      "text": "Schönes-Wochenende-Ticket"
+    },
+    {
+      "key": "6263_1201",
+      "text": "Quer-Durchs-Land-Ticket"
+    },
+    {
+      "key": "6263_1012",
+      "text": "Rheinland-Pfalz-Ticket + Luxemburg"
+    }
+  ]
+}

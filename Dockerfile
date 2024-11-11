@@ -27,4 +27,3 @@ COPY --from=barkoder /barkoder/build/Barkoder.cpython-312-x86_64-linux-gnu.so /u
 COPY main /app/main
 COPY vdv_pkpass /app/vdv_pkpass
 COPY manage.py /app/manage.py
-COPY aztec/target/aztec-1.0.jar /app/aztec-1.0.jar

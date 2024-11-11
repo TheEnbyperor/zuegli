@@ -1,0 +1,1684 @@
+{
+  "replace": {
+    "type": "instance",
+    "name": "productids"
+  },
+  "textmap": [
+    {
+      "key": "77_10002",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10004",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10006",
+      "text": "4erTicket"
+    },
+    {
+      "key": "77_10008",
+      "text": "4erKinderTicket"
+    },
+    {
+      "key": "77_10016",
+      "text": "9 UhrAbo ü"
+    },
+    {
+      "key": "77_10024",
+      "text": "Abo übertragbar"
+    },
+    {
+      "key": "77_10032",
+      "text": "SchulAzubiMonatsT"
+    },
+    {
+      "key": "77_10036",
+      "text": "SchülerAbo plus"
+    },
+    {
+      "key": "77_10040",
+      "text": "SchulwegMonatsTicket"
+    },
+    {
+      "key": "77_10048",
+      "text": "FunTicket"
+    },
+    {
+      "key": "77_10060",
+      "text": "FahrradAbo"
+    },
+    {
+      "key": "77_10062",
+      "text": "Aufp 1. Klasse"
+    },
+    {
+      "key": "77_10066",
+      "text": "30 Tage 1. Klasse"
+    },
+    {
+      "key": "77_10068",
+      "text": "Abo Aufp 1. Klasse"
+    },
+    {
+      "key": "77_10070",
+      "text": "Die Blaue"
+    },
+    {
+      "key": "77_10074",
+      "text": "BocholtTicket"
+    },
+    {
+      "key": "77_10076",
+      "text": "NachtBus Aufpreis"
+    },
+    {
+      "key": "77_10078",
+      "text": "NachtBus Aufpreis HR"
+    },
+    {
+      "key": "77_10090",
+      "text": "9 Uhr Die Blaue"
+    },
+    {
+      "key": "77_10094",
+      "text": "9 Uhr BocholtTicket"
+    },
+    {
+      "key": "77_10096",
+      "text": "4erTicket"
+    },
+    {
+      "key": "77_10098",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_10100",
+      "text": "4er KinderTicket"
+    },
+    {
+      "key": "77_10102",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10110",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_10114",
+      "text": "9 Uhr MünsterAbo"
+    },
+    {
+      "key": "77_10116",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10118",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10120",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10124",
+      "text": "60plusTicket"
+    },
+    {
+      "key": "77_10128",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10130",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10134",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_10136",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_10140",
+      "text": "EinzelTicket Kurzstrecke"
+    },
+    {
+      "key": "77_10142",
+      "text": "EinzelTicket Kurzstrecke"
+    },
+    {
+      "key": "77_10144",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10146",
+      "text": "KinderTicket Kurzstrecke"
+    },
+    {
+      "key": "77_10148",
+      "text": "KinderTicket Kurzstrecke"
+    },
+    {
+      "key": "77_10152",
+      "text": "Schüler MonatsTicket"
+    },
+    {
+      "key": "77_10164",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10172",
+      "text": "SemesterTicket Münster"
+    },
+    {
+      "key": "77_10174",
+      "text": "SemesterTicket Münsterland"
+    },
+    {
+      "key": "77_10176",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_10178",
+      "text": "9 Uhr MünsterAbo"
+    },
+    {
+      "key": "77_10200",
+      "text": "AzubiAbo"
+    },
+    {
+      "key": "77_10208",
+      "text": "Abo"
+    },
+    {
+      "key": "77_10212",
+      "text": "90 MinutenTicket"
+    },
+    {
+      "key": "77_10214",
+      "text": "GruppenTicket"
+    },
+    {
+      "key": "77_10228",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_10230",
+      "text": "FlexAbo MAX"
+    },
+    {
+      "key": "77_10232",
+      "text": "FlexZuschlag"
+    },
+    {
+      "key": "77_10236",
+      "text": "JobTicket Westf."
+    },
+    {
+      "key": "77_10246",
+      "text": "FunTicket Westf."
+    },
+    {
+      "key": "77_10250",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10252",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10254",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10256",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10258",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10260",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10262",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10264",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10266",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10276",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10314",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_10316",
+      "text": "SemesterTicket Ruhr-Lippe (VRL"
+    },
+    {
+      "key": "77_10320",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10326",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10330",
+      "text": "Job Aufp 1. Klasse"
+    },
+    {
+      "key": "77_10336",
+      "text": "9 UhrTagesT 5P"
+    },
+    {
+      "key": "77_10338",
+      "text": "9 UhrTagesT 1P"
+    },
+    {
+      "key": "77_10340",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10342",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10344",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10350",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10352",
+      "text": "9 Uhr Abo"
+    },
+    {
+      "key": "77_10354",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10356",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_10358",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_10360",
+      "text": "90MTagespreis"
+    },
+    {
+      "key": "77_10362",
+      "text": "10erTicket"
+    },
+    {
+      "key": "77_10364",
+      "text": "10erTicket Kind"
+    },
+    {
+      "key": "77_10386",
+      "text": "UT Sauer- Siegerland 3 Tage"
+    },
+    {
+      "key": "77_10388",
+      "text": "UT Sauer- Siegerland 10 Tage"
+    },
+    {
+      "key": "77_10394",
+      "text": "7 TageTicket"
+    },
+    {
+      "key": "77_10398",
+      "text": "7 Tage 1. Klasse"
+    },
+    {
+      "key": "77_10402",
+      "text": "PaderTicket Basis"
+    },
+    {
+      "key": "77_10404",
+      "text": "PaderTicket Premium"
+    },
+    {
+      "key": "77_10406",
+      "text": "10erTicket_nurUN"
+    },
+    {
+      "key": "77_10408",
+      "text": "9 UhrAbo p"
+    },
+    {
+      "key": "77_10410",
+      "text": "Abo persönlich"
+    },
+    {
+      "key": "77_10414",
+      "text": "SchulAzubiMonatsT"
+    },
+    {
+      "key": "77_10416",
+      "text": "Schulwegticket"
+    },
+    {
+      "key": "77_10418",
+      "text": "ChillTicket"
+    },
+    {
+      "key": "77_10424",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_10426",
+      "text": "FunTicket"
+    },
+    {
+      "key": "77_10428",
+      "text": "Semesterticket OWL"
+    },
+    {
+      "key": "77_10430",
+      "text": "Semesterticket OWL"
+    },
+    {
+      "key": "77_10432",
+      "text": "Semesterticket OWL"
+    },
+    {
+      "key": "77_10434",
+      "text": "Semesterticket OWL"
+    },
+    {
+      "key": "77_10444",
+      "text": "GroßkundenAbo p"
+    },
+    {
+      "key": "77_10446",
+      "text": "GroßkundenAbo ü"
+    },
+    {
+      "key": "77_10464",
+      "text": "9 UhrGroKuAbo p"
+    },
+    {
+      "key": "77_10466",
+      "text": "9 UhrGroKuAbo ü"
+    },
+    {
+      "key": "77_10472",
+      "text": "FirmenAbo"
+    },
+    {
+      "key": "77_10526",
+      "text": "WE-Ticket Erw."
+    },
+    {
+      "key": "77_10528",
+      "text": "9 UhrMonatsTicket"
+    },
+    {
+      "key": "77_10532",
+      "text": "WE-4erTicket Kind"
+    },
+    {
+      "key": "77_10534",
+      "text": "WE-4erTicket Erw."
+    },
+    {
+      "key": "77_10536",
+      "text": "UmweltMonatsT"
+    },
+    {
+      "key": "77_10538",
+      "text": "DetmoldAbo"
+    },
+    {
+      "key": "77_10540",
+      "text": "FamilienAbo"
+    },
+    {
+      "key": "77_10542",
+      "text": "KinderMonatsT"
+    },
+    {
+      "key": "77_10544",
+      "text": "Fam.Abo Partner"
+    },
+    {
+      "key": "77_10546",
+      "text": "MobiTicket"
+    },
+    {
+      "key": "77_10548",
+      "text": "KinderMonatsT"
+    },
+    {
+      "key": "77_10552",
+      "text": "WE-Ticket Kind"
+    },
+    {
+      "key": "77_10554",
+      "text": "Abo sofort"
+    },
+    {
+      "key": "77_10556",
+      "text": "VeranstaltungsT"
+    },
+    {
+      "key": "77_10558",
+      "text": "JobTicket Theater DT"
+    },
+    {
+      "key": "77_10560",
+      "text": "DetmoldAbo Firmen"
+    },
+    {
+      "key": "77_10562",
+      "text": "DetmoldAbo GK"
+    },
+    {
+      "key": "77_10564",
+      "text": "Abo sofort Partner"
+    },
+    {
+      "key": "77_10566",
+      "text": "Abo sofort Kind"
+    },
+    {
+      "key": "77_10570",
+      "text": "smartTicket"
+    },
+    {
+      "key": "77_10620",
+      "text": "HandyEinzelTi"
+    },
+    {
+      "key": "77_10622",
+      "text": "HandyKinderTi"
+    },
+    {
+      "key": "77_10624",
+      "text": "Handy9UhrTaTi1P"
+    },
+    {
+      "key": "77_10626",
+      "text": "Handy9UhrTaTi5P"
+    },
+    {
+      "key": "77_10638",
+      "text": "LemGoCard p"
+    },
+    {
+      "key": "77_10640",
+      "text": "LemGoCard ü"
+    },
+    {
+      "key": "77_10646",
+      "text": "LemGoCard p"
+    },
+    {
+      "key": "77_10648",
+      "text": "LemGoCard ü"
+    },
+    {
+      "key": "77_10654",
+      "text": "MonatsTicket BSal"
+    },
+    {
+      "key": "77_10656",
+      "text": "3 MonatsTicket"
+    },
+    {
+      "key": "77_10658",
+      "text": "B-SalzuflenTicket"
+    },
+    {
+      "key": "77_10660",
+      "text": "B-SalzuflenTicket"
+    },
+    {
+      "key": "77_10662",
+      "text": "MonatsBündeCard"
+    },
+    {
+      "key": "77_10664",
+      "text": "3 MonatsBündeCard"
+    },
+    {
+      "key": "77_10666",
+      "text": "JahresBündeCard"
+    },
+    {
+      "key": "77_10668",
+      "text": "Gästekarte BSalzu"
+    },
+    {
+      "key": "77_10676",
+      "text": "Bef.entgeltSachen"
+    },
+    {
+      "key": "77_10688",
+      "text": "UmweltBildungsT"
+    },
+    {
+      "key": "77_10690",
+      "text": "WeserWerreTicket"
+    },
+    {
+      "key": "77_10696",
+      "text": "Abo"
+    },
+    {
+      "key": "77_10698",
+      "text": "9 UhrAbo"
+    },
+    {
+      "key": "77_10706",
+      "text": "MonatsBündeCard"
+    },
+    {
+      "key": "77_10746",
+      "text": "JobT Westf.plus"
+    },
+    {
+      "key": "77_10754",
+      "text": "FunAbo Westf."
+    },
+    {
+      "key": "77_10762",
+      "text": "9 Uhr BocholtTicket"
+    },
+    {
+      "key": "77_10764",
+      "text": "9 Uhr Die Blaue"
+    },
+    {
+      "key": "77_10776",
+      "text": "Die Blaue"
+    },
+    {
+      "key": "77_10786",
+      "text": "FahrradTagesT"
+    },
+    {
+      "key": "77_10788",
+      "text": "60plusAbo Westf."
+    },
+    {
+      "key": "77_10790",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10792",
+      "text": "SchulAzubiMonatsT"
+    },
+    {
+      "key": "77_10814",
+      "text": "FunTicketMonat"
+    },
+    {
+      "key": "77_10816",
+      "text": "FunTicketMonat"
+    },
+    {
+      "key": "77_10818",
+      "text": "MobilitätsCard"
+    },
+    {
+      "key": "77_10822",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_10824",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_10826",
+      "text": "AzubiMonatsTicket"
+    },
+    {
+      "key": "77_10830",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10832",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10834",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_10836",
+      "text": "JobTicketPlus"
+    },
+    {
+      "key": "77_10838",
+      "text": "JobTicketPlus"
+    },
+    {
+      "key": "77_10840",
+      "text": "JobTicketPlus"
+    },
+    {
+      "key": "77_10842",
+      "text": "Nachtbuszuschlag"
+    },
+    {
+      "key": "77_10848",
+      "text": "Nachtbuszuschlag"
+    },
+    {
+      "key": "77_10850",
+      "text": "FunTicket"
+    },
+    {
+      "key": "77_10852",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_10854",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10856",
+      "text": "Abo übertragbar"
+    },
+    {
+      "key": "77_10858",
+      "text": "Abo persönlich"
+    },
+    {
+      "key": "77_10860",
+      "text": "9 Uhr Abo übertragbar"
+    },
+    {
+      "key": "77_10862",
+      "text": "9 Uhr Abo persönlich"
+    },
+    {
+      "key": "77_10864",
+      "text": "SchulwegTicket"
+    },
+    {
+      "key": "77_10866",
+      "text": "LiboriTicket"
+    },
+    {
+      "key": "77_10868",
+      "text": "Libori WochenTicket"
+    },
+    {
+      "key": "77_10870",
+      "text": "AdventTicket"
+    },
+    {
+      "key": "77_10872",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_10874",
+      "text": "FunTicket"
+    },
+    {
+      "key": "77_10876",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_10880",
+      "text": "FunTicketJahr"
+    },
+    {
+      "key": "77_10886",
+      "text": "LiboriTicket Kind"
+    },
+    {
+      "key": "77_10888",
+      "text": "AdventTicket Kind"
+    },
+    {
+      "key": "77_10890",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10892",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10894",
+      "text": "4erTicket"
+    },
+    {
+      "key": "77_10896",
+      "text": "4er KinderTicket"
+    },
+    {
+      "key": "77_10898",
+      "text": "Praktikantenticket"
+    },
+    {
+      "key": "77_10902",
+      "text": "FunTicketMonat"
+    },
+    {
+      "key": "77_10918",
+      "text": "Abo direkt V"
+    },
+    {
+      "key": "77_10920",
+      "text": "9 UhrAbo direkt V"
+    },
+    {
+      "key": "77_10922",
+      "text": "FunAbo direkt V"
+    },
+    {
+      "key": "77_10924",
+      "text": "60plusAbo direkt V"
+    },
+    {
+      "key": "77_10926",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10928",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10930",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10932",
+      "text": "4erTicket"
+    },
+    {
+      "key": "77_10934",
+      "text": "4erKinderTicket"
+    },
+    {
+      "key": "77_10938",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_10940",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_10942",
+      "text": "AnschlussTicket"
+    },
+    {
+      "key": "77_10954",
+      "text": "FahrradTagesT"
+    },
+    {
+      "key": "77_10956",
+      "text": "60pAbo W.-Süd"
+    },
+    {
+      "key": "77_10958",
+      "text": "SchulwegMonatsTicket"
+    },
+    {
+      "key": "77_10960",
+      "text": "WarburgCard"
+    },
+    {
+      "key": "77_10962",
+      "text": "DelbrückCard"
+    },
+    {
+      "key": "77_10964",
+      "text": "GruppenTicket"
+    },
+    {
+      "key": "77_10966",
+      "text": "GruppenTicket"
+    },
+    {
+      "key": "77_10976",
+      "text": "PaderTicket Premium persönlich"
+    },
+    {
+      "key": "77_10980",
+      "text": "EinzelTicket Kurz"
+    },
+    {
+      "key": "77_10982",
+      "text": "KinderTicket Kurz"
+    },
+    {
+      "key": "77_10986",
+      "text": "4erTicket Kurz"
+    },
+    {
+      "key": "77_10988",
+      "text": "4er KinderTicket Kurz"
+    },
+    {
+      "key": "77_11016",
+      "text": "GruppenTicket"
+    },
+    {
+      "key": "77_11018",
+      "text": "MobilTicket"
+    },
+    {
+      "key": "77_11024",
+      "text": "CityLifeTicket"
+    },
+    {
+      "key": "77_11026",
+      "text": "RegioLifeTicket"
+    },
+    {
+      "key": "77_11028",
+      "text": "CityLifeAbo p"
+    },
+    {
+      "key": "77_11030",
+      "text": "RegioLifeAbo p"
+    },
+    {
+      "key": "77_11032",
+      "text": "CityLifeAbo ü"
+    },
+    {
+      "key": "77_11034",
+      "text": "RegioLifeAbo ü"
+    },
+    {
+      "key": "77_11040",
+      "text": "CityLifeAbo p"
+    },
+    {
+      "key": "77_11042",
+      "text": "CityLifeAbo ü"
+    },
+    {
+      "key": "77_11052",
+      "text": "TeutoEmsTicket"
+    },
+    {
+      "key": "77_11054",
+      "text": "MobiTicket Lemgo"
+    },
+    {
+      "key": "77_11056",
+      "text": "ChillTicket light"
+    },
+    {
+      "key": "77_11058",
+      "text": "MobiTicket Lippe"
+    },
+    {
+      "key": "77_11060",
+      "text": "ETNachtbuszuschlag"
+    },
+    {
+      "key": "77_11062",
+      "text": "JobTicketAzubi"
+    },
+    {
+      "key": "77_11064",
+      "text": "JobTicketAzubi"
+    },
+    {
+      "key": "77_11066",
+      "text": "JobTicketAzubi"
+    },
+    {
+      "key": "77_11068",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11070",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11072",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11074",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11076",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11078",
+      "text": "SchülerMonatsTicket"
+    },
+    {
+      "key": "77_11080",
+      "text": "JobTicketPlusAzubi"
+    },
+    {
+      "key": "77_11082",
+      "text": "JobTicketPlusAzubi"
+    },
+    {
+      "key": "77_11084",
+      "text": "JobTicketPlusAzubi"
+    },
+    {
+      "key": "77_11086",
+      "text": "Festschreibung ST"
+    },
+    {
+      "key": "77_11088",
+      "text": "Festschreibung ST"
+    },
+    {
+      "key": "77_11092",
+      "text": "FairTicket"
+    },
+    {
+      "key": "77_11094",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_11098",
+      "text": "Abo"
+    },
+    {
+      "key": "77_11100",
+      "text": "CityLifeAbo"
+    },
+    {
+      "key": "77_11102",
+      "text": "Abo Umwelt"
+    },
+    {
+      "key": "77_11104",
+      "text": "Schüler Abo plus Umwelt"
+    },
+    {
+      "key": "77_11106",
+      "text": "Abo"
+    },
+    {
+      "key": "77_11108",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_11110",
+      "text": "FunAbo"
+    },
+    {
+      "key": "77_11112",
+      "text": "Abo"
+    },
+    {
+      "key": "77_11114",
+      "text": "9 Uhr Abo"
+    },
+    {
+      "key": "77_11116",
+      "text": "9 UhrAbo Umwelt"
+    },
+    {
+      "key": "77_11118",
+      "text": "Abo Umwelt"
+    },
+    {
+      "key": "77_11120",
+      "text": "Abo Umwelt"
+    },
+    {
+      "key": "77_11122",
+      "text": "MobiTicket one"
+    },
+    {
+      "key": "77_11124",
+      "text": "LandEiAbo"
+    },
+    {
+      "key": "77_11128",
+      "text": "Die Blaue"
+    },
+    {
+      "key": "77_11130",
+      "text": "9Uhr Die Blaue"
+    },
+    {
+      "key": "77_11136",
+      "text": "24 Stunden 5P"
+    },
+    {
+      "key": "77_11138",
+      "text": "24 Stunden 1P"
+    },
+    {
+      "key": "77_11140",
+      "text": "AzubiAbo Westfalen"
+    },
+    {
+      "key": "77_11142",
+      "text": "AzubiAbo Westfalen"
+    },
+    {
+      "key": "77_11144",
+      "text": "FahrWeiter W"
+    },
+    {
+      "key": "77_11146",
+      "text": "FahrWeiter Kind W"
+    },
+    {
+      "key": "77_11148",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11150",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11152",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11154",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11156",
+      "text": "8 Uhr MünsterAbo"
+    },
+    {
+      "key": "77_11158",
+      "text": "8 Uhr MünsterAbo"
+    },
+    {
+      "key": "77_11160",
+      "text": "8 Uhr MünsterAbo"
+    },
+    {
+      "key": "77_11162",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11164",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11166",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11168",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11176",
+      "text": "LippeTicket one"
+    },
+    {
+      "key": "77_11178",
+      "text": "LippeTicket"
+    },
+    {
+      "key": "77_11180",
+      "text": "LippeAbo p"
+    },
+    {
+      "key": "77_11182",
+      "text": "LippeAbo ü"
+    },
+    {
+      "key": "77_11188",
+      "text": "AzubiAbo Westfalen"
+    },
+    {
+      "key": "77_11190",
+      "text": "SemesterTicket HST"
+    },
+    {
+      "key": "77_11192",
+      "text": "SemesterTicket Siegen"
+    },
+    {
+      "key": "77_11196",
+      "text": "AzubiAbo plus"
+    },
+    {
+      "key": "77_11198",
+      "text": "EinzelTicket"
+    },
+    {
+      "key": "77_11200",
+      "text": "KinderTicket"
+    },
+    {
+      "key": "77_11202",
+      "text": "MobiTicket Bad S"
+    },
+    {
+      "key": "77_11204",
+      "text": "HandyEinzelTi"
+    },
+    {
+      "key": "77_11206",
+      "text": "HandyKinderTi"
+    },
+    {
+      "key": "77_11208",
+      "text": "SilberAbo"
+    },
+    {
+      "key": "77_11212",
+      "text": "HövelCard"
+    },
+    {
+      "key": "77_11214",
+      "text": "HandyFunTicket"
+    },
+    {
+      "key": "77_11216",
+      "text": "8 UhrAbo ü"
+    },
+    {
+      "key": "77_11218",
+      "text": "8 UhrAbo p"
+    },
+    {
+      "key": "77_11220",
+      "text": "8 UhrAboReferenz"
+    },
+    {
+      "key": "77_11222",
+      "text": "8 UhrAbo"
+    },
+    {
+      "key": "77_11224",
+      "text": "30 TageTicket"
+    },
+    {
+      "key": "77_11226",
+      "text": "30 Tage 9 Uhr"
+    },
+    {
+      "key": "77_11230",
+      "text": "30 Tage Fahrrad"
+    },
+    {
+      "key": "77_11234",
+      "text": "30 Tage 8 Uhr"
+    },
+    {
+      "key": "77_11240",
+      "text": "goCardAbo"
+    },
+    {
+      "key": "77_11242",
+      "text": "Fun EinzelTicket"
+    },
+    {
+      "key": "77_11244",
+      "text": "SchulAzubiMonatsT"
+    },
+    {
+      "key": "77_11246",
+      "text": "EinzelTicket Kurz"
+    },
+    {
+      "key": "77_11248",
+      "text": "KinderTicket Kurz"
+    },
+    {
+      "key": "77_11250",
+      "text": "4er Ticket Kurz PB"
+    },
+    {
+      "key": "77_11252",
+      "text": "4er KinderTicket Kurz"
+    },
+    {
+      "key": "77_11256",
+      "text": "GruppenTicket Kurz"
+    },
+    {
+      "key": "77_11258",
+      "text": "SilberAbo plus"
+    },
+    {
+      "key": "77_11260",
+      "text": "SchülerCard"
+    },
+    {
+      "key": "77_11262",
+      "text": "SchülerCard"
+    },
+    {
+      "key": "77_11264",
+      "text": "SchülerCard"
+    },
+    {
+      "key": "77_11266",
+      "text": "SchülerCard"
+    },
+    {
+      "key": "77_11268",
+      "text": "WE-Ticket Erw."
+    },
+    {
+      "key": "77_11270",
+      "text": "WE-Ticket Kind"
+    },
+    {
+      "key": "77_11272",
+      "text": "KlimaTicket"
+    },
+    {
+      "key": "77_11274",
+      "text": "KlimaAbo ü"
+    },
+    {
+      "key": "77_11276",
+      "text": "KlimaAbo p"
+    },
+    {
+      "key": "77_11278",
+      "text": "EiTicket 1P"
+    },
+    {
+      "key": "77_11280",
+      "text": "EiTicket 5P"
+    },
+    {
+      "key": "77_11282",
+      "text": "ungültiger FA"
+    },
+    {
+      "key": "77_11284",
+      "text": "ungültiger FA"
+    },
+    {
+      "key": "77_11286",
+      "text": "ungültiger FA"
+    },
+    {
+      "key": "77_11288",
+      "text": "MonatsTicket WS"
+    },
+    {
+      "key": "77_11290",
+      "text": "9U MonatsTicket WS"
+    },
+    {
+      "key": "77_11292",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_11294",
+      "text": "60plusAbo"
+    },
+    {
+      "key": "77_11304",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11306",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11308",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11310",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11312",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11314",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11316",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11318",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11320",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11322",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11324",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11326",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11330",
+      "text": "60plusAbo Westf."
+    },
+    {
+      "key": "77_11332",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11334",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11336",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11338",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11342",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11344",
+      "text": "90 MinutenTicket"
+    },
+    {
+      "key": "77_11346",
+      "text": "Kombiticket Westfalen"
+    },
+    {
+      "key": "77_11348",
+      "text": "MieterAbo"
+    },
+    {
+      "key": "77_11350",
+      "text": "MieterAbo plus"
+    },
+    {
+      "key": "77_11352",
+      "text": "ClipTicket"
+    },
+    {
+      "key": "77_11360",
+      "text": "ungültig - keine Ausgabe"
+    },
+    {
+      "key": "77_11362",
+      "text": "ungültig - keine Ausgabe"
+    },
+    {
+      "key": "77_11364",
+      "text": "ungültig - keine Ausgabe"
+    },
+    {
+      "key": "77_11366",
+      "text": "ungültig - keine Ausgabe"
+    },
+    {
+      "key": "77_11368",
+      "text": "ungültig - keine Ausgabe"
+    },
+    {
+      "key": "77_11370",
+      "text": "kommitAbo über"
+    },
+    {
+      "key": "77_11372",
+      "text": "kommitAbo nü"
+    },
+    {
+      "key": "77_11374",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11376",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_11378",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_11380",
+      "text": "JobTicket"
+    },
+    {
+      "key": "77_11382",
+      "text": "PaderTicket Basis+"
+    },
+    {
+      "key": "77_11384",
+      "text": "PaderTicket Premium+"
+    },
+    {
+      "key": "77_11386",
+      "text": "EinzelTicket Kurz"
+    },
+    {
+      "key": "77_11388",
+      "text": "KinderTicket Kurz"
+    },
+    {
+      "key": "77_11390",
+      "text": "TagesT24 1 Pers."
+    },
+    {
+      "key": "77_11392",
+      "text": "TagesT24 5 Pers."
+    },
+    {
+      "key": "77_11394",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11396",
+      "text": "Referenz JOB"
+    },
+    {
+      "key": "77_11398",
+      "text": "Referenz JOBWS"
+    },
+    {
+      "key": "77_11400",
+      "text": "Referenz JOB AGZ"
+    },
+    {
+      "key": "77_11402",
+      "text": "WelcomeCard Ruhr 24 Stunden"
+    },
+    {
+      "key": "77_11404",
+      "text": "WelcomeCard Ruhr 48 Stunden"
+    },
+    {
+      "key": "77_11406",
+      "text": "WelcomeCard Ruhr 72 Stunden"
+    },
+    {
+      "key": "77_11408",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11410",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11412",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11414",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11416",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11418",
+      "text": "Kontrolle: keine Ausgabe"
+    },
+    {
+      "key": "77_11420",
+      "text": "KombiTicket"
+    },
+    {
+      "key": "77_11422",
+      "text": "SchülerTicket W Referenz"
+    },
+    {
+      "key": "77_11424",
+      "text": "SchülerTicket W"
+    },
+    {
+      "key": "77_11426",
+      "text": "1-Euro-Ticket"
+    },
+    {
+      "key": "77_11428",
+      "text": "8 UhrAbo"
+    },
+    {
+      "key": "77_11430",
+      "text": "Abo"
+    },
+    {
+      "key": "77_11432",
+      "text": "TagesT24 1 Pers."
+    },
+    {
+      "key": "77_11434",
+      "text": "TagesT24 5 Pers."
+    },
+    {
+      "key": "77_11436",
+      "text": "FahrradT24"
+    },
+    {
+      "key": "77_11438",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_11440",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_11442",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_11444",
+      "text": "MünsterAbo"
+    },
+    {
+      "key": "77_11446",
+      "text": "HammTicket"
+    },
+    {
+      "key": "77_11448",
+      "text": "HammTicket"
+    },
+    {
+      "key": "77_11450",
+      "text": "MaxiTicket"
+    },
+    {
+      "key": "77_11452",
+      "text": "MaxiTicket light"
+    },
+    {
+      "key": "77_11454",
+      "text": "Nachberechnung W"
+    },
+    {
+      "key": "77_11456",
+      "text": "Nachberechnung W"
+    },
+    {
+      "key": "77_11458",
+      "text": "Nachberechnung M"
+    },
+    {
+      "key": "77_11460",
+      "text": "Nachberechnung M"
+    },
+    {
+      "key": "77_11464",
+      "text": "Nachberechnung H"
+    },
+    {
+      "key": "77_11466",
+      "text": "Nachberechnung H"
+    },
+    {
+      "key": "77_11468",
+      "text": "Nachberechnung T"
+    },
+    {
+      "key": "77_11470",
+      "text": "Nachberechnung T"
+    },
+    {
+      "key": "77_11472",
+      "text": "Nachberechnung S"
+    },
+    {
+      "key": "77_11474",
+      "text": "Nachberechnung S"
+    },
+    {
+      "key": "77_9002",
+      "text": "FlexAbo / 90 Minuten Ticket"
+    },
+    {
+      "key": "77_9003",
+      "text": "90 MinutenTicket"
+    },
+    {
+      "key": "77_9995",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "77_9996",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "77_9997",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "77_9998",
+      "text": "Deutschlandticket"
+    },
+    {
+      "key": "77_9999",
+      "text": "Deutschlandticket"
+    }
+  ]
+}
