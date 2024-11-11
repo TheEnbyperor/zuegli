@@ -32,6 +32,11 @@ def update_abo_tickets(abo: models.DBSubscription):
     }, headers={
         "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
     })
+    
+    if r.status_code == 404:
+        abo.delete()
+        return
+
     r.raise_for_status()
     data = r.json()
 
