@@ -1043,4 +1043,5 @@ VDV_ORG_ID_LOGO = {
     6310: "pass/logo-svv.png",
     6441: "pass/logo-kvg.png",
     6496: "pass/logo-naldo.png",
+    6613: "pass/logo-arriva.png",
 }
