@@ -1,0 +1,26 @@
+<h2 class="govuk-heading-m">Deutschlandtarifverbund passenger data</h2>
+<dl class="govuk-summary-list">
+    {% if dt.passenger_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Name</dt>
+            <dd class="govuk-summary-list__value">{{ dt.passenger_name }}</dd>
+        </div>
+    {% endif %}
+    {% if dt.other_blocks %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Unknown blocks</dt>
+            <dd class="govuk-summary-list__value">
+                {% for block_id, value in dt.other_blocks.items %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">Block <code>{{ block_id }}</code></h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <code>{{ value }}</code>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+</dl>

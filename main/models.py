@@ -154,20 +154,7 @@ class UICTicketInstance(models.Model):
         )
 
         ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
-        return t.UICTicket(
-            raw_bytes=self.barcode_data,
-            envelope=ticket_envelope,
-            head=t.parse_ticket_uic_head(ticket_envelope),
-            layout=t.parse_ticket_uic_layout(ticket_envelope),
-            flex=t.parse_ticket_uic_flex(ticket_envelope),
-            db_bl=t.parse_ticket_uic_db_bl(ticket_envelope),
-            cd_ut=t.parse_ticket_uic_cd_ut(ticket_envelope),
-            oebb_99=t.parse_ticket_uic_oebb_99(ticket_envelope),
-            db_vu=t.parse_ticket_uic_db_vu(ticket_envelope, context),
-            other_records=[r for r in ticket_envelope.records if not (
-                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT" or r.id == "118199" or r.id == "0080VU"
-            )]
-        )
+        return t.UICTicket.from_envelope(self.barcode_data, ticket_envelope, context)
 
 
 class RSP6TicketInstance(models.Model):

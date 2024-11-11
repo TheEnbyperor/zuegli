@@ -85,6 +85,14 @@
     {% include "main/uic/flex.html" with flex=ticket.flex %}
 {% endif %}
 
+{% if ticket.dt_ti %}
+    {% include "main/uic/dt_ti.html" with dt=ticket.dt_ti %}
+{% endif %}
+
+{% if ticket.dt_pa %}
+    {% include "main/uic/dt_pa.html" with dt=ticket.dt_pa %}
+{% endif %}
+
 {% if ticket.db_bl %}
     {% include "main/uic/db.html" with db=ticket.db_bl %}
 {% endif %}

@@ -67,6 +67,8 @@ class UICTicket:
     head: uic.HeadV1
     layout: typing.Optional[uic.LayoutV1]
     flex: typing.Optional[uic.Flex]
+    dt_ti: typing.Optional[uic.dt.DTRecordTI]
+    dt_pa: typing.Optional[uic.dt.DTRecordPA]
     db_bl: typing.Optional[uic.db.DBRecordBL]
     cd_ut: typing.Optional[uic.cd.CDRecordUT]
     oebb_99: typing.Optional[uic.oebb.OeBBRecord99]
@@ -114,6 +116,10 @@ class UICTicket:
             return models.Ticket.TYPE_FAHRKARTE
         elif self.oebb_99:
             return models.Ticket.TYPE_FAHRKARTE
+        elif self.dt_ti:
+            if self.dt_ti.product_name == "Deutschlandticket":
+                return models.Ticket.TYPE_DEUTCHLANDTICKET
+            return models.Ticket.TYPE_FAHRKARTE
 
         return models.Ticket.TYPE_UNKNOWN
 
@@ -123,16 +129,22 @@ class UICTicket:
         ticket_type = self.type()
 
         if ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
-            passenger = self.flex.data.get("travelerDetail", {}).get("traveler", [{}])[0]
-            dob_year = passenger.get("yearOfBirth", 0)
-            dob_month = passenger.get("monthOfBirth", 0)
-            dob_day = passenger.get("dayOfBirthInMonth", 0)
-            hd.update(b"deutschlandticket")
-            hd.update(self.flex.data["issuingDetail"]["issuerNum"].to_bytes(8, "big"))
-            hd.update(passenger.get("firstName").encode("utf-8"))
-            hd.update(passenger.get("lastName").encode("utf-8"))
-            hd.update(f"{dob_year:04d}-{dob_month:02d}-{dob_day:02d}".encode("utf-8"))
-            return base64.b32hexencode(hd.digest()).decode("utf-8")
+            if self.flex:
+                passenger = self.flex.data.get("travelerDetail", {}).get("traveler", [{}])[0]
+                dob_year = passenger.get("yearOfBirth", 0)
+                dob_month = passenger.get("monthOfBirth", 0)
+                dob_day = passenger.get("dayOfBirthInMonth", 0)
+                hd.update(b"deutschlandticket")
+                hd.update(self.flex.data["issuingDetail"]["issuerNum"].to_bytes(8, "big"))
+                hd.update(passenger.get("firstName").encode("utf-8"))
+                hd.update(passenger.get("lastName").encode("utf-8"))
+                hd.update(f"{dob_year:04d}-{dob_month:02d}-{dob_day:02d}".encode("utf-8"))
+                return base64.b32hexencode(hd.digest()).decode("utf-8")
+            elif self.dt_pa:
+                hd.update(b"deutschlandticket")
+                hd.update(self.issuing_rics().to_bytes(8, "big"))
+                hd.update(self.dt_pa.passenger_name.encode("utf-8"))
+                return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_BAHNCARD:
             card = self.flex.data["transportDocument"][0]["ticket"][1]
@@ -226,6 +238,27 @@ class UICTicket:
             return self.flex.specimen()
         else:
             return False
+
+    @classmethod
+    def from_envelope(cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> "UICTicket":
+        return cls(
+            raw_bytes=ticket_bytes,
+            envelope=ticket_envelope,
+            head=parse_ticket_uic_head(ticket_envelope),
+            layout=parse_ticket_uic_layout(ticket_envelope),
+            flex=parse_ticket_uic_flex(ticket_envelope),
+            dt_ti=parse_ticket_uic_dt_ti(ticket_envelope),
+            dt_pa=parse_ticket_uic_dt_pa(ticket_envelope),
+            db_bl=parse_ticket_uic_db_bl(ticket_envelope),
+            db_vu=parse_ticket_uic_db_vu(ticket_envelope, context),
+            cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
+            oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
+            other_records=[r for r in ticket_envelope.records if not (
+                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT"
+                    or r.id == "118199" or r.id == "5197TI" or r.id == "5008TI"
+                    or r.id == "5197PA" or r.id == "5008PA"
+            )]
+        )
 
 
 @dataclasses.dataclass
@@ -485,6 +518,42 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
         )
 
 
+def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
+    ti_record = next(filter(
+        lambda r: r.id == "5197TI" or r.id == "5008TI" and r.version == 1,
+        ticket_envelope.records
+    ), None)
+    if not ti_record:
+        return None
+
+    try:
+        return uic.dt.DTRecordTI.parse(ti_record.data, ti_record.version)
+    except uic.dt.DTException:
+        raise TicketError(
+            title="Invalid TI record",
+            message="The TI record is invalid - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
+    pa_record = next(filter(
+        lambda r: r.id == "5197PA" or r.id == "5008PA" and r.version == 1,
+        ticket_envelope.records
+    ), None)
+    if not pa_record:
+        return None
+
+    try:
+        return uic.dt.DTRecordPA.parse(pa_record.data, pa_record.version)
+    except uic.dt.DTException:
+        raise TicketError(
+            title="Invalid PA record",
+            message="The PA record is invalid - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
 def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic.db.DBRecordBL]:
     bl_record = next(filter(lambda r: r.id == "0080BL" and r.version == 3, ticket_envelope.records), None)
     if not bl_record:
@@ -554,20 +623,7 @@ def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTic
             exception=traceback.format_exc()
         )
 
-    return UICTicket(
-        raw_bytes=ticket_bytes,
-        envelope=ticket_envelope,
-        head=parse_ticket_uic_head(ticket_envelope),
-        layout=parse_ticket_uic_layout(ticket_envelope),
-        flex=parse_ticket_uic_flex(ticket_envelope),
-        db_bl=parse_ticket_uic_db_bl(ticket_envelope),
-        db_vu=parse_ticket_uic_db_vu(ticket_envelope, context),
-        cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
-        oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
-        other_records=[r for r in ticket_envelope.records if not (
-                r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT" or r.id == "118199"
-        )]
-    )
+    return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
 
 def parse_ticket_rsp6(ticket_bytes: bytes) -> RSP6Ticket:
     pki_store = rsp6.CertificateStore()
