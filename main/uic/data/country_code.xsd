@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- edited with XMLSpy v2007 rel. 3 sp1 (http://www.altova.com) by Mantell (UIC) -->
+<xsi:schema xmlns="http://ws.refdata.crd.cc.uic.org/replication/schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ws.refdata.crd.cc.uic.org/replication/schemas" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsi:element name="Countries">
+		<xsi:complexType>
+			<xsi:sequence maxOccurs="unbounded">
+				<xsi:element ref="Country"/>
+			</xsi:sequence>
+		</xsi:complexType>
+	</xsi:element>
+	<xsi:element name="Country">
+		<xsi:complexType>
+			<xsi:sequence>
+				<xsi:element ref="Country_ISO_Code"/>
+				<xsi:element ref="Country_UIC_Code" minOccurs="0"/>
+				<xsi:element name="Country_Name_EN">
+					<xsi:annotation>
+						<xsi:documentation>English name of the country</xsi:documentation>
+					</xsi:annotation>
+					<xsi:simpleType>
+						<xsi:restriction base="xsi:string">
+							<xsi:maxLength value="255"/>
+						</xsi:restriction>
+					</xsi:simpleType>
+				</xsi:element>
+				<xsi:element name="Country_Name_FR" minOccurs="0">
+					<xsi:annotation>
+						<xsi:documentation>French name of the country </xsi:documentation>
+					</xsi:annotation>
+					<xsi:simpleType>
+						<xsi:restriction base="xsi:string">
+							<xsi:maxLength value="255"/>
+						</xsi:restriction>
+					</xsi:simpleType>
+				</xsi:element>
+				<xsi:element name="Country_Name_DE" minOccurs="0">
+					<xsi:annotation>
+						<xsi:documentation>name of the country in German language</xsi:documentation>
+					</xsi:annotation>
+					<xsi:simpleType>
+						<xsi:restriction base="xsi:string">
+							<xsi:maxLength value="255"/>
+						</xsi:restriction>
+					</xsi:simpleType>
+				</xsi:element>
+				<xsi:element name="Sub_Loc_Code_Flag" type="xsi:boolean" minOccurs="0">
+					<xsi:annotation>
+						<xsi:documentation>allow subsidiary location change</xsi:documentation>
+					</xsi:annotation>
+				</xsi:element>
+			</xsi:sequence>
+		</xsi:complexType>
+	</xsi:element>
+	<xsi:element name="Country_ISO_Code">
+		<xsi:annotation>
+			<xsi:documentation>Identifies a County or State by code (ISO 3166-1)</xsi:documentation>
+		</xsi:annotation>
+		<xsi:simpleType>
+			<xsi:restriction base="xsi:string">
+				<xsi:minLength value="2"/>
+				<xsi:maxLength value="2"/>
+				<xsi:whiteSpace value="collapse"/>
+			</xsi:restriction>
+		</xsi:simpleType>
+	</xsi:element>
+	<xsi:element name="Country_UIC_Code">
+		<xsi:annotation>
+			<xsi:documentation>Standard numerical country coding for use in railway traffic (UIC Leaflet 920-14)</xsi:documentation>
+		</xsi:annotation>
+		<xsi:simpleType>
+			<xsi:restriction base="xsi:integer">
+				<xsi:minInclusive value="10"/>
+				<xsi:maxInclusive value="99"/>
+			</xsi:restriction>
+		</xsi:simpleType>
+	</xsi:element>
+</xsi:schema>
