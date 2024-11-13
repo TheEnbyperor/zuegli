@@ -320,6 +320,11 @@ def make_pkpass(ticket_obj: models.Ticket):
                                 "label": "product-label",
                                 "value": tariff["tariffDesc"]
                             })
+                            pass_fields["backFields"].append({
+                                "key": "product-back",
+                                "label": "product-label",
+                                "value": tariff["tariffDesc"],
+                            })
 
                         for card in tariff.get("reductionCard", []):
                             pass_fields["auxiliaryFields"].append({
@@ -387,6 +392,11 @@ def make_pkpass(ticket_obj: models.Ticket):
                     if "cardTypeDescr" in document:
                         pass_fields["headerFields"].append({
                             "key": "product",
+                            "label": "product-label",
+                            "value": document["cardTypeDescr"]
+                        })
+                        pass_fields["backFields"].append({
+                            "key": "product-back",
                             "label": "product-label",
                             "value": document["cardTypeDescr"]
                         })
@@ -459,6 +469,11 @@ def make_pkpass(ticket_obj: models.Ticket):
                             "key": "product",
                             "label": "product-label",
                             "value": product_name
+                        })
+                        pass_fields["backFields"].append({
+                            "key": "product-back",
+                            "label": "product-label",
+                            "value": product_name,
                         })
 
                     pass_fields["secondaryFields"].append({
@@ -556,6 +571,11 @@ def make_pkpass(ticket_obj: models.Ticket):
             if ticket_data.db_bl.product:
                 pass_fields["headerFields"].append({
                     "key": "product",
+                    "label": "product-label",
+                    "value": ticket_data.db_bl.product,
+                })
+                pass_fields["backFields"].append({
+                    "key": "product-back",
                     "label": "product-label",
                     "value": ticket_data.db_bl.product,
                 })
@@ -745,12 +765,11 @@ def make_pkpass(ticket_obj: models.Ticket):
                 })
 
             if ticket_data.cd_ut.name:
-                field_data = {
+                pass_fields["primaryFields"].append({
                     "key": "passenger",
                     "label": "passenger-label",
                     "value": ticket_data.cd_ut.name,
-                }
-                pass_fields["primaryFields"].append(field_data)
+                })
 
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -784,6 +803,61 @@ def make_pkpass(ticket_obj: models.Ticket):
                 "timeStyle": "PKDateStyleFull",
                 "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
+        elif ticket_data.dt_ti or ticket_data.dt_pa:
+            if ticket_data.dt_ti:
+                if ticket_data.dt_ti.product_name:
+                    pass_fields["headerFields"].append({
+                        "key": "product",
+                        "label": "product-label",
+                        "value": ticket_data.dt_ti.product_name,
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "product-back",
+                        "label": "product-label",
+                        "value": ticket_data.dt_ti.product_name,
+                    })
+
+                if ticket_data.dt_ti.validity_start:
+                    pass_json["relevantDate"] = ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-start",
+                        "label": "validity-start-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleNone",
+                        "value": ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "validity-start-back",
+                        "label": "validity-start-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+                if ticket_data.dt_ti.validity_end:
+                    pass_json["expirationDate"] = ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-end",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleNone",
+                        "value": ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "changeMessage": "validity-end-change"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "validity-end-back",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+                if ticket_data.dt_pa and ticket_data.dt_pa.passenger_name:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": ticket_data.dt_pa.passenger_name,
+                    })
 
 
         if distributor := ticket_data.distributor():
@@ -906,12 +980,13 @@ def make_pkpass(ticket_obj: models.Ticket):
                             }
                         }
                     })
-                    pass_fields["secondaryFields"].append({
-                        "key": "date-of-birth",
-                        "label": "date-of-birth-label",
-                        "dateStyle": "PKDateStyleMedium",
-                        "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    })
+                    if elm.date_of_birth:
+                        pass_fields["secondaryFields"].append({
+                            "key": "date-of-birth",
+                            "label": "date-of-birth-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        })
 
             if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
                 add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.product_org_id], "logo.png")
@@ -1024,7 +1099,13 @@ RICS_LOGO = {
     1184: "pass/logo-ns.png",
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",
+    3076: "pass/logo-transdev.png",
     3509: "pass/logo-ret.png",
+    3591: "pass/logo-akn.png",
+    5008: "pass/logo-vrn.png",
+    5177: "pass/logo-fribus.png",
+    5197: "pass/logo-avv.png",
+    5217: "pass/logo-bremerhaven.png",
     9901: "pass/logo-interrail.png",
 }
 
@@ -1039,8 +1120,10 @@ VDV_ORG_ID_LOGO = {
     77: "pass/logo-wt.png",
     102: "pass/logo-vrs.png",
     103: "pass/logo-swb.png",
+    6212: "pass/logo-vrs.png",
     6234: "pass/logo-vvs.png",
     6310: "pass/logo-svv.png",
     6441: "pass/logo-kvg.png",
     6496: "pass/logo-naldo.png",
+    6613: "pass/logo-arriva.png",
 }
