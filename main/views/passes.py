@@ -1117,6 +1117,7 @@ VDV_ORG_ID_LOGO = {
     35: "pass/logo-hvv.png",
     36: "pass/logo-rmv.png",
     57: "pass/logo-dsw.png",
+    70: "pass/logo-vrr.png",
     77: "pass/logo-wt.png",
     102: "pass/logo-vrs.png",
     103: "pass/logo-swb.png",
