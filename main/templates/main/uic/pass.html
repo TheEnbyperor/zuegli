@@ -62,7 +62,7 @@
             <dd class="govuk-summary-list__value">
                 <ul class="govuk-list">
                     {% for country in pass.countries %}
-                        <li>{{ country|uic_country|iso3166 }}</li>
+                        <li>{{ country|uic_country }}</li>
                     {% endfor %}
                 </ul>
             </dd>
