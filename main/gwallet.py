@@ -77,12 +77,16 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "BLOCK_CLOSED_LOOP_TRANSIT"
             ]
         },
-        "linksModuleData": {
-            "uris": [{
-                "uri": f"{settings.EXTERNAL_URL_BASE}{ticket_url}",
-                "description": "More info",
-                "id": "more-info"
-            }]
+        "appLinkData": {
+            "webAppLinkInfo": {
+                "appTarget": {
+                    "targetUri": {
+                        "uri": f"{settings.EXTERNAL_URL_BASE}{ticket_url}",
+                        "description": "More info",
+                        "id": "more-info"
+                    }
+                }
+            }
         }
     }
 
