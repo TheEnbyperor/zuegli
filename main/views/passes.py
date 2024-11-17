@@ -261,8 +261,8 @@ def make_pkpass(ticket_obj: models.Ticket):
                         pass_type = "boardingPass"
                         pass_fields["transitType"] = "PKTransitTypeTrain"
 
-                        from_station = templatetags.rics.get_station(document["fromStationNum"], document["stationCodeTable"])
-                        to_station = templatetags.rics.get_station(document["toStationNum"], document["stationCodeTable"])
+                        from_station = templatetags.rics.get_station(document["fromStationNum"], document)
+                        to_station = templatetags.rics.get_station(document["toStationNum"], document)
 
                         if "classCode" in document:
                             pass_fields["auxiliaryFields"].append({

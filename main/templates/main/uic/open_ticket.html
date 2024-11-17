@@ -50,7 +50,7 @@
             <dd class="govuk-summary-list__value">{{ ticket.fromStationNameUTF8 }}</dd>
         </div>
     {% endif %}
-    {% with station=ticket.fromStationNum|get_station:ticket.stationCodeTable %}
+    {% with station=ticket.fromStationNum|get_station:ticket %}
         {% if station %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">From station</dt>
@@ -73,7 +73,7 @@
             <dd class="govuk-summary-list__value">{{ ticket.toStationNameUTF8 }}</dd>
         </div>
     {% endif %}
-    {% with station=ticket.toStationNum|get_station:ticket.stationCodeTable %}
+    {% with station=ticket.toStationNum|get_station:ticket %}
         {% if station %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">To station</dt>
