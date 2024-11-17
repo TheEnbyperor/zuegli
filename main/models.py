@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp
+from . import vdv, uic, rsp, sncf
 
 
 def make_pass_token():
@@ -130,6 +130,9 @@ class Ticket(models.Model):
         if ticket_instance := self.rsp_instances.order_by("-validity_end").first():
             return ticket_instance
 
+        if ticket_instance := self.sncf_instances.first():
+            return ticket_instance
+
 
 class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances")
@@ -220,6 +223,8 @@ class RSPTicketInstance(models.Model):
         raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"])
         if self.ticket_type == "08":
             data = rsp.RailcardData.parse(raw_ticket)
+        elif self.ticket_type == "06":
+            data = rsp.TicketData.parse(raw_ticket)
         else:
             raise NotImplementedError()
         return t.RSPTicket(
@@ -228,6 +233,24 @@ class RSPTicketInstance(models.Model):
             issuer_id=self.issuer_id,
             raw_ticket=raw_ticket,
             data=data
+        )
+
+
+class SNCFTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sncf_instances")
+    reference = models.CharField(max_length=20, verbose_name="Ticket number", unique=True)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "SNCF ticket"
+
+    def __str__(self):
+        return str(self.reference)
+
+    def as_ticket(self) -> t.SNCFTicket:
+        return t.SNCFTicket(
+            raw_ticket=self.barcode_data,
+            data=sncf.SNCFTicket.parse(self.barcode_data)
         )
 
 

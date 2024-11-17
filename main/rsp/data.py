@@ -38,6 +38,17 @@ class BitStream:
         i = self.read_int(start, end)
         return datetime.time((i // 3600) % 24, (i // 60) % 60, i % 60)
 
+@dataclasses.dataclass
+class TicketData:
+    mandatory_manual_check: bool
+
+    @classmethod
+    def parse(cls, payload: bytes):
+        d = BitStream(payload)
+
+        return cls(
+            mandatory_manual_check=d.read_bool(0),
+        )
 
 @dataclasses.dataclass
 class RailcardData:
@@ -184,6 +195,8 @@ class RailcardData:
             return "#6e1f7e"
         elif self.railcard_type == "YNG":
             return "#e97201"
+        elif self.railcard_type == "TST":
+            return "#e32706"
         elif self.railcard_type == "FAM":
             return "#df202a"
         elif self.railcard_type == "SRN":

@@ -5,118 +5,124 @@
 
 {% block content %}
     <div class="govuk-width-container">
-    <h1 class="govuk-heading-xl">VDV/UIC to Apple Wallet Pass</h1>
-    <p class="govuk-body-l">
-        Turn your public transport ticket into an Apple Wallet pass.
-    </p>
-    <p class="govuk-body">
-        Both VDV and UIC tickets are supported. UIC tickets are usually issued by Deutsche Bahn and other long-distance
-        operators, while VDV tickets are issued by German local transport operators.
-        UIC tickets may not work as reliably as VDV tickets - they're a lot more complicated.
-    </p>
-    <p class="govuk-body">
-        If you want your tickets to automatically update when they are renewed you can create an account and add the
-        subscription. Currently, DB and SaarVV are supported.
-    </p>
-    <p class="govuk-body">
-        These passes should be able to be imported into Google Wallet as well, but updates won't work.
-    </p>
+        <h1 class="govuk-heading-xl">VDV/UIC to Apple Wallet Pass</h1>
+        <p class="govuk-body-l">
+            Turn your public transport ticket into an Apple Wallet pass.
+        </p>
+        <p class="govuk-body">
+            Both VDV and UIC tickets are supported. UIC tickets are usually issued by Deutsche Bahn and other
+            long-distance
+            operators, while VDV tickets are issued by German local transport operators.
+            UIC tickets may not work as reliably as VDV tickets - they're a lot more complicated.
+        </p>
+        <p class="govuk-body">
+            If you want your tickets to automatically update when they are renewed you can create an account and add the
+            subscription. Currently, DB and SaarVV are supported.
+        </p>
+        <p class="govuk-body">
+            These passes should be able to be imported into Google Wallet as well, but updates won't work.
+        </p>
 
-    {% if error %}
-        <div class="govuk-error-summary" data-module="govuk-error-summary">
-            <div role="alert">
-                <h2 class="govuk-error-summary__title">{{ error.title }}</h2>
-                <div class="govuk-error-summary__body">
-                    <p class="govuk-body">{{ error.message }}</p>
-                    {% if error.exception %}
-                        <details class="govuk-details">
-                            <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Full exception</span>
-                            </summary>
-                            <div class="govuk-details__text">
-                                <pre style="overflow-x: auto;font-size: 1rem;">{{ error.exception }}</pre>
-                            </div>
-                        </details>
-                    {% endif %}
-                    {% if error.ticket_contents %}
-                        <p class="govuk-body-s">
-                            Ticket contents; please send this when asking for support:<br/>
-                            <code style="line-break: anywhere;">{{ error.ticket_contents }}</code>
+        {% if error %}
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">{{ error.title }}</h2>
+                    <div class="govuk-error-summary__body">
+                        <p class="govuk-body">{{ error.message }}</p>
+                        {% if error.exception %}
+                            <details class="govuk-details">
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text">Full exception</span>
+                                </summary>
+                                <div class="govuk-details__text">
+                                    <pre style="overflow-x: auto;font-size: 1rem;">{{ error.exception }}</pre>
+                                </div>
+                            </details>
+                        {% endif %}
+                        {% if error.ticket_contents %}
+                            <p class="govuk-body-s">
+                                Ticket contents; please send this when asking for support:<br/>
+                                <code style="line-break: anywhere;">{{ error.ticket_contents }}</code>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <noscript>
+            <div class="govuk-error-summary" data-module="govuk-error-summary" id="error-banner">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">
+                        JavaScript is required to scan tickets
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <p class="govuk-body">
+                            JavaScript is required to scan tickets in your browser.
+                            You can still upload a picture of your ticket to have it processed server-side.
                         </p>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
+        </noscript>
+
+        <button id="scan-button" class="govuk-button govuk-button--start" disabled>
+            Scan your ticket
+            <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
+                 viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+            </svg>
+        </button>
+
+        <div id="video-container" style="display: none;" class="govuk-!-margin-bottom-4">
+            <div id="barkoder-container" style="width: 100%; height: 450px;"></div>
         </div>
-    {% endif %}
 
-    <noscript>
-        <div class="govuk-error-summary" data-module="govuk-error-summary" id="error-banner">
-            <div role="alert">
-                <h2 class="govuk-error-summary__title">
-                    JavaScript is required to scan tickets
-                </h2>
-                <div class="govuk-error-summary__body">
-                    <p class="govuk-body">
-                        JavaScript is required to scan tickets in your browser.
-                        You can still upload a picture of your ticket to have it processed server-side.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </noscript>
+        <form action="" method="post" style="display: none" id="scan-form">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="scan">
+            <input type="hidden" name="ticket_hex" id="data">
+        </form>
 
-    <button id="scan-button" class="govuk-button govuk-button--start" disabled>
-        Scan your ticket
-        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
-             viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-        </svg>
-    </button>
+        <p class="govuk-body">
+            If you're having trouble scanning your ticket uploading a picture/screenshot of your ticket usually works
+            better.
+            The decoder on the server is better than the one in your browser.
+        </p>
 
-    <div id="video-container" style="display: none;" class="govuk-!-margin-bottom-4">
-        <div id="barkoder-container" style="width: 100%; height: 450px;"></div>
-    </div>
+        <h2 class="govuk-heading-l">Upload a picture or a PDF instead</h2>
+        {% crispy image_form %}
 
-    <form action="" method="post" style="display: none" id="scan-form">
-        {% csrf_token %}
-        <input type="hidden" name="type" value="scan">
-        <input type="hidden" name="ticket_hex" id="data">
-    </form>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-    <p class="govuk-body">
-        If you're having trouble scanning your ticket uploading a picture/screenshot of your ticket usually works better.
-        The decoder on the server is better than the one in your browser.
-    </p>
+        <h3 class="govuk-heading-m">Not working?</h3>
+        <p class="govuk-body">
+            Get in touch with a picture of your ticket and I'll see what I can do.
+        </p>
+        <ul class="govuk-list govuk-inset-text">
+            <li>Fedi: <a href="https://glauca.space/@q" class="govuk-link">@q@glauca.space</a></li>
+            <li>Email: <a href="mailto:q@magicalcodewit.ch" class="govuk-link">q@magicalcodewit.ch</a></li>
+        </ul>
+        <h3 class="govuk-heading-m">Privacy</h3>
+        <p class="govuk-body">
+            Your ticket barcode will be stored to allow automatic updates to subscription tickets.
+            Tickets commonly include your name and date of birth - this information is not processed except to
+            generate the pass. Ticket data may be inspected by a human if you ask for help.
+        </p>
 
-    <h2 class="govuk-heading-l">Upload a picture or a PDF instead</h2>
-    {% crispy image_form %}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
-    <h3 class="govuk-heading-m">Not working?</h3>
-    <p class="govuk-body">
-        Get in touch with a picture of your ticket and I'll see what I can do.
-    </p>
-    <ul class="govuk-list govuk-inset-text">
-        <li>Fedi: <a href="https://glauca.space/@q" class="govuk-link">@q@glauca.space</a></li>
-        <li>Email: <a href="mailto:q@magicalcodewit.ch" class="govuk-link">q@magicalcodewit.ch</a></li>
-    </ul>
-    <h3 class="govuk-heading-m">Privacy</h3>
-    <p class="govuk-body">
-        Your ticket barcode will be stored to allow automatic updates to subscription tickets.
-        Tickets commonly include your name and date of birth - this information is not processed except to
-        generate the pass. Ticket data may be inspected by a human if you ask for help.
-    </p>
-
-    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
-    <h3 class="govuk-heading-m">API</h3>
-    <p class="govuk-body">
-        You can send scanned Aztec barcode contents to this service's API and retrieve PKPass files from it.
-    </p>
-
-    <h4 class="govuk-heading-s"><code>POST /api/upload</code></h4>
-    <pre><code>Content-Type: application/json
+        <h3 class="govuk-heading-m">API</h3>
+        <p class="govuk-body">
+            You can send scanned Aztec barcode contents to this service's API and retrieve PKPass files from it.
+        </p>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">API details</span>
+            </summary>
+            <div class="govuk-details__text">
+                <h4 class="govuk-heading-s"><code>POST /api/upload</code></h4>
+                <pre><code>Content-Type: application/json
 
 {
     "barcode_data": "&lt;base64 encoded aztec contents>"
@@ -142,8 +148,9 @@ Content-Type: application/json
     "message": "This doesn't look like a valid ticket"
 }</code></pre>
 
-    <h4 class="govuk-heading-s"><code>GET /api/apple/v1/passes/pass.ch.magicalcodewit.vdv.ticket/EXAMPLE_ID</code></h4>
-    <pre><code>Authorization: ApplePass EXAMPLE_TOKEN
+                <h4 class="govuk-heading-s"><code>GET
+                    /api/apple/v1/passes/pass.ch.magicalcodewit.vdv.ticket/EXAMPLE_ID</code></h4>
+                <pre><code>Authorization: ApplePass EXAMPLE_TOKEN
 
 ---
 
@@ -152,47 +159,48 @@ Content-Type: application/vnd.apple.pkpass
 Content-Disposition: attachment; filename="EXAMPLE_ID.pkpass"
 
 Pass Contents</code></pre>
-    </div>
+            </div>
+        </details>
 
-    <script>
-        async function barkoderInit() {
-            const scanButton = document.getElementById("scan-button");
-            const videoContainer = document.getElementById("video-container");
-            const scanForm = document.getElementById("scan-form");
-            const dataInput = document.getElementById("data");
+        <script>
+            async function barkoderInit() {
+                const scanButton = document.getElementById("scan-button");
+                const videoContainer = document.getElementById("video-container");
+                const scanForm = document.getElementById("scan-form");
+                const dataInput = document.getElementById("data");
 
-            var Barkoder = await BarkoderSDK.initialize("PEmBIohr9EZXgCkySoetbwP4gvOfMcGzgxKPL2X6uqOYS_kq3Dg29ETQUylj0B7tX0Qjf7OADh49UOuXd3lLay9853Akr1i-RGjOaTUVnYXgcwJWDlQCw_hdEoq8mlpW6kE-OCxLu1sGWWMK2cxflKL4Dgvjdq1BbCIZxwsuRb2EqVTF0JY2DkwXSr4Fi565lAIMd6_gBbiQyuOnj_zXYTFyR4N1z9k_1kB2PBw_12mdDPzmCvSLqq4Qsi6d3qX8HzYwjSmZ7zXXusyhtoTqo1imBWSoXlGEyRJPij4cdKr9frbzqPZ-EOdcHopW_YhN0LOjJOKc4ugS9gVtjgSZTQ..");
+                var Barkoder = await BarkoderSDK.initialize("PEmBIohr9EZXgCkySoetbwP4gvOfMcGzgxKPL2X6uqOYS_kq3Dg29ETQUylj0B7tX0Qjf7OADh49UOuXd3lLay9853Akr1i-RGjOaTUVnYXgcwJWDlQCw_hdEoq8mlpW6kE-OCxLu1sGWWMK2cxflKL4Dgvjdq1BbCIZxwsuRb2EqVTF0JY2DkwXSr4Fi565lAIMd6_gBbiQyuOnj_zXYTFyR4N1z9k_1kB2PBw_12mdDPzmCvSLqq4Qsi6d3qX8HzYwjSmZ7zXXusyhtoTqo1imBWSoXlGEyRJPij4cdKr9frbzqPZ-EOdcHopW_YhN0LOjJOKc4ugS9gVtjgSZTQ..");
 
-            Barkoder.setEnabledDecoders(
-                Barkoder.constants.Decoders.Aztec,
-                Barkoder.constants.Decoders.AztecCompact,
-                Barkoder.constants.Decoders.QR,
-                Barkoder.constants.Decoders.QRMicro,
-                Barkoder.constants.Decoders.PDF417,
-                Barkoder.constants.Decoders.PDF417Micro,
-            );
-            Barkoder.setCameraResolution(Barkoder.constants.CameraResolution.FHD);
-            Barkoder.setDecodingSpeed(Barkoder.constants.DecodingSpeed.Normal);
-            Barkoder.setCloseEnabled(false);
-            Barkoder.setContinuous(false);
+                Barkoder.setEnabledDecoders(
+                    Barkoder.constants.Decoders.Aztec,
+                    Barkoder.constants.Decoders.AztecCompact,
+                    Barkoder.constants.Decoders.QR,
+                    Barkoder.constants.Decoders.QRMicro,
+                    Barkoder.constants.Decoders.PDF417,
+                    Barkoder.constants.Decoders.PDF417Micro,
+                );
+                Barkoder.setCameraResolution(Barkoder.constants.CameraResolution.FHD);
+                Barkoder.setDecodingSpeed(Barkoder.constants.DecodingSpeed.Normal);
+                Barkoder.setCloseEnabled(false);
+                Barkoder.setContinuous(false);
 
-            scanButton.addEventListener('click', function () {
-                videoContainer.style.display = "block";
-                Barkoder.startScanner(function (result) {
-                    videoContainer.style.display = "none";
-                    const rawBytes = result.binaryData;
-                    const hexOctets = new Array(rawBytes.length * 2);
-                    for (let i = 0; i < rawBytes.length; ++i)
-                        hexOctets.push(("0" + rawBytes[i].toString(16)).slice(-2));
-                    dataInput.value = hexOctets.join("");
-                    console.log(dataInput.value);
-                    scanForm.submit();
+                scanButton.addEventListener('click', function () {
+                    videoContainer.style.display = "block";
+                    Barkoder.startScanner(function (result) {
+                        videoContainer.style.display = "none";
+                        const rawBytes = result.binaryData;
+                        const hexOctets = new Array(rawBytes.length * 2);
+                        for (let i = 0; i < rawBytes.length; ++i)
+                            hexOctets.push(("0" + rawBytes[i].toString(16)).slice(-2));
+                        dataInput.value = hexOctets.join("");
+                        console.log(dataInput.value);
+                        scanForm.submit();
+                    });
                 });
-            });
 
-            scanButton.disabled = false;
-        }
+                scanButton.disabled = false;
+            }
 
-        window.addEventListener('load', barkoderInit);
-    </script>
+            window.addEventListener('load', barkoderInit);
+        </script>
 {% endblock content %}

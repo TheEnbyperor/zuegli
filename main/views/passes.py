@@ -183,7 +183,6 @@ def ticket_pkpass(request, pk):
 
 
 def make_pkpass(ticket_obj: models.Ticket):
-    now = timezone.now()
     pkp = pkpass.PKPass()
     have_logo = False
 
@@ -1075,7 +1074,7 @@ def make_pkpass(ticket_obj: models.Ticket):
                 "primaryFields": [{
                     "key": "passenger",
                     "label": "passenger-label",
-                    "value": ticket_data.data.passenger_1_name(),
+                    "value": f"{ticket_data.data.passenger_1_forename}\n{ticket_data.data.passenger_1_surname}",
                     "semantics": {
                         "passengerName": {
                             "familyName": ticket_data.data.passenger_1_surname,
@@ -1149,6 +1148,105 @@ def make_pkpass(ticket_obj: models.Ticket):
 
             add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
             have_logo = True
+    elif isinstance(ticket_instance, models.SNCFTicketInstance):
+        ticket_data: ticket.SNCFTicket = ticket_instance.as_ticket()
+
+        pass_type = "boardingPass"
+
+        from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "sncf")
+        to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "sncf")
+
+        pass_json["locations"].append({
+            "latitude": float(from_station["latitude"]),
+            "longitude": float(from_station["longitude"]),
+            "relevantText": from_station["name"]
+        })
+        pass_json["locations"].append({
+            "latitude": float(to_station["latitude"]),
+            "longitude": float(to_station["longitude"]),
+            "relevantText": to_station["name"]
+        })
+        from_station_maps_link = urllib.parse.urlencode({
+            "q": from_station["name"],
+            "ll": f"{from_station['latitude']},{from_station['longitude']}"
+        })
+        to_station_maps_link = urllib.parse.urlencode({
+            "q": to_station["name"],
+            "ll": f"{to_station['latitude']},{to_station['longitude']}"
+        })
+
+        pass_fields = {
+            "transitType": "PKTransitTypeTrain",
+            "headerFields": [{
+                "key": "class-code",
+                "label": "class-code-label",
+                "value": f"class-code-{ticket_data.data.travel_class}-label",
+            }],
+            "primaryFields": [{
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "semantics": {
+                    "departureLocation": {
+                        "latitude": float(from_station["latitude"]),
+                        "longitude": float(from_station["longitude"]),
+                    },
+                    "departureStationName": from_station["name"]
+                }
+            }, {
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "semantics": {
+                    "destinationLocation": {
+                        "latitude": float(to_station["latitude"]),
+                        "longitude": float(to_station["longitude"]),
+                    },
+                    "destinationStationName": to_station["name"]
+                }
+            }],
+            "auxiliaryFields": [{
+                "key": "passenger",
+                "label": "passenger-label",
+                "value": f"{ticket_data.data.traveler_forename} {ticket_data.data.traveler_surname}",
+                "semantics": {
+                    "passengerName": {
+                        "familyName": ticket_data.data.traveler_surname,
+                        "givenName": ticket_data.data.traveler_forename,
+                    }
+                }
+            } ,{
+                "key": "date-of-birth",
+                "label": "date-of-birth-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.traveler_dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }],
+            "secondaryFields": [],
+            "backFields": [{
+                "key": "from-station-back",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
+            }, {
+                "key": "to-station-back",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
+            }, {
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": str(ticket_data.data.ticket_number),
+            }]
+        }
+        pass_json["organizationName"] = "SNCF"
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": str(ticket_data.data.pnr)
+        }]
+        add_pkp_img(pkp, "pass/logo-sncf.png", "logo.png")
+        have_logo = True
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -1197,7 +1295,9 @@ PASS_STRINGS = {
 "passenger-label" = "Passenger";
 "class-code-label" = "Class";
 "class-code-first-label" = "1st";
+"class-code-1-label" = "1st";
 "class-code-second-label" = "2nd";
+"class-code-2-label" = "2nd";
 "reduction-card-label" = "Discount card";
 "date-of-birth-label" = "Date of birth";
 "month-of-birth-label" = "Birth month";
@@ -1228,7 +1328,9 @@ PASS_STRINGS = {
 "passenger-label" = "Fahrgast";
 "class-code-label" = "Klasse";
 "class-code-first-label" = "1.";
+"class-code-1-label" = "1.";
 "class-code-second-label" = "2.";
+"class-code-2-label" = "2.";
 "reduction-card-label" = "Bahncard";
 "date-of-birth-label" = "Geburtsdatum";
 "month-of-birth-label" = "Geburtsmonat";

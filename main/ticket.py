@@ -5,7 +5,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf
 
 
 class TicketError(Exception):
@@ -276,8 +276,10 @@ class RSPTicket:
     def type(self) -> str:
         if self.rsp_type == "08":
             return models.Ticket.TYPE_RAILCARD
-        
-        return models.Ticket.TYPE_FAHRKARTE
+        elif self.rsp_type == "06":
+            return models.Ticket.TYPE_FAHRKARTE
+        else:
+            return models.Ticket.TYPE_UNKNOWN
 
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
@@ -288,7 +290,7 @@ class RSPTicket:
             return base64.b32encode(hd.digest()).decode("utf-8")
         
         hd.update(b"rsp")
-        hd.update(self.ticket_type.encode("utf-8"))
+        hd.update(self.rsp_type.encode("utf-8"))
         hd.update(self.issuer_id.encode("utf-8"))
         hd.update(self.ticket_ref.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
@@ -305,6 +307,26 @@ class RSPTicket:
     @property
     def raw_ticket_hex(self):
         return ":".join(f"{b:02x}" for b in self.raw_ticket)
+
+
+@dataclasses.dataclass
+class SNCFTicket:
+    raw_ticket: bytes
+    data: sncf.SNCFTicket
+
+    @property
+    def ticket_type(self) -> str:
+        return "SNCF"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"sncf")
+        hd.update(self.data.ticket_number.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
 
 
 def parse_ticket_vdv(ticket_bytes: bytes, context: vdv.ticket.Context) -> VDVTicket:
@@ -684,6 +706,8 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     
     if ticket_envelope.ticket_type == "08":
         data = rsp.RailcardData.parse(ticket_payload)
+    elif ticket_envelope.ticket_type == "06":
+        data = rsp.TicketData.parse(ticket_payload)
     else:
         raise TicketError(
             title="Unsupported RSP ticket type",
@@ -698,12 +722,30 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
         data=data
     )
 
+def parse_ticket_sncf(ticket_bytes: bytes) -> SNCFTicket:
+    try:
+        data = sncf.SNCFTicket.parse(ticket_bytes)
+    except sncf.SNCFException:
+        raise TicketError(
+            title="This doesn't look like a valid SNCF ticket",
+            message="You may have scanned something that is not an SNCF ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return SNCFTicket(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSPTicket]:
+        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
     )
+    if ticket_bytes[:4] == b"i0CV":
+        return parse_ticket_sncf(ticket_bytes)
     if ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
     elif ticket_bytes[:2] in (b"06", b"08"):
@@ -792,6 +834,14 @@ def create_ticket_obj(
                 "decoded_data": {
                     "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
                 }
+            }
+        )
+    elif isinstance(ticket_data, SNCFTicket):
+        _, created = models.SNCFTicketInstance.objects.update_or_create(
+            reference=ticket_data.data.ticket_number,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
             }
         )
     return created

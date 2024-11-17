@@ -51,7 +51,8 @@ class Command(BaseCommand):
         out = {
             "stations": [],
             "uic_codes": {},
-            "db_ids": {}
+            "db_ids": {},
+            "sncf_ids": {},
         }
         for row in stations:
             station = {}
@@ -67,6 +68,8 @@ class Command(BaseCommand):
                 out["uic_codes"][row["uic"]] = len(out["stations"]) - 1
             if row["db_id"]:
                 out["db_ids"][row["db_id"]] = len(out["stations"]) - 1
+            if row["sncf_id"]:
+                out["sncf_ids"][row["sncf_id"]] = len(out["stations"]) - 1
 
         with uic_storage.open("stations.json", "w") as f:
             json.dump(out, f)
