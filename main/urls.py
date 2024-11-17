@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.passes.index, name='index'),
     path('ticket/<str:pk>/', views.passes.view_ticket, name='ticket'),
     path('ticket/<str:pk>/pkpass/', views.passes.ticket_pkpass, name='ticket_pkpass'),
+    path('ticket/<str:pk>/pass_photo_banner.png', views.passes.pass_photo_banner, name='ticket_pass_photo_banner'),
 
     path('api/apple/v1/log', views.apple_api.log),
     path('api/apple/v1/devices/<str:device_id>/registrations/<str:pass_type_id>', views.apple_api.pass_status),

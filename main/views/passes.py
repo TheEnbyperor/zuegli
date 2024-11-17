@@ -3,13 +3,15 @@ import json
 import urllib.parse
 import pytz
 import pymupdf
+import io
+from PIL import Image
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse
 from django.core.files.storage import storages
 from django.conf import settings
-from django.db.models import Q
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn
+from django.core.files.storage import default_storage
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp
 
 
 def index(request):
@@ -83,6 +85,7 @@ def index(request):
             request.session["ticket_created"] = ticket_created
             ticket.create_ticket_obj(ticket_obj, ticket_bytes, ticket_data)
             apn.notify_ticket(ticket_obj)
+            gwallet.sync_ticket(ticket_obj)
             return redirect('ticket', pk=ticket_obj.id)
 
     return render(request, "main/index.html", {
@@ -93,11 +96,74 @@ def index(request):
 
 def view_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
+    gwallet_url = gwallet.create_jwt_link(ticket_obj)
+
+    photo_upload_forms = {}
+    if rsp_obj := ticket_obj.rsp_instances.first():
+        td = rsp_obj.as_ticket()  # type: ticket.RSPTicket
+        if isinstance(td.data, rsp.RailcardData):
+            photo_upload_forms["first"] = {
+                "name": td.data.passenger_1_name(),
+            }
+            if name := ticket_obj.photos.get("first"):
+                photo_upload_forms["first"]["current"] = default_storage.url(name)
+            if td.data.has_passenger_2():
+                photo_upload_forms["second"] = {
+                    "name": td.data.passenger_2_name(),
+                    "current": ticket_obj.photos.get("second"),
+                }
+
+    if request.method == "POST":
+        if "photo-upload" in request.POST:
+            pi = request.POST["photo-upload"]
+            if pi in photo_upload_forms:
+                if "photo" in request.FILES:
+                    file = request.FILES["photo"]
+                    if file.size > 16 * 1024 * 1024:
+                        photo_upload_forms[pi]["error"] = "The photo must be less than 16MB"
+                    elif file.content_type not in ("image/jpeg", "image/png"):
+                        photo_upload_forms[pi]["error"] = "The photo must be a JPEG or PNG"
+                    else:
+                        file_name = default_storage.save(file.name, file)
+                        ticket_obj.photos[pi] = file_name
+                        ticket_obj.save()
+                        apn.notify_ticket(ticket_obj)
+                        gwallet.sync_ticket(ticket_obj)
+
+
     return render(request, "main/ticket.html", {
         "ticket": ticket_obj,
         "ticket_updated": request.session.pop("ticket_updated", False),
         "ticket_created": request.session.pop("ticket_created", False),
+        "gwallet_url": gwallet_url,
+        "photo_upload_forms": photo_upload_forms
     })
+
+
+def pass_photo_thumbnail(ticket_obj: models.Ticket, size, padding):
+    out = Image.new("RGBA", size, (0, 0, 0, 0))
+    images = []
+    for k in ("first", "second"):
+        if img := ticket_obj.photos.get(k):
+            with default_storage.open(img) as f:
+                i = Image.open(f)
+                i.thumbnail(out.size, Image.Resampling.LANCZOS)
+                images.append(i)
+
+    total_width = sum((i.width + padding) for i in images)
+    x = (out.width // 2) - (total_width // 2)
+    for i in images:
+        out.paste(i, (x + (padding // 2), (out.height - i.height) // 2))
+        x += i.width + (padding // 2)
+
+    return out
+
+def pass_photo_banner(request, pk):
+    ticket_obj = get_object_or_404(models.Ticket, id=pk)
+    out = pass_photo_thumbnail(ticket_obj, (1000, 500), 50)
+    out_bytes = io.BytesIO()
+    out.save(out_bytes, format='PNG')
+    return HttpResponse(out_bytes.getvalue(), content_type="image/png")
 
 
 def add_pkp_img(pkp, img_name: str, pass_path: str):
@@ -118,14 +184,6 @@ def ticket_pkpass(request, pk):
 
 def make_pkpass(ticket_obj: models.Ticket):
     now = timezone.now()
-    ticket_instance: models.UICTicketInstance = ticket_obj.uic_instances\
-        .filter(validity_start__lte=now).order_by("-validity_end").first()
-    if not ticket_instance:
-        ticket_instance = ticket_obj.uic_instances.filter(
-            ~Q(validity_start__lte=now) | Q(validity_start__isnull=True),
-            ).order_by("-validity_end").first()
-    if not ticket_instance:
-        ticket_instance = ticket_obj.uic_instances.order_by("-validity_end").first()
     pkp = pkpass.PKPass()
     have_logo = False
 
@@ -154,7 +212,10 @@ def make_pkpass(ticket_obj: models.Ticket):
         "backFields": []
     }
 
-    if ticket_instance:
+
+    ticket_instance = ticket_obj.active_instance()
+
+    if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data: ticket.UICTicket = ticket_instance.as_ticket()
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
         issuing_rics = ticket_data.issuing_rics()
@@ -883,35 +944,149 @@ def make_pkpass(ticket_obj: models.Ticket):
             "timeStyle": "PKDateStyleFull",
             "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
-    else:
-        ticket_instance: models.VDVTicketInstance = ticket_obj.vdv_instances\
-            .filter(validity_start__lte=now).order_by("-validity_end").first()
-        if not ticket_instance:
-            ticket_instance = ticket_obj.vdv_instances.filter(
-                ~Q(validity_start__lte=now) | Q(validity_start__isnull=True),
-                ).order_by("-validity_end").first()
-        if not ticket_instance:
-            ticket_instance = ticket_obj.vdv_instances.order_by("-validity_end").first()
-        if ticket_instance:
-            ticket_data: ticket.VDVTicket = ticket_instance.as_ticket()
+    elif isinstance(ticket_instance, models.VDVTicketInstance):
+        ticket_data: ticket.VDVTicket = ticket_instance.as_ticket()
 
-            validity_start = ticket_data.ticket.validity_start.as_datetime().astimezone(pytz.utc)
-            validity_end = ticket_data.ticket.validity_end.as_datetime().astimezone(pytz.utc)
-            issued_at = ticket_data.ticket.transaction_time.as_datetime().astimezone(pytz.utc)
+        validity_start = ticket_data.ticket.validity_start.as_datetime().astimezone(pytz.utc)
+        validity_end = ticket_data.ticket.validity_end.as_datetime().astimezone(pytz.utc)
+        issued_at = ticket_data.ticket.transaction_time.as_datetime().astimezone(pytz.utc)
+
+        pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_fields = {
+            "headerFields": [{
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.ticket.product_name()
+            }],
+            "primaryFields": [],
+            "secondaryFields": [{
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }, {
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "changeMessage": "validity-end-change"
+            }],
+            "backFields": [{
+                "key": "validity-start-back",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleFull",
+                "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }, {
+                "key": "validity-end-back",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleFull",
+                "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }, {
+                "key": "product-back",
+                "label": "product-label",
+                "value": ticket_data.ticket.product_name()
+            }, {
+                "key": "product-org-back",
+                "label": "product-organisation-label",
+                "value": ticket_data.ticket.product_org_name()
+            }, {
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": str(ticket_data.ticket.ticket_id),
+            }, {
+                "key": "ticket-org",
+                "label": "ticketing-organisation-label",
+                "value": ticket_data.ticket.ticket_org_name(),
+            }, {
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleFull",
+                "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }, {
+                "key": "issuing-org",
+                "label": "issuing-organisation-label",
+                "value": ticket_data.ticket.kvp_org_name(),
+            }]
+        }
+        pass_json["organizationName"] = ticket_data.ticket.kvp_org_name()
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": str(ticket_data.ticket.ticket_id),
+        }]
+
+        for elm in ticket_data.ticket.product_data:
+            if isinstance(elm, vdv.ticket.PassengerData):
+                pass_fields["primaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": f"{elm.forename}\n{elm.surname}",
+                    "semantics": {
+                        "passengerName": {
+                            "familyName": elm.surname,
+                            "givenName": elm.forename
+                        }
+                    }
+                })
+                if elm.date_of_birth:
+                    pass_fields["secondaryFields"].append({
+                        "key": "date-of-birth",
+                        "label": "date-of-birth-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+        if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
+            add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.product_org_id], "logo.png")
+            have_logo = True
+        elif ticket_data.ticket.product_org_id == 3000 and ticket_data.ticket.ticket_org_id in VDV_ORG_ID_LOGO:
+            add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.ticket_org_id], "logo.png")
+            have_logo = True
+    elif isinstance(ticket_instance, models.RSPTicketInstance):
+        ticket_data: ticket.RSPTicket = ticket_instance.as_ticket()
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": f"{ticket_instance.issuer_id}-{ticket_instance.reference}",
+        }]
+
+        if isinstance(ticket_data.data, rsp.RailcardData):
+            validity_start =  ticket_data.data.validity_start_time()
+            validity_end =  ticket_data.data.validity_end_time()
+            pass_json["organizationName"] = ticket_data.data.issuer_name()
+            if colour := ticket_data.data.background_colour():
+                pass_json["backgroundColor"] = colour
+                pass_json["foregroundColor"] = "rgb(255, 255, 255)"
+                pass_json["labelColor"] = "rgb(255, 255, 255)"
 
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_fields = {
                 "headerFields": [{
                     "key": "product",
                     "label": "product-label",
-                    "value": ticket_data.ticket.product_name()
+                    "value": ticket_data.data.railcard_type_name(),
                 }],
-                "primaryFields": [],
+                "primaryFields": [{
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": ticket_data.data.passenger_1_name(),
+                    "semantics": {
+                        "passengerName": {
+                            "familyName": ticket_data.data.passenger_1_surname,
+                            "givenName": ticket_data.data.passenger_1_forename,
+                        }
+                    }
+                }],
                 "secondaryFields": [{
-                    "key": "validity-start",
-                    "label": "validity-start-label",
-                    "dateStyle": "PKDateStyleMedium",
-                    "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "key": "railcard-number",
+                    "label": "railcard-number",
+                    "value": ticket_data.data.railcard_number,
                 }, {
                     "key": "validity-end",
                     "label": "validity-end-label",
@@ -932,68 +1107,48 @@ def make_pkpass(ticket_obj: models.Ticket):
                     "timeStyle": "PKDateStyleFull",
                     "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 }, {
-                    "key": "product-back",
-                    "label": "product-label",
-                    "value": ticket_data.ticket.product_name()
-                }, {
-                    "key": "product-org-back",
-                    "label": "product-organisation-label",
-                    "value": ticket_data.ticket.product_org_name()
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": ticket_data.data.issuer_name(),
                 }, {
                     "key": "ticket-id",
                     "label": "ticket-id-label",
-                    "value": str(ticket_data.ticket.ticket_id),
-                }, {
-                    "key": "ticket-org",
-                    "label": "ticketing-organisation-label",
-                    "value": ticket_data.ticket.ticket_org_name(),
+                    "value": str(ticket_data.data.ticket_reference),
                 }, {
                     "key": "issued-date",
                     "label": "issued-at-label",
                     "dateStyle": "PKDateStyleFull",
                     "timeStyle": "PKDateStyleFull",
-                    "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                }, {
-                    "key": "issuing-org",
-                    "label": "issuing-organisation-label",
-                    "value": ticket_data.ticket.kvp_org_name(),
+                    "value": ticket_data.data.purchase_time().strftime("%Y-%m-%dT%H:%M:%SZ"),
                 }]
             }
-            pass_json["organizationName"] = ticket_data.ticket.kvp_org_name()
-            pass_json["barcodes"] = [{
-                "format": "PKBarcodeFormatAztec",
-                "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
-                "messageEncoding": "iso-8859-1",
-                "altText": str(ticket_data.ticket.ticket_id),
-            }]
 
-            for elm in ticket_data.ticket.product_data:
-                if isinstance(elm, vdv.ticket.PassengerData):
-                    pass_fields["primaryFields"].append({
-                        "key": "passenger",
-                        "label": "passenger-label",
-                        "value": f"{elm.forename}\n{elm.surname}",
-                        "semantics": {
-                            "passengerName": {
-                                "familyName": elm.surname,
-                                "givenName": elm.forename
-                            }
+            if ticket_data.data.has_passenger_2():
+                pass_fields["primaryFields"].append({
+                    "key": "passenger-2",
+                    "label": "passenger-2-label",
+                    "value": ticket_data.data.passenger_2_name(),
+                    "semantics": {
+                        "passengerName": {
+                            "familyName": ticket_data.data.passenger_2_surname,
+                            "givenName": ticket_data.data.passenger_2_forename,
                         }
-                    })
-                    if elm.date_of_birth:
-                        pass_fields["secondaryFields"].append({
-                            "key": "date-of-birth",
-                            "label": "date-of-birth-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
-                        })
+                    }
+                })
 
-            if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
-                add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.product_org_id], "logo.png")
-                have_logo = True
-            elif ticket_data.ticket.product_org_id == 3000 and ticket_data.ticket.ticket_org_id in VDV_ORG_ID_LOGO:
-                add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.ticket_org_id], "logo.png")
-                have_logo = True
+            thumb = pass_photo_thumbnail(ticket_obj, (270, 270), 20)
+            out_3x = io.BytesIO()
+            thumb.save(out_3x, format="PNG")
+            out_2x = io.BytesIO()
+            thumb.resize((180, 180)).save(out_2x, format="PNG")
+            out_1x = io.BytesIO()
+            thumb.resize((90, 90)).save(out_1x, format="PNG")
+            pkp.add_file(f"thumbnail@3x.png", out_3x.getvalue())
+            pkp.add_file(f"thumbnail@2x.png", out_2x.getvalue())
+            pkp.add_file(f"thumbnail.png", out_1x.getvalue())
+
+            add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
+            have_logo = True
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -1056,6 +1211,7 @@ PASS_STRINGS = {
 "return-included-label" = "Return included";
 "return-included-yes" = "Yes";
 "return-included-no" = "No";
+"railcard-number" = "Railcard number";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -1086,6 +1242,7 @@ PASS_STRINGS = {
 "return-included-label" = "Rückfahrt inklusive";
 "return-included-yes" = "Ja";
 "return-included-no" = "Nein";
+"railcard-number" = "Railcard-Nummer";
 """
 }
 

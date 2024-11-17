@@ -26,13 +26,51 @@
             <div class="govuk-notification-banner__content">
                 <p class="govuk-body">
                     {% if ticket_created %}
-                        Your ticket has been created; download your pass below to add it to your Apple Wallet.
+                        Your ticket has been created; download your pass below to add it to your Apple or Google Wallet.
                     {% else %}
-                        Your ticket has been updated; it has been sent to your Apple devices in the background.
+                        Your ticket has been updated; it has been sent to your Apple and Google devices in the background.
                     {% endif %}
                 </p>
             </div>
         </div>
+    {% endif %}
+
+    {% if photo_upload_forms %}
+        <h2 class="govuk-heading-m">Photos</h2>
+        <p class="govuk-body">
+            Your pass requires passport style photos. Please upload them below.
+        </p>
+        {% for k, f in photo_upload_forms.items %}
+            <h3 class="govuk-heading-s">Photo for {{ f.name }}</h3>
+            {% if f.current %}
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">Current photo</span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <img src="{{ f.current }}" alt="" style="max-width: 100px">
+                    </div>
+                </details>
+            {% endif %}
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="photo-upload" value="{{ k }}">
+                <div class="govuk-form-group">
+                    {% if f.error %}
+                        <p class="govuk-error-message">
+                            {{ f.error }}
+                        </p>
+                    {% endif %}
+                    <label class="govuk-label" for="file-upload-1">
+                        Upload photo
+                    </label>
+                    <input class="govuk-file-upload" name="photo" type="file" accept="image/*">
+                </div>
+                <button type="submit" class="govuk-button" data-module="govuk-button">
+                    Save
+                </button>
+            </form>
+        {% endfor %}
     {% endif %}
 
     <div class="govuk-panel govuk-panel--confirmation">
@@ -40,14 +78,17 @@
             Download your pass
         </h1>
         <div class="govuk-panel__body">
-            <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-button govuk-button--start govuk-button--inverse govuk-!-margin-0">Download</a>
+            <a href="{% url 'ticket_pkpass' ticket.id %}"><img src="{% static 'main/add-to-apple-wallet.svg' %}" alt="Add to Apple Wallet" class="apple-wallet-button"></a>
+            {% if gwallet_url %}
+                <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank"><img src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet" class="g-wallet-button"></a>
+            {% endif %}
         </div>
     </div>
 </div>
 
 <div class="govuk-!-margin-7">
     <h2 class="govuk-heading-l">Ticket details</h2>
-    {% if not ticket.vdv_instances.count and not ticket.uic_instances.count %}
+    {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count %}
         <p class="govuk-body">No instances found for this ticket.</p>
     {% else %}
         {% for instance in ticket.vdv_instances.all %}
@@ -76,6 +117,19 @@
                     </summary>
                     <div class="govuk-details__text">
                         {% include 'main/uic/ticket_details.html' with ticket=ticket_obj %}
+                    </div>
+                </details>
+            {% endwith %}
+        {% endfor %}
+        {% for instance in ticket.rsp_instances.all %}
+            {% with ticket_obj=instance.as_ticket %}
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
+                        Type {{ instance.ticket_type }} - {{ instance.issuer_id }}
+                    </summary>
+                    <div class="govuk-details__text">
+                        {% include 'main/rsp_ticket_details.html' with ticket=ticket_obj %}
                     </div>
                 </details>
             {% endwith %}

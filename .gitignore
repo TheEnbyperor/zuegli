@@ -5,7 +5,7 @@
 /node_modules
 /vdv-certs
 /uic-data
-/rsp6-data
+/rsp-data
 __pycache__
 .keyHash
 tickeos.py

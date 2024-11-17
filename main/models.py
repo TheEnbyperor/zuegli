@@ -9,8 +9,9 @@ from django.db import models
 from django.core import validators
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp6
+from . import vdv, uic, rsp
 
 
 def make_pass_token():
@@ -57,6 +58,7 @@ class Ticket(models.Model):
     TYPE_FAHRKARTE = "fahrkarte"
     TYPE_RESERVIERUNG = "reservierung"
     TYPE_INTERRAIL = "interrail"
+    TYPE_RAILCARD = "railcard"
     TYPE_UNKNOWN = "unknown"
 
     TICKET_TYPES = (
@@ -66,6 +68,7 @@ class Ticket(models.Model):
         (TYPE_FAHRKARTE, "Fahrkarte"),
         (TYPE_RESERVIERUNG, "Reservierung"),
         (TYPE_INTERRAIL, "Interrail"),
+        (TYPE_RAILCARD, "Railcard"),
         (TYPE_UNKNOWN, "Unknown"),
     )
 
@@ -80,6 +83,7 @@ class Ticket(models.Model):
     saarvv_account = models.ForeignKey(
         "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="saarvv_tickets"
     )
+    photos = models.JSONField(default=dict)
 
     def __str__(self):
         return f"{self.get_ticket_type_display()} - {self.id}"
@@ -89,6 +93,42 @@ class Ticket(models.Model):
 
     def public_id(self):
         return self.pk.upper()[0:8]
+
+
+    def active_instance(self):
+        now = timezone.now()
+        if ticket_instance := self.uic_instances.filter(validity_start__lte=now).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.vdv_instances.filter(validity_start__lte=now).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.rsp_instances.filter(validity_start__lte=now).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.uic_instances.filter(
+            ~Q(validity_start__lte=now) | Q(validity_start__isnull=True),
+        ).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.vdv_instances.filter(
+            ~Q(validity_start__lte=now) | Q(validity_start__isnull=True),
+        ).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.rsp_instances.filter(
+            ~Q(validity_start__lte=now) | Q(validity_start__isnull=True),
+        ).order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.uic_instances.order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.vdv_instances.order_by("-validity_end").first():
+            return ticket_instance
+
+        if ticket_instance := self.rsp_instances.order_by("-validity_end").first():
+            return ticket_instance
 
 
 class VDVTicketInstance(models.Model):
@@ -157,29 +197,37 @@ class UICTicketInstance(models.Model):
         return t.UICTicket.from_envelope(self.barcode_data, ticket_envelope, context)
 
 
-class RSP6TicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp6_instances")
+class RSPTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp_instances")
     issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID")
     reference = models.CharField(max_length=20, verbose_name="Ticket reference")
     barcode_data = models.BinaryField()
+    ticket_type = models.CharField(max_length=2, verbose_name="Ticket type", default="06")
     decoded_data = models.JSONField()
+    validity_start = models.DateTimeField(blank=True, null=True)
+    validity_end = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         unique_together = [
-            ["reference", "issuer_id"],
+            ["ticket_type", "reference", "issuer_id"],
         ]
-        verbose_name = "RSP6 ticket"
+        verbose_name = "RSP ticket"
 
     def __str__(self):
         return f"{self.issuer_id} - {self.reference}"
 
-    def as_ticket(self) -> t.RSP6Ticket:
-        config = dacite.Config(type_hooks={bytes: base64.b64decode})
-        ticket_envelope = dacite.from_dict(data_class=rsp6.Envelope, data=self.decoded_data["envelope"], config=config)
-        raw_ticket = base64.b64decode(self.decoded_data["ticket"])
-        return t.RSP6Ticket(
-            envelope=ticket_envelope,
-            raw_bytes=raw_ticket,
+    def as_ticket(self) -> t.RSPTicket:
+        raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"])
+        if self.ticket_type == "08":
+            data = rsp.RailcardData.parse(raw_ticket)
+        else:
+            raise NotImplementedError()
+        return t.RSPTicket(
+            rsp_type=self.ticket_type,
+            ticket_ref=self.reference,
+            issuer_id=self.issuer_id,
+            raw_ticket=raw_ticket,
+            data=data
         )
 
 

@@ -5,6 +5,7 @@ from . import util, pki
 
 @dataclasses.dataclass
 class Envelope:
+    ticket_type: str
     issuer_id: str
     ticket_ref: str
     payload: bytes
@@ -12,23 +13,24 @@ class Envelope:
     @classmethod
     def parse(cls, data: bytes) -> "Envelope":
         if len(data) < 16:
-            raise util.RSP6Exception("Envelope is too short")
+            raise util.RSPException("Envelope is too short")
 
-        if data[0:2] != b"06":
-            raise util.RSP6Exception("Envelope isn't an RSP6 ticket")
+        if data[0:2] not in (b"06", b"08"):
+            raise util.RSPException("Envelope isn't an RSP ticket")
 
         try:
             ticket_ref = data[2:11].decode()
             issuer_id = data[13:15].decode()
         except UnicodeDecodeError as e:
-            raise util.RSP6Exception("Invalid ticket reference encoding") from e
+            raise util.RSPException("Invalid ticket reference encoding") from e
 
         try:
             payload = base26.decode(data[15:].decode())
         except UnicodeDecodeError as e:
-            raise util.RSP6Exception("Invalid payload encoding") from e
+            raise util.RSPException("Invalid payload encoding") from e
 
         return cls(
+            ticket_type=data[0:2].decode(),
             issuer_id=issuer_id,
             ticket_ref=ticket_ref,
             payload=payload,

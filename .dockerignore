@@ -3,7 +3,7 @@
 /static
 /uic-data
 /vdv-certs
-/rsp6-data
+/rsp-data
 /venv
 /db.sqlite3
 /package.json

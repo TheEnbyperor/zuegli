@@ -22,6 +22,7 @@ data:
   WWDR_CERTIFICATE_LOCATION: "/certs/wwdrg4.crt"
   PKPASS_CERTIFICATE_LOCATION: "/certs/pass.crt"
   PKPASS_KEY_LOCATION: "/certs/pass.key"
+  GOOGLE_CREDS_LOCATION: "/google-creds/google-creds.json"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -49,14 +50,19 @@ spec:
         - name: certs
           secret:
             secretName: vdv-pkpass-certs
+        - name: google-creds
+          secret:
+            secretName: vdv-pkpass-google-creds
       initContainers:
         - name: django
           image: theenbyperor/vdv-pkpass-django:(version)
           imagePullPolicy: Always
-          command: ["sh", "-c", "python3 manage.py collectstatic --noinput && python3 manage.py migrate"]
+          command: ["sh", "-c", "python3 manage.py collectstatic --noinput && python3 manage.py migrate && python3 manage.py sync-gwallet-classes"]
           volumeMounts: &volumeMounts
             - mountPath: "/certs"
               name: certs
+            - mountPath: "/google-creds"
+              name: google-creds
           envFrom: &envFrom
             - configMapRef:
                 name: vdv-pkpass
