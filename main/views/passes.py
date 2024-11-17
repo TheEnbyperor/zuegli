@@ -1355,6 +1355,7 @@ RICS_LOGO = {
     1181: "pass/logo-oebb.png",
     1084: "pass/logo-ns.png",
     1154: "pass/logo-cd.png",
+    1156: "pass/logo-zssk.png",
     1184: "pass/logo-ns.png",
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",
