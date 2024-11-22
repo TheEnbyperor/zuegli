@@ -3,7 +3,7 @@
 <html lang="en" class="govuk-template">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}VDV to Apple Wallet{% endblock title %} </title>
+    <title>{% block title %}Train Tickets to Wallet Passes{% endblock title %}</title>
     <meta name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c">
@@ -12,7 +12,11 @@
     <link href='{% static "govuk/govuk-frontend-5.6.0.min.css" %}' rel="stylesheet">
     <link href='{% static "main/style.css" %}' rel="stylesheet">
 
-    <meta name="description" content="Turn your public transport tickets into an Apple Wallet passes.">
+    <meta name="description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
+    <meta property="og:title" content="Train Tickets to Wallet Passes">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
+    <meta name="fediverse:creator" content="@q@glauca.space" />
 </head>
 <body class="govuk-template__body ">
 <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
@@ -21,7 +25,7 @@
 <header class="govuk-header govuk-header--full-width-border" data-module="govuk-header">
     <div class="govuk-header__container govuk-width-container">
         <a href="{% url 'index' %}" class="govuk-header__link govuk-header__service-name">
-            VDV to Apple Wallet
+            Train Tickets to Wallet Passes
         </a>
     </div>
 </header>
