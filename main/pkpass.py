@@ -8,18 +8,18 @@ from django.conf import settings
 
 class PKPass:
     def __init__(self):
+        self.data = {}
         self.manifest = {}
-        self.zip_buffer = io.BytesIO()
-        self.zip = zipfile.ZipFile(self.zip_buffer, "w")
+        self.signature = None
 
     def add_file(self, filename: str, data: bytes):
         file_hash = hashlib.sha1(data).hexdigest()
-        self.zip.writestr(filename, data)
+        self.data[filename] = data
         self.manifest[filename] = file_hash
 
     def sign(self):
         manifest = json.dumps(self.manifest).encode("utf-8")
-        self.zip.writestr("manifest.json", manifest)
+        self.data["manifest.json"] = manifest
         signature = cryptography.hazmat.primitives.serialization.pkcs7.PKCS7SignatureBuilder()\
                 .set_data(manifest)\
                 .add_signer(
@@ -31,7 +31,26 @@ class PKPass:
                     cryptography.hazmat.primitives.serialization.pkcs7.PKCS7Options.Binary,
                     cryptography.hazmat.primitives.serialization.pkcs7.PKCS7Options.DetachedSignature,
                 ])
-        self.zip.writestr("signature", signature)
+        self.data["signature"] = signature
+
+    def get_buffer(self) -> bytes:
+        zip_buffer = io.BytesIO()
+        zip = zipfile.ZipFile(zip_buffer, "w")
+        for filename, data in self.data.items():
+            zip.writestr(filename, data)
+        zip.close()
+        return zip_buffer.getvalue()
+
+
+class MultiPKPass:
+    def __init__(self):
+        self.counter = 1
+        self.zip_buffer = io.BytesIO()
+        self.zip = zipfile.ZipFile(self.zip_buffer, "w")
+
+    def add_pkpass(self, pkpass: PKPass):
+        self.zip.writestr(f"pass-{self.counter}.pkpass", pkpass.get_buffer())
+        self.counter += 1
 
     def get_buffer(self) -> bytes:
         self.zip.close()

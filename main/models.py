@@ -297,10 +297,11 @@ class AppleDevice(models.Model):
 class AppleRegistration(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="apple_registrations")
     device = models.ForeignKey(AppleDevice, on_delete=models.CASCADE, related_name="registrations")
+    ticket_part = models.CharField(max_length=255, verbose_name="Ticket part", blank=True, null=True)
 
     class Meta:
         unique_together = [
-            ["ticket", "device"],
+            ["ticket", "device", "ticket_part"],
         ]
 
 

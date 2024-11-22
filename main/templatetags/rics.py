@@ -26,7 +26,6 @@ def get_station(value, code_type):
         elif code_type == "benerail":
             return uic.stations.get_station_by_benerail(value)
     elif isinstance(code_type, dict):
-        print(code_type)
         if code_type.get("stationCodeTable") == "stationUIC":
             return uic.stations.get_station_by_uic(value)
         elif code_type.get("stationCodeTable") == "localCarrierStationCodeTable":
@@ -111,3 +110,14 @@ def rics_valid_until_date(value):
         )
     valid_from += datetime.timedelta(days=value["validUntilDay"]-1)
     return valid_from
+
+
+@register.filter(name="rics_departure_time")
+def rics_departure_time(value, issuing_time: datetime.datetime):
+    travel_time = issuing_time + datetime.timedelta(days=value["travelDate"])
+    travel_time = travel_time.replace(hour=0, minute=0, second=0, microsecond=0)
+    travel_time += datetime.timedelta(minutes=value["departureTime"])
+    if "departureUTCOffset" in value:
+        travel_time += datetime.timedelta(minutes=15 * value["departureUTCOffset"])
+        travel_time = travel_time.replace(tzinfo=pytz.utc)
+    return travel_time

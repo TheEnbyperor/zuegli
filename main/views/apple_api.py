@@ -1,8 +1,9 @@
 import json
 import logging
 import datetime
+import urllib.parse
 import pytz
-from django.utils import timezone
+import typing
 from django.http import HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +11,19 @@ from django.views.decorators.http import condition
 from main import models, views
 
 logger = logging.Logger(__name__)
+
+
+def get_ticket(serial_number) -> typing.Optional[typing.Tuple[models.Ticket, str]]:
+    serial_number = urllib.parse.unquote(serial_number)
+    serial_number = serial_number.split(":", 1)
+    if len(serial_number) == 2:
+        serial_number, part = serial_number
+    else:
+        serial_number, part = serial_number[0], None
+    try:
+        return models.Ticket.objects.get(id=serial_number), part
+    except models.Ticket.DoesNotExist:
+        return None
 
 
 def check_pass_auth(f):
@@ -26,14 +40,14 @@ def check_pass_auth(f):
         if pass_type_id != settings.PKPASS_CONF["pass_type"]:
             return HttpResponse(status=404)
 
-        ticket_obj: models.Ticket = models.Ticket.objects.get(id=serial_number)
+        ticket_obj, ticket_part = get_ticket(serial_number)
         if not ticket_obj:
             return HttpResponse(status=404)
 
         if ticket_obj.pkpass_authentication_token != auth_token:
             return HttpResponse(status=401)
 
-        return f(request, ticket_obj=ticket_obj, **kwargs)
+        return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
 
     return wrapper
 
@@ -41,10 +55,11 @@ def check_pass_auth(f):
 def ticket_updated_date(_request, pass_type_id, serial_number):
     if pass_type_id != settings.PKPASS_CONF["pass_type"]:
         return
-    ticket_obj: models.Ticket = models.Ticket.objects.get(id=serial_number)
+    ticket_obj, _ = get_ticket(serial_number)
     if not ticket_obj:
         return
     return ticket_obj.last_updated
+
 
 @csrf_exempt
 def pass_status(request, device_id, pass_type_id):
@@ -80,7 +95,7 @@ def pass_status(request, device_id, pass_type_id):
 
 @csrf_exempt
 @check_pass_auth
-def registration(request, device_id, ticket_obj):
+def registration(request, device_id, ticket_obj, ticket_part):
     if request.method == "POST":
         if request.content_type != "application/json":
             return HttpResponse(status=415)
@@ -101,18 +116,21 @@ def registration(request, device_id, ticket_obj):
         )
         models.AppleRegistration.objects.update_or_create(
             device=device_obj,
-            ticket=ticket_obj
+            ticket=ticket_obj,
+            ticket_part=ticket_part,
         )
 
         return HttpResponse(status=200)
     elif request.method == "DELETE":
-        device_obj = models.AppleDevice.objects.get(device_id=device_id)
-        if not device_obj:
+        try:
+            device_obj = models.AppleDevice.objects.get(device_id=device_id)
+        except models.AppleDevice.DoesNotExist:
             return HttpResponse(status=200)
 
         models.AppleRegistration.objects.filter(
             device=device_obj,
-            ticket=ticket_obj
+            ticket=ticket_obj,
+            ticket_part=ticket_part,
         ).delete()
 
         if device_obj.registrations.count() == 0:
@@ -126,8 +144,8 @@ def registration(request, device_id, ticket_obj):
 @csrf_exempt
 @condition(last_modified_func=ticket_updated_date)
 @check_pass_auth
-def pass_document(_, ticket_obj):
-    return views.passes.make_pkpass(ticket_obj)
+def pass_document(_, ticket_obj, ticket_part):
+    return views.passes.make_pkpass(ticket_obj, ticket_part)
 
 
 @csrf_exempt

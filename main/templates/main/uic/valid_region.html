@@ -1,0 +1,35 @@
+{% load tz rics %}
+<dl class="govuk-summary-list">
+    {% for region in valid_region %}
+        {% if region.0 == "trainLink" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Train {% if region.1.trainIA5 %}{{ region.1.trainIA5 }}{% elif region.1.trainNum %}{{ region.1.trainNum }}{% endif %}
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Departure time</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ region.1|rics_departure_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        {% else %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Unknown region - <code>{{ region.0 }}</code>
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <pre>{{ region.1|pprint }}</pre>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</dl>

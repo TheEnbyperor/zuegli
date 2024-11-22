@@ -4,6 +4,8 @@ import urllib.parse
 import pytz
 import pymupdf
 import io
+import typing
+import copy
 from PIL import Image, ImageOps
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404, reverse
@@ -183,7 +185,7 @@ def ticket_pkpass(request, pk):
     return make_pkpass(ticket_obj)
 
 
-def make_pkpass(ticket_obj: models.Ticket):
+def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
     pkp = pkpass.PKPass()
     have_logo = False
 
@@ -200,7 +202,8 @@ def make_pkpass(ticket_obj: models.Ticket):
         "foregroundColor": "rgb(0, 0, 0)",
         "locations": [],
         "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple/",
-        "authenticationToken": ticket_obj.pkpass_authentication_token
+        "authenticationToken": ticket_obj.pkpass_authentication_token,
+        "semantics": {}
     }
 
     pass_type = "generic"
@@ -211,7 +214,16 @@ def make_pkpass(ticket_obj: models.Ticket):
         "auxiliaryFields": [],
         "backFields": []
     }
-
+    has_return = False
+    return_pass_fields = {
+        "headerFields": [],
+        "primaryFields": [],
+        "secondaryFields": [],
+        "auxiliaryFields": [],
+        "backFields": []
+    }
+    return_pass_type = "generic"
+    return_pass_json = None
 
     ticket_instance = ticket_obj.active_instance()
 
@@ -422,7 +434,196 @@ def make_pkpass(ticket_obj: models.Ticket):
                         "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "changeMessage": "validity-end-change"
                     })
+
+                    if "validRegionDesc" in document:
+                        pass_fields["backFields"].append({
+                            "key": "valid-region",
+                            "label": "valid-region-label",
+                            "value": document["validRegionDesc"],
+                        })
+
+                    if "validRegion" in document and document["validRegion"][0][0] == "trainLink":
+                        train_link = document["validRegion"][0][1]
+                        departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
+                        pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        train_number = train_link["trainIA5"] or str(train_link["trainNum"])
+                        pass_fields["headerFields"] = [{
+                            "key": "train-number",
+                            "label": "train-number-label",
+                            "value": train_number,
+                            "semantics": {
+                                "vehicleNumber": train_number
+                            }
+                        }]
+                        pass_fields["secondaryFields"] = list(filter(
+                            lambda f: f["key"] not in ("validity-start", "validity-end"),
+                            pass_fields["secondaryFields"]
+                        ))
+                        pass_fields["secondaryFields"].append({
+                            "key": "departure-time",
+                            "label": "departure-time-label",
+                            "value": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "dateStyle": "PKDateStyleShort",
+                            "timeStyle": "PKDateStyleShort",
+                            "semantics": {
+                                "originalDepartureDate": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+
+                    if "returnDescription" in document:
+                        return_document = document["returnDescription"]
+                        has_return = True
+                        return_pass_json = copy.deepcopy(pass_json)
+                        return_pass_json["locations"] = []
+
+                        return_pass_fields["headerFields"].extend(filter(lambda f: f["key"] != "train-number", pass_fields["headerFields"]))
+                        return_pass_fields["auxiliaryFields"].extend(pass_fields["auxiliaryFields"])
+                        return_pass_fields["secondaryFields"].extend(filter(lambda f: f["key"] != "departure-time", pass_fields["secondaryFields"]))
+                        return_pass_fields["backFields"].extend(filter(
+                            lambda f: f["key"] not in ("valid-region", "to-station-back", "from-station-back"),
+                            pass_fields["backFields"]
+                        ))
+
+                        if "fromStationNum" in return_document and "toStationNum" in return_document:
+                            return_pass_type = "boardingPass"
+                            return_pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                            from_station = templatetags.rics.get_station(return_document["fromStationNum"], document)
+                            to_station = templatetags.rics.get_station(return_document["toStationNum"], document)
+
+                            if from_station:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "from-station",
+                                    "label": "from-station-label",
+                                    "value": from_station["name"],
+                                    "semantics": {
+                                        "departureLocation": {
+                                            "latitude": float(from_station["latitude"]),
+                                            "longitude": float(from_station["longitude"]),
+                                        },
+                                        "departureStationName": from_station["name"]
+                                    }
+                                })
+                                return_pass_json["locations"].append({
+                                    "latitude": float(from_station["latitude"]),
+                                    "longitude": float(from_station["longitude"]),
+                                    "relevantText": from_station["name"]
+                                })
+                                maps_link = urllib.parse.urlencode({
+                                    "q": from_station["name"],
+                                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                                })
+                                return_pass_fields["backFields"].append({
+                                    "key": "from-station-back",
+                                    "label": "from-station-label",
+                                    "value": from_station["name"],
+                                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                                })
+                            elif "fromStationNameUTF8" in return_document:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "from-station",
+                                    "label": "from-station-label",
+                                    "value": return_document["fromStationNameUTF8"],
+                                    "semantics": {
+                                        "departureStationName": return_document["fromStationNameUTF8"]
+                                    }
+                                })
+                            elif "fromStationIA5" in return_document:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "from-station",
+                                    "label": "from-station-label",
+                                    "value": return_document["fromStationIA5"],
+                                    "semantics": {
+                                        "departureStationName": return_document["fromStationIA5"]
+                                    }
+                                })
+
+                            if to_station:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "to-station",
+                                    "label": "to-station-label",
+                                    "value": to_station["name"],
+                                    "semantics": {
+                                        "destinationLocation": {
+                                            "latitude": float(to_station["latitude"]),
+                                            "longitude": float(to_station["longitude"]),
+                                        },
+                                        "destinationStationName": to_station["name"]
+                                    }
+                                })
+                                return_pass_json["locations"].append({
+                                    "latitude": float(to_station["latitude"]),
+                                    "longitude": float(to_station["longitude"]),
+                                    "relevantText": to_station["name"]
+                                })
+                                maps_link = urllib.parse.urlencode({
+                                    "q": to_station["name"],
+                                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                                })
+                                return_pass_fields["backFields"].append({
+                                    "key": "to-station-back",
+                                    "label": "to-station-label",
+                                    "value": to_station["name"],
+                                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                                })
+                            elif "toStationNameUTF8" in return_document:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "to-station",
+                                    "label": "to-station-label",
+                                    "value": return_document["toStationNameUTF8"],
+                                    "semantics": {
+                                        "destinationStationName": return_document["toStationNameUTF8"]
+                                    }
+                                })
+                            elif "toStationIA5" in return_document:
+                                return_pass_fields["primaryFields"].append({
+                                    "key": "to-station",
+                                    "label": "to-station-label",
+                                    "value": return_document["toStationIA5"],
+                                    "semantics": {
+                                        "destinationStationName": return_document["toStationIA5"]
+                                    }
+                                })
+
+                        if "validReturnRegionDesc" in return_document:
+                            return_pass_fields["backFields"].append({
+                                "key": "valid-region",
+                                "label": "valid-region-label",
+                                "value": return_document["validReturnRegionDesc"],
+                            })
+
+                        if "validReturnRegion" in return_document and return_document["validReturnRegion"][0][0] == "trainLink":
+                            train_link = return_document["validReturnRegion"][0][1]
+                            departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
+                            return_pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                            train_number = train_link["trainIA5"] or str(train_link["trainNum"])
+                            return_pass_fields["headerFields"] = [{
+                                "key": "train-number",
+                                "label": "train-number-label",
+                                "value": train_number,
+                                "semantics": {
+                                    "vehicleNumber": train_number
+                                }
+                            }]
+                            return_pass_fields["secondaryFields"].append({
+                                "key": "departure-time",
+                                "label": "departure-time-label",
+                                "value": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "dateStyle": "PKDateStyleShort",
+                                "timeStyle": "PKDateStyleShort",
+                                "semantics": {
+                                    "originalDepartureDate": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                }
+                            })
+
                     pass_fields["backFields"].append({
+                        "key": "validity-start-back",
+                        "label": "validity-start-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    return_pass_fields["backFields"].append({
                         "key": "validity-start-back",
                         "label": "validity-start-label",
                         "dateStyle": "PKDateStyleFull",
@@ -436,13 +637,13 @@ def make_pkpass(ticket_obj: models.Ticket):
                         "timeStyle": "PKDateStyleFull",
                         "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
-
-                    if "validRegionDesc" in document:
-                        pass_fields["backFields"].append({
-                            "key": "valid-region",
-                            "label": "valid-region-label",
-                            "value": document["validRegionDesc"],
-                        })
+                    return_pass_fields["backFields"].append({
+                        "key": "validity-end-back",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
 
                 elif document_type == "customerCard":
                     validity_start = templatetags.rics.rics_valid_from_date(document)
@@ -585,18 +786,22 @@ def make_pkpass(ticket_obj: models.Ticket):
                 }
                 if pass_type == "generic":
                     pass_fields["primaryFields"].append(field_data)
+                    return_pass_fields["primaryFields"].append(field_data)
                 else:
                     pass_fields["auxiliaryFields"].append(field_data)
+                    return_pass_fields["auxiliaryFields"].append(field_data)
 
                 dob = templatetags.rics.rics_traveler_dob(passenger)
                 if dob:
                     dob = datetime.datetime.combine(dob, datetime.time.min)
-                    pass_fields["secondaryFields"].append({
+                    dob_field = {
                         "key": "date-of-birth",
                         "label": "date-of-birth-label",
                         "dateStyle": "PKDateStyleMedium",
                         "value": dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    })
+                    }
+                    pass_fields["secondaryFields"].append(dob_field)
+                    return_pass_fields["secondaryFields"].append(dob_field)
                 else:
                     dob_year = passenger.get("yearOfBirth", 0)
                     dob_month = passenger.get("monthOfBirth", 0)
@@ -606,8 +811,18 @@ def make_pkpass(ticket_obj: models.Ticket):
                             "label": "month-of-birth-label",
                             "value": f"{dob_month:02d}.{dob_year:04d}",
                         })
+                        return_pass_fields["secondaryFields"].append({
+                            "key": "month-of-birth",
+                            "label": "month-of-birth-label",
+                            "value": f"{dob_month:02d}.{dob_year:04d}",
+                        })
                     elif dob_year != 0:
                         pass_fields["secondaryFields"].append({
+                            "key": "year-of-birth",
+                            "label": "year-of-birth-label",
+                            "value": f"{dob_year:04d}",
+                        })
+                        return_pass_fields["secondaryFields"].append({
                             "key": "year-of-birth",
                             "label": "year-of-birth-label",
                             "value": f"{dob_year:04d}",
@@ -619,9 +834,19 @@ def make_pkpass(ticket_obj: models.Ticket):
                         "label": "country-of-residence-label",
                         "value": templatetags.rics.get_country(passenger["countryOfResidence"]),
                     })
+                    return_pass_fields["secondaryFields"].append({
+                        "key": "country-of-residence",
+                        "label": "country-of-residence-label",
+                        "value": templatetags.rics.get_country(passenger["countryOfResidence"]),
+                    })
 
                 if "passportId" in passenger:
                     pass_fields["secondaryFields"].append({
+                        "key": "passport-number",
+                        "label": "passport-number-label",
+                        "value": passenger["passportId"],
+                    })
+                    return_pass_fields["secondaryFields"].append({
                         "key": "passport-number",
                         "label": "passport-number-label",
                         "value": passenger["passportId"],
@@ -935,14 +1160,32 @@ def make_pkpass(ticket_obj: models.Ticket):
                     "value": distributor["full_name"],
                     "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
                 })
+                return_pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
             else:
                 pass_fields["backFields"].append({
                     "key": "distributor",
                     "label": "issuing-organisation-label",
                     "value": distributor["full_name"],
                 })
+                return_pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
 
         pass_fields["backFields"].append({
+            "key": "issued-date",
+            "label": "issued-at-label",
+            "dateStyle": "PKDateStyleFull",
+            "timeStyle": "PKDateStyleFull",
+            "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        })
+        return_pass_fields["backFields"].append({
             "key": "issued-date",
             "label": "issued-at-label",
             "dateStyle": "PKDateStyleFull",
@@ -1363,8 +1606,16 @@ def make_pkpass(ticket_obj: models.Ticket):
         "value": "",
         "attributedValue": f"<a href=\"{settings.EXTERNAL_URL_BASE}{ticket_url}\">View ticket</a>",
     })
+    return_pass_fields["backFields"].append({
+        "key": "view-link",
+        "label": "more-info-label",
+        "value": "",
+        "attributedValue": f"<a href=\"{settings.EXTERNAL_URL_BASE}{ticket_url}\">View ticket</a>",
+    })
 
     pass_json[pass_type] = pass_fields
+    if return_pass_json:
+        return_pass_json[return_pass_type] = return_pass_fields
 
     for lang, strings in PASS_STRINGS.items():
         pkp.add_file(f"{lang}.lproj/pass.strings", strings.encode("utf-8"))
@@ -1377,14 +1628,53 @@ def make_pkpass(ticket_obj: models.Ticket):
     if ticket_obj.ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
         add_pkp_img(pkp, "pass/logo-dt.png", "thumbnail.png")
 
-    pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
-    pkp.sign()
+    if has_return:
+        pass_json["serialNumber"] = f'{pass_json["serialNumber"]}:outbound'
+        return_pass_json["serialNumber"] = f'{return_pass_json["serialNumber"]}:return'
 
-    response = HttpResponse()
-    response['Content-Type'] = "application/vnd.apple.pkpass"
-    response['Content-Disposition'] = f'attachment; filename="{ticket_obj.pk}.pkpass"'
-    response.write(pkp.get_buffer())
-    return response
+        if part == "outbound":
+            pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
+            pkp.sign()
+
+            response = HttpResponse()
+            response['Content-Type'] = "application/vnd.apple.pkpass"
+            response['Content-Disposition'] = f'attachment; filename="{ticket_obj.pk}.pkpass"'
+            response.write(pkp.get_buffer())
+            return response
+        elif part == "return":
+            pkp.add_file("pass.json", json.dumps(return_pass_json).encode("utf-8"))
+            pkp.sign()
+
+            response = HttpResponse()
+            response['Content-Type'] = "application/vnd.apple.pkpass"
+            response['Content-Disposition'] = f'attachment; filename="{ticket_obj.pk}.pkpass"'
+            response.write(pkp.get_buffer())
+            return response
+        else:
+            multi_pass = pkpass.MultiPKPass()
+
+            pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
+            pkp.sign()
+            multi_pass.add_pkpass(pkp)
+
+            pkp.add_file("pass.json", json.dumps(return_pass_json).encode("utf-8"))
+            pkp.sign()
+            multi_pass.add_pkpass(pkp)
+
+            response = HttpResponse()
+            response['Content-Type'] = "application/vnd.apple.pkpasses"
+            response['Content-Disposition'] = f'attachment; filename="{ticket_obj.pk}.pkpasses"'
+            response.write(multi_pass.get_buffer())
+            return response
+    else:
+        pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
+        pkp.sign()
+
+        response = HttpResponse()
+        response['Content-Type'] = "application/vnd.apple.pkpass"
+        response['Content-Disposition'] = f'attachment; filename="{ticket_obj.pk}.pkpass"'
+        response.write(pkp.get_buffer())
+        return response
 
 
 PASS_STRINGS = {
@@ -1421,6 +1711,7 @@ PASS_STRINGS = {
 "return-included-no" = "No";
 "railcard-number" = "Railcard number";
 "departure-date-label" = "Departure date";
+"departure-time-label" = "Departure";
 "train-number-label" = "Train number";
 "coach-number-label" = "Coach";
 "seat-number-label" = "Seat";
@@ -1458,6 +1749,7 @@ PASS_STRINGS = {
 "return-included-no" = "Nein";
 "railcard-number" = "Railcard-Nummer";
 "departure-date-label" = "Datum";
+"departure-time-label" = "Abfahrt";
 "train-number-label" = "Zug nr.";
 "coach-number-label" = "Waggon";
 "seat-number-label" = "Sitzpl.";

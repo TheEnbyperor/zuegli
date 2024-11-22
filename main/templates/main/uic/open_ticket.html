@@ -99,9 +99,17 @@
         <dt class="govuk-summary-list__key">Travel class</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.classCode }}</code></dd>
     </div>
-    {% if ticket.validRegionDesc %}
+    {% if ticket.validRegion %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Valid region</dt>
+            <dd class="govuk-summary-list__value">
+                {% include "main/uic/valid_region.html" with valid_region=ticket.validRegion %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if ticket.validRegionDesc %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid region description</dt>
             <dd class="govuk-summary-list__value">{{ ticket.validRegionDesc }}</dd>
         </div>
     {% endif %}
@@ -123,6 +131,74 @@
                 {% endfor %}
             </dd>
         </div>
+    {% endif %}
+    {% if ticket.returnDescription %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                <h3 class="govuk-heading-m govuk-!-margin-0">Return</h3>
+            </dt>
+            <dd class="govuk-summary-list__value"></dd>
+        </div>
+        {% if ticket.returnDescription.fromStationNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">From station number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.fromStationNum }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.returnDescription.fromStationNameUTF8 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">From station name</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.returnDescription.fromStationNameUTF8 }}</dd>
+            </div>
+        {% endif %}
+        {% with station=ticket.returnDescription.fromStationNum|get_station:ticket %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">From station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if ticket.returnDescription.toStationNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">To station number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.toStationNum }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.returnDescription.toStationNameUTF8 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">To station name</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.returnDescription.toStationNameUTF8 }}</dd>
+            </div>
+        {% endif %}
+        {% with station=ticket.returnDescription.toStationNum|get_station:ticket %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">To station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if ticket.returnDescription.validReturnRegion %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid region</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/valid_region.html" with valid_region=ticket.returnDescription.validReturnRegion %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.returnDescription.validReturnRegionDesc %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid region description</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.returnDescription.validReturnRegionDesc }}</dd>
+            </div>
+        {% endif %}
     {% endif %}
     {% include "main/uic/extension.html" with obj=card %}
 </dl>
