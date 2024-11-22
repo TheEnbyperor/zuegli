@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, max_length=255, null=True, verbose_name='Ticket part'),
         ),
         migrations.AlterUniqueTogether(
-            name='appleregistration',
+            name='i',
             unique_together={('ticket', 'device', 'ticket_part')},
         ),
     ]

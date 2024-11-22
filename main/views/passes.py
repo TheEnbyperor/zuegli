@@ -459,6 +459,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                             lambda f: f["key"] not in ("validity-start", "validity-end"),
                             pass_fields["secondaryFields"]
                         ))
+                        pass_json["locations"] = []
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
                             "label": "departure-time-label",
@@ -605,6 +606,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                     "vehicleNumber": train_number
                                 }
                             }]
+                            return_pass_json["locations"] = []
                             return_pass_fields["secondaryFields"].append({
                                 "key": "departure-time",
                                 "label": "departure-time-label",
