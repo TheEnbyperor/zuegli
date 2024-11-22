@@ -1,0 +1,53 @@
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            X.509 {{ cert.version.name }} certificate
+        </h2>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Serial number</dt>
+                <dd class="govuk-summary-list__value">{{ cert.serial_number }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid from</dt>
+                <dd class="govuk-summary-list__value">{{ cert.not_valid_before_utc|date:"F d, Y H:i:s" }} UTC</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid until</dt>
+                <dd class="govuk-summary-list__value">{{ cert.not_valid_after_utc|date:"F d, Y H:i:s" }} UTC</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuer</dt>
+                <dd class="govuk-summary-list__value">{{ cert.issuer.rfc4514_string }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Subject</dt>
+                <dd class="govuk-summary-list__value">{{ cert.subject.rfc4514_string }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Public key algorithm</dt>
+                <dd class="govuk-summary-list__value"><code>{{ cert.public_key_algorithm_oid.dotted_string }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signature algorithm</dt>
+                <dd class="govuk-summary-list__value"><code>{{ cert.signature_algorithm_oid.dotted_string }}</code></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extensions</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        {% for ext in cert.extensions %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{{ ext.oid.dotted_string }}</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ ext.value|pprint }}</code></dd>
+                            </div>
+                        {% endfor %}
+                    </dl>
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>

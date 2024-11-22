@@ -7,7 +7,7 @@ import json
 
 
 class Command(BaseCommand):
-    help = "Download VDV certificates from LDAP"
+    help = "Download UIC data from the ERA and Trainline"
 
     def handle(self, *args, **options):
         uic_storage = django.core.files.storage.storages["uic-data"]

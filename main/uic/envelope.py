@@ -1,6 +1,15 @@
+import base64
 import dataclasses
 import typing
+
+import ber_tlv.tlv
+import cryptography.x509
+import cryptography.exceptions
+import cryptography.hazmat.primitives.hashes
+import cryptography.hazmat.primitives.asymmetric.dsa
 import zlib
+import json
+import django.core.files.storage
 
 from . import util, rics
 
@@ -51,11 +60,71 @@ class Envelope:
     version: int
     issuer_rics: int
     signature_key_id: typing.Union[int, str]
-    signature: bytes
     records: typing.List[Record]
+    signature: bytes = None
+    signed_data: bytes = None
 
     def issuer(self):
         return rics.get_rics(self.issuer_rics)
+
+    def signing_cert(self):
+        uic_storage = django.core.files.storage.storages["uic-data"]
+        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.der"
+        key_meta_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.json"
+        if uic_storage.exists(key_meta_name):
+            with uic_storage.open(key_meta_name) as key_file:
+                meta = json.load(key_file)
+            with uic_storage.open(key_name) as key_file:
+                key = cryptography.x509.load_der_x509_certificate(key_file.read())
+
+            return meta, key
+
+    def verify_signature(self):
+        if not self.signature or not self.signed_data:
+            return False
+
+        if self.version == 1:
+            sig_data = ber_tlv.tlv.Tlv.parse(self.signature, True)
+            sig = ber_tlv.tlv.Tlv.build(sig_data)
+            hasher = cryptography.hazmat.primitives.hashes.SHA1()
+        elif self.version == 2:
+            sig = bytearray([0x30, 0x44])
+            if self.signature[0] & 0x80:
+                sig[1] += 1
+                sig.extend([0x02, 0x21, 0x00])
+            else:
+                sig.extend([0x02, 0x20])
+            sig.extend(self.signature[0:32])
+            if self.signature[32] & 0x80:
+                sig[1] += 1
+                sig.extend([0x02, 0x21, 0x00])
+            else:
+                sig.extend([0x02, 0x20])
+            sig.extend(self.signature[32:64])
+            sig = bytes(sig)
+            hasher = cryptography.hazmat.primitives.hashes.SHA256()
+        else:
+            return False
+
+        uic_storage = django.core.files.storage.storages["uic-data"]
+        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.der"
+        if uic_storage.exists(key_name):
+            with uic_storage.open(key_name) as key_file:
+                key = cryptography.x509.load_der_x509_certificate(key_file.read())
+
+            pk = key.public_key()
+            print(sig.hex())
+            if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
+                try:
+                    pk.verify(sig, self.signed_data, hasher)
+                    return True
+                except cryptography.exceptions.InvalidSignature as e:
+                    print(f"Invalid signature {e}")
+                    return False
+            else:
+                return False
+        else:
+            return False
 
     @classmethod
     def parse(cls, data: bytes) -> "Envelope":
@@ -102,6 +171,8 @@ class Envelope:
         if len(data) < 4 + data_length:
             raise util.UICException("UIC ticket data too short")
 
+        signed_data = data[4:]
+
         try:
             raw_ticket = zlib.decompress(data[4:4+data_length])
         except zlib.error as e:
@@ -119,5 +190,6 @@ class Envelope:
             issuer_rics=provider,
             signature_key_id=signature_key_id,
             signature=signature,
+            signed_data=signed_data,
             records=records
         )

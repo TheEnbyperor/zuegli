@@ -5,6 +5,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
+import django.core.files.storage
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb
 
 
