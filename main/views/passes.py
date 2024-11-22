@@ -835,6 +835,11 @@ def make_pkpass(ticket_obj: models.Ticket):
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_fields["headerFields"].append({
+                "key": "train-number",
+                "label": "train-number-label",
+                "value": str(ticket_data.oebb_99.train_number),
+            })
             pass_fields["secondaryFields"].append({
                 "key": "validity-start",
                 "label": "validity-start-label",
