@@ -82,3 +82,11 @@
 .paper-ticket-field.paper-ticket-field-italic {
     font-style: italic;
 }
+
+pre {
+    margin-top: 0;
+}
+
+.g-wallet-button, .apple-wallet-button {
+    height: 1.2em;
+}

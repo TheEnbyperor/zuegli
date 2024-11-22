@@ -1,0 +1,176 @@
+<h2 class="govuk-heading-m">Envelope Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Type</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.rsp_type }}</code> - {{ ticket.rsp_type_name }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Issuer</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.issuer_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reference</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket_ref }}</code></dd>
+    </div>
+</dl>
+
+{% if ticket.rsp_type == "08" %}
+    <h2 class="govuk-heading-m">Railcard Data</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Mandatory Manual Check</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.mandatory_manual_check %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Non Revenue Ticket</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.non_revenue %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">RSP Specification Version</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.spec_version }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.issuer_id }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.issuer_name }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.ticket_reference }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Checksum</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.checksum }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Barcode Version</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.barcode_version }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.start_date|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid until</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.end_date|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Purchased at</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.purchase_date|date:"F d, Y H:i:s" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger #1</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    {% if ticket.data.passenger_1_title %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Title</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.passenger_1_title }}</dd>
+                    </div>
+                    {% endif %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Forename</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.passenger_1_forename }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Surname</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.passenger_1_surname }}</dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+        {% if ticket.data.has_passenger_2 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Passenger #2</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        {% if ticket.data.passenger_2_title %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Title</dt>
+                                <dd class="govuk-summary-list__value">{{ ticket.data.passenger_2_title }}</dd>
+                            </div>
+                        {% endif %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Forename</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket.data.passenger_2_forename }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Surname</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket.data.passenger_2_surname }}</dd>
+                        </div>
+                    </dl>
+                </dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Railcard ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.railcard_type }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Railcard name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.railcard_type_name }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Railcard number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.railcard_number }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Sale NLC</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.selling_nlc }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Sale location name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.selling_nlc_name }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Selling machine type</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.selling_machine_type }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Selling machine number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.selling_machine_number }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Selling transaction number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.selling_transaction_number }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">No IPE</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.no_ipe %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        {% if ticket.data.free_use %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Free use</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.free_use }}</dd>
+        </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Hash</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.sha256_hash_hex }}</code></dd>
+        </div>
+    </dl>
+{% endif %}
+
+<h2 class="govuk-heading-m">Raw Data</h2>
+<p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>

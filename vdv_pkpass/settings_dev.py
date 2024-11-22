@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
+import google.oauth2.service_account
+import google.auth.crypt
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -130,6 +132,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -149,21 +154,39 @@ try:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
 except FileNotFoundError:
     WWDR_CERTIFICATE = None
+
 try:
     with open(PKPASS_CERTIFICATE_LOCATION, "rb") as f:
         PKPASS_CERTIFICATE = cryptography.x509.load_pem_x509_certificate(f.read())
 except FileNotFoundError:
     PKPASS_CERTIFICATE = None
+
 try:
     with open(PKPASS_KEY_LOCATION, "rb") as f:
         PKPASS_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
 except FileNotFoundError:
     PKPASS_KEY = None
 
+try:
+    GOOGLE_CREDS = google.oauth2.service_account.Credentials.from_service_account_file(
+        str((BASE_DIR / "priv" / "google-creds.json").absolute()),
+        scopes=['https://www.googleapis.com/auth/wallet_object.issuer']
+    )
+    GOOGLE_SIGNER = google.auth.crypt.RSASigner.from_service_account_file(
+        str((BASE_DIR / "priv" / "google-creds.json").absolute())
+    )
+except FileNotFoundError:
+    GOOGLE_CREDS = None
+    GOOGLE_SIGNER = None
+
 PKPASS_CONF = {
     "organization_name": "Q Misell",
     "pass_type": "pass.ch.magicalcodewit.vdv.ticket",
     "team_id": "MQ9TN9772U"
+}
+GWALLET_CONF = {
+    "issuer_id": "3388000000009246234",
+    "railcard_pass_class": "pass.ch.magicalcodewit.vdv.railcard",
 }
 
 AZTEC_JAR_PATH = BASE_DIR / "aztec" / "target" / "aztec-1.0.jar"
@@ -187,10 +210,10 @@ STORAGES = {
             "location": BASE_DIR / "uic-data",
         }
     },
-    "rsp6-data": {
+    "rsp-data": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
         "OPTIONS": {
-            "location": BASE_DIR / "rsp6-data",
+            "location": BASE_DIR / "rsp-data",
         }
     },
 }

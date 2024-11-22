@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
+import google.oauth2.service_account
+import google.auth.crypt
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,16 +146,17 @@ STORAGES = {
             "bucket_name": "uic-data",
         }
     },
-    "rsp6-data": {
+    "rsp-data": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
-            "bucket_name": "rsp6-data",
+            "bucket_name": "rsp-data",
         }
     },
 }
 
 PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")
 PKPASS_KEY_LOCATION = os.getenv("PKPASS_KEY_LOCATION")
+GOOGLE_CREDS_LOCATION = os.getenv("GOOGLE_CREDS_LOCATION")
 
 try:
     with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
@@ -171,10 +174,26 @@ try:
 except FileNotFoundError:
     PKPASS_KEY = None
 
+try:
+    GOOGLE_CREDS = google.oauth2.service_account.Credentials.from_service_account_file(
+        GOOGLE_CREDS_LOCATION,
+        scopes=['https://www.googleapis.com/auth/wallet_object.issuer']
+    )
+    GOOGLE_SIGNER = google.auth.crypt.RSASigner.from_service_account_file(
+        GOOGLE_CREDS_LOCATION,
+    )
+except FileNotFoundError:
+    GOOGLE_CREDS = None
+    GOOGLE_SIGNER = None
+
 PKPASS_CONF = {
     "organization_name": os.getenv("PKPASS_ORGANIZATION_NAME"),
     "pass_type": os.getenv("PKPASS_PASS_TYPE"),
     "team_id": os.getenv("PKPASS_TEAM_ID"),
+}
+GWALLET_CONF = {
+    "issuer_id": "3388000000009246234",
+    "railcard_pass_class": "pass.ch.magicalcodewit.vdv.railcard",
 }
 
 AZTEC_JAR_PATH = BASE_DIR / "aztec-1.0.jar"

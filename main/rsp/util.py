@@ -1,0 +1,2 @@
+class RSPException(Exception):
+    pass

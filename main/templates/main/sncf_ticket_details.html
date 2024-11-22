@@ -1,0 +1,77 @@
+{% load rics %}
+<h2 class="govuk-heading-m">SNCF Ticket Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PNR</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.pnr }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Ticket number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.ticket_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Traveler</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Forename</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.data.traveler_forename }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Surname</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.data.traveler_surname }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Date of Birth</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.data.traveler_dob|date:"F d, Y" }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">SNCF Customer ID</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.data.traveler_sncf_id }}</dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Tariff code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.tariff_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Travel class</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.travel_class }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Travel date</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.travel_date|date:"F d" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Departure station</dt>
+        <dd class="govuk-summary-list__value">{% include "main/uic/station.html" with station=ticket.data.departure_station|get_station:"sncf" %}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Arrival station</dt>
+        <dd class="govuk-summary-list__value">{% include "main/uic/station.html" with station=ticket.data.arrival_station|get_station:"sncf" %}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Train number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.train_number }}</dd>
+    </div>
+    {% if ticket.data.return_travel_class != "0" %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return travel class</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.return_travel_class }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return departure station</dt>
+            <dd class="govuk-summary-list__value">{% include "main/uic/station.html" with station=ticket.data.return_departure_station|get_station:"sncf" %}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return arrival station</dt>
+            <dd class="govuk-summary-list__value">{% include "main/uic/station.html" with station=ticket.data.return_arrival_station|get_station:"sncf" %}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return train number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.return_train_number }}</dd>
+        </div>
+    {% endif %}
+</dl>

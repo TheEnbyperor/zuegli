@@ -14,16 +14,27 @@ def get_rics_code(value):
     return uic.rics.get_rics(int(value))
 
 @register.filter(name="get_station")
-def get_station(value, code_type: str):
+def get_station(value, code_type):
     if not value:
         return None
 
-    if code_type == "stationUIC":
-        return uic.stations.get_station_by_uic(value)
-    elif code_type == "db":
-        return uic.stations.get_station_by_db(value)
-    elif code_type == "benerail":
-        return uic.stations.get_station_by_benerail(value)
+    if isinstance(code_type, str):
+        if code_type == "db":
+            return uic.stations.get_station_by_db(value)
+        elif code_type == "sncf":
+            return uic.stations.get_station_by_sncf(value)
+        elif code_type == "benerail":
+            return uic.stations.get_station_by_benerail(value)
+    elif isinstance(code_type, dict):
+        print(code_type)
+        if code_type.get("stationCodeTable") == "stationUIC":
+            return uic.stations.get_station_by_uic(value)
+        elif code_type.get("stationCodeTable") == "localCarrierStationCodeTable":
+            if code_type.get("productOwnerNum") == 1154:
+                if s := uic.stations.get_station_by_uic(value):
+                    return s
+                if s := uic.stations.get_station_by_db(value):
+                    return s
 
 @register.filter(name="iso3166")
 def get_country(value):

@@ -52,6 +52,7 @@ class Command(BaseCommand):
             "stations": [],
             "uic_codes": {},
             "db_ids": {},
+            "sncf_ids": {},
             "benerail_ids": {}
         }
         for row in stations:
@@ -71,6 +72,8 @@ class Command(BaseCommand):
                 out["db_ids"][row["db_id"]] = i
             if row["benerail_id"]:
                 out["benerail_ids"][row["benerail_id"]] = i
+            if row["sncf_id"]:
+                out["sncf_ids"][row["sncf_id"]] = i
 
         with uic_storage.open("stations.json", "w") as f:
             json.dump(out, f)

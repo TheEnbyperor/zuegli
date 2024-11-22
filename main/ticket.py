@@ -5,7 +5,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
-from . import models, vdv, uic, rsp6, templatetags, apn, elb
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb
 
 
 class TicketError(Exception):
@@ -262,13 +262,61 @@ class UICTicket:
 
 
 @dataclasses.dataclass
-class RSP6Ticket:
-    envelope: rsp6.Envelope
-    raw_bytes: bytes
+class RSPTicket:
+    rsp_type: str
+    issuer_id: str
+    ticket_ref: str
+    raw_ticket: bytes
+    data: typing.Union[rsp.RailcardData]
 
     @property
     def ticket_type(self) -> str:
-        return "RSP6"
+        return "RSP"
+
+    def type(self) -> str:
+        if self.rsp_type == "08":
+            return models.Ticket.TYPE_RAILCARD
+        elif self.rsp_type == "06":
+            return models.Ticket.TYPE_FAHRKARTE
+        else:
+            return models.Ticket.TYPE_UNKNOWN
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        if self.rsp_type == "08":
+            hd.update(b"rsp-railcard")
+            hd.update(self.data.railcard_number.encode("utf-8"))
+            return base64.b32encode(hd.digest()).decode("utf-8")
+
+        hd.update(b"rsp")
+        hd.update(self.rsp_type.encode("utf-8"))
+        hd.update(self.issuer_id.encode("utf-8"))
+        hd.update(self.ticket_ref.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+    @property
+    def rsp_type_name(self):
+        if self.rsp_type == "08":
+            return "Railcard"
+        elif self.rsp_type == "06":
+            return "Ticket"
+        else:
+            return "Unknown"
+
+    @property
+    def raw_ticket_hex(self):
+        return ":".join(f"{b:02x}" for b in self.raw_ticket)
+
+
+@dataclasses.dataclass
+class SNCFTicket:
+    raw_ticket: bytes
+    data: sncf.SNCFTicket
+
+    @property
+    def ticket_type(self) -> str:
+        return "SNCF"
 
     def type(self) -> str:
         return models.Ticket.TYPE_FAHRKARTE
@@ -276,9 +324,8 @@ class RSP6Ticket:
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
 
-        hd.update(b"rsp6")
-        hd.update(self.envelope.issuer_id.encode("utf-8"))
-        hd.update(self.envelope.ticket_ref.encode("utf-8"))
+        hd.update(b"sncf")
+        hd.update(self.data.ticket_number.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -646,24 +693,24 @@ def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTic
 
     return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
 
-def parse_ticket_rsp6(ticket_bytes: bytes) -> RSP6Ticket:
-    pki_store = rsp6.CertificateStore()
+def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
+    pki_store = rsp.CertificateStore()
     pki_store.load_certificates()
 
     try:
-        ticket_envelope = rsp6.Envelope.parse(ticket_bytes)
-    except rsp6.RSP6Exception:
+        ticket_envelope = rsp.Envelope.parse(ticket_bytes)
+    except rsp.RSPException:
         raise TicketError(
-            title="This doesn't look like a valid RSP6 ticket",
-            message="You may have scanned something that is not a RSP6 ticket, the ticket is corrupted, or there "
+            title="This doesn't look like a valid RSP ticket",
+            message="You may have scanned something that is not a RSP ticket, the ticket is corrupted, or there "
                     "is a bug in this program.",
             exception=traceback.format_exc()
         )
 
     if ticket_envelope.issuer_id not in pki_store.certificates:
         raise TicketError(
-            title="Unknown RSP6 issuer",
-            message=f"We don't have any keys for the RSP6 issuer {ticket_envelope.issuer_id} - we can't decode this ticket",
+            title="Unknown RSP issuer",
+            message=f"We don't have any keys for the RSP issuer {ticket_envelope.issuer_id} - we can't decode this ticket",
         )
 
     ticket_payload = None
@@ -674,13 +721,42 @@ def parse_ticket_rsp6(ticket_bytes: bytes) -> RSP6Ticket:
 
     if not ticket_payload:
         raise TicketError(
-            title="Unable to decrypt RSP6 ticket",
-            message="None of the issuer's public keys match the RSP6 ticket",
+            title="Unable to decrypt RS6 ticket",
+            message="None of the issuer's public keys match the RSP ticket",
         )
 
-    return RSP6Ticket(
-        envelope=ticket_envelope,
-        raw_bytes=ticket_payload,
+    if ticket_envelope.ticket_type == "08":
+        data = rsp.RailcardData.parse(ticket_payload)
+    elif ticket_envelope.ticket_type == "06":
+        data = rsp.TicketData.parse(ticket_payload)
+    else:
+        raise TicketError(
+            title="Unsupported RSP ticket type",
+            message=f"We don't know how to parse type {ticket_envelope.ticket_type} tickets",
+        )
+
+    return RSPTicket(
+        rsp_type=ticket_envelope.ticket_type,
+        ticket_ref=ticket_envelope.ticket_ref,
+        issuer_id=ticket_envelope.issuer_id,
+        raw_ticket=ticket_payload,
+        data=data
+    )
+
+def parse_ticket_sncf(ticket_bytes: bytes) -> SNCFTicket:
+    try:
+        data = sncf.SNCFTicket.parse(ticket_bytes)
+    except sncf.SNCFException:
+        raise TicketError(
+            title="This doesn't look like a valid SNCF ticket",
+            message="You may have scanned something that is not an SNCF ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return SNCFTicket(
+        raw_ticket=ticket_bytes,
+        data=data
     )
 
 def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
@@ -701,15 +777,17 @@ def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
 
 
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSP6Ticket, ELBTicket]:
+        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
     )
+    if ticket_bytes[:4] == b"i0CV":
+        return parse_ticket_sncf(ticket_bytes)
     if ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
-    elif ticket_bytes[:2] == b"06":
-        return parse_ticket_rsp6(ticket_bytes)
+    elif ticket_bytes[:2] in (b"06", b"08"):
+        return parse_ticket_rsp(ticket_bytes)
     elif ticket_bytes[:1] == b"e":
         return parse_ticket_elb(ticket_bytes)
     else:
@@ -729,7 +807,7 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
 def create_ticket_obj(
         ticket_obj: "models.Ticket",
         ticket_bytes: bytes,
-        ticket_data: typing.Union[VDVTicket, UICTicket, RSP6Ticket],
+        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket],
 ) -> bool:
     created = False
     if isinstance(ticket_data, VDVTicket):
@@ -777,17 +855,33 @@ def create_ticket_obj(
                 }
             }
         )
-    elif isinstance(ticket_data, RSP6Ticket):
-        _, created = models.RSP6TicketInstance.objects.update_or_create(
-            issuer_id=ticket_data.envelope.issuer_id,
-            reference=ticket_data.envelope.ticket_ref,
+    elif isinstance(ticket_data, RSPTicket):
+        validity_start = None
+        validity_end = None
+        if isinstance(ticket_data.data, rsp.RailcardData):
+            validity_start = ticket_data.data.validity_start_time()
+            validity_end = ticket_data.data.validity_end_time()
+
+        _, created = models.RSPTicketInstance.objects.update_or_create(
+            ticket_type=ticket_data.rsp_type,
+            issuer_id=ticket_data.issuer_id,
+            reference=ticket_data.ticket_ref,
             defaults={
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
+                "validity_start": validity_start,
+                "validity_end": validity_end,
                 "decoded_data": {
-                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
-                    "ticket": base64.b64encode(ticket_data.raw_bytes).decode("ascii"),
+                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
                 }
+            }
+        )
+    elif isinstance(ticket_data, SNCFTicket):
+        _, created = models.SNCFTicketInstance.objects.update_or_create(
+            reference=ticket_data.data.ticket_number,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
             }
         )
     elif isinstance(ticket_data, ELBTicket):
@@ -826,5 +920,6 @@ def update_from_subscription_barcode(barcode_data: bytes, account: typing.Option
 
     if should_update:
         apn.notify_ticket(ticket_obj)
+        gwallet.sync_ticket(ticket_obj)
 
     return ticket_obj

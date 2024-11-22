@@ -34,7 +34,7 @@ class CertificateStore:
 
     def load_certificates(self):
         certificates = {}
-        certificate_storage = django.core.files.storage.storages["rsp6-data"]
+        certificate_storage = django.core.files.storage.storages["rsp-data"]
         with certificate_storage.open("keys.json", "r") as f:
             data = json.loads(f.read())
             for issuer, keys in data.items():

@@ -20,11 +20,18 @@ spec:
             part: db-abo
         spec:
           restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
           containers:
             - name: django
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: Always
               command: ["sh", "-c", "python3 manage.py update-db-abo"]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -61,11 +68,18 @@ spec:
             part: db-saarvv
         spec:
           restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
           containers:
             - name: django
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: Always
               command: ["sh", "-c", "python3 manage.py update-saarvv"]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
