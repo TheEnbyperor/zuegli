@@ -10,7 +10,7 @@ from django.core import validators
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from . import ticket as t
-from . import vdv, uic, rsp6
+from . import vdv, uic, rsp6, elb
 
 
 def make_pass_token():
@@ -180,6 +180,28 @@ class RSP6TicketInstance(models.Model):
         return t.RSP6Ticket(
             envelope=ticket_envelope,
             raw_bytes=raw_ticket,
+        )
+
+
+class ELBTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="elb_instances")
+    pnr = models.CharField(max_length=6, verbose_name="PNR")
+    sequence_number = models.PositiveSmallIntegerField(verbose_name="Sequence number")
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        unique_together = [
+            ["pnr", "sequence_number"],
+        ]
+        verbose_name = "ELB ticket"
+
+    def __str__(self):
+        return f"{self.pnr} - {self.sequence_number}"
+
+    def as_ticket(self) -> t.ELBTicket:
+        return t.ELBTicket(
+            raw_ticket=bytes(self.barcode_data),
+            data=elb.ELBTicket.parse(bytes(self.barcode_data)),
         )
 
 

@@ -1,0 +1,2 @@
+class ELBException(Exception):
+    pass

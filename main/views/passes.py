@@ -994,6 +994,110 @@ def make_pkpass(ticket_obj: models.Ticket):
             elif ticket_data.ticket.product_org_id == 3000 and ticket_data.ticket.ticket_org_id in VDV_ORG_ID_LOGO:
                 add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.ticket_org_id], "logo.png")
                 have_logo = True
+        else:
+            ticket_instance = ticket_obj.elb_instances.first()
+            if ticket_instance:
+                ticket_data: ticket.ELBTicket = ticket_instance.as_ticket()
+                validity_end = ticket_data.data.validity_end_time()
+                departure_date = ticket_data.data.departure_time()
+                pass_type = "boardingPass"
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "benerail")
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "benerail")
+
+                pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                pass_json["relevantDate"] = departure_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+                pass_json["locations"].append({
+                    "latitude": float(from_station["latitude"]),
+                    "longitude": float(from_station["longitude"]),
+                    "relevantText": from_station["name"]
+                })
+                from_station_maps_link = urllib.parse.urlencode({
+                    "q": from_station["name"],
+                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                })
+                pass_json["locations"].append({
+                    "latitude": float(to_station["latitude"]),
+                    "longitude": float(to_station["longitude"]),
+                    "relevantText": to_station["name"]
+                })
+                to_station_maps_link = urllib.parse.urlencode({
+                    "q": to_station["name"],
+                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                })
+
+                pass_fields = {
+                    "transitType": "PKTransitTypeTrain",
+                    "headerFields": [{
+                        "key": "departure-date",
+                        "label": "departure-date-label",
+                        "value": departure_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "dateStyle": "PKDateStyleMedium",
+                    }],
+                    "primaryFields": [{
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": from_station["name"],
+                        "semantics": {
+                            "departureLocation": {
+                                "latitude": float(from_station["latitude"]),
+                                "longitude": float(from_station["longitude"]),
+                            },
+                            "departureStationName": from_station["name"]
+                        }
+                    }, {
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": to_station["name"],
+                        "semantics": {
+                            "destinationLocation": {
+                                "latitude": float(to_station["latitude"]),
+                                "longitude": float(to_station["longitude"]),
+                            },
+                            "destinationStationName": to_station["name"]
+                        }
+                    }],
+                    "secondaryFields": [{
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": f"class-code-{ticket_data.data.travel_class}-label",
+                    }],
+                    "auxiliaryFields": [{
+                        "key": "train-number",
+                        "label": "train-number-label",
+                        "value": ticket_data.data.train_number,
+                    }, {
+                        "key": "coach-number",
+                        "label": "coach-number-label",
+                        "value": ticket_data.data.coach_number,
+                    }, {
+                        "key": "seat-number",
+                        "label": "seat-number-label",
+                        "value": ticket_data.data.seat_number,
+                    }],
+                    "backFields": [{
+                        "key": "from-station-back",
+                        "label": "from-station-label",
+                        "value": from_station["name"],
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
+                    }, {
+                        "key": "to-station-back",
+                        "label": "to-station-label",
+                        "value": to_station["name"],
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
+                    }, {
+                        "key": "ticket-id",
+                        "label": "ticket-id-label",
+                        "value": str(ticket_data.data.booking_number),
+                    }]
+                }
+                pass_json["barcodes"] = [{
+                    "format": "PKBarcodeFormatAztec",
+                    "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+                    "messageEncoding": "iso-8859-1",
+                    "altText": f"{ticket_data.data.pnr} {ticket_data.data.sequence_number}"
+                }]
+                add_pkp_img(pkp, "pass/logo-eurostar.png", "logo.png")
+                have_logo = True
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -1042,7 +1146,9 @@ PASS_STRINGS = {
 "passenger-label" = "Passenger";
 "class-code-label" = "Class";
 "class-code-first-label" = "1st";
+"class-code-1-label" = "1st";
 "class-code-second-label" = "2nd";
+"class-code-2-label" = "2nd";
 "reduction-card-label" = "Discount card";
 "date-of-birth-label" = "Date of birth";
 "month-of-birth-label" = "Birth month";
@@ -1056,6 +1162,10 @@ PASS_STRINGS = {
 "return-included-label" = "Return included";
 "return-included-yes" = "Yes";
 "return-included-no" = "No";
+"departure-date-label" = "Departure date";
+"train-number-label" = "Train number";
+"coach-number-label" = "Coach";
+"seat-number-label" = "Seat";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -1072,7 +1182,9 @@ PASS_STRINGS = {
 "passenger-label" = "Fahrgast";
 "class-code-label" = "Klasse";
 "class-code-first-label" = "1.";
+"class-code-1-label" = "1.";
 "class-code-second-label" = "2.";
+"class-code-2-label" = "2.";
 "reduction-card-label" = "Bahncard";
 "date-of-birth-label" = "Geburtsdatum";
 "month-of-birth-label" = "Geburtsmonat";
@@ -1086,6 +1198,10 @@ PASS_STRINGS = {
 "return-included-label" = "Rückfahrt inklusive";
 "return-included-yes" = "Ja";
 "return-included-no" = "Nein";
+"departure-date-label" = "Datum";
+"train-number-label" = "Zug nr.";
+"coach-number-label" = "Waggon";
+"seat-number-label" = "Sitzpl.";
 """
 }
 

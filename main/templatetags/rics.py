@@ -22,6 +22,8 @@ def get_station(value, code_type: str):
         return uic.stations.get_station_by_uic(value)
     elif code_type == "db":
         return uic.stations.get_station_by_db(value)
+    elif code_type == "benerail":
+        return uic.stations.get_station_by_benerail(value)
 
 @register.filter(name="iso3166")
 def get_country(value):

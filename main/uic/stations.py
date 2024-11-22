@@ -25,3 +25,8 @@ def get_station_by_uic(code) -> typing.Optional[dict]:
 def get_station_by_db(code) -> typing.Optional[dict]:
     if i := get_stations_list()["db_ids"].get(str(code)):
         return get_stations_list()["stations"][i]
+
+
+def get_station_by_benerail(code) -> typing.Optional[dict]:
+    if i := get_stations_list()["benerail_ids"].get(str(code)):
+        return get_stations_list()["stations"][i]

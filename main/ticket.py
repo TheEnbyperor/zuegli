@@ -5,7 +5,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
-from . import models, vdv, uic, rsp6, templatetags, apn
+from . import models, vdv, uic, rsp6, templatetags, apn, elb
 
 
 class TicketError(Exception):
@@ -279,6 +279,27 @@ class RSP6Ticket:
         hd.update(b"rsp6")
         hd.update(self.envelope.issuer_id.encode("utf-8"))
         hd.update(self.envelope.ticket_ref.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class ELBTicket:
+    raw_ticket: bytes
+    data: elb.ELBTicket
+
+    @property
+    def ticket_type(self) -> str:
+        return "ELB"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"elb")
+        hd.update(self.data.pnr.encode("utf-8"))
+        hd.update(self.data.sequence_number.to_bytes(2, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -662,8 +683,25 @@ def parse_ticket_rsp6(ticket_bytes: bytes) -> RSP6Ticket:
         raw_bytes=ticket_payload,
     )
 
+def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
+    try:
+        data = elb.ELBTicket.parse(ticket_bytes)
+    except elb.ELBException:
+        raise TicketError(
+            title="This doesn't look like a valid ELB ticket",
+            message="You may have scanned something that is not an ELB ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return ELBTicket(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSP6Ticket]:
+        typing.Union[VDVTicket, UICTicket, RSP6Ticket, ELBTicket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
@@ -672,6 +710,8 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
         return parse_ticket_uic(ticket_bytes, context)
     elif ticket_bytes[:2] == b"06":
         return parse_ticket_rsp6(ticket_bytes)
+    elif ticket_bytes[:1] == b"e":
+        return parse_ticket_elb(ticket_bytes)
     else:
         return parse_ticket_vdv(ticket_bytes, context)
 
@@ -748,6 +788,15 @@ def create_ticket_obj(
                     "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
                     "ticket": base64.b64encode(ticket_data.raw_bytes).decode("ascii"),
                 }
+            }
+        )
+    elif isinstance(ticket_data, ELBTicket):
+        _, created = models.ELBTicketInstance.objects.update_or_create(
+            pnr=ticket_data.data.pnr,
+            sequence_number=ticket_data.data.sequence_number,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
             }
         )
     return created
