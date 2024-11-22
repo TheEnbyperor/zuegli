@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='appleregistration',
-            unique_together=set(),
-        ),
         migrations.AddField(
             model_name='appleregistration',
             name='ticket_part',
