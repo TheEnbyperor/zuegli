@@ -4,7 +4,7 @@ import urllib.parse
 import pytz
 import pymupdf
 import io
-from PIL import Image
+from PIL import Image, ImageOps
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http import HttpResponse
@@ -147,6 +147,7 @@ def pass_photo_thumbnail(ticket_obj: models.Ticket, size, padding):
         if img := ticket_obj.photos.get(k):
             with default_storage.open(img) as f:
                 i = Image.open(f)
+                ImageOps.exif_transpose(i, in_place=True)
                 i.thumbnail(out.size, Image.Resampling.LANCZOS)
                 images.append(i)
 
