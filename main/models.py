@@ -154,7 +154,7 @@ class UICTicketInstance(models.Model):
         )
 
         ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
-        return t.UICTicket.from_envelope(self.barcode_data, ticket_envelope, context)
+        return t.UICTicket.from_envelope(bytes(self.barcode_data), ticket_envelope, context)
 
 
 class RSP6TicketInstance(models.Model):
