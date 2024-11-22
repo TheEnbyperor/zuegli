@@ -36,7 +36,7 @@ class BitStream:
 
     def read_time(self, start: int, end: int) -> datetime.time:
         i = self.read_int(start, end)
-        return datetime.time((i // 3600) % 24, (i // 60) % 60, i % 60)
+        return datetime.time((i // 60) % 24, i % 60, 0)
 
 @dataclasses.dataclass
 class TicketData:
