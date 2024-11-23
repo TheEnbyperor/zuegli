@@ -66,7 +66,8 @@ def index(request):
 
     if ticket_bytes:
         try:
-            ticket_data = ticket.parse_ticket(ticket_bytes, request.user.account if request.user.is_authenticated else None)
+            ticket_data = ticket.parse_ticket(ticket_bytes,
+                                              request.user.account if request.user.is_authenticated else None)
         except ticket.TicketError as e:
             error = {
                 "title": e.title,
@@ -132,7 +133,6 @@ def view_ticket(request, pk):
                         apn.notify_ticket(ticket_obj)
                         gwallet.sync_ticket(ticket_obj)
 
-
     return render(request, "main/ticket.html", {
         "ticket": ticket_obj,
         "ticket_updated": request.session.pop("ticket_updated", False),
@@ -160,6 +160,7 @@ def pass_photo_thumbnail(ticket_obj: models.Ticket, size, padding):
         x += i.width + (padding // 2)
 
     return out
+
 
 def pass_photo_banner(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
@@ -199,6 +200,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
         "description": ticket_obj.get_ticket_type_display(),
         "sharingProhibited": True,
         "backgroundColor": "rgb(255, 255, 255)",
+        "labelColor": "rgb(75, 75, 75)",
         "foregroundColor": "rgb(0, 0, 0)",
         "locations": [],
         "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple/",
@@ -477,9 +479,11 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         return_pass_json = copy.deepcopy(pass_json)
                         return_pass_json["locations"] = []
 
-                        return_pass_fields["headerFields"].extend(filter(lambda f: f["key"] != "train-number", pass_fields["headerFields"]))
+                        return_pass_fields["headerFields"].extend(
+                            filter(lambda f: f["key"] != "train-number", pass_fields["headerFields"]))
                         return_pass_fields["auxiliaryFields"].extend(pass_fields["auxiliaryFields"])
-                        return_pass_fields["secondaryFields"].extend(filter(lambda f: f["key"] != "departure-time", pass_fields["secondaryFields"]))
+                        return_pass_fields["secondaryFields"].extend(
+                            filter(lambda f: f["key"] != "departure-time", pass_fields["secondaryFields"]))
                         return_pass_fields["backFields"].extend(filter(
                             lambda f: f["key"] not in ("valid-region", "to-station-back", "from-station-back"),
                             pass_fields["backFields"]
@@ -593,7 +597,8 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                 "value": return_document["validReturnRegionDesc"],
                             })
 
-                        if "validReturnRegion" in return_document and return_document["validReturnRegion"][0][0] == "trainLink":
+                        if "validReturnRegion" in return_document and return_document["validReturnRegion"][0][
+                            0] == "trainLink":
                             train_link = return_document["validReturnRegion"][0][1]
                             departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
                             return_pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -952,7 +957,8 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     })
 
             if ticket_data.db_bl.validity_start:
-                validity_start = tz.localize(datetime.datetime.combine(ticket_data.db_bl.validity_start, datetime.time.min))\
+                validity_start = tz.localize(
+                    datetime.datetime.combine(ticket_data.db_bl.validity_start, datetime.time.min)) \
                     .astimezone(pytz.utc)
                 pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                 pass_fields["secondaryFields"].append({
@@ -971,7 +977,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 })
 
             if ticket_data.db_bl.validity_end:
-                validity_end = tz.localize(datetime.datetime.combine(ticket_data.db_bl.validity_end, datetime.time.max))\
+                validity_end = tz.localize(datetime.datetime.combine(ticket_data.db_bl.validity_end, datetime.time.max)) \
                     .astimezone(pytz.utc)
                 pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
                 pass_fields["secondaryFields"].append({
@@ -1152,7 +1158,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "value": ticket_data.dt_pa.passenger_name,
                     })
 
-
         if distributor := ticket_data.distributor():
             pass_json["organizationName"] = distributor["full_name"]
             if distributor["url"]:
@@ -1305,15 +1310,117 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
             "messageEncoding": "iso-8859-1",
             "altText": f"{ticket_instance.issuer_id}-{ticket_instance.reference}",
         }]
+        pass_json["organizationName"] = ticket_data.issuer_name()
 
-        if isinstance(ticket_data.data, rsp.RailcardData):
-            validity_start =  ticket_data.data.validity_start_time()
-            validity_end =  ticket_data.data.validity_end_time()
+        if isinstance(ticket_data.data, rsp.TicketData):
+            from_station = rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc)
+            to_station = rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc)
+            validity_start = ticket_data.data.validity_start_time()
+            validity_end = ticket_data.data.validity_end_time()
+
+            pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_type = "boardingPass"
+            pass_fields = {
+                "transitType": "PKTransitTypeTrain",
+                "headerFields": [{
+                    "key": "departure-time",
+                    "label": "departure-time-label",
+                    "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "dateStyle": "PKDateStyleShort",
+                    "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time_flag == 2 else "PKDateStyleNone",
+                }],
+                "primaryFields": [{
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": from_station["3ALPHA"],
+                    "semantics": {
+                        "departureStationName": from_station["NLCDESC"]
+                    }
+                }, {
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": to_station["3ALPHA"],
+                    "semantics": {
+                        "destinationStationName": to_station["NLCDESC"]
+                    }
+                }],
+                "auxiliaryFields": [],
+                "secondaryFields": [{
+                    "key": "travel-class",
+                    "label": "class-code-label",
+                    "value": "class-code-second-label" if ticket_data.data.standard_class else "class-code-first-label",
+                }],
+                "backFields": [{
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": from_station["NLCDESC"],
+                }, {
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": to_station["NLCDESC"],
+                }, {
+                    "key": "return-included",
+                    "label": "return-included-label",
+                    "value": "return-included-yes" if ticket_data.data.bidirectional else "return-included-no",
+                }, {
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": ticket_data.issuer_name(),
+                }],
+            }
+
+            if ticket_data.data.passenger_name:
+                pass_fields["secondaryFields"].append({
+                    "key": "passenger-name",
+                    "label": "passenger-label",
+                    "value": ticket_data.data.passenger_name,
+                })
+
+            if ticket_data.data.purchase_data:
+                pass_fields["backFields"].extend([{
+                    "key": "ticket-id",
+                    "label": "ticket-id-label",
+                    "value": ticket_data.data.purchase_data.purchase_reference or ticket_data.ticket_ref,
+                }, {
+                    "key": "issued-date",
+                    "label": "issued-at-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": ticket_data.data.purchase_data.purchase_time().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                }])
+
+            for i, reservation in enumerate(ticket_data.data.reservations):
+                pass_fields["auxiliaryFields"].append({
+                    "key": f"reservation-{i}-service",
+                    "label": "train-number-label",
+                    "value": reservation.service_id,
+                })
+                if reservation.coach:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": f"reservation-{i}-coach",
+                        "label": "coach-number-label",
+                        "value": reservation.coach,
+                    })
+                if reservation.seat:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": f"reservation-{i}-seat",
+                        "label": "seat-number-label",
+                        "value": reservation.seat,
+                    })
+
+            if ticket_data.issuer_id in RSP_ORG_LOGO:
+                add_pkp_img(pkp, RSP_ORG_LOGO[ticket_data.issuer_id], "logo.png")
+                have_logo = True
+
+        elif isinstance(ticket_data.data, rsp.RailcardData):
+            validity_start = ticket_data.data.validity_start_time()
+            validity_end = ticket_data.data.validity_end_time()
             pass_json["organizationName"] = ticket_data.data.issuer_name()
             if colour := ticket_data.data.background_colour():
                 pass_json["backgroundColor"] = colour
                 pass_json["foregroundColor"] = "rgb(255, 255, 255)"
-                pass_json["labelColor"] = "rgb(255, 255, 255)"
+                pass_json["labelColor"] = "rgb(205, 205, 205)"
 
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_fields = {
@@ -1466,7 +1573,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "givenName": ticket_data.data.traveler_forename,
                     }
                 }
-            } ,{
+            }, {
                 "key": "date-of-birth",
                 "label": "date-of-birth-label",
                 "dateStyle": "PKDateStyleMedium",
@@ -1797,4 +1904,9 @@ VDV_ORG_ID_LOGO = {
     6441: "pass/logo-kvg.png",
     6496: "pass/logo-naldo.png",
     6613: "pass/logo-arriva.png",
+}
+
+RSP_ORG_LOGO = {
+    "TT": "pass/logo-tt.png",
+    "CS": "pass/logo-cs.png",
 }

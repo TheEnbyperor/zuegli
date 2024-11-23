@@ -309,6 +309,8 @@ class RSPTicket:
     def raw_ticket_hex(self):
         return ":".join(f"{b:02x}" for b in self.raw_ticket)
 
+    def issuer_name(self):
+        return rsp.data.issuer_name(self.issuer_id)
 
 @dataclasses.dataclass
 class SNCFTicket:
@@ -729,7 +731,15 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     if ticket_envelope.ticket_type == "08":
         data = rsp.RailcardData.parse(ticket_payload)
     elif ticket_envelope.ticket_type == "06":
-        data = rsp.TicketData.parse(ticket_payload)
+        try:
+            data = rsp.TicketData.parse(ticket_payload)
+        except rsp.RSPException:
+            raise TicketError(
+                title="This doesn't look like a valid RSP ticket",
+                message="You may have scanned something that is not a RSP ticket, the ticket is corrupted, or there "
+                        "is a bug in this program.",
+                exception=traceback.format_exc()
+            )
     else:
         raise TicketError(
             title="Unsupported RSP ticket type",

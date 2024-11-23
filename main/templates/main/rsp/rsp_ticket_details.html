@@ -1,0 +1,24 @@
+<h2 class="govuk-heading-m">Envelope Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Type</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.rsp_type }}</code> - {{ ticket.rsp_type_name }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Issuer</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.issuer_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reference</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket_ref }}</code></dd>
+    </div>
+</dl>
+
+{% if ticket.rsp_type == "06" %}
+    {% include "main/rsp/ticket.html" with data=ticket.data %}
+{% elif ticket.rsp_type == "08" %}
+    {% include "main/rsp/railcard.html" with data=ticket.data %}
+{% endif %}
+
+<h2 class="govuk-heading-m">Raw Data</h2>
+<p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>

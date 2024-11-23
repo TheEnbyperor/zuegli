@@ -23,7 +23,7 @@ def get_locations_data() -> typing.Dict[str, typing.Any]:
 
 
 def get_station_by_nlc(code: str) -> typing.Optional[dict]:
-    if len(code) == 4:
+    if len(code) <= 4:
         code = f"{code}00"
 
     if i := get_locations_data()["NLC"].get(code):

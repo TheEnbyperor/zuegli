@@ -1,0 +1,210 @@
+<h2 class="govuk-heading-m">Ticket Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Mandatory Manual Check</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.mandatory_manual_check %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Non Revenue Ticket</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.non_revenue %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">RSP Specification Version</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.spec_version }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Checksum</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.checksum }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Barcode Version</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.barcode_version }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reference</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.ticket_reference }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Child ticket</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.child_ticket %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Standard class</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.standard_class %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Return included</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.bidirectional %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Lennon ticket type</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.lennon_ticket_type }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Fare code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.fare_label }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Origin</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">NLC</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.origin_nlc }}</code></dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Location name</dt>
+                    <dd class="govuk-summary-list__value">{{ data.origin_nlc_name }}</dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Destination</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">NLC</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.destination_nlc }}</code></dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Location name</dt>
+                    <dd class="govuk-summary-list__value">{{ data.destination_nlc_name }}</dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Coupon type</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Discount code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.discount_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Route code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.route_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Restriction code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.restriction_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Passenger name</dt>
+        <dd class="govuk-summary-list__value">{{ data.passenger_name }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Departure time</dt>
+        <dd class="govuk-summary-list__value">
+            {{ data.start_date|date:"F d, Y H:i" }}
+            {% if data.depart_time_flag == 2 %}(mandatory){% elif data.depart_time_flag == 3 %}(suggested){% endif %}
+        </dd>
+    </div>
+    {% if data.reservations %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reservations</dt>
+            <dd class="govuk-summary-list__value">
+                {% for reservation in data.reservations %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Reservation #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Service</dt>
+                                    <dd class="govuk-summary-list__value">{{ reservation.service_id }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Coach</dt>
+                                    <dd class="govuk-summary-list__value">{{ reservation.coach }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Seat</dt>
+                                    <dd class="govuk-summary-list__value">{{ reservation.seat }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if data.purchase_data %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Purchase data</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Purchased at</dt>
+                        <dd class="govuk-summary-list__value">{{ data.purchase_data.purchase_date|date:"F d, Y H:i" }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Price</dt>
+                        <dd class="govuk-summary-list__value">&pound;{{ data.purchase_data.price }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Purchase reference</dt>
+                        <dd class="govuk-summary-list__value">{{ data.purchase_data.purchase_reference }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Days of validity</dt>
+                        <dd class="govuk-summary-list__value">{{ data.purchase_data.days_of_validity }}</dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sale</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">NLC</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.selling_nlc }}</code></dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Location name</dt>
+                    <dd class="govuk-summary-list__value">{{ data.selling_nlc_name }}</dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Hash</dt>
+        <dd class="govuk-summary-list__value"><code>{{ data.sha256_hash_hex }}</code></dd>
+    </div>
+</dl>

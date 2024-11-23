@@ -129,7 +129,7 @@
                         Type {{ instance.ticket_type }} - {{ instance.issuer_id }}
                     </summary>
                     <div class="govuk-details__text">
-                        {% include 'main/rsp_ticket_details.html' with ticket=ticket_obj %}
+                        {% include 'main/rsp/rsp_ticket_details.html' with ticket=ticket_obj %}
                     </div>
                 </details>
             {% endwith %}
