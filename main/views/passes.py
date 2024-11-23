@@ -801,8 +801,12 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     pass_fields["primaryFields"].append(field_data)
                     return_pass_fields["primaryFields"].append(field_data)
                 elif pass_type == "storeCard":
-                    pass_fields["headerFields"].append(field_data)
-                    return_pass_fields["headerFields"].append(field_data)
+                    if pass_fields["headerFields"]:
+                        pass_fields["primaryFields"].append(field_data)
+                        return_pass_fields["primaryFields"].append(field_data)
+                    else:
+                        pass_fields["headerFields"].append(field_data)
+                        return_pass_fields["headerFields"].append(field_data)
                 else:
                     pass_fields["auxiliaryFields"].append(field_data)
                     return_pass_fields["auxiliaryFields"].append(field_data)
