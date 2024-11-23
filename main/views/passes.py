@@ -173,12 +173,15 @@ def pass_photo_banner(request, pk):
 def add_pkp_img(pkp, img_name: str, pass_path: str):
     img_name, img_name_ext = img_name.rsplit(".", 1)
     pass_path, pass_path_ext = pass_path.rsplit(".", 1)
-    img_1x = storages["staticfiles"].open(f"{img_name}.{img_name_ext}", "rb").read()
+    storage = storages["staticfiles"]
+    img_1x = storage.open(f"{img_name}.{img_name_ext}", "rb").read()
     pkp.add_file(f"{pass_path}.{pass_path_ext}", img_1x)
-    img_2x = storages["staticfiles"].open(f"{img_name}@2x.{img_name_ext}", "rb").read()
-    pkp.add_file(f"{pass_path}@2x.{pass_path_ext}", img_2x)
-    img_3x = storages["staticfiles"].open(f"{img_name}@3x.{img_name_ext}", "rb").read()
-    pkp.add_file(f"{pass_path}@3x.{pass_path_ext}", img_3x)
+    if storage.exists(f"{img_name}@2x.{img_name_ext}"):
+        img_2x = storage.open(f"{img_name}@2x.{img_name_ext}", "rb").read()
+        pkp.add_file(f"{pass_path}@2x.{pass_path_ext}", img_2x)
+    if storage.exists(f"{img_name}@3x.{img_name_ext}"):
+        img_3x = storages["staticfiles"].open(f"{img_name}@3x.{img_name_ext}", "rb").read()
+        pkp.add_file(f"{pass_path}@3x.{pass_path_ext}", img_3x)
 
 
 def ticket_pkpass(request, pk):
@@ -653,22 +656,25 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     })
 
                 elif document_type == "customerCard":
+                    pass_type = "storeCard"
                     validity_start = templatetags.rics.rics_valid_from_date(document)
                     validity_end = templatetags.rics.rics_valid_until_date(document)
 
-                    pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-
                     if "cardTypeDescr" in document:
-                        pass_fields["headerFields"].append({
-                            "key": "product",
-                            "label": "product-label",
-                            "value": document["cardTypeDescr"]
-                        })
                         pass_fields["backFields"].append({
                             "key": "product-back",
                             "label": "product-label",
                             "value": document["cardTypeDescr"]
                         })
+
+                        if document["cardTypeDescr"] in BC_STRIP_IMG:
+                            add_pkp_img(pkp, BC_STRIP_IMG[document["cardTypeDescr"]], "strip.png")
+                        else:
+                            pass_fields["headerFields"].append({
+                                "key": "product",
+                                "label": "product-label",
+                                "value": document["cardTypeDescr"]
+                            })
 
                     if "cardIdIA5" in document:
                         pass_fields["secondaryFields"].append({
@@ -691,7 +697,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         })
 
                     if validity_start:
-                        pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                         pass_fields["backFields"].append({
                             "key": "validity-start-back",
                             "label": "validity-start-label",
@@ -708,6 +713,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                             "timeStyle": "PKDateStyleNone",
                             "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                         })
+
 
                 elif document_type == "pass":
                     validity_start = templatetags.rics.rics_valid_from(document, issued_at)
@@ -794,6 +800,9 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 if pass_type == "generic":
                     pass_fields["primaryFields"].append(field_data)
                     return_pass_fields["primaryFields"].append(field_data)
+                elif pass_type == "storeCard":
+                    pass_fields["headerFields"].append(field_data)
+                    return_pass_fields["headerFields"].append(field_data)
                 else:
                     pass_fields["auxiliaryFields"].append(field_data)
                     return_pass_fields["auxiliaryFields"].append(field_data)
@@ -2041,4 +2050,17 @@ RSP_ORG_LOGO = {
     "TT": "pass/logo-tt.png",
     "CS": "pass/logo-cs.png",
     "RE": "pass/logo-re.png",
+}
+
+BC_STRIP_IMG = {
+    "BahnCard 50 Herbst Aktion 2024 (1. Klasse)": "bahncard/AKTIONSBAHNCARD501KLASSE.png",
+    "BahnCard 50 Herbst Aktion 2024 (2. Klasse)": "bahncard/AKTIONSBAHNCARD502KLASSE.png",
+    "My BahnCard 25 (1. Klasse)": "bahncard/MYBAHNCARD251KLASSE.png",
+    "My BahnCard 25 (2. Klasse)": "bahncard/MYBAHNCARD252KLASSE.png",
+    "My BahnCard 50 (1. Klasse)": "bahncard/MYBAHNCARD501KLASSE.png",
+    "My BahnCard 50 (2. Klasse)": "bahncard/MYBAHNCARD502KLASSE.png",
+    "BahnCard 25 (1. Klasse)": "bahncard/BAHNCARD251KLASSE.png",
+    "BahnCard 25 (2. Klasse)": "bahncard/BAHNCARD252KLASSE.png",
+    "BahnCard 50 (1. Klasse)": "bahncard/BAHNCARD501KLASSE.png",
+    "BahnCard 50 (2. Klasse)": "bahncard/BAHNCARD502KLASSE.png",
 }

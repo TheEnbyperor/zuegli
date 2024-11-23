@@ -123,7 +123,7 @@ spec:
           containers:
             - name: uic-certs
               image: theenbyperor/vdv-pkpass-django:(version)
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               command: ["sh", "-c", "python3 manage.py download-uic-certs"]
               volumeMounts: &volumeMounts
                 - mountPath: "/google-creds"
@@ -143,20 +143,26 @@ spec:
                     name: vdv-pkpass-s3
             - name: uic-data
               image: theenbyperor/vdv-pkpass-django:(version)
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               command: ["sh", "-c", "python3 manage.py download-uic-data"]
               volumeMounts: *volumeMounts
               envFrom: *envFrom
-            - name: vdv-certs
-              image: theenbyperor/vdv-pkpass-django:(version)
-              imagePullPolicy: Always
-              command: ["sh", "-c", "python3 manage.py download-vdv-certs"]
-              volumeMounts: *volumeMounts
-              envFrom: *envFrom
+#            - name: vdv-certs
+#              image: theenbyperor/vdv-pkpass-django:(version)
+#              imagePullPolicy: IfNotPresent
+#              command: ["sh", "-c", "python3 manage.py download-vdv-certs"]
+#              volumeMounts: *volumeMounts
+#              envFrom: *envFrom
             - name: vdv-orgs
               image: theenbyperor/vdv-pkpass-django:(version)
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               command: ["sh", "-c", "python3 manage.py download-vdv-orgs"]
+              volumeMounts: *volumeMounts
+              envFrom: *envFrom
+            - name: rsp-data
+              image: theenbyperor/vdv-pkpass-django:(version)
+              imagePullPolicy: IfNotPresent
+              command: ["sh", "-c", "python3 manage.py download-rsp-data"]
               volumeMounts: *volumeMounts
               envFrom: *envFrom
 ---
