@@ -19,6 +19,24 @@
                     </dl>
                 </div>
             </div>
+        {% elif region.0 == "zone" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Zone
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% if region.1.nutsCode %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">NUTS Region</dt>
+                                <dd class="govuk-summary-list__value">{{ region.1.nutsCode|nuts_region_name }}</dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
         {% else %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
