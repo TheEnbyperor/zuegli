@@ -85,6 +85,92 @@
         <dt class="govuk-summary-list__key">Issuer PNR</dt>
         <dd class="govuk-summary-list__value"><code>{{ flex.data.issuingDetail.issuerPNR }}</code></dd>
     </div>
+    {% if flex.data.controlDetail %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Control data</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Identification by ID card</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.identificationByIdCard %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Identification by passport</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.identificationByPassportId %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Passport validation required</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.passportValidationRequired %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Online validation required</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.onlineValidationRequired %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Age check required</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.ageCheckRequired %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reduction card required</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if flex.data.controlDetail.reductionCardCheckRequired %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% if flex.data.controlDetail.randomDetailedValidationRequired != None %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Random detailed validation</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ flex.data.controlDetail.randomDetailedValidationRequired }}%
+                            </dd>
+                        </div>
+                    {% endif %}
+                    {% if flex.data.controlDetail.infoText %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Extra info</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ flex.data.controlDetail.infoText }}
+                            </dd>
+                        </div>
+                    {% endif %}
+                    {% include "main/uic/extension.html" with obj=flex.data.controlDetail %}
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
     {% if flex.data.travelerDetail %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Travelers</dt>
@@ -116,39 +202,39 @@
         </div>
     {% endif %}
     {% if flex.data.transportDocument %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Documents</dt>
-        <dd class="govuk-summary-list__value">
-        {% for doc in flex.data.transportDocument %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    {% if doc.ticket.0 == "reservation" %}
-                        <h2 class="govuk-summary-card__title">Reservation</h2>
-                    {% elif doc.ticket.0 == "openTicket" %}
-                        <h2 class="govuk-summary-card__title">Open ticket</h2>
-                    {% elif doc.ticket.0 == "pass" %}
-                        <h2 class="govuk-summary-card__title">Pass</h2>
-                    {% elif doc.ticket.0 == "customerCard" %}
-                        <h2 class="govuk-summary-card__title">Customer card</h2>
-                    {% else %}
-                        <h2 class="govuk-summary-card__title">Document <code>{{ doc.ticket.0 }}</code></h2>
-                    {% endif %}
-                </div>
-                <div class="govuk-summary-card__content">
-                    {% if doc.ticket.0 == "openTicket" %}
-                        {% include "main/uic/open_ticket.html" with ticket=doc.ticket.1 %}
-                    {% elif doc.ticket.0 == "customerCard" %}
-                        {% include "main/uic/customer_card.html" with card=doc.ticket.1 %}
-                    {% elif doc.ticket.0 == "pass" %}
-                        {% include "main/uic/pass.html" with pass=doc.ticket.1 %}
-                    {% else %}
-                        <pre>{{ doc.ticket.1|pprint }}</pre>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-        </dd>
-    </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Documents</dt>
+            <dd class="govuk-summary-list__value">
+                {% for doc in flex.data.transportDocument %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            {% if doc.ticket.0 == "reservation" %}
+                                <h2 class="govuk-summary-card__title">Reservation</h2>
+                            {% elif doc.ticket.0 == "openTicket" %}
+                                <h2 class="govuk-summary-card__title">Open ticket</h2>
+                            {% elif doc.ticket.0 == "pass" %}
+                                <h2 class="govuk-summary-card__title">Pass</h2>
+                            {% elif doc.ticket.0 == "customerCard" %}
+                                <h2 class="govuk-summary-card__title">Customer card</h2>
+                            {% else %}
+                                <h2 class="govuk-summary-card__title">Document <code>{{ doc.ticket.0 }}</code></h2>
+                            {% endif %}
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% if doc.ticket.0 == "openTicket" %}
+                                {% include "main/uic/open_ticket.html" with ticket=doc.ticket.1 %}
+                            {% elif doc.ticket.0 == "customerCard" %}
+                                {% include "main/uic/customer_card.html" with card=doc.ticket.1 %}
+                            {% elif doc.ticket.0 == "pass" %}
+                                {% include "main/uic/pass.html" with pass=doc.ticket.1 %}
+                            {% else %}
+                                <pre>{{ doc.ticket.1|pprint }}</pre>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
     {% endif %}
     {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
 </dl>
