@@ -1068,16 +1068,17 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
-            pass_fields["headerFields"].append({
-                "key": "train-number",
-                "label": "train-number-label",
-                "value": str(ticket_data.oebb_99.train_number),
-            })
+            if ticket_data.oebb_99.train_number:
+                pass_fields["headerFields"].append({
+                    "key": "train-number",
+                    "label": "train-number-label",
+                    "value": str(ticket_data.oebb_99.train_number),
+                })
             pass_fields["secondaryFields"].append({
                 "key": "validity-start",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleNone",
+                "timeStyle": "PKDateStyleMedium" if ticket_data.oebb_99.train_number else "PKDateStyleNone",
                 "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             pass_fields["backFields"].append({
@@ -1091,7 +1092,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleNone",
+                "timeStyle": "PKDateStyleMedium" if ticket_data.oebb_99.train_number else "PKDateStyleNone",
                 "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "changeMessage": "validity-end-change"
             })
