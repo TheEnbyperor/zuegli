@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema for British Standard BS7666 address types -->
+<!-- 
+	Changes 1.4 to 2.0
+		PAONtype and SAONtype replaced by AONstructure which eliminates the need for fixed length records.
+		Postcode amended to disallow CIKMOV in the second part.
+	Changes 1.3 to 1.4
+		Regular expression pattern restriction in PAON/SAON rewritten. This pattern expands the 0-Z and %-. constructs detailing allowed punctuation explicitly. Note that "<",">" and "&" are replaced by the relevant XML entity and "+", "-", "?","(",")" and "." are escaped with backslashes as they are reserved in regex syntax.
+		Element StreetClosureDate made optional (minOccurs=0)
+		Element name "UNIQUE_STREET_REFERENCE_NUMBERS" corrected to camel case
+		Element Annotation made optional (minOccurs=0)
+		Enumeration values for "RepresentativePointCodeType" extended to include 5 & 9
+		Extend SAON/PAON content validation to include hyphen 
+	Changes 1.2 to 1.3
+	     PostCode pattern simplified because some parsers do not accept the complex pattern, this is backwardly compatible
+	Pattern for "RefPointGridCoordinateType" changed from "/d{14}" to "[0-9]{14}" in order to conform to guidelines, this is backwardly compatible
+	Easting Field pattern corrected to read 7 digits, aligned with Northing Field pattern that is also 7 digtis
+	
+	Changes 1.1 to 1.2:
+		PostCode pattern brought in line with Data standards catalogue
+		Metadata brought up to latest version of standard
+	Changes 1.0 to 1.1:
+		Postcode element changed to PostCode
+		PostcodeType and PosttownType changed to PostCodeType and PostTownType
+		PostCodeType pattern changed to match GDSC. The pattern has been relaxed slightly to not exclude [CIKMOV] in one part since testing found postcode with these patterns. It is still to be determined whether these are valid postcodes.
+		StreetDescriptiveIdentifierStructure has been made unambiguous (deterministic)
+-->
+<xsd:schema targetNamespace="http://www.govtalk.gov.uk/people/bs7666" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0" id="BS7666" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.govtalk.gov.uk/people/bs7666">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Href="mailto:adam.bailin@cabinet-office.x.gsi.gov.uk">Adam Bailin, e-Government Unit, Cabinet Office</Contributor>
+				<Contributor Href="mailto:paul.spencer@boynings.co.uk"/>
+				<Contributor>e-champions, Government Schema Group, IDeA</Contributor>
+				<Contributor>Adrian Kent, Office e-Envoy</Contributor>
+				<Contributor Href="mailto:bruce@egic.ltd.uk">Bruce Yeoman, EGIC</Contributor>
+				<Creator Href="maito:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Creator>
+				<Created>2003-02-11</Created>
+				<Modified>2004-12-08</Modified>
+				<Description>Schema for BS7666 definitions including address and postcode. BS7666 provides a geo-spatial reference and is particularly suitable for local gazeteer applications. For a postal address format, use the UKPostalAddressStructure defined in the Address Types schema.</Description>
+				<Review>2005-12-08</Review>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://www.govtalk.gov.uk/gdsc/schemas/bs7666-v2-0.xsd">BS7666-v2-0</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<IsPartOf>http://www.govtalk.gov.uk/gdsc/schemas/AddressTypes-v2-0.xsd</IsPartOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">BSaddressStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">BasicLandAndPropertyUnitStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">PostCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">AONstructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">StreetDescriptiveIdentifierStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">UPRNtype</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/bs7666">USRNtype</ProvidesDefinitionOf>
+				<Copyright>Crown Copyright 2002, 2003, 2004</Copyright>
+				<ProtectiveMarking>Unclassified</ProtectiveMarking>
+				<Status>draft</Status>
+				<StatusDescription>For approval by GSG</StatusDescription>
+				<Version>2.0</Version>
+				<Category codeListID="GCL">People, communities and living</Category>
+				<Project>UK GovTalk Government Data Standards Catalogue</Project>
+				<Title>BS7666 2.0</Title>
+				<Type>architectural</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- Basic BS7666 Compliant Address Element -->
+	<xsd:complexType name="BSaddressStructure">
+		<xsd:sequence>
+			<xsd:element name="SAON" type="AONstructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Secondary Addressable Object</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PAON" type="AONstructure">
+				<xsd:annotation>
+					<xsd:documentation>Primary Addressable Object</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:sequence>
+				<xsd:element name="StreetDescription" type="StreetDescriptorType"/>
+				<xsd:element name="UniqueStreetReferenceNumber" type="USRNtype" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element ref="Locality"/>
+					<xsd:choice minOccurs="0">
+						<xsd:sequence>
+							<xsd:element ref="Town"/>
+							<xsd:element ref="AdministrativeArea" minOccurs="0"/>
+						</xsd:sequence>
+						<xsd:element ref="AdministrativeArea"/>
+					</xsd:choice>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element ref="Town"/>
+					<xsd:element ref="AdministrativeArea" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:element ref="AdministrativeArea"/>
+			</xsd:choice>
+			<xsd:element name="PostTown" type="PostTownType" minOccurs="0"/>
+			<xsd:element name="PostCode" type="PostCodeType" minOccurs="0"/>
+			<xsd:element name="UniquePropertyReferenceNumber" type="UPRNtype" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- UPRN Definition as 2000-->
+	<xsd:simpleType name="UPRNtype">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="999999999999"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- USRN Definition as 2000-->
+	<xsd:simpleType name="USRNtype">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="99999999"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- PostCode Definition -->
+	<xsd:simpleType name="PostCodeType">
+		<xsd:annotation>
+			<xsd:documentation>complex pattern for postcode, which matches definition, accepted by some parsers is: "(GIR 0AA)|((([A-Z-[QVX]][0-9][0-9]?)|(([A-Z-[QVX]][A-Z-[IJZ]][0-9][0-9]?)|(([A-Z-[QVX]][0-9][A-HJKSTUW])|([A-Z-[QVX]][A-Z-[IJZ]][0-9][ABEHMNPRVWXY])))) [0-9][A-Z-[CIKMOV]]{2})"</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z-[CIKMOV]]{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Post Town Definition -->
+	<xsd:simpleType name="PostTownType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Locality Definition as 2000-->
+	<xsd:simpleType name="LocalityType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- AdministrativeArea Definition as 2000-->
+	<xsd:simpleType name="AdministrativeAreaType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Town Definition as 2000-->
+	<xsd:simpleType name="TownType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Street Descriptor as 2000-->
+	<xsd:simpleType name="StreetDescriptorType">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Street Reference Type Definition as 2000-->
+	<xsd:simpleType name="StreetReferenceTypeType">
+		<xsd:restriction base="xsd:integer">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Version Number Definition as 2000-->
+	<xsd:simpleType name="VersionNumberType">
+		<xsd:restriction base="xsd:positiveInteger">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="9999"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Tolerance Definition as 2000-->
+	<xsd:simpleType name="ToleranceType">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Reference Point Grid Coordinate Definition required for ESUs -->
+	<xsd:simpleType name="RefPointGridCoordinateType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{14}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Type Definition For a BS7666 Street -->
+	<xsd:complexType name="StreetStructure">
+		<xsd:sequence>
+			<xsd:element name="StreetReferenceType" type="StreetReferenceTypeType"/>
+			<xsd:element name="StartCoordinate" type="CoordinateStructure"/>
+			<xsd:element name="EndCoordinate" type="CoordinateStructure"/>
+			<xsd:element name="Tolerance" type="ToleranceType"/>
+			<xsd:element name="StreetVersionNumber" type="VersionNumberType"/>
+			<xsd:element name="StreetEntryDate" type="xsd:date"/>
+			<xsd:element name="StreetClosureDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="ResponsibleAuthority" type="CustodianCodeType"/>
+			<xsd:element name="DescriptiveIdentifier" type="StreetDescriptiveIdentifierStructure"/>
+			<xsd:element name="StreetAlias" type="StreetDescriptiveIdentifierStructure" minOccurs="0"/>
+			<xsd:element name="StreetCrossReferences" minOccurs="0">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="UniqueStreetReferenceNumbers" type="USRNlistType"/>
+						<xsd:element name="ElementaryStreetUnit" type="ElementaryStreetUnitStructure" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="usrn" type="USRNtype"/>
+	</xsd:complexType>
+	<!-- Type Definition For a Street Descriptive Identifier 
+		 New Construct, contains the street description and
+		 at least one of Town, AdministrativeArea or Locality
+	 -->
+	<xsd:complexType name="StreetDescriptiveIdentifierStructure">
+		<xsd:sequence>
+			<xsd:element name="StreetDescription" type="StreetDescriptorType"/>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element ref="Locality"/>
+					<xsd:choice minOccurs="0">
+						<xsd:sequence>
+							<xsd:element ref="Town"/>
+							<xsd:element ref="AdministrativeArea" minOccurs="0"/>
+						</xsd:sequence>
+						<xsd:element ref="AdministrativeArea"/>
+					</xsd:choice>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element ref="Town"/>
+					<xsd:element ref="AdministrativeArea" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:element ref="AdministrativeArea"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- BS7666 Elementary Street Unit -->
+	<xsd:complexType name="ElementaryStreetUnitStructure">
+		<xsd:sequence>
+			<xsd:element name="ESUidentity" type="RefPointGridCoordinateType"/>
+			<xsd:element name="ESUversion" type="VersionNumberType"/>
+			<xsd:element name="ESUentryDate" type="xsd:date"/>
+			<xsd:element name="ESUclosureDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="StartCoordinate" type="CoordinateStructure"/>
+			<xsd:element name="EndCoordinate" type="CoordinateStructure"/>
+			<xsd:element name="Tolerance" type="ToleranceType"/>
+			<xsd:element name="IntermediateCoord" type="CoordinateStructure" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Coordinate Definition -->
+	<xsd:complexType name="CoordinateStructure">
+		<xsd:annotation>
+			<xsd:documentation>Coordinate Point based on UK National Grid</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="X">
+				<xsd:annotation>
+					<xsd:documentation>Easting Field</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:unsignedLong">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="9999999"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="Y">
+				<xsd:annotation>
+					<xsd:documentation>Northing Field</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:unsignedLong">
+						<xsd:minInclusive value="0"/>
+						<xsd:maxInclusive value="9999999"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Type Definition for a list or UPRN's -->
+	<xsd:simpleType name="UPRNlistType">
+		<xsd:list itemType="UPRNtype"/>
+	</xsd:simpleType>
+	<!-- Type Definition for a list or USRN's -->
+	<xsd:simpleType name="USRNlistType">
+		<xsd:list itemType="USRNtype"/>
+	</xsd:simpleType>
+	<!-- Polygon representing the extent of a BLPU.   -->
+	<xsd:complexType name="BLPUpolygonStructure">
+		<xsd:sequence>
+			<xsd:element name="PolygonID">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:positiveInteger">
+						<xsd:minInclusive value="1"/>
+						<xsd:maxInclusive value="99"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PolygonType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>H to represent a hole or not present</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="H"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:choice>
+				<xsd:element name="Vertices" type="CoordinateStructure" minOccurs="3" maxOccurs="unbounded"/>
+				<xsd:element name="ExternalRef" type="xsd:unsignedLong"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- The Extent of a BLPU - expressed either as one or more polygons or external references -->
+	<xsd:complexType name="BLPUextentStructure">
+		<xsd:sequence>
+			<xsd:element name="SourceDescription">
+				<xsd:annotation>
+					<xsd:documentation>Description of Source of BLPU Extent</xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="50"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ExtentEntryDate" type="xsd:date"/>
+			<xsd:element name="ExtentSourceDate" type="xsd:date"/>
+			<xsd:element name="ExtentStartDate" type="xsd:date"/>
+			<xsd:element name="ExtentEndDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="ExtentLastUpdateDate" type="xsd:date"/>
+			<xsd:element name="ExtentDefinition" type="BLPUpolygonStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- BS7666 Provenance Code -->
+	<xsd:simpleType name="ProvenanceCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Provenance Code values
+					T = Registered land title
+					L = Unregistered land title
+					F = Formal tenancy agreement
+					R = Rental agreement
+					P = Physical features
+					O = Occupancy
+					U = Use</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="T"/>
+			<xsd:enumeration value="L"/>
+			<xsd:enumeration value="F"/>
+			<xsd:enumeration value="R"/>
+			<xsd:enumeration value="P"/>
+			<xsd:enumeration value="O"/>
+			<xsd:enumeration value="U"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- BS7666 Provenance for a BLPU -->
+	<xsd:complexType name="ProvenanceStructure">
+		<xsd:sequence>
+			<xsd:element name="ProvenanceCode" type="ProvenanceCodeType"/>
+			<xsd:element name="Annotation" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ProvEntryDate" type="xsd:date"/>
+			<xsd:element name="ProvStartDate" type="xsd:date"/>
+			<xsd:element name="ProvEndDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="ProvLastUpdateDate" type="xsd:date"/>
+			<xsd:element name="BLPUextent" type="BLPUextentStructure" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Custodian Code - 4 digit code identifier for a particular local authority or other custodian -->
+	<xsd:simpleType name="CustodianCodeType">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="9999"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Representative Point Code -->
+	<xsd:simpleType name="RepresentativePointCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Representative Point Code values
+					1 = Visual centre
+					2 = General internal point
+					3 = South-west corner of 100m grid square
+					4 = Start point of the referenced street</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:positiveInteger">
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="4"/>
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Logical Status for an LPI and BLPU-->
+	<xsd:simpleType name="LogicalStatusType">
+		<xsd:annotation>
+			<xsd:documentation>Logical Status values
+					1 = Approved preferred
+					2 = Approved alternative (LPI Only)
+					3 = Alternative (LPI Only)
+					5 = Candidate
+					6 = Provisional
+					8 = Historical
+					9 = Rejected</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="9"/>
+			<xsd:enumeration value="1"/>
+			<xsd:enumeration value="2"/>
+			<xsd:enumeration value="3"/>
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="6"/>
+			<xsd:enumeration value="8"/>
+			<xsd:enumeration value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- 2000 - Basic Land And Property Unit -->
+	<xsd:complexType name="BasicLandAndPropertyUnitStructure">
+		<xsd:sequence>
+			<xsd:element ref="UniquePropertyReferenceNumber"/>
+			<xsd:element name="CustodianCode" type="CustodianCodeType"/>
+			<xsd:element name="RepresentativePointCode" type="RepresentativePointCodeType"/>
+			<xsd:element name="LogicalStatus" type="LogicalStatusType"/>
+			<xsd:element name="GridReference" type="CoordinateStructure"/>
+			<xsd:element name="BLPUentryDate" type="xsd:date"/>
+			<xsd:element name="BLPUstartDate" type="xsd:date"/>
+			<xsd:element name="BLPUendDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="BLPUlastUpdateDate" type="xsd:date"/>
+			<xsd:element name="LandAndPropertyIdentifier" type="LandAndPropertyIdentifierStructure" maxOccurs="unbounded"/>
+			<xsd:element name="Provenance" type="ProvenanceStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- 2000 - Land and Property Identifier -->
+	<xsd:complexType name="LandAndPropertyIdentifierStructure">
+		<xsd:sequence>
+			<xsd:element name="PAON" type="AONstructure"/>
+			<xsd:element name="SAON" type="AONstructure" minOccurs="0"/>
+			<xsd:element name="PostTown" type="PostTownType" minOccurs="0"/>
+			<xsd:element name="PostCode" type="PostCodeType" minOccurs="0"/>
+			<xsd:element name="Level" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="30"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="LogicalStatus" type="LogicalStatusType"/>
+			<xsd:element name="OfficialAddressMarker" type="xsd:boolean" minOccurs="0"/>
+			<xsd:element name="LPIstartDate" type="xsd:date"/>
+			<xsd:element name="LPIentryDate" type="xsd:date"/>
+			<xsd:element name="LPIendDate" type="xsd:date" minOccurs="0"/>
+			<xsd:element name="LPIlastUpdateDate" type="xsd:date"/>
+			<xsd:choice>
+				<xsd:element name="Street" type="StreetStructure"/>
+				<xsd:element name="USRN" type="USRNtype"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Town" type="TownType"/>
+	<xsd:element name="Locality" type="LocalityType"/>
+	<xsd:element name="AdministrativeArea" type="AdministrativeAreaType"/>
+	<xsd:element name="UniquePropertyReferenceNumber" type="UPRNtype"/>
+	<xsd:element name="BS7666Address" type="BSaddressStructure"/>
+	<xsd:element name="BS7666BLPU" type="BasicLandAndPropertyUnitStructure"/>
+	<xsd:simpleType name="AONdescriptionType">
+		<xsd:annotation>
+			<xsd:documentation>Restricted string type for the name text portion of the PAON and SAON</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="90"/>
+			<xsd:pattern value="[a-zA-Z0-9:;&lt;=&gt;\?@%&amp;'\(\)\*\+,\-\. ]{0,90}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="AONrangeStructure">
+		<xsd:annotation>
+			<xsd:documentation>Numeric and optional alpha suffix for start and end numbers</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Number">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:positiveInteger">
+						<xsd:maxInclusive value="9999"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="Suffix" minOccurs="0">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="1"/>
+						<xsd:maxLength value="1"/>
+						<xsd:pattern value="[A-Z]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AONstructure">
+		<xsd:annotation>
+			<xsd:documentation>Replacement for PAONtype and SAONtype</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:sequence>
+				<xsd:element name="StartRange" type="AONrangeStructure"/>
+				<xsd:element name="EndRange" type="AONrangeStructure" minOccurs="0"/>
+				<xsd:element name="Description" type="AONdescriptionType" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:element name="Description" type="AONdescriptionType"/>
+		</xsd:choice>
+	</xsd:complexType>
+</xsd:schema>

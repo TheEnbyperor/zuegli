@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/serviceindicator" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gms="http://www.govtalk.gov.uk/CM/gms-xs" xmlns:com="http://nationalrail.co.uk/xml/common" targetNamespace="http://nationalrail.co.uk/xml/serviceindicator" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0" id="nre-service-indicator">
+	<xsd:annotation>
+		<xsd:documentation>The National Rail Enquiries Service Indicator Schema</xsd:documentation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Role="developer" Href="mailto:geoff.parkin@cds.co.uk">Geoff Parkin</Contributor>
+				<Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+				<Creator>NRE</Creator>
+				<Created>2013-07-01</Created>
+				<Modified>2013-07-01</Modified>
+				<Description>The National Rail Enquiries (NRE)  Service Indicator  XML Schema</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://kb.nationalrail.co.uk/schemas/NreServiceIndicatorSchema">NreServiceIndicatorSchema</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<HasPart>nre-common-v4-0.xsd</HasPart>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/serviceindicator">NationalServiceIndicatorListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/serviceindicator">NationalServiceIndicatorStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/serviceindicator">NSIServiceGroupStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/serviceindicator">CurrentDisruptionType</ProvidesDefinitionOf>
+				<Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>Draft</Status>
+				<StatusDescription>Initial release for consultation</StatusDescription>
+				<Category codeListID="">Arts, recreation and travel, Tourism, Travel(tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track, Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+				<Version>4.0</Version>
+				<Project>National Rail Enquiries Knowledgebase</Project>
+				<Title>NRE Service Indicator XML Schema,  a schema to describe</Title>
+				<Type>message</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- ======================================================================= -->
+	<xsd:import namespace="http://nationalrail.co.uk/xml/common" schemaLocation="nre-common-v4-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation>
+                A com set of types for NRE schemas.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<!-- ======================================================================= -->
+	<!-- Root element -->
+	<xsd:element name="NSI" type="NationalServiceIndicatorListStructure">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+	</xsd:element>
+	<!-- ======================================================================= -->
+	<!-- Complex types -->
+	<xsd:complexType name="NationalServiceIndicatorListStructure">
+		<xsd:sequence>
+			<xsd:element name="TOC" type="NationalServiceIndicatorStructure" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NationalServiceIndicatorStructure">
+		<xsd:sequence>
+			<xsd:element name="TocCode" type="com:AtocCodeType"/>
+			<xsd:element name="TocName" type="xsd:string"/>
+			<xsd:element name="Status" type="xsd:string"/>
+			<xsd:element name="StatusImage" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StatusDescription" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ServiceGroup" type="NSIServiceGroupStructure" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="TwitterAccount" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AdditionalInfo" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CustomAdditionalInfo" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="NSIServiceGroupStructure">
+		<xsd:sequence>
+			<xsd:element name="GroupName" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CurrentDisruption" type="CurrentDisruptionType" minOccurs="0"/>
+			<xsd:element name="CustomDetail" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CustomURL" type="xsd:anyURI" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ======================================================================= -->
+	<!-- Simple types -->
+	<xsd:simpleType name="CurrentDisruptionType">
+		<xsd:annotation>
+			<xsd:documentation>Type for a reference Unique identifier of a CurrentDisruption</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:pattern value="[A-Za-z0-9]{1,32}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

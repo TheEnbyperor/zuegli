@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/common" xmlns:core="http://www.govtalk.gov.uk/core" xmlns:apd="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://nationalrail.co.uk/xml/common" elementFormDefault="qualified" attributeFormDefault="unqualified" version="3.0" id="nre-common">
+	<xsd:annotation>
+		<xsd:documentation>The National Rail Enquiries Common Data Types</xsd:documentation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Role="developer" Href="mailto:geoff.parkin@cds.co.uk">Geoff Parkin</Contributor>
+				<Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+				<Creator>NRE</Creator>
+				<Created>2013-07-01</Created>
+				<Modified>2015-08-01</Modified>
+				<Description>Defines common data types used in The National Rail Enquiries (NRE)  XML Schemas</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://kb.nationalrail.co.uk/schemas/NreTocSchema">http://nationalrail.co.uk/schemas/nre-common_v4_0.xsd</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<HasPart>apd/AddressTypes-v2-0.xsd</HasPart>
+				<HasPart>apd/CommonSimpleTypes-v1-3.xsd</HasPart>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">ChangeHistoryStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">AvailableFacilityStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">PenaltyFaresStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">ServiceStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">TravelcardsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">OpeningHoursStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">TelephoneStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">PostalAddressStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">ContactDetailsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">AnnotatedStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">AnnotationContent</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">DayAndTimeAvailabilityStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">DailyOpeningHoursStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">ClosedTimeRangeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">HalfOpenDateRangeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">HalfOpenTimeRangeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">HalfOpenTimestampRangeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">TelephoneNumberStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">CrsCodeListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">AtocListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">StationGroupListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">StationListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">DaysGroup</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">AtocCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">StartDateType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">EndDateType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">CrsCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">NationalLocationCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">TiplocCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">PopulatedStringType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">BbcRegionEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">SixteenCharacterNameType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">TicketTypeCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">NlcCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">CoinsOrCardsEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/common">PlatformCoverageEnumeration</ProvidesDefinitionOf>
+				<Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>Draft</Status>
+				<StatusDescription>Initial release for consultation</StatusDescription>
+				<Category codeListID="">Arts, recreation and travel, Tourism, Travel (tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track,  Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+				<Version>5.0</Version>
+				<Project>National Rail Enquiries Knowledgebase</Project>
+				<Title>NRE Common XML Schema,  National Rail Enquiries Common Data Types.</Title>
+				<Type>message</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:import namespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" schemaLocation="apd/AddressTypes-v2-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation source="http://www.govtalk.gov.uk/schemasstandards/agreedschema_schema.asp?schemaid=204">Address Types architectural schema, including BS7666 version 1.3</xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<xsd:import namespace="http://www.govtalk.gov.uk/core" schemaLocation="apd/CommonSimpleTypes-v1-3.xsd">
+		<xsd:annotation>
+			<xsd:documentation source="http://www.govtalk.gov.uk/schemasstandards/agreedschema_schema.asp?schemaid=204">A set of Address and personal details schema, including BS7666 version 1.3</xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<!-- ======================================================================= -->
+	<!-- Common complex structures -->
+	<xsd:complexType name="ChangeHistoryStructure">
+		<xsd:annotation>
+			<xsd:documentation>Describes the last change made to this document.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ChangedBy">
+				<xsd:annotation>
+					<xsd:documentation>Name of person who last changed this information.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="tocAffiliation" type="AtocCodeType" use="optional"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="LastChangedDate" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>Date and time of last alteration.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AvailableFacilityStructure">
+		<xsd:annotation>
+			<xsd:documentation>Whether a specified facility is available, and when it is open (if applicable).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:choice>
+						<xsd:element name="Open" type="OpeningHoursStructure" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>Opening hours of this facility.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="Available" type="xsd:boolean" minOccurs="0">
+							<xsd:annotation>
+								<xsd:documentation>A value of true indicates that opening hours are unknown or not applicable.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:choice>
+					<xsd:element name="Location" type="AnnotationContent" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ServiceStructure">
+		<xsd:annotation>
+			<xsd:documentation>Information about a specific customer service.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="ContactDetails" type="ContactDetailsStructure" minOccurs="0"/>
+					<xsd:choice minOccurs="0">
+						<xsd:element name="Available" type="xsd:boolean">
+							<xsd:annotation>
+								<xsd:documentation>Some services do not have specific opening hours.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="Open" type="OpeningHoursStructure"/>
+					</xsd:choice>
+					<xsd:element name="OperatorName" type="xsd:string" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TravelcardsStructure">
+		<xsd:annotation>
+			<xsd:documentation>Information about Travelcards.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TravelcardZone" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>The London Travelcard zone in which this station lies.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OpeningHoursStructure">
+		<xsd:annotation>
+			<xsd:documentation>Determines the opening hours of a service.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="DayAndTimeAvailability" type="DayAndTimeAvailabilityStructure" minOccurs="0" maxOccurs="unbounded">
+						<xsd:annotation>
+							<xsd:documentation>Each DayAndTimeAvailability element provides the opening hours for a particular range of days.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="TelephoneStructure">
+		<xsd:sequence>
+			<xsd:element name="Exists" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>Does the station have telephones?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="UsageType" type="CoinsOrCardsEnumeration" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>How is it operated? With coins or cards?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PostalAddressStructure">
+		<xsd:sequence>
+			<xsd:element name="PostalAddress" type="apd:UKAddressStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Address of  the station based on apd standard apd:UKAddressStructure 5 line address and postcode .</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Contact structures -->
+	<xsd:complexType name="ContactDetailsStructure">
+		<xsd:annotation>
+			<xsd:documentation>Methods of contacting a TOC service.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="PrimaryTelephoneNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Mandatory public telephone number for this service.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AlternatePublicTelephoneNumbers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Alternate telephone numbers available to the public. For example, a national number rather than an 0870 number.</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="TelephoneNumber" type="TelephoneNumberStructure" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="AlternateInternalTelephoneNumbers" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Alternate telephone numbers only available to NRE staff.</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="TelephoneNumber" type="TelephoneNumberStructure" maxOccurs="unbounded"/>
+							</xsd:sequence>
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="FaxNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>A fax number for this service. Always publicly available.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PrimaryMinicomNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>A minicom number for this service. Always publicly available.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AlternateMinicomNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>An alternate minicom number for this service. Always publicly available. For example, a national number rather than an 0870 number.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PrimaryTextphoneNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>A textphone number for this service. Always publicly available.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AlternateTextphoneNumber" type="TelephoneNumberStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>An textphone number for this service. Always publicly available. For example, a national number rather than an 0870 number.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PostalAddress" type="apd:UKPostalAddressStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Publicly available postal address of the service. Defaults to the TOC Head office address if omitted.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="EmailAddress" type="core:EmailAddressType" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Publicly available email address for this service.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AlternativeEmailAddress" type="core:EmailAddressType" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Alternative email address available to NRE staff.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Url" type="xsd:anyURI" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Publicly available web site for this service.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- Annotations -->
+	<xsd:complexType name="AnnotatedStructure">
+		<xsd:annotation>
+			<xsd:documentation>Abstract base type for types that can be annotated.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Annotation" type="AnnotationContent" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AnnotationContent">
+		<xsd:annotation>
+			<xsd:documentation>Annotation content model. Currently only allows paragraphs with optional URLs.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Note" type="xsd:string" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--Migrated from NaPT_dates-v1-0c -->
+	<xsd:complexType name="DayAndTimeAvailabilityStructure">
+		<xsd:annotation>
+			<xsd:documentation>Opening hours</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DayTypes">
+				<xsd:annotation>
+					<xsd:documentation>Pattern of days.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:group ref="DaysGroup"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="OpeningHours" type="DailyOpeningHoursStructure">
+				<xsd:annotation>
+					<xsd:documentation>Hours on the specified day or holiday type when the facility is available or unavailable. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DailyOpeningHoursStructure">
+		<xsd:annotation>
+			<xsd:documentation>Specifies hours of opening on a specified day.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice>
+			<xsd:element name="TwentyFourHours" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>Open 24hrs on the specified days (defined as 00:00 until 23:59)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OpenPeriod" type="ClosedTimeRangeStructure" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Each time range indicates an open period. Multiple ranges can be used to indicate separate opening hours in the morning and afternoon.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Unavailable" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>Not available on this specified day.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="ClosedTimeRangeStructure">
+		<xsd:annotation>
+			<xsd:documentation>A range of times. Both start and end time are required.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StartTime" type="xsd:time">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) start time.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EndTime" type="xsd:time">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) end time.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="HalfOpenDateRangeStructure">
+		<xsd:annotation>
+			<xsd:documentation>A range of dates. The start date is required, but the end date is not.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StartDate" type="StartDateType">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) start date.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EndDate" type="EndDateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) end date. If omitted, the range end is open-ended, that is, it should be interpreted as "forever".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="HalfOpenTimeRangeStructure">
+		<xsd:annotation>
+			<xsd:documentation>A range of times. Start time must be specified, end time is optional.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StartTime" type="xsd:time">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) start time.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EndTime" type="xsd:time" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) end time. If omitted, the range end is open-ended, that is, it should be interpreted as "forever".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="HalfOpenTimestampRangeStructure">
+		<xsd:annotation>
+			<xsd:documentation>Data Type for a  range of date times. Start time must be specified, end time is optional.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StartTime" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) start time stamp.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EndTime" type="xsd:dateTime" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The (inclusive) end time stamp. If omitted, the range end is open-ended, that is, it should be interpreted as "forever".</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--Migrated from NaPT_common-v1-0b -->
+	<xsd:complexType name="TelephoneNumberStructure">
+		<xsd:annotation>
+			<xsd:documentation>A telephone number, using GovTalk constructs.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TelNationalNumber" type="core:TelephoneNumberType">
+				<xsd:annotation>
+					<xsd:documentation>Full telephone number including STD prefix</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TelExtensionNumber" type="core:TelephoneExtensionType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Any additional extension number.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TelCountryCode" type="core:TelCountryCodeType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Two character country prefix, e.g. 44 for UK.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Migrated from other NRE schemas -->
+	<xsd:complexType name="CrsCodeListStructure">
+		<xsd:annotation>
+			<xsd:documentation>An annotated list of station CRS codes.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="CrsCode" type="CrsCodeType" minOccurs="0" maxOccurs="unbounded">
+						<xsd:annotation>
+							<xsd:documentation>Refers to another station by CRS code.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="AtocListStructure">
+		<xsd:annotation>
+			<xsd:documentation>An list of toc codes.</xsd:documentation>
+		</xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TocRef" type="AtocCodeType" maxOccurs="unbounded"></xsd:element>
+    </xsd:sequence>    	
+	</xsd:complexType>
+	<xsd:complexType name="StationGroupListStructure">
+		<xsd:annotation>
+			<xsd:documentation>A list of station groups.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StationGroupRef" type="xsd:string" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="StationListStructure">
+		<xsd:annotation>
+			<xsd:documentation>A list of stations.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="StationRef" type="CrsCodeType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--Groups -->
+	<!--Migrated from NaPT_dates-v1-0c -->
+	<xsd:group name="DaysGroup">
+		<xsd:annotation>
+			<xsd:documentation>A pattern of specific weekdays.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="Monday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Tuesday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Wednesday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Thursday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Friday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Saturday" type="xsd:boolean" minOccurs="0"/>
+					<xsd:element name="Sunday" type="xsd:boolean" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:element name="MondayToFriday" type="xsd:boolean" minOccurs="0"/>
+				<xsd:element name="MondayToSunday" type="xsd:boolean" minOccurs="0"/>
+				<xsd:element name="Weekend" type="xsd:boolean" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Only Saturday and Sunday</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:choice>
+			<xsd:element name="AllBankHolidays" type="xsd:boolean" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:group>
+	<!-- ======================================================================= -->
+	<!-- Simple types -->
+	<xsd:simpleType name="AtocCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Two character ATOC code identifying a TOC.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[A-Z]{1}[A-Z0-9]{1}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--Migrated from NaPT_dates-v1-0c -->
+	<xsd:simpleType name="StartDateType">
+		<xsd:annotation>
+			<xsd:documentation>Start of miscellaneous period.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="EndDateType">
+		<xsd:annotation>
+			<xsd:documentation>End of miscellaneous period. Default value is '9999-09-09' representing an end date of until further notice.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:date"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="CrsCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Three character CRS code identifying a station.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:length value="3"/>
+			<xsd:pattern value="[A-Z]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NationalLocationCodeType">
+		<xsd:annotation>
+			<xsd:documentation>NLC code for a location as used by RJIS These are usually 5 or 6 digits, though letters may appear for non-station locations such as "Alton Towers". Those locations which are stations generally have NLCs ending "00" - this suffix is often omitted in booking offices.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TiplocCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Timing Point Location code. These are usually 4 to 7 uppercase letters, though numbers may be used for non-station locations such as "Shalford Signal 21". Used by train planners to identify what time trains should arrive at, depart or pass a particular point. UK rail stations always have one or more TIPLOCs, but not all TIPLOCs are located at a train station or are even on the rail network.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:minLength value="4"/>
+			<xsd:maxLength value="7"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Migrated from Siri Types -->
+	<xsd:simpleType name="PopulatedStringType">
+		<xsd:annotation>
+			<xsd:documentation>A restriction of W3C XML Schema's string that requires at least one character of text. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Migrated from nre-geographic-location -->
+	<xsd:simpleType name="BbcRegionEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>The list of BBC Region codes</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BM"/>
+			<xsd:enumeration value="BS"/>
+			<xsd:enumeration value="CB"/>
+			<xsd:enumeration value="GB"/>
+			<xsd:enumeration value="HL"/>
+			<xsd:enumeration value="LDN"/>
+			<xsd:enumeration value="LS"/>
+			<xsd:enumeration value="MR"/>
+			<xsd:enumeration value="NC"/>
+			<xsd:enumeration value="NO"/>
+			<xsd:enumeration value="NT"/>
+			<xsd:enumeration value="OX"/>
+			<xsd:enumeration value="PY"/>
+			<xsd:enumeration value="SCOTLAND"/>
+			<xsd:enumeration value="SO"/>
+			<xsd:enumeration value="TW"/>
+			<xsd:enumeration value="WALES"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--New SimpleTypes added v4-0-->
+	<xsd:simpleType name="SixteenCharacterNameType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="16"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="TicketTypeCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Three character code identifying a ticket type.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[A-Z0-9]{3}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NlcCodeType">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN"/>
+	</xsd:simpleType>
+	<!-- ======================================================================= -->
+	<!-- Enumerations -->
+	<xsd:simpleType name="PlatformCoverageEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Rough indication of platform coverage.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="Yes"/>
+			<xsd:enumeration value="Partial"/>
+			<xsd:enumeration value="No"/>
+			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CoinsOrCardsEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Defines the kind of input for a telephone.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="Cards"/>
+			<xsd:enumeration value="Coins"/>
+			<xsd:enumeration value="CardsAndCoins"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

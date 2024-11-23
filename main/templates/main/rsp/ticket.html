@@ -1,3 +1,4 @@
+{% load rsp %}
 <h2 class="govuk-heading-m">Ticket Data</h2>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
@@ -71,10 +72,6 @@
         <dd class="govuk-summary-list__value"><code>{{ data.lennon_ticket_type }}</code></dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Fare code</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.fare_label }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Origin</dt>
         <dd class="govuk-summary-list__value">
             <dl class="govuk-summary-list">
@@ -82,10 +79,24 @@
                     <dt class="govuk-summary-list__key">NLC</dt>
                     <dd class="govuk-summary-list__value"><code>{{ data.origin_nlc }}</code></dd>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Location name</dt>
-                    <dd class="govuk-summary-list__value">{{ data.origin_nlc_name }}</dd>
-                </div>
+                {% with station=data.origin_nlc|rsp_station_nlc %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                        </div>
+                        {% if station.latitude and station.longitude %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">
+                                        <code>{{ station.latitude }}, {{ station.longitude }}</code>
+                                    </a>
+                                </dd>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
             </dl>
         </dd>
     </div>
@@ -97,13 +108,110 @@
                     <dt class="govuk-summary-list__key">NLC</dt>
                     <dd class="govuk-summary-list__value"><code>{{ data.destination_nlc }}</code></dd>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Location name</dt>
-                    <dd class="govuk-summary-list__value">{{ data.destination_nlc_name }}</dd>
-                </div>
+                {% with station=data.destination_nlc|rsp_station_nlc %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                        </div>
+                        {% if station.latitude and station.longitude %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">
+                                        <code>{{ station.latitude }}, {{ station.longitude }}</code>
+                                    </a>
+                                </dd>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ data.destination_nlc_name }}</dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
             </dl>
         </dd>
     </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Fare</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Code</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.fare_label }}</code></dd>
+                </div>
+                {% with ticket_type=data.fare_label|rsp_ticket_type %}
+                    {% if ticket_type %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Identifier</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ ticket_type.ticket_type_identifier }}</code>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket_type.ticket_type_name }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Compulsory reservations</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket_type.compulsory_reservations }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Validity - outward</dt>
+                            <dd class="govuk-summary-list__value">
+                                <h3 class="govuk-heading-s">Date</h3>
+                                {{ ticket_type.validity.day_outward|safe }}
+                                <h3 class="govuk-heading-s">Time</h3>
+                                {{ ticket_type.validity.time_outward|safe }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Validity - return</dt>
+                            <dd class="govuk-summary-list__value">
+                                <h3 class="govuk-heading-s">Date</h3>
+                                {{ ticket_type.validity.day_return|safe }}
+                                <h3 class="govuk-heading-s">Time</h3>
+                                {{ ticket_type.validity.time_return|safe }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Break of journey - outward</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket_type.break_of_journey.outward_note|safe }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Break of journey - return</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket_type.break_of_journey.return_note|safe }}
+                            </dd>
+                        </div>
+                        {% if ticket_type.conditions %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Conditions</dt>
+                                <dd class="govuk-summary-list__value">{{ ticket_type.conditions|safe }}</dd>
+                            </div>
+                        {% endif %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Changes to travel plans</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket_type.changes_to_travel_plans|safe }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Refunds</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket_type.refunds|safe }}</dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </dl>
+        </dd>
+    </div>
+    {% if data.restriction_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Restriction code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ data.restriction_code }}</code></dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Coupon type</dt>
         <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
@@ -115,10 +223,6 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Route code</dt>
         <dd class="govuk-summary-list__value"><code>{{ data.route_code }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Restriction code</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.restriction_code }}</code></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Passenger name</dt>

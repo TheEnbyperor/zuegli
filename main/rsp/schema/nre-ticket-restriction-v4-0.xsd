@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/ticketrestriction"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:com="http://nationalrail.co.uk/xml/common"
+            targetNamespace="http://nationalrail.co.uk/xml/ticketrestriction"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            version="4.0" id="nre-ticketrestriction">
+  <xsd:annotation>
+    <xsd:documentation>
+      The National Rail Enquiries Ticket Restrictions Schema
+    </xsd:documentation>
+    <xsd:appinfo>
+      <Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+        <Contributor Role="developer" Href="mailto:juan.londono@cds.co.uk">Juan Londono</Contributor>
+        <Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+        <Creator>NRE</Creator>
+        <Created>2014-10-01</Created>
+        <Modified>2014-10-01</Modified>
+        <Description>
+          The National Rail Enquiries (NRE) Ticket Restrictions describes
+        </Description>
+        <Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+        <Language codeListID="ISO639-2">eng</Language>
+        <Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+        <ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+        <HasPart>nre-common-v4-0.xsd</HasPart>
+        <ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/ticketrestrictions">TicketRestrictionStructure</ProvidesDefinitionOf>
+        <ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/ticketrestrictions">RestrictionStructure</ProvidesDefinitionOf>
+        <Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+        <ProtectiveMarking>unclassified</ProtectiveMarking>
+        <Status>Draft</Status>
+        <StatusDescription>Initial release for consultation</StatusDescription>
+        <Category codeListID="">Arts, recreation and travel, Tourism, Travel(tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track, Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+        <Version>4.0</Version>
+        <Project>National Rail Enquiries Knowledgebase</Project>
+        <Title>NRE Ticket Restrictions Schema</Title>
+        <Type>message</Type>
+      </Metadata>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <!-- ======================================================================= -->
+  <!-- Root elements -->
+  <xsd:element name="TicketRestrictions">
+    <xsd:annotation>
+      <xsd:documentation>A list of Ticket Restrictions</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="TicketRestriction" minOccurs="0" maxOccurs="unbounded">
+          <xsd:annotation>
+            <xsd:documentation>Public Transport Restrictions. </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+
+  <xsd:element name="TicketRestriction" type="TicketRestrictionStructure">
+    <xsd:annotation>
+      <xsd:documentation>Public Transport Restrictions. </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+
+
+  <!-- ======================================================================= -->
+  <!-- Top Level Complex types for TicketRestriction-->
+
+  <xsd:complexType name="TicketRestrictionStructure">
+    <xsd:sequence>
+      <xsd:element name="Name" >
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="LinkToDetailPage" type="xsd:string" />
+      <!--<xsd:element name="UrlAlias" type="UrlAliasStructure"></xsd:element>-->
+      <xsd:element name="RestrictionCode">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+      <xsd:element name="TicketRestrictionIdentifier" type="xsd:string" />
+
+      <xsd:element name="ApplicableDays">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+      <xsd:element name="Easement" type="xsd:string"  minOccurs="0" />
+      <xsd:element name="Notes" type="xsd:string"  minOccurs="0" />
+      <xsd:element name="SeasonalVariations" type="xsd:string"  minOccurs="0" />
+
+      <xsd:element name="OutwardDirection">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Outward Travel"/>
+            <xsd:enumeration value="Morning Travel"/>
+            <xsd:enumeration value="Eastbound Travel"/>
+            <xsd:enumeration value="Northbound Travel"/>
+            <xsd:enumeration value="Southbound Travel"/>
+            <xsd:enumeration value="Westbound Travel"/>
+            <xsd:enumeration value="From London"/>
+            <xsd:enumeration value="Towards London"/>
+            <xsd:enumeration value="Outward"/>
+            <xsd:enumeration value="Return"/>            
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+
+      <xsd:element name="ReturnDirection">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Return Travel"/>
+            <xsd:enumeration value="Evening Travel"/>
+            <xsd:enumeration value="Westbound Travel"/>
+            <xsd:enumeration value="Southbound Travel"/>
+            <xsd:enumeration value="Northbound Travel"/>
+            <xsd:enumeration value="Eastbound Travel"/>
+            <xsd:enumeration value="From London"/>
+            <xsd:enumeration value="Towards London"/>
+            <xsd:enumeration value="Outward"/>
+            <xsd:enumeration value="Return"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+
+      <xsd:element name="ReturnStatus" type="xsd:string"  minOccurs="0" />
+      <xsd:element name="OutwardStatus" type="xsd:string"  minOccurs="0" />
+      
+      
+      <xsd:element name="RestrictionsType" minOccurs="1" >
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:integer">
+            <xsd:pattern value="2|4"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      
+    
+      
+      
+      <xsd:element name="Restrictions" minOccurs="1" maxOccurs="1">
+        <xsd:annotation>
+          <xsd:documentation>Restrictions Wrapper</xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Restriction" type="RestrictionStructure" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Restriction's details</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+        
+        
+      </xsd:element>
+      
+    </xsd:sequence>
+  </xsd:complexType>
+
+
+  <!-- ======================================================================= -->
+  <!-- Third level Complex types for Restrictions-->
+  <xsd:complexType name="RestrictionStructure">
+    <xsd:sequence  minOccurs="1">
+      <xsd:element name="StationOutward" minOccurs="0" >
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:length value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+      <xsd:element name="StationReturn" minOccurs="0" >
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:length value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      
+      <xsd:element name="DetailsOutward">
+        <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:minLength value="1"/>
+        </xsd:restriction>
+        </xsd:simpleType>        
+      </xsd:element>
+
+      <xsd:element name="DetailsReturn" type="xsd:string"  minOccurs="0" />
+      
+      <xsd:element name="CommentsOutward" type="xsd:string"  minOccurs="0" />
+      <xsd:element name="CommentsReturn" type="xsd:string"  minOccurs="0" />
+    
+    
+    </xsd:sequence>
+
+  </xsd:complexType>
+  
+
+</xsd:schema>

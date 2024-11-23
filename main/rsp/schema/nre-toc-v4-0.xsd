@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/toc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gms="http://www.govtalk.gov.uk/CM/gms-xs" xmlns:apd="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:com="http://nationalrail.co.uk/xml/common" targetNamespace="http://nationalrail.co.uk/xml/toc" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0" id="nre-toc">
+	<xsd:annotation>
+		<xsd:documentation>
+            The National Rail Enquiries Train Operating Company Schema
+        </xsd:documentation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Role="developer" Href="mailto:geoff.parkin@cds.co.uk">Geoff Parkin</Contributor>
+				<Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+				<Creator>NRE</Creator>
+				<Created>2013-07-01</Created>
+				<Modified>2013-07-01</Modified>
+				<Description> The National Rail Enquiries (NRE) Train Operating
+                    Company XML Schema describes UK Train Operating
+                    Company (TOC) customer information. Content includes
+                    information about:
+                    <ul>
+						<li>TOC identification and address.</li>
+						<li>Customer services provided by the TOC.</li>
+						<li>
+                            Passenger facilities provided by the TOC.
+                        </li>
+						<li>
+                            Impaired mobility access information for TOC
+                            services.
+                        </li>
+					</ul>
+					<p>
+                        The Schema is designed to be used in conjunction with the NRE XML Station schema.
+                    </p>
+				</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://kb.nationalrail.co.uk/schemas/NreTocSchema">NreTocSchema</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<HasPart>nre-common-v4-0.xsd</HasPart>
+				<HasPart>apd/PersonalDetailsTypes-v1-3.xsd</HasPart>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/toc">TrainOperatingCompanyStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/toc">TicketingAndFaresStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/toc">SupportAndInformationStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/toc">OperatingPeriodStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/toc">SeatingClassEnumeration</ProvidesDefinitionOf>
+				<Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>Draft</Status>
+				<StatusDescription>Initial release for consultation</StatusDescription>
+				<Category codeListID="">Arts, recreation and travel, Tourism, Travel(tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track, Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+				<Version>4.0</Version>
+				<Project>National Rail Enquiries Knowledgebase</Project>
+				<Title>NRE TOC XML Schema, a schema to describe UK Train Operating Companies.</Title>
+				<Type>message</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- ======================================================================= -->
+	<xsd:import namespace="http://nationalrail.co.uk/xml/common" schemaLocation="nre-common-v4-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation>
+                A com set of types for NRE schemas.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<xsd:import namespace="http://www.govtalk.gov.uk/people/PersonDescriptives" schemaLocation="apd/PersonDescriptiveTypes-v1-1.xsd">
+		<xsd:annotation>
+			<xsd:documentation source="http://www.govtalk.gov.uk/schemasstandards/agreedschema_schema.asp?schemaid=204">
+                Personal Details Types architectural schema
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<!-- ======================================================================= -->
+	<!-- Root elements and main component-->
+	<xsd:element name="TrainOperatingCompanyList">
+		<xsd:annotation>
+			<xsd:documentation>A list of Train Operating Companies</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="TrainOperatingCompany" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TrainOperatingCompany" type="TrainOperatingCompanyStructure">
+		<xsd:annotation>
+			<xsd:documentation>Details of a Train Operating Company as required for the NRE Knowledge Base.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<!-- ======================================================================= -->
+	<!-- TOC specific complex structures -->
+	<xsd:complexType name="TrainOperatingCompanyStructure">
+		<xsd:sequence>
+			<xsd:element name="ChangeHistory" type="com:ChangeHistoryStructure">
+				<xsd:annotation>
+					<xsd:documentation>Who changed the data most recently.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AtocCode" type="com:AtocCodeType">
+				<xsd:annotation>
+					<xsd:documentation>Two character ATOC code identifying the company.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AtocMember" type="xsd:boolean" default="true" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether the TOC is a member of ATOC. Default is true.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StationOperator" type="xsd:boolean" default="true" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether the TOC is a station operator. Default is true.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>The brand name of the TOC.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LegalName" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>The legal company name of the TOC.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ManagingDirector" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Logo" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A link to the TOC logo as a GIF or JPEG.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NetworkMap" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A link to a map of the TOC's network as a PDF or other graphic format.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OperatingPeriod" type="OperatingPeriodStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The dates between which the TOC is operational, i.e visible to the public</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="HeadOfficeContactDetails" type="com:ContactDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact details for the TOC head office.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CompanyWebsite" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The public website address for the TOC</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SupportAndInformation" type="SupportAndInformationStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about customer support services.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TicketingAndFares" type="TicketingAndFaresStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>
+                            Information about buying tickets and fare types.
+                        </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TicketingAndFaresStructure">
+		<xsd:sequence>
+			<xsd:element name="TeleSales" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about buying tickets by phone, post or online.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="GroupTravel" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about group tickets.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="BusinessTravel" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about business travel.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SeatReservations" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation> Information about support for seat reservations.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PenaltyFaresUrl" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A link to a penalty fares details.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>			
+			<xsd:element name="BuyingTickets" type="com:AnnotationContent" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether the TOC allows tickets to be bought on the trains. (This is an internal only field)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="SupportAndInformationStructure">
+		<xsd:sequence>
+			<xsd:element name="CustomerService" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about customer services.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LostProperty" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about lost property  for the TOC's servcies and stations.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AssistedTravel" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information for disabled passengers.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CyclePolicyUrl" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A link to a cycling policy documentation.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="OperatingPeriodStructure">
+		<xsd:sequence>
+			<xsd:element name="StartDate" type="com:StartDateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>If omitted then the TOC can  never be live.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="EndDate" type="com:EndDateType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>If omitted then the TOC once live remains so indefinitely.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ======================================================================= -->
+	<!-- Enumerations -->
+	<xsd:simpleType name="SeatingClassEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Available seating classes.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="first"/>
+			<xsd:enumeration value="business"/>
+			<xsd:enumeration value="standard"/>
+			<xsd:enumeration value="sleeper"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

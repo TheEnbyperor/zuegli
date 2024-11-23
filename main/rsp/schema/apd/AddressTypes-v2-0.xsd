@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Changes 1.4 to 2.0
+	Imports BS7666 schema version 2.0 rather than 1.4
+Changes 1.3 to 1.4
+	Imports BS7666 schema version 1.4 rather than 1.3	
+Changes 1.2 to 1.3
+	Imports BS7666 schema version 1.3 rather than 1.2
+Changes 1.1 to 1.2
+	Imports BS7666 schema version 1.2 rather than 1.1
+	Metadata updated tolatest standard
+Changes 1.0 to 1.1
+	UK postcode now uses the data type defined in the BS7666 schema International addresses now allow a choice of postcode and/or country in either order UKAddressStructure simplified and made unambiguous (but still allowing same combinations of BS7666 and 5 line addresses)
+-->
+<!-- Schema for commonly used address types -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.govtalk.gov.uk/core" xmlns:bs7666="http://www.govtalk.gov.uk/people/bs7666" xmlns="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" targetNamespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0" id="AddressTypes-v2-0">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor>e-champions, Government Schema Group, IDeA</Contributor>
+				<Contributor Href="mailto:paul.spencer@boynings.co.uk">Paul Spencer, Boynings Consulting</Contributor>
+				<Contributor Href="mailto:adam.bailin@cabinet-office.x.gsi.gov.uk">Adam Bailin, e-Government Unit, Cabinet Office</Contributor>
+				<Creator Href="mailto:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Creator>
+				<Created>2001-12-19</Created>
+				<Modified>2002-01-30</Modified>
+				<Modified>2003-02-17</Modified>
+				<Modified>2003-07-07</Modified>
+				<Modified>2005-03-09</Modified>
+				<Description>Address schema giving the user a choice of address formats. UK Postal Address is suitable for routing instructions for postal delivery. BS7666 is used for a more structured geo-spatial reference that has many applications aside from postal delivery.</Description>
+				<Review>2006-03-09</Review>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://www.govtalk.gov.uk/gdsc/schemas/AddressTypes-v2-0.xsd">AddressTypes-v2-0</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails">InternationalAddressStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails">UKPostalAddressStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails">UKAddressStructure</ProvidesDefinitionOf>
+				<Requires>http://www.govtalk.gov.uk/gdsc/schemas/bs7666-v2-0.xsd</Requires>
+				<Requires>http://www.govtalk.gov.uk/gdsc/schemas/CommonSimpleTypes-v1-3.xsd</Requires>
+				<Copyright>Crown Copyright 2002, 2003, 2004, 2005</Copyright>
+				<ProtectiveMarking>Unclassified</ProtectiveMarking>
+				<Status>draft</Status>
+				<StatusDescription>For approval by GSG</StatusDescription>
+				<Version>2.0</Version>
+				<Category codeListID="GCL">People, communities and living</Category>
+				<Project>UK GovTalk Government Data Standards Catalogue</Project>
+				<Title>Address Types 2.0</Title>
+				<Type>architectural</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:import namespace="http://www.govtalk.gov.uk/people/bs7666" schemaLocation="../bs7666-v2-0.xsd"/>
+	<xsd:import namespace="http://www.govtalk.gov.uk/core" schemaLocation="CommonSimpleTypes-v1-3.xsd"/>
+	<!-- start of InternationalAddress type definition -->
+	<xsd:complexType name="InternationalAddressStructure">
+		<xsd:sequence>
+			<xsd:element name="IntAddressLine" type="AddressLineType" minOccurs="2" maxOccurs="5"/>
+			<xsd:choice>
+				<xsd:sequence>
+					<xsd:element name="Country" type="AddressLineType"/>
+					<xsd:element name="InternationalPostCode" type="InternationalPostCodeType" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:sequence>
+					<xsd:element name="InternationalPostCode" type="InternationalPostCodeType"/>
+					<xsd:element name="Country" type="AddressLineType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- end of InternationalAddress type definition -->
+	<!-- start of AddressUKpostalStructure type definition -->
+	<xsd:complexType name="UKPostalAddressStructure">
+		<xsd:sequence>
+			<xsd:element name="Line" type="AddressLineType" minOccurs="2" maxOccurs="5"/>
+			<xsd:element name="PostCode" type="bs7666:PostCodeType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- end of AddressUKpostalStructure type definition -->
+	<!-- start of AddressUKstructure type definition -->
+	<xsd:complexType name="UKAddressStructure">
+		<xsd:annotation>
+			<xsd:documentation>Supports BS7666 address types.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:annotation>
+					<xsd:documentation>At least one of' 5LineAddress and BS7666Address.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:element name="BS7666Address" type="bs7666:BSaddressStructure"/>
+				<xsd:sequence>
+					<xsd:element name="A_5LineAddress" type="UKPostalAddressStructure"/>
+					<xsd:element name="BS7666Address" type="bs7666:BSaddressStructure" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:choice>
+			<xsd:element name="UniquePropertyReferenceNumber" type="bs7666:UPRNtype" minOccurs="0"/>
+			<xsd:choice>
+				<xsd:annotation>
+					<xsd:documentation>a Mailsort code is a code that aims to ensure that items are properly addressed and offers discounts to organisations using it, and a Walksort provides more detail (and higher discounts).  Local authorities extensively use both.  The Post Office issues files that are used by the sending organisations to manage the processes of correct addressing and sorting of mail items</xsd:documentation>
+				</xsd:annotation>
+				<xsd:element name="SortCode" type="MailSortCodeType" minOccurs="0"/>
+				<xsd:element name="WalkSort" type="WalkSortCodeType" minOccurs="0"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- end of AddressUKstructure type definition -->
+	<xsd:simpleType name="AddressLineType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="MailSortCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{5}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="WalkSortCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[0-9]{8}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="InternationalPostCodeType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AddressQualifierType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="residential"/>
+			<xsd:enumeration value="correspondence"/>
+			<xsd:enumeration value="self-employed-business"/>
+			<xsd:enumeration value="business"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="AddressValidationType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="not-checked"/>
+			<xsd:enumeration value="PAF-check-failed"/>
+			<xsd:enumeration value="NLPG-check-failed"/>
+			<xsd:enumeration value="PAF-check-valid"/>
+			<xsd:enumeration value="NLPG-check-valid"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

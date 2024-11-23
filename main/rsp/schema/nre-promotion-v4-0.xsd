@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/promotion" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gms="http://www.govtalk.gov.uk/CM/gms-xs" xmlns:com="http://nationalrail.co.uk/xml/common" targetNamespace="http://nationalrail.co.uk/xml/promotion" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0" id="nre-promotion">
+	<xsd:annotation>
+		<xsd:documentation>The National Rail Enquiries Promotions Schema</xsd:documentation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Role="developer" Href="mailto:geoff.parkin@cds.co.uk">Geoff Parkin</Contributor>
+        <Contributor Role="developer">Neil Fursey</Contributor>
+				<Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+				<Creator>NRE</Creator>
+				<Created>2013-07-01</Created>
+				<Modified>2014-03-24</Modified>
+				<Description>The National Rail Enquiries (NRE)  Promotions   XML Schema describes UK rail promotion information.
+					Content includes information about:
+  					<ul>
+						<li>Promotion identification.</li>
+						<li>Who is eligible for it</li>
+						<li>When it is available</li>
+						<li>Conditions of use.</li>
+					</ul>
+					<p>The Schema is designed to be used in conjunction with the NRE XML Station and TOC schemas.</p>
+				</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://kb.nationalrail.co.uk/schemas/NrePromotionSchema">NrePromotionSchema</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<HasPart>nre-common-v4-0.xsd</HasPart>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionRailCardStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionRailCardListStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">LinkAndDetailsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionFlowsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">ExceptionsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">FlowsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">FlowStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromoApplicableTocsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">NearestStationStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">ProductPricesStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">ProductTypeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PassengerStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">InternalInfoStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionFareDetailsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">DiscountsAvailableStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">DiscountDetail</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionCodeType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionIdentifierType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromoTypeEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">PromotionTypeEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">AvailableToEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/promotion">ViewableByEnumeration</ProvidesDefinitionOf>
+				<Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>Draft</Status>
+				<StatusDescription>Initial release for consultation</StatusDescription>
+				<Category codeListID="">Arts, recreation and travel, Tourism, Travel(tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track, Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+				<Version>4.0</Version>
+				<Project>National Rail Enquiries Knowledgebase</Project>
+				<Title>NRE Promotion  XML Schema,  a schema to describe UK Train Ticketing Promotions.</Title>
+				<Type>message</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- ======================================================================= -->
+	<xsd:import namespace="http://nationalrail.co.uk/xml/common" schemaLocation="nre-common-v4-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation>
+                A com set of types for NRE schemas.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<!-- ======================================================================= -->
+	<!-- Root element -->
+	<xsd:element name="PromotionList">
+		<xsd:annotation>
+			<xsd:documentation>A list of promotions.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Promotion" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Promotion" type="PromotionStructure">
+		<xsd:annotation>
+			<xsd:documentation>Details of a Promotion as required for the NRE Knowledge Base.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<!-- ======================================================================= -->
+	<!-- Complex types -->
+	<xsd:complexType name="PromotionStructure">
+		<xsd:sequence>
+			<xsd:element name="ChangeHistory" type="com:ChangeHistoryStructure">
+				<xsd:annotation>
+					<xsd:documentation>Who changed the data most recently.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PromotionIdentifier" type="PromotionIdentifierType">
+				<xsd:annotation>
+					<xsd:documentation>Unique Identifier of the promotion within the knowledge base. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+      <xsd:element name="Type" type="xsd:NMTOKEN">
+        <xsd:annotation>
+          <xsd:documentation>Types of promotions.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>						
+			<xsd:element name="NearestStation" type="NearestStationStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The name of the Promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+      <xsd:element name="InterchangeStations" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>PlusBus interchange stations.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+			<xsd:element name="PromotionName" type="com:PopulatedStringType">
+				<xsd:annotation>
+					<xsd:documentation>The name of the Promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Summary" type="com:PopulatedStringType">
+				<xsd:annotation>
+					<xsd:documentation>The summary of the Promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OfferDetails" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Details of the Promotion. Who is eligible and other further conditions.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ValidityPeriod" type="com:HalfOpenDateRangeStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Period during which tickets bought under the promotion may be used. Optional as this field is never used for PlusBus, 
+          expected for other types.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ValidityDayAndTime" type="com:OpeningHoursStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Period during which the promotion is valid in terms of days and time.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AvailableFromDate" type="com:HalfOpenDateRangeStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Date from which the promotion is available for purchase by public.  May be earlier than the validity period. 
+            Optional as field is never used for PlusBus, expected for other types.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Region" type="com:BbcRegionEnumeration" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Region within which the promotion applies.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AreaMap" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Link to a map showing where the promotion applies.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+      <xsd:element name="TimetableLinks" type="LinkStructure" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Timetable links which only apply to plusbus.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+			<xsd:element name="LeadToc" type="com:AtocCodeType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The lead toc who created the promotion or allocated by an admin. Can be empty if the admin does not assign one.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableTocs" type="PromoApplicableTocsStructure">
+				<xsd:annotation>
+					<xsd:documentation>List of TOCs for which promotion is applicable.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+      <xsd:element name="Operators" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>PlusBus Operators</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ExcludedServices" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>PlusBus Excluded Services</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+			<xsd:element name="ProductPrices" type="ProductPricesStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableOriginStationGroups" type="com:StationGroupListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of station groups for the origins.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableOrigins" type="com:StationListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of station CRS codes at which journey must start.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableDestinationStationGroups" type="com:StationGroupListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of station groups for the destinations.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableDestinations" type="com:StationListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of station CRS codes at which journey must end.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableZoneOfStationGroups" type="com:StationGroupListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of station groups for the zones.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ApplicableZoneOfStations" type="com:StationListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Zone containing station CRS codes at which offer applies for use of promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Reversible" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>Is promotion valid travelling in both directions?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PromotionFlows" type="PromotionFlowsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>What are the flows and exceptions for this promotion</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FurtherInformation" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TicketValidityConditions" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Text description of conditions. </xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="BookingConditions" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Booking conditions that apply to the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PurchaseDetails" type="LinkAndDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>How and where to purchase the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Passengers" type="PassengerStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>How and where to purchase the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PromotionRailCards" type="PromotionRailCardListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Qualifies which RailCards are applicable to this promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PromotionCode" type="PromotionCodeType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Three or four character code identifying an ordinary promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NlcCode" type="com:NlcCodeType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TocContact" type="com:ContactDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about contact at TOC.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="InternalInfo" type="InternalInfoStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Internal information about the promotion (not visible to public).</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TicketName" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AdultFares" type="PromotionFareDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Adult fares available under the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ChildFares" type="PromotionFareDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Child fares available under the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="FamilyFares" type="PromotionFareDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Family fares available under the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ConcessionFares" type="PromotionFareDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Concession fares available under the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="GroupFares" type="PromotionFareDetailsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Group fares available under the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+      <xsd:element name="DayTicket" type="DayTicketStructure" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>PlusBus day ticket details.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SeasonTicket" type="SeasonTicketStructure" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>PlusBus season ticket details.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ViewableBy" type="ViewableByEnumeration">
+				<xsd:annotation>
+					<xsd:documentation>Who can view the promotion.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="DiscountsAvailable" type="DiscountsAvailableStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PromotionRailCardStructure">
+		<xsd:annotation>
+			<xsd:documentation>A structure containing a RailCard name and its applicability to the promotion.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="RailCardId" type="xsd:string"/>
+			<xsd:element name="Price" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Details" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PromotionRailCardListStructure">
+		<xsd:annotation>
+			<xsd:documentation>A structure containing a list of railcards and applicability option values</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="PromotionRailCard" type="PromotionRailCardStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LinkAndDetailsStructure">
+		<xsd:annotation>
+			<xsd:documentation>A stucture containing details and a Uri.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Uri" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Details" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+  <xsd:complexType name="LinkStructure">
+    <xsd:annotation>
+      <xsd:documentation>A list of station groups.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Uri" type="xsd:anyURI" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+	<xsd:complexType name="PromotionFlowsStructure">
+		<xsd:sequence>
+			<xsd:element name="Exceptions" type="ExceptionsStructure" minOccurs="0"/>
+			<xsd:element name="Flows" type="FlowsStructure" minOccurs="0"/>
+      <xsd:element name="ExceptionsAndFlows" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ExceptionsStructure">
+		<xsd:sequence>
+			<xsd:element name="Exception" type="FlowStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FlowsStructure">
+		<xsd:sequence>
+			<xsd:element name="Flow" type="FlowStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FlowStructure">
+		<xsd:sequence>
+			<xsd:element name="Origin" type="com:CrsCodeType"/>
+			<xsd:element name="Destination" type="com:CrsCodeType"/>
+			<xsd:element name="Reversible" type="xsd:boolean"/>
+			<xsd:element name="Station" type="com:CrsCodeType" minOccurs="0"/>
+			<xsd:element name="Tocs" type="com:AtocListStructure" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- New v4-0 -->
+	<xsd:complexType name="PromoApplicableTocsStructure">
+		<xsd:choice>
+			<xsd:element name="AllTocs" type="xsd:boolean"/>
+			<xsd:sequence>
+				<xsd:element name="TocRef" type="com:AtocCodeType" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="NearestStationStructure">
+		<xsd:annotation>
+			<xsd:documentation>A list of stations.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CrsCode" type="com:CrsCodeType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>  
+	<xsd:complexType name="ProductPricesStructure">
+		<xsd:sequence>
+			<xsd:element name="ProductType" type="ProductTypeStructure" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ProductTypeStructure">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Valid" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AdultPrice" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChildPrice" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="FamilyPrice" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="GroupPrice" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StaffDiscountAdult" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StaffDiscountChild" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StaffDiscountFamily" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="StaffDiscountGroup" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PromotionRailCards" type="PromotionRailCardListStructure" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PassengerStructure">
+		<xsd:sequence>
+			<xsd:element name="Note" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="MinAdults" type="xsd:nonNegativeInteger" minOccurs="0"/>
+			<xsd:element name="MaxAdults" type="xsd:nonNegativeInteger" minOccurs="0"/>
+			<xsd:element name="MinChildren" type="xsd:nonNegativeInteger" minOccurs="0"/>
+			<xsd:element name="MaxChildren" type="xsd:nonNegativeInteger" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InternalInfoStructure">
+		<xsd:annotation>
+			<xsd:documentation>A stucture containing details and a Uri.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="IssuingInstructions" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Details" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PromotionFareDetailsStructure">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Price" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Details" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+  <xsd:complexType name="DayTicketStructure">
+    <xsd:sequence>
+      <xsd:element name="Adult" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="Child" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="Railcard" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="Note" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SeasonTicketStructure">
+    <xsd:sequence>
+      <xsd:element name="SevenDays" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="OneMonth" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="ThreeMonths" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="OneYear" type="xsd:decimal" minOccurs="0"/>
+      <xsd:element name="Note" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DiscountsAvailableStructure">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="DiscountDetail" type="DiscountDetail" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="PlusBus" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="SleeperServices" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="OtherDiscounts" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DiscountDetail">
+		<xsd:annotation>
+			<xsd:documentation/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TicketTypeName" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TicketTypeCode" type="com:TicketTypeCodeType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="CardHolder" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AccompanyingAdult" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AccompanyingChild" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Note" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ======================================================================= -->
+	<!-- Simple types -->
+	<xsd:simpleType name="PromotionCodeType">
+		<xsd:annotation>
+			<xsd:documentation>Three or four character code identifying a promotion.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[A-Z0-9]{3,4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="PromotionIdentifierType">
+		<xsd:annotation>
+			<xsd:documentation>Type for a referenceUnique identifier of a promotion</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:pattern value="[A-Za-z0-9]{1,32}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ======================================================================= -->
+	<!-- Enumerations -->	
+	<xsd:simpleType name="AvailableToEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Who is the promotion available to.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="public">
+				<xsd:annotation>
+					<xsd:documentation>Promotion is available to the general public.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="staff">
+				<xsd:annotation>
+					<xsd:documentation>Promotion is only available to railway staff.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ViewableByEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Who can see the  promotion viewable  .</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="public">
+				<xsd:annotation>
+					<xsd:documentation>Promotion can be seen by the public.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="internal">
+				<xsd:annotation>
+					<xsd:documentation>Promotion is not visible to public. Normal Staff only promotions are not visible to public</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="xmlFeed">
+				<xsd:annotation>
+					<xsd:documentation>Not available on public or internal, only via XML Feed.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>		
+</xsd:schema>

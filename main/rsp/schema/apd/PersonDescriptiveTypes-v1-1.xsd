@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Schema for person descriptive types -->
+<!-- Changes from 1.0 to 1.1
+		Definition of PersonNameStructure added. This supersedes CitizenNameStructure in the Personal Details schema.
+-->
+<xsd:schema targetNamespace="http://www.govtalk.gov.uk/people/PersonDescriptives" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1" id="PersonDescriptiveTypes" xmlns="http://www.govtalk.gov.uk/people/PersonDescriptives" xmlns:core="http://www.govtalk.gov.uk/core" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:appinfo>
+			<Metadata>
+				<Contributor Href="mailto:adam.bailin@cabinet-office.x.gsi.gov.uk">Adam Bailin, e-Government Unit, Cabinet Office</Contributor>
+				<Contributor Href="mailto:paul.spencer@boynings.co.uk">Paul Spencer, Boynings Consulting</Contributor>
+				<Contributor>Adrian Kent, Office e-Envoy</Contributor>
+				<Creator Href="mailto:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Creator>
+				<Created>2003-02-11</Created>
+				<Modified>2004-12-08</Modified>
+				<Description>Person descriptive types for use within UK Government</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://www.govtalk.gov.uk/gdsc/schemas/PersonDescriptiveTypes-v1-1.xsd">PersonDescriptiveTypes-v1-1</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:govtalk@cabinet-office.x.gsi.gov.uk">e-Government Unit, Cabinet Office, UK Government</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">VerificationLevelType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonBirthDateStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonDeathDateStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonMaritalStatusStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">GenderAtRegistrationType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">GenderCurrentType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonNameSuffixType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonRequestedNameType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonGivenNameType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonFamilyNameType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonInitialsType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonNameTitleType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonFullNameType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://www.govtalk.gov.uk/people/PersonDescriptives">PersonNameStructure</ProvidesDefinitionOf>
+				<Requires>http://www.govtalk.gov.uk/gdsc/schemas/CommonSimpleTypes-v1-3.xsd</Requires>
+				<Copyright>Crown copyright 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>draft</Status>
+				<StatusDescription>For approval by the GSG</StatusDescription>
+				<Version>1.1</Version>
+				<Category codeListID="GCL"/>
+				<Project>UK GovTalk Government Data Standards Catalogue</Project>
+				<Title>Person Descriptive Types 1.1</Title>
+				<Type>architectural</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:import namespace="http://www.govtalk.gov.uk/core" schemaLocation="CommonSimpleTypes-v1-3.xsd"/>
+	<xsd:simpleType name="VerificationLevelType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:enumeration value="Level 0"/>
+			<xsd:enumeration value="Level 1"/>
+			<xsd:enumeration value="Level 2"/>
+			<xsd:enumeration value="Level 3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="PersonBirthDateStructure">
+		<xsd:sequence>
+			<xsd:element name="PersonBirthDate" type="core:DateType"/>
+			<xsd:element name="VerificationLevel" type="VerificationLevelType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PersonDeathDateStructure">
+		<xsd:sequence>
+			<xsd:element name="PersonDeathDate" type="core:DateType"/>
+			<xsd:element name="VerificationLevel" type="VerificationLevelType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- Choice of types for marital Status -->
+	<xsd:complexType name="PersonMaritalStatusStructure">
+		<xsd:sequence>
+			<xsd:element name="MaritalStatus" type="core:MaritalStatusType"/>
+			<xsd:element name="VerificationLevel" type="VerificationLevelType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- OR.... -->
+	<xsd:complexType name="PersonMaritalStatus">
+		<xsd:simpleContent>
+			<xsd:extension base="core:MaritalStatusType">
+				<xsd:attribute name="VerificationLevel" type="VerificationLevelType"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:simpleType name="GenderAtRegistrationType">
+		<xsd:restriction base="xsd:byte">
+			<xsd:pattern value="1"/>
+			<xsd:pattern value="2"/>
+			<xsd:pattern value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="GenderCurrentType">
+		<xsd:restriction base="xsd:byte">
+			<xsd:pattern value="0"/>
+			<xsd:pattern value="1"/>
+			<xsd:pattern value="2"/>
+			<xsd:pattern value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonNameSuffixType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonRequestedNameType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="70"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonGivenNameType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonFamilyNameType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonInitialsType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonNameTitleType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="35"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PersonFullNameType">
+		<xsd:restriction base="core:RestrictedStringType">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="70"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="PersonNameStructure">
+		<xsd:annotation>
+			<xsd:documentation>This mirrors the CitizenNameStructure in the AddressAndPersonalDetails namespace and supersedes it.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="PersonNameTitle" type="PersonNameTitleType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="PersonGivenName" type="PersonGivenNameType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="PersonFamilyName" type="PersonFamilyNameType"/>
+			<xsd:element name="PersonNameSuffix" type="PersonNameSuffixType" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="PersonRequestedName" type="PersonRequestedNameType" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://nationalrail.co.uk/xml/station" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gms="http://www.govtalk.gov.uk/CM/gms-xs" xmlns:apd="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" xmlns:com="http://nationalrail.co.uk/xml/common" targetNamespace="http://nationalrail.co.uk/xml/station" elementFormDefault="qualified" attributeFormDefault="unqualified" version="4.0" id="nre-station">
+	<xsd:annotation>
+		<xsd:documentation>The National Rail Enquiries Station Schema</xsd:documentation>
+		<xsd:appinfo>
+			<Metadata xmlns="http://www.govtalk.gov.uk/metadata/egms">
+				<Contributor Role="developer" Href="mailto:geoff.parkin@cds.co.uk">Geoff Parkin</Contributor>
+				<Contributor Role="client" Href="mailto:nre@nationalrail.co.uk">NRE</Contributor>
+				<Creator>NRE</Creator>
+				<Created>2013-07-01</Created>
+				<Modified>2013-07-01</Modified>
+				<Description> The National Rail Enquiries (NRE)  Station XML Schema describes facilities for UK stations, including
+				<ul>
+						<li>Station identification and address information.</li>
+						<li>Station operational information .</li>
+						<li>Booking and reservation facilities.</li>
+						<li>Ticket On Departure Machine facilities.</li>
+						<li>Passenger  facilities.</li>
+						<li>Interchange information.</li>
+						<li>Impaired mobility access information.</li>
+						<li>Local Area information.</li>
+					</ul>
+					The Schemas is designed to be used in conjunction with the NRE  XML TOC schema.
+				</Description>
+				<Format Scheme="http://www.iana.org/assignments/media-types/">text/xml</Format>
+				<Identifier Href="http://kb.nationalrail.co.uk/schemas/NreStationSchema">NreStationSchema</Identifier>
+				<Language codeListID="ISO639-2">eng</Language>
+				<Publisher Href="mailto:nre@nationalrail.co.uk"> National Rail Enquiries, 40 Bernard Street, London WC1N 1BY</Publisher>
+				<ConformsTo>http://www.w3.org/2001/XMLSchema</ConformsTo>
+				<HasPart>nre-common-v4-0.xsd</HasPart>
+				<HasPart>apd/AddressTypes-v2-0.xsd</HasPart>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StationStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StaffingStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">CCTVStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">InformationSystemsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">FaresStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">TicketMachineStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">PassengerServicesStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">AccessibilityStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">InterchangeStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">RailReplacementStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StationAlertStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">AlternativeIdentifiersStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">TicketPickupStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">PenaltyFaresStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StationFacilitiesStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">ToiletsStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">CycleStorageStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">CarParkStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">ChargesStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">TrainOperatingCompaniesStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StepFreeAccessStructure</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">PlatformIdentifierType</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StaffingLevelEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">CISEnumeration</ProvidesDefinitionOf>
+				<ProvidesDefinitionOf Namespace="http://nationalrail.co.uk/xml/station">StepFreeAccessCoverageEnumeration</ProvidesDefinitionOf>
+				<Copyright href="http://www.opsi.gov.uk/advice/crown-copyright/index.htm">National Rail Enquiries, 2003, 2004</Copyright>
+				<ProtectiveMarking>unclassified</ProtectiveMarking>
+				<Status>Draft</Status>
+				<StatusDescription>Initial release for consultation</StatusDescription>
+				<Category codeListID="">Arts, recreation and travel, Tourism, Travel(tourism), Transport, Rail transport, Infrastructure (railways), Railway stations and track, Train services, Underground trains, Parking, Taxis, Access for disabled people, Mobility for the disabled.</Category>
+				<Version>4.0</Version>
+				<Project>National Rail Enquiries Knowledgebase</Project>
+				<Title>NRE Station XML Schema, a schema to describe UK Train Operating Companies.</Title>
+				<Type>message</Type>
+			</Metadata>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<xsd:import namespace="http://nationalrail.co.uk/xml/common" schemaLocation="nre-common-v4-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation>
+                A com set of types for NRE schemas.
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<xsd:import namespace="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails" schemaLocation="apd/AddressTypes-v2-0.xsd">
+		<xsd:annotation>
+			<xsd:documentation source="http://www.govtalk.gov.uk/schemasstandards/agreedschema_schema.asp?schemaid=204">
+               Address and Personal Details Types architectural schema
+            </xsd:documentation>
+		</xsd:annotation>
+	</xsd:import>
+	<!-- ======================================================================= -->
+	<!-- Root elements and main component-->
+	<xsd:element name="StationList">
+		<xsd:annotation>
+			<xsd:documentation>A list of stations.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Station" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Station" type="StationStructure">
+		<xsd:annotation>
+			<xsd:documentation>Describes a station's services and facilities.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	
+	<!-- ======================================================================= -->
+	<!-- Top level station information structures -->
+	<xsd:complexType name="StationStructure">
+		<xsd:annotation>
+			<xsd:documentation>Information about an individual station.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ChangeHistory" type="com:ChangeHistoryStructure">
+				<xsd:annotation>
+					<xsd:documentation>Who changed the data  most recently.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CrsCode" type="com:CrsCodeType">
+				<xsd:annotation>
+					<xsd:documentation>Three character CRS code identifying a station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AlternativeIdentifiers" type="AlternativeIdentifiersStructure">
+				<xsd:annotation>
+					<xsd:documentation>Alternative identifiers for this station. Note that these are NOT to be used as a primary key for this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>The canonical name of the station. This is the full name of the station and must be unique.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SixteenCharacterName" type="com:SixteenCharacterNameType">
+				<xsd:annotation>
+					<xsd:documentation>A unique name for the station with maximum 16 characters. This element is required for SID export to RJIS, and is output even if the canonical name is shorter than 16 characters.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Address" type="com:PostalAddressStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Address of  the station based on apd standard apd:UKAddressStructure 5 line address and postcode .</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Longitude" type="xsd:decimal">
+				<xsd:annotation>
+					<xsd:documentation>The longitude of the station as supplied by NaPTAN.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Latitude" type="xsd:decimal">
+				<xsd:annotation>
+					<xsd:documentation>The longitude of the station as supplied by NaPTAN.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StationOperator" type="com:AtocCodeType">
+				<xsd:annotation>
+					<xsd:documentation>The operator of the station: a TOC or Network Rail.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Staffing" type="StaffingStructure">
+				<xsd:annotation>
+					<xsd:documentation>Information about the staffing of the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="InformationSystems" type="InformationSystemsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Details fo the passenger information available at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Fares" type="FaresStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Fare related information.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PassengerServices" type="PassengerServicesStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact information and opening hours of services offered at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StationFacilities" type="StationFacilitiesStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Availability of facilities at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Accessibility" type="AccessibilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Availability of facilities at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Interchange" type="InterchangeStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about changing between services at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StationAlerts" type="StationAlertStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Alerts affecting the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TrainOperatingCompanies" type="TrainOperatingCompaniesStructure">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StationCategory" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="StaffingStructure">
+		<xsd:sequence>
+			<xsd:element name="StaffingLevel" type="StaffingLevelEnumeration" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether the station is staffed</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ClosedCircuitTelevision" type="CCTVStructure">
+				<xsd:annotation>
+					<xsd:documentation>Is there CCTV in operation at the station?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CCTVStructure">
+		<xsd:sequence>
+			<xsd:element name="Available" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>Whether the station has CCTV or not.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InformationSystemsStructure">
+		<xsd:sequence>
+			<xsd:element name="InformationAvailableFromStaff" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Facilities available for the Customer Information System.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="InformationServicesOpen" type="com:OpeningHoursStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Facilities available for the Customer Information System.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CIS" type="CISEnumeration" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Facilities available for the Customer Information System.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CustomerHelpPoints" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there an information point / desk / kiosk?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="FaresStructure">
+		<xsd:sequence>
+			<xsd:element name="TicketOffice" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Ticket Office for the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PrepurchaseCollection" type="TicketPickupStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether pre-purchased tickets can be collected at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TicketMachine" type="TicketMachineStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Details on the Ticket Machine facilities at the station</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OystercardIssued" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether you can use Oyster/Pre-Pay at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OystercardTopup" type="TicketPickupStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether you can Top Up Oyster cards at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="UseOystercard" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Validate Oyster cards at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OysterComments" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Oyster card related comments.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AlwaysShowOysterCardFields" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Always show the oyster card fields.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SmartcardIssued" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Can a smartcard be issued at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SmartcardTopup" type="TicketPickupStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether you can Top Up Smartcards at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SmartcardValidator" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Validate Smartcards at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="SmartcardComments" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Smartcard related comments.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Travelcard" type="com:TravelcardsStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Travelcard information for this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="PenaltyFares" type="PenaltyFaresStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information of penalty fares at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TicketMachineStructure">
+		<xsd:sequence>
+			<xsd:element name="Available" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Whether there is a Ticket Machine at this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="PassengerServicesStructure">
+		<xsd:sequence>
+			<xsd:element name="CustomerService" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Customer service contact details for the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TeleSales" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact details for buying tickets for travel from this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LeftLuggage" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information about any left luggage facilities at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="LostProperty" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Contact details for lost property enquiries at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="AccessibilityStructure">
+		<xsd:sequence>
+			<xsd:element name="Helpline" type="com:ServiceStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Impaired access helpline for station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StaffHelpAvailable" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are there staff available to help customers with impaired access? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="InductionLoop" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there an Induction Loop for Deaf people at the station? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AccessibleTicketMachines" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are Ticket Machines Accessible to all Disabled people?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="HeightAdjustedTicketOfficeCounter" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Has the booking office got a low-level/split level counter?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="RampForTrainAccess" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there a ramp for train access available at the station?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AccessibleTaxis" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are accessible taxis available</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="AccessiblePublicTelephones" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are there low-level/text phones available?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NearestStationsWithMoreFacilities" type="com:CrsCodeListStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>List of recommended nearby stations with more impaired access facilities. Specified by CRS code.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="NationalKeyToilets" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there an Impaired Access toilet run as part of the National Key Scheme at the station? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="StepFreeAccess" type="StepFreeAccessStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information on step free access to the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TicketGates" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are ticket gates available at the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="ImpairedMobilitySetDown" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there an Impaired Mobility set down point at or near to the entrance to the station? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="WheelchairsAvailable" type="com:AvailableFacilityStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Are there wheelchairs available at the station?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="InterchangeStructure">
+		<xsd:sequence>
+			<xsd:element name="CycleStorage" type="CycleStorageStructure">
+				<xsd:annotation>
+					<xsd:documentation>Availability of Cycle Storage facilities</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CarPark" type="CarParkStructure" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Car park availability and information. Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="RailReplacementServices" type="RailReplacementStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Information on Rail Replacement Services</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="TaxiRank" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Is there a taxi rank at the station? Defaults to unknown. Annotation can provide TrainTaxi url.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="OnwardTravel" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="MetroServices" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The metro services available from this station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Airport" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Does the Station give access to an Airport?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Port" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Does the Station give access to an Port or ferry service?</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CarHire" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Can cars be hired at or near the station? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="CycleHire" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Can cycles be hired at or near the station? Defaults to unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RailReplacementStructure">
+		<xsd:complexContent>
+			<xsd:extension base="com:AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="RailReplacementMap" type="xsd:anyURI" minOccurs="0" maxOccurs="unbounded">
+						<xsd:annotation>
+							<xsd:documentation>Link to a map showing the station in the local area.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="StationAlertStructure">
+		<xsd:sequence>
+			<xsd:element name="AlertText" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A description the alerts for the station.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--New ComplexTypes added v4-0-->
+	<xsd:complexType name="AlternativeIdentifiersStructure">
+		<xsd:sequence>
+			<xsd:element name="NationalLocationCode" type="com:NationalLocationCodeType">
+				<xsd:annotation>
+					<xsd:documentation>NLC code for this station. This element is required for SID export to RJIS.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Tiplocs" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A list of TIPLOCs located at this station.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Tiploc" type="com:TiplocCodeType" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:documentation>Timing Point Location code. There may be more than one of these per station.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="TicketPickupStructure">
+		<xsd:choice>
+			<xsd:sequence>
+				<xsd:element name="TicketOffice" type="xsd:boolean" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation/>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="TicketMachine" type="xsd:boolean" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation/>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:element name="NotAvailable" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="PenaltyFaresStructure">
+		<xsd:sequence>
+			<xsd:element name="TrainOperator" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Url" type="xsd:anyURI" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="StationFacilitiesStructure">
+		<xsd:complexContent>
+			<xsd:extension base="com:AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="FirstClassLounge" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a first class lounge? Defaults to unavailable.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="SeatedArea" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have an area with seats? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="WaitingRoom" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a general waiting room? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Trolleys" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Are luggage trolleys available at the station for passenger use? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="StationBuffet" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a Buffet? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Toilets" type="ToiletsStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Details on station toilets</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="BabyChange" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have facilities to change babies's nappies? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Showers" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have showers? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Telephones" type="com:TelephoneStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Details the stations telephone facilities</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="WiFi" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a public 802.11 wireless network? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="WebKiosk" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a Kiosk? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="PostBox" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a post box? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="TouristInformation" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AtmMachine" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have an ATM Machine? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="BureauDeChange" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have a Bureau de Change? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Shops" type="com:AvailableFacilityStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Does the station have shops? Defaults to unknown.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ToiletsStructure">
+		<xsd:sequence>
+			<xsd:element name="Available" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A boolean value indicating whether toliets are available</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Location" type="com:AnnotatedStructure" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>A boolean value indicating whether toliets are available</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CycleStorageStructure">
+		<xsd:sequence>
+			<xsd:element name="Spaces" type="xsd:nonNegativeInteger" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Number of spaces available</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Sheltered" type="com:PlatformCoverageEnumeration" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Degree of shelter for the Cycle Storage area</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Cctv" type="xsd:boolean" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>If the Cycle Storage area is completely covered by CCTV coverage</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Location" type="com:AnnotationContent" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>The location in the station of the Cycle Storage</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Annotation" type="com:AnnotationContent" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Any additional information related to Cycle Storage</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Type" type="xsd:string" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation>Type of Cycle Storage Available</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="CarParkStructure">
+		<xsd:complexContent>
+			<xsd:extension base="com:ServiceStructure">
+				<xsd:sequence>
+					<xsd:element name="Name" type="xsd:string" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Name of the car park.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Spaces" type="xsd:nonNegativeInteger" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Total number of spaces available.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Charges" type="ChargesStructure" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Description of parking charges.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="NumberAccessibleSpaces" type="xsd:nonNegativeInteger" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AccessibleSpacesNote" type="xsd:string" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AccessibleCarParkEquipment" type="xsd:boolean" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="AccessibleCarParkEquipmentNote" type="xsd:string" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="Cctv" type="xsd:boolean" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation/>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ChargesStructure">
+		<xsd:choice>
+			<xsd:sequence>
+				<xsd:element name="Off-peak" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="PerHour" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Daily" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Weekly" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Monthly" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="ThreeMonthly" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="SixMonthly" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="Annual" type="xsd:string" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:element name="Free" type="xsd:string"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="TrainOperatingCompaniesStructure">
+		<xsd:sequence>
+			<xsd:element name="TocRef" type="com:AtocCodeType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- ======================================================================= -->
+	<!-- Lower level structures -->
+	<xsd:complexType name="StepFreeAccessStructure">
+		<xsd:annotation>
+			<xsd:documentation>Details of step free access to the station.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:extension base="com:AnnotatedStructure">
+				<xsd:sequence>
+					<xsd:element name="Coverage" type="StepFreeAccessCoverageEnumeration" minOccurs="0">
+						<xsd:annotation>
+							<xsd:documentation>Indicates how much of the station is accessible. Further details should be given in the annotation.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- ======================================================================= -->
+	<!-- Simple types -->
+	<xsd:simpleType name="PlatformIdentifierType">
+		<xsd:annotation>
+			<xsd:documentation>Platform identifier -- should eventually be a NaPTAN id.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	
+	<!-- ======================================================================= -->
+	<!-- Enumerations -->
+	<xsd:simpleType name="StaffingLevelEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Available levels of staffing at a station.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="fullTime"/>
+			<xsd:enumeration value="partTime"/>
+			<xsd:enumeration value="unstaffed"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CISEnumeration">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DepartureScreens"/>
+			<xsd:enumeration value="ArrivalScreens"/>
+			<xsd:enumeration value="Announcements"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="StepFreeAccessCoverageEnumeration">
+		<xsd:annotation>
+			<xsd:documentation>Amount of station accessible without steps.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:NMTOKEN">
+			<xsd:enumeration value="wholeStation">
+				<xsd:annotation>
+					<xsd:documentation>The whole station is accessible, including all platforms and ticket office.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="partialStation">
+				<xsd:annotation>
+					<xsd:documentation>Parts of the station are accessible. Used when neither allPlatforms nor wholeStation are applicable.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="allPlatforms">
+				<xsd:annotation>
+					<xsd:documentation>All platforms are accessible, but not the ticket office.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="noPartOfStation">
+				<xsd:annotation>
+					<xsd:documentation>Neither the platforms nor the ticket office are accessible.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="unknown">
+				<xsd:annotation>
+					<xsd:documentation>Accessibility details are unknown.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
