@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mit XMLSpy v2009 sp1 (http://www.altova.com) von Volker Hahn (DB Systel GmbH) bearbeitet -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:org.eclipse._2007.ocl="http://www.eclipse.org/2007/OCL" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.eclipse.org/emf/2002/Ecore" schemaLocation="platform:/plugin/org.eclipse.emf.ecore/model/Ecore.xsd"/>
+	<xs:element name="keys">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="key" type="KeyType" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="barcodeStructure" type="BarcodeStructureType" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="BarcodeStructureType">
+		<xs:sequence>
+			<xs:element name="issuerName" type="xs:string"/>
+			<xs:element name="issuerCode" type="xs:int"/>
+			<xs:element name="versionType" type="xs:string"/>
+			<xs:element name="id" type="xs:int"/>
+			<xs:element name="barcodeVersion" type="xs:int"/>
+			<xs:element name="description" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="KeyType">
+		<xs:annotation>
+			<xs:appinfo source="http://www.eclipse.org/emf/2002/Ecore" ecore:key="constraints">ValidKeyType</xs:appinfo>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="issuerName" type="xs:string"/>
+			<xs:element name="issuerCode" type="xs:int"/>
+			<xs:element name="versionType" type="xs:string"/>
+			<xs:element name="signatureAlgorithm" type="xs:string"/>
+			<xs:element name="signatureAlgorithmOid" type="xs:string" minOccurs="0"/>
+			<xs:element name="id" type="xs:int"/>
+			<xs:element name="publicKey" type="publicKeyType"/>
+			<xs:element name="barcodeVersion" type="xs:int"/>
+			<xs:element name="startDate" type="xs:date"/>
+			<xs:element name="endDate" type="xs:date"/>		
+			<xs:element name="barcodeXsd" type="xs:string" minOccurs="0"/>
+			<xs:element name="allowedProductOwnerCodes">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="productOwnerCode" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="productOwnerName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="lastDayOfSale" type="xs:date" minOccurs="0"/>			
+			<xs:element name="keyForged" default="false" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="true"/>
+						<xs:enumeration value="false"/>
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="0"/>
+						<xs:enumeration value=""/>						
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<!--<xs:element name="keyForged" type="xs:boolean" fixed="false" minOccurs="0" />-->
+			<xs:element name="commentForEncryptionType" type="xs:string"/>
+			<xs:element name="testbarcode" minOccurs="0">
+					<xs:complexType>
+							<xs:sequence>
+								<xs:element name="imagetype">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="jpg"/>
+													<xs:enumeration value="png"/>
+													<xs:enumeration value="bmp"/>
+												</xs:restriction>
+											</xs:simpleType>
+								</xs:element>
+								<xs:element name="imagedata" type="xs:base64Binary"/>
+							</xs:sequence>
+					</xs:complexType>
+			</xs:element>			
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="publicKeyType">
+		<xs:simpleContent>
+			<xs:extension base="xs:base64Binary">
+				<xs:attribute name="keytype" type="xs:string" use="optional" default="CERTIFICATE"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

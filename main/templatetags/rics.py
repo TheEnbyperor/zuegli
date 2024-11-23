@@ -121,3 +121,9 @@ def rics_departure_time(value, issuing_time: datetime.datetime):
         travel_time += datetime.timedelta(minutes=15 * value["departureUTCOffset"])
         travel_time = travel_time.replace(tzinfo=pytz.utc)
     return travel_time
+
+
+@register.filter(name="nuts_region_name")
+def nuts_region_name(value):
+    if region := uic.nuts.get_nuts_by_code(value):
+        return region["NUTS_NAME"]

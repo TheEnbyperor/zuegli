@@ -1,0 +1,230 @@
+<xs:schema attributeFormDefault="unqualified"
+           xmlns="http://ws.refdata.crd.cc.uic.org/replication/schemas"
+           elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://ws.refdata.crd.cc.uic.org/replication/schemas">
+    <xs:element name="PrimaryLocations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Primary_Location" maxOccurs="unbounded"
+                            minOccurs="0">
+                    <xs:complexType>
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="Country_Iso_Code"/>
+                            <xs:element ref="Location_Code"/>
+                            <xs:element ref="Start_Validity"/>
+                            <xs:element ref="End_Validity" minOccurs="0"/>
+                            <xs:element ref="ResponsibleIM"/>
+                            <xs:element ref="Location_Name"/>
+                            <xs:element ref="Location_Name_ASCII"/>
+                            <xs:element ref="NUTS_Code" minOccurs="0"/>
+                            <xs:element ref="Container_Handling_Flag" minOccurs="0"/>
+                            <xs:element ref="Handover_Point_Flag" minOccurs="0"/>
+                            <xs:element ref="Freight_Possible_Flag" minOccurs="0"/>
+                            <xs:element ref="Freight_Start_Validity" minOccurs="0"/>
+                            <xs:element ref="Freight_End_Validity" minOccurs="0"/>
+                            <xs:element ref="Passenger_Possible_Flag" minOccurs="0"/>
+                            <xs:element ref="Passenger_Start_Validity" minOccurs="0"/>
+                            <xs:element ref="Passenger_End_Validity"/>
+                            <xs:element ref="Free_Text" minOccurs="0"/>
+                            <xs:element ref="Latitude" minOccurs="0"/>
+                            <xs:element ref="Longitude" minOccurs="0"/>
+                            <xs:element ref="Active_Flag"/>
+                            <xs:element ref="Add_Date"/>
+                            <xs:element ref="Modified_Date" minOccurs="0"/>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Country_Iso_Code">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="CountryIdentIso"/>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Location_Name" type="String-255">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Location_Name_ASCII" type="String-255">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="NUTS_Code" nillable="true" type="String5">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="CountryIdentIso">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="Container_Handling_Flag" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Handover_Point_Flag" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Freight_Possible_Flag" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Passenger_Possible_Flag" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Active_Flag" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Passenger_Start_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Passenger_End_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Freight_Start_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Freight_End_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Add_Date" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Modified_Date" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Start_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="End_Validity" type="Date">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Free_Text" nillable="true" type="String-255">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Longitude" nillable="true" type="Decimal9-6">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Latitude" nillable="true" type="Decimal8-6">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="ResponsibleIM" type="CompanyCode">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="CompanyCode">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="String4-4"/>
+    </xs:simpleType>
+    <xs:element name="Location_Code" type="String1-5">
+        <xs:annotation>
+            <xs:documentation></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="String1-5">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="String4-4">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="String1-10">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="10" fixed="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Decimal8-6">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="14"/>
+            <xs:fractionDigits value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Decimal9-6">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="15"/>
+            <xs:fractionDigits value="6"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="String-255">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="255"/>
+            <xs:minLength value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="String5">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Date">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{4}[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

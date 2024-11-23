@@ -5,7 +5,7 @@ __NAMESPACE__ = "http://ws.refdata.crd.cc.uic.org/replication/schemas"
 
 
 @dataclass
-class CountryIsoCode:
+class CountryIsoCode1:
     """
     Identifies a County or State by code (ISO 3166-1)
     """
@@ -58,7 +58,7 @@ class Country:
     class Meta:
         namespace = "http://ws.refdata.crd.cc.uic.org/replication/schemas"
 
-    country_iso_code: Optional[CountryIsoCode] = field(
+    country_iso_code: Optional[CountryIsoCode1] = field(
         default=None,
         metadata={
             "name": "Country_ISO_Code",

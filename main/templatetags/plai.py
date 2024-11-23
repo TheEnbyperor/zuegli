@@ -1,9 +1,5 @@
-import datetime
-import pytz
 import typing
-import iso3166
 from django import template
-from .. import uic
 
 register = template.Library()
 
