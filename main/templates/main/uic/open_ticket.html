@@ -116,13 +116,22 @@
                     {% if graph %}
                         <div id="{{ graph.0 }}" class="route-graph"></div>
                         <script>
-                           window.addEventListener('load', function () {
-                               const graph = `{{ graph.1|safe }}`;
-                               Viz.instance().then(function(viz) {
-                                   const svg = viz.renderSVGElement(graph);
-                                   document.getElementById('{{ graph.0 }}').appendChild(svg);
-                               });
-                           });
+                            window.addEventListener('load', function () {
+                                const graph = `{{ graph.1|safe }}`;
+                                Viz.instance().then(function (viz) {
+                                    const svg = viz.renderSVGElement(graph, {
+                                        graphAttributes: {
+                                            fontname: "GDS Transport",
+                                            fontsize: 12,
+                                        },
+                                        nodeAttributes: {
+                                            fontname: "GDS Transport",
+                                            fontsize: 12,
+                                        }
+                                    });
+                                    document.getElementById('{{ graph.0 }}').appendChild(svg);
+                                });
+                            });
                         </script>
                     {% endif %}
                 {% endwith %}

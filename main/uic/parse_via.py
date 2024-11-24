@@ -65,9 +65,9 @@ class Route:
         point_id = f"point_{point.id.hex}"
         db_abbr = get_db_abbr()
         if point.name in db_abbr:
-            self.out.append(f"{point_id} [label=\"{db_abbr[point.name]['name']}\", shape=\"plain\"]")
+            self.out.append(f"{point_id} [label=\"{db_abbr[point.name]['name']}\"]")
         else:
-            self.out.append(f"{point_id} [label=\"{point.name}\", shape=\"plain\"]")
+            self.out.append(f"{point_id} [label=\"{point.name}\"]")
         return [point_id], [point_id]
 
     def _print_options(self, options: Options) -> typing.Tuple[typing.List[str], typing.List[str]]:
