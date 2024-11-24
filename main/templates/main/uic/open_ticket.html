@@ -110,7 +110,23 @@
     {% if ticket.validRegionDesc %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Valid region description</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.validRegionDesc }}</dd>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.validRegionDesc }}
+                {% with graph=ticket.validRegionDesc|via_as_graphviz %}
+                    {% if graph %}
+                        <div id="{{ graph.0 }}" class="route-graph"></div>
+                        <script>
+                           window.addEventListener('load', function () {
+                               const graph = `{{ graph.1|safe }}`;
+                               Viz.instance().then(function(viz) {
+                                   const svg = viz.renderSVGElement(graph);
+                                   document.getElementById('{{ graph.0 }}').appendChild(svg);
+                               });
+                           });
+                        </script>
+                    {% endif %}
+                {% endwith %}
+            </dd>
         </div>
     {% endif %}
     {% if ticket.tariffs %}

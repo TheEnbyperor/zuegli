@@ -1,6 +1,7 @@
 import datetime
 import pytz
 import typing
+import uuid
 import iso3166
 from django import template
 from .. import uic
@@ -148,3 +149,10 @@ def rics_arrival_time(value, issuing_time: datetime.datetime):
 def nuts_region_name(value):
     if region := uic.nuts.get_nuts_by_code(value):
         return region["NUTS_NAME"]
+
+
+@register.filter(name="via_as_graphviz")
+def via_as_graphviz(value):
+    if value.lower().startswith("via:"):
+        via = uic.parse_via.parse_via(value)
+        return uuid.uuid4(), via.to_graph()

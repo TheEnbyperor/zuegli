@@ -90,3 +90,7 @@ pre {
 .g-wallet-button, .apple-wallet-button {
     height: 1.2em;
 }
+
+.route-graph svg {
+    max-width: 100%;
+}

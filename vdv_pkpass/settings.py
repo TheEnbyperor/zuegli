@@ -138,18 +138,27 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "vdv-certs",
+            "transfer_config": {
+                "max_concurrency": 32
+            }
         }
     },
     "uic-data": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "uic-data",
+            "transfer_config": {
+                "max_concurrency": 32
+            }
         }
     },
     "rsp-data": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "rsp-data",
+            "transfer_config": {
+                "max_concurrency": 32
+            }
         }
     },
 }
