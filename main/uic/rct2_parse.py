@@ -52,7 +52,7 @@ class RCT2Parser:
 
                 self.contents[y + field.line][x + field.column + offset_x] = c
                 x += 1
-                if already_new_lined and x == field.width:
+                if (not already_new_lined) and x == field.width:
                     y += 1
                     x = 0
 
