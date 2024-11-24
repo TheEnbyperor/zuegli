@@ -255,9 +255,9 @@ class UICTicket:
             cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
             other_records=[r for r in ticket_envelope.records if not (
-                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "1154UT"
-                    or r.id == "118199" or r.id == "5197TI" or r.id == "5008TI"
-                    or r.id == "5197PA" or r.id == "5008PA"
+                    r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
+                    or r.id == "1154UT" or r.id == "118199" or r.id == "5197TI"
+                    or r.id == "5008TI" or r.id == "5197PA" or r.id == "5008PA"
             )]
         )
 

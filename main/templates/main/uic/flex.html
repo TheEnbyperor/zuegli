@@ -227,6 +227,8 @@
                                 {% include "main/uic/customer_card.html" with card=doc.ticket.1 %}
                             {% elif doc.ticket.0 == "pass" %}
                                 {% include "main/uic/pass.html" with pass=doc.ticket.1 %}
+                            {% elif doc.ticket.0 == "reservation" %}
+                                {% include "main/uic/reservation.html" with res=doc.ticket.1 %}
                             {% else %}
                                 <pre>{{ doc.ticket.1|pprint }}</pre>
                             {% endif %}

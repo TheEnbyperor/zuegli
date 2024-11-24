@@ -1,0 +1,198 @@
+{% load tz rics %}
+<dl class="govuk-summary-list">
+    {% if res.trainIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Train</dt>
+            <dd class="govuk-summary-list__value">{{ res.trainIA5 }}</dd>
+        </div>
+    {% endif %}
+    {% if res.referenceNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference number</dt>
+            <dd class="govuk-summary-list__value">{{ res.referenceNum }}</dd>
+        </div>
+    {% endif %}
+    {% if res.referenceIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference</dt>
+            <dd class="govuk-summary-list__value">{{ res.referenceIA5 }}</dd>
+        </div>
+    {% endif %}
+    {% if res.productOwnerNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product owner RICS</dt>
+            <dd class="govuk-summary-list__value"><code>{{ res.productOwnerNum }}</code></dd>
+        </div>
+        {% with org=res.productOwnerNum|rics %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product owner</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include 'main/rics.html' with org=org %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+    {% if res.productOwnerIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product owner</dt>
+            <dd class="govuk-summary-list__value">{{ res.productOwnerIA5 }}</dd>
+        </div>
+    {% endif %}
+    {% if res.serviceBrandAbrUTF8 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Service brand abr.</dt>
+            <dd class="govuk-summary-list__value">{{ res.serviceBrandAbrUTF8 }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Service</dt>
+        <dd class="govuk-summary-list__value"><code>{{ res.service }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Departure time</dt>
+        <dd class="govuk-summary-list__value">
+            {{ res|rics_departure_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Arrival time</dt>
+        <dd class="govuk-summary-list__value">
+            {{ res|rics_arrival_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+        </dd>
+    </div>
+    {% if res.trainNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Train number</dt>
+            <dd class="govuk-summary-list__value">{{ res.trainNum }}</dd>
+        </div>
+    {% endif %}
+    {% if res.fromStationNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">From station number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ res.fromStationNum }}</code>
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.fromStationNameUTF8 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">From station name</dt>
+            <dd class="govuk-summary-list__value">{{ res.fromStationNameUTF8 }}</dd>
+        </div>
+    {% endif %}
+    {% with station=res.fromStationNum|get_station:res %}
+        {% if station %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">From station</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/station.html" with station=station %}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% if res.toStationNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">To station number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ res.toStationNum }}</code>
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.toStationNameUTF8 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">To station name</dt>
+            <dd class="govuk-summary-list__value">{{ res.toStationNameUTF8 }}</dd>
+        </div>
+    {% endif %}
+    {% with station=res.toStationNum|get_station:ticket %}
+        {% if station %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">To station</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/station.html" with station=station %}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Travel class</dt>
+        <dd class="govuk-summary-list__value"><code>{{ res.classCode }}</code></dd>
+    </div>
+    {% if res.places %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Places</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    {% if res.places.coach %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Coach</dt>
+                            <dd class="govuk-summary-list__value">{{ res.places.coach }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if res.places.placeNum %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Place</dt>
+                            <dd class="govuk-summary-list__value">{{ res.places.placeNum|join:", " }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if res.places.placeString %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Place</dt>
+                            <dd class="govuk-summary-list__value">{{ res.places.placeString }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if res.places.placeDescription %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Description</dt>
+                            <dd class="govuk-summary-list__value">{{ res.places.placeDescription }}</dd>
+                        </div>
+                    {% endif %}
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.carrierNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list--bullet">
+                    {% for carrier in res.carrierNum %}
+                        {% with org=res.productOwnerNum|rics %}
+                            {% if org %}
+                                <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.tariff %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Tariffs</dt>
+            <dd class="govuk-summary-list__value">
+                {% for tariff in res.tariff %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Tariff #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% include "main/uic/tariff.html" with tariff=tariff %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.infoText %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extra info</dt>
+            <dd class="govuk-summary-list__value">{{ res.infoText }}</dd>
+        </div>
+    {% endif %}
+    {% include "main/uic/extension.html" with obj=res %}
+</dl>

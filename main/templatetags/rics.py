@@ -28,6 +28,8 @@ def get_station(value, code_type):
     elif isinstance(code_type, dict):
         if code_type.get("stationCodeTable") == "stationUIC":
             return uic.stations.get_station_by_uic(value)
+        elif code_type.get("stationCodeTable") == "stationUICReservation":
+            return
         elif code_type.get("stationCodeTable") == "localCarrierStationCodeTable":
             if code_type.get("productOwnerNum") == 1154:
                 if s := uic.stations.get_station_by_uic(value):
@@ -114,11 +116,30 @@ def rics_valid_until_date(value):
 
 @register.filter(name="rics_departure_time")
 def rics_departure_time(value, issuing_time: datetime.datetime):
-    travel_time = issuing_time + datetime.timedelta(days=value["travelDate"])
+    if "departureDate" in value:
+        travel_time = issuing_time + datetime.timedelta(days=value["departureDate"])
+    else:
+        travel_time = issuing_time + datetime.timedelta(days=value["travelDate"])
     travel_time = travel_time.replace(hour=0, minute=0, second=0, microsecond=0)
     travel_time += datetime.timedelta(minutes=value["departureTime"])
     if "departureUTCOffset" in value:
         travel_time += datetime.timedelta(minutes=15 * value["departureUTCOffset"])
+        travel_time = travel_time.replace(tzinfo=pytz.utc)
+    return travel_time
+
+
+@register.filter(name="rics_arrival_time")
+def rics_arrival_time(value, issuing_time: datetime.datetime):
+    if "departureDate" in value:
+        travel_time = issuing_time + datetime.timedelta(days=value["departureDate"])
+    else:
+        travel_time = issuing_time + datetime.timedelta(days=value["travelDate"])
+    if "arrivalDate" in value:
+        travel_time += datetime.timedelta(days=value["arrivalDate"])
+    travel_time = travel_time.replace(hour=0, minute=0, second=0, microsecond=0)
+    travel_time += datetime.timedelta(minutes=value["arrivalTime"])
+    if "arrivalUTCOffset" in value:
+        travel_time += datetime.timedelta(minutes=15 * value["arrivalUTCOffset"])
         travel_time = travel_time.replace(tzinfo=pytz.utc)
     return travel_time
 

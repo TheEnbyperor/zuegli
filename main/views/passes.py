@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic
 
 
 def index(request):
@@ -302,11 +302,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                     "departureStationName": from_station["name"]
                                 }
                             })
-                            pass_json["locations"].append({
-                                "latitude": float(from_station["latitude"]),
-                                "longitude": float(from_station["longitude"]),
-                                "relevantText": from_station["name"]
-                            })
                             maps_link = urllib.parse.urlencode({
                                 "q": from_station["name"],
                                 "ll": f"{from_station['latitude']},{from_station['longitude']}"
@@ -348,11 +343,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                     },
                                     "destinationStationName": to_station["name"]
                                 }
-                            })
-                            pass_json["locations"].append({
-                                "latitude": float(to_station["latitude"]),
-                                "longitude": float(to_station["longitude"]),
-                                "relevantText": to_station["name"]
                             })
                             maps_link = urllib.parse.urlencode({
                                 "q": to_station["name"],
@@ -464,7 +454,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                             lambda f: f["key"] not in ("validity-start", "validity-end"),
                             pass_fields["secondaryFields"]
                         ))
-                        pass_json["locations"] = []
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
                             "label": "departure-time-label",
@@ -655,8 +644,213 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
 
+                elif document_type == "reservation":
+                    pass_type = "boardingPass"
+                    pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                    departure_time = templatetags.rics.rics_departure_time(document, issued_at)
+                    arrival_time = templatetags.rics.rics_arrival_time(document, issued_at)
+
+                    pass_json["expirationDate"] = arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+                    if "fromStationNum" in document:
+                        from_station = templatetags.rics.get_station(document["fromStationNum"], document)
+                    else:
+                        from_station = None
+
+                    if "toStationNum" in document:
+                        to_station = templatetags.rics.get_station(document["toStationNum"], document)
+                    else:
+                        to_station = None
+
+                    if from_station:
+                        pass_fields["primaryFields"].append({
+                            "key": "from-station",
+                            "label": "from-station-label",
+                            "value": from_station["name"],
+                            "semantics": {
+                                "departureLocation": {
+                                    "latitude": float(from_station["latitude"]),
+                                    "longitude": float(from_station["longitude"]),
+                                },
+                                "departureStationName": from_station["name"],
+                                "originalDepartureDate": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+                        maps_link = urllib.parse.urlencode({
+                            "q": from_station["name"],
+                            "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                        })
+                        pass_fields["backFields"].append({
+                            "key": "from-station-back",
+                            "label": "from-station-label",
+                            "value": from_station["name"],
+                            "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                        })
+                    elif "fromStationNameUTF8" in document:
+                        pass_fields["primaryFields"].append({
+                            "key": "from-station",
+                            "label": "from-station-label",
+                            "value": document["fromStationNameUTF8"],
+                            "semantics": {
+                                "departureStationName": document["fromStationNameUTF8"],
+                                "originalDepartureDate": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+                    elif "fromStationIA5" in document:
+                        pass_fields["primaryFields"].append({
+                            "key": "from-station",
+                            "label": "from-station-label",
+                            "value": document["fromStationIA5"],
+                            "semantics": {
+                                "departureStationName": document["fromStationIA5"],
+                                "originalDepartureDate": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+
+                    if to_station:
+                        pass_fields["primaryFields"].append({
+                            "key": "to-station",
+                            "label": "to-station-label",
+                            "value": to_station["name"],
+                            "semantics": {
+                                "destinationLocation": {
+                                    "latitude": float(to_station["latitude"]),
+                                    "longitude": float(to_station["longitude"]),
+                                },
+                                "destinationStationName": to_station["name"],
+                                "originalArrivalDate": arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+                        maps_link = urllib.parse.urlencode({
+                            "q": to_station["name"],
+                            "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                        })
+                        pass_fields["backFields"].append({
+                            "key": "to-station-back",
+                            "label": "to-station-label",
+                            "value": to_station["name"],
+                            "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                        })
+                    elif "toStationNameUTF8" in document:
+                        pass_fields["primaryFields"].append({
+                            "key": "to-station",
+                            "label": "to-station-label",
+                            "value": document["toStationNameUTF8"],
+                            "semantics": {
+                                "destinationStationName": document["toStationNameUTF8"],
+                                "originalArrivalDate": arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+                    elif "toStationIA5" in document:
+                        pass_fields["primaryFields"].append({
+                            "key": "to-station",
+                            "label": "to-station-label",
+                            "value": document["toStationIA5"],
+                            "semantics": {
+                                "destinationStationName": document["toStationIA5"],
+                                "originalArrivalDate": arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            }
+                        })
+
+                    if "classCode" in document:
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "class-code",
+                            "label": "class-code-label",
+                            "value": f"class-code-{document['classCode']}-label",
+                        })
+
+                    if "places" in document:
+                        if "coach" in document["places"]:
+                            pass_fields["auxiliaryFields"].append({
+                                "key": f"reservation-coach",
+                                "label": "coach-number-label",
+                                "value": document["places"]["coach"],
+                            })
+                        if "placeString" in document["places"]:
+                            pass_fields["auxiliaryFields"].append({
+                                "key": f"reservation-seat",
+                                "label": "seat-number-label",
+                                "value": document["places"]["placeString"],
+                            })
+                        elif "placeNum" in document["places"]:
+                            pass_fields["auxiliaryFields"].append({
+                                "key": f"reservation-seat",
+                                "label": "seat-number-label",
+                                "value": ", ".join(list(map(str, document["places"]["placeNum"]))),
+                            })
+
+                    pass_fields["secondaryFields"].append({
+                        "key": "departure-time",
+                        "label": "departure-time-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleMedium",
+                        "value": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    pass_fields["secondaryFields"].append({
+                        "key": "arrival-time",
+                        "label": "arrival-time-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleMedium",
+                        "value": arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "departure-time-back",
+                        "label": "departure-time-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": departure_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "arrival-time-back",
+                        "label": "arrival-time-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": arrival_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+                    for i, carrier_id in enumerate(document.get("carrierNum", [])):
+                        if carrier := uic.rics.get_rics(carrier_id):
+                            if carrier["url"]:
+                                pass_fields["backFields"].append({
+                                    "key": f"carrier-{i}",
+                                    "label": "carrier-label",
+                                    "value": carrier["full_name"],
+                                    "attributedValue": f"<a href=\"{carrier['url']}\">{carrier['full_name']}</a>",
+                                })
+                            else:
+                                pass_fields["backFields"].append({
+                                    "key": "distributor",
+                                    "label": "carrier-label",
+                                    "value": carrier["full_name"],
+                                })
+                        else:
+                            pass_fields["backFields"].append({
+                                "key": f"carrier-{i}",
+                                "label": "carrier-label",
+                                "value": str(carrier_id),
+                            })
+
+                    train_number = document.get("trainIA5") or document.get("trainNum")
+                    if train_number:
+                        pass_fields["headerFields"] = [{
+                            "key": "train-number",
+                            "label": "train-number-label",
+                            "value": str(train_number),
+                            "semantics": {
+                                "vehicleNumber": str(train_number)
+                            }
+                        }]
+
+                    if "referenceNum" in document:
+                        pass_fields["backFields"].append({
+                            "key": "reference-num",
+                            "label": "reference-num-label",
+                            "value": str(document["referenceNum"])
+                        })
+
                 elif document_type == "customerCard":
-                    pass_type = "storeCard"
                     validity_start = templatetags.rics.rics_valid_from_date(document)
                     validity_end = templatetags.rics.rics_valid_until_date(document)
 
@@ -668,6 +862,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         })
 
                         if document["cardTypeDescr"] in BC_STRIP_IMG:
+                            pass_type = "storeCard"
                             add_pkp_img(pkp, BC_STRIP_IMG[document["cardTypeDescr"]], "strip.png")
                         else:
                             pass_fields["headerFields"].append({
@@ -801,12 +996,8 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     pass_fields["primaryFields"].append(field_data)
                     return_pass_fields["primaryFields"].append(field_data)
                 elif pass_type == "storeCard":
-                    if pass_fields["headerFields"]:
-                        pass_fields["primaryFields"].append(field_data)
-                        return_pass_fields["primaryFields"].append(field_data)
-                    else:
-                        pass_fields["headerFields"].append(field_data)
-                        return_pass_fields["headerFields"].append(field_data)
+                    pass_fields["headerFields"].append(field_data)
+                    return_pass_fields["headerFields"].append(field_data)
                 else:
                     pass_fields["auxiliaryFields"].append(field_data)
                     return_pass_fields["auxiliaryFields"].append(field_data)
@@ -1945,6 +2136,7 @@ PASS_STRINGS = {
 "railcard-number" = "Railcard number";
 "departure-date-label" = "Departure date";
 "departure-time-label" = "Departure";
+"arrival-time-label" = "Arrival";
 "train-number-label" = "Train number";
 "coach-number-label" = "Coach";
 "seat-number-label" = "Seat";
@@ -1958,6 +2150,8 @@ PASS_STRINGS = {
 "product-conditions-label" = "Conditions";
 "product-changes-label" = "Changes to travel plans";
 "product-refunds-label" = "Refunds";
+"carrier-label" = "Carrier";
+"reference-num-label" = "Reference number";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -1993,6 +2187,7 @@ PASS_STRINGS = {
 "railcard-number" = "Railcard-Nummer";
 "departure-date-label" = "Datum";
 "departure-time-label" = "Abfahrt";
+"arrival-time-label" = "Ankunft";
 "train-number-label" = "Zug nr.";
 "coach-number-label" = "Waggon";
 "seat-number-label" = "Sitzpl.";
@@ -2006,6 +2201,8 @@ PASS_STRINGS = {
 "product-conditions-label" = "Bedingungen";
 "product-changes-label" = "Änderungen";
 "product-refunds-label" = "Erstattungen";
+"carrier-label" = "Verkehrsbetrieb";
+"reference-num-label" = "Referenznummer";
 """
 }
 
