@@ -92,9 +92,9 @@ class RCT2Parser:
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)[0]
 
         trips = []
-        if departure_date_1 not in ("", "*") and departure_time_1 not in ("", "*") and \
-            arrival_date_1 not in ("", "*") and arrival_time_1 not in ("", "*") and \
-            departure_station_1 not in ("", "*") and arrival_station_1 not in ("", "*"):
+        if departure_date_1 not in ("", "*") or departure_time_1 not in ("", "*") or \
+            arrival_date_1 not in ("", "*") or arrival_time_1 not in ("", "*") or \
+            departure_station_1 not in ("", "*") or arrival_station_1 not in ("", "*"):
             trips.append(TripPart(
                 departure_date=departure_date_1,
                 departure_time=departure_time_1,
@@ -104,9 +104,9 @@ class RCT2Parser:
                 arrival_time=arrival_time_1,
             ))
 
-        if departure_date_2 not in ("", "*") and departure_time_2 not in ("", "*") and \
-            arrival_date_2 not in ("", "*") and arrival_time_2 not in ("", "*") and \
-            departure_station_2 not in ("", "*") and arrival_station_2 not in ("", "*"):
+        if departure_date_2 not in ("", "*") or departure_time_2 not in ("", "*") or \
+            arrival_date_2 not in ("", "*") or arrival_time_2 not in ("", "*") or \
+            departure_station_2 not in ("", "*") or arrival_station_2 not in ("", "*"):
             trips.append(TripPart(
                 departure_date=departure_date_2,
                 departure_time=departure_time_2,
