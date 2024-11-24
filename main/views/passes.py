@@ -174,14 +174,17 @@ def add_pkp_img(pkp, img_name: str, pass_path: str):
     img_name, img_name_ext = img_name.rsplit(".", 1)
     pass_path, pass_path_ext = pass_path.rsplit(".", 1)
     storage = storages["staticfiles"]
-    img_1x = storage.open(f"{img_name}.{img_name_ext}", "rb").read()
-    pkp.add_file(f"{pass_path}.{pass_path_ext}", img_1x)
+    with storage.open(f"{img_name}.{img_name_ext}", "rb") as f:
+        img_1x = f.read()
+        pkp.add_file(f"{pass_path}.{pass_path_ext}", img_1x)
     if storage.exists(f"{img_name}@2x.{img_name_ext}"):
-        img_2x = storage.open(f"{img_name}@2x.{img_name_ext}", "rb").read()
-        pkp.add_file(f"{pass_path}@2x.{pass_path_ext}", img_2x)
+        with storage.open(f"{img_name}@2x.{img_name_ext}", "rb") as f:
+            img_2x = f.read()
+            pkp.add_file(f"{pass_path}@2x.{pass_path_ext}", img_2x)
     if storage.exists(f"{img_name}@3x.{img_name_ext}"):
-        img_3x = storages["staticfiles"].open(f"{img_name}@3x.{img_name_ext}", "rb").read()
-        pkp.add_file(f"{pass_path}@3x.{pass_path_ext}", img_3x)
+        with storages["staticfiles"].open(f"{img_name}@3x.{img_name_ext}", "rb") as f:
+            img_3x = f.read()
+            pkp.add_file(f"{pass_path}@3x.{pass_path_ext}", img_3x)
 
 
 def ticket_pkpass(request, pk):
