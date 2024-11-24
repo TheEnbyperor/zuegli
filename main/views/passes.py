@@ -821,7 +821,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                 })
                             else:
                                 pass_fields["backFields"].append({
-                                    "key": "distributor",
+                                    "key": f"carrier-{i}",
                                     "label": "carrier-label",
                                     "value": carrier["full_name"],
                                 })
@@ -1271,34 +1271,70 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
 
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+            if ticket_data.layout and ticket_data.layout.standard == "RCT2":
+                parser = uic.rct2_parse.RCT2Parser()
+                parser.read(ticket_data.layout, ticket_data.issuing_rics())
+                parsed_layout = parser.parse()
+
+                if parsed_layout.travel_class:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+
             if ticket_data.oebb_99.train_number:
+                pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                 pass_fields["headerFields"].append({
                     "key": "train-number",
                     "label": "train-number-label",
                     "value": str(ticket_data.oebb_99.train_number),
                 })
-            pass_fields["secondaryFields"].append({
-                "key": "validity-start",
-                "label": "validity-start-label",
-                "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium" if ticket_data.oebb_99.train_number else "PKDateStyleNone",
-                "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            })
+                pass_fields["secondaryFields"].append({
+                    "key": "departure-time",
+                    "label": "departure-time-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+                pass_fields["secondaryFields"].append({
+                    "key": "arrival-time",
+                    "label": "arrival-time-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+            else:
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-end",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "changeMessage": "validity-end-change"
+                })
+
+            if parsed_layout.document_type:
+                pass_fields["backFields"].append({
+                    "key": "document-type",
+                    "label": "product-label",
+                    "value": parsed_layout.document_type,
+                })
+
             pass_fields["backFields"].append({
                 "key": "validity-start-back",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
                 "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            })
-            pass_fields["secondaryFields"].append({
-                "key": "validity-end",
-                "label": "validity-end-label",
-                "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium" if ticket_data.oebb_99.train_number else "PKDateStyleNone",
-                "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "changeMessage": "validity-end-change"
             })
             pass_fields["backFields"].append({
                 "key": "validity-end-back",
@@ -1307,6 +1343,86 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "timeStyle": "PKDateStyleFull",
                 "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
+
+            if parsed_layout.traveller:
+                pass_fields["backFields"].append({
+                    "key": "traveller",
+                    "label": "passenger-label",
+                    "value": parsed_layout.traveller,
+                })
+
+            if parsed_layout.train_data:
+                pass_fields["backFields"].append({
+                    "key": "train-data",
+                    "label": "train-number-label",
+                    "value": parsed_layout.train_data,
+                })
+
+            if parsed_layout.extra:
+                pass_fields["backFields"].append({
+                    "key": "extra-data",
+                    "label": "other-data-label",
+                    "value": parsed_layout.extra,
+                })
+
+            if parsed_layout.operator_rics:
+                if carrier := uic.rics.get_rics(parsed_layout.operator_rics):
+                    if carrier["url"]:
+                        pass_fields["backFields"].append({
+                            "key": "carrier",
+                            "label": "carrier-label",
+                            "value": carrier["full_name"],
+                            "attributedValue": f"<a href=\"{carrier['url']}\">{carrier['full_name']}</a>",
+                        })
+                    else:
+                        pass_fields["backFields"].append({
+                            "key": "carrier",
+                            "label": "carrier-label",
+                            "value": carrier["full_name"],
+                        })
+                else:
+                    pass_fields["backFields"].append({
+                        "key": "carrier",
+                        "label": "carrier-label",
+                        "value": parsed_layout.operator_rics,
+                    })
+
+            if parsed_layout.price:
+                pass_fields["backFields"].append({
+                    "key": "price",
+                    "label": "price-label",
+                    "value": parsed_layout.price,
+                })
+
+            if parsed_layout.conditions:
+                pass_fields["backFields"].append({
+                    "key": "conditions",
+                    "label": "product-conditions-label",
+                    "value": parsed_layout.conditions,
+                })
+
+            if parsed_layout.trips:
+                pass_type = "boardingPass"
+                pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": parsed_layout.trips[0].departure_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].departure_station
+                    }
+                })
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": parsed_layout.trips[0].arrival_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].arrival_station,
+                    }
+                })
+
+
         elif ticket_data.dt_ti or ticket_data.dt_pa:
             if ticket_data.dt_ti:
                 if ticket_data.dt_ti.product_name:
@@ -1361,6 +1477,129 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "key": "passenger",
                         "label": "passenger-label",
                         "value": ticket_data.dt_pa.passenger_name,
+                    })
+
+        elif ticket_data.layout and ticket_data.layout.standard == "RCT2":
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(ticket_data.layout, ticket_data.issuing_rics())
+            parsed_layout = parser.parse()
+
+            if parsed_layout.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": parsed_layout.travel_class,
+                })
+
+            if parsed_layout.document_type:
+                pass_fields["backFields"].append({
+                    "key": "document-type",
+                    "label": "product-label",
+                    "value": parsed_layout.document_type,
+                })
+
+            if parsed_layout.traveller:
+                pass_fields["backFields"].append({
+                    "key": "traveller",
+                    "label": "passenger-label",
+                    "value": parsed_layout.traveller,
+                })
+
+            if parsed_layout.train_data:
+                pass_fields["backFields"].append({
+                    "key": "train-data",
+                    "label": "train-number-label",
+                    "value": parsed_layout.train_data,
+                })
+
+            if parsed_layout.extra:
+                pass_fields["backFields"].append({
+                    "key": "extra-data",
+                    "label": "other-data-label",
+                    "value": parsed_layout.extra,
+                })
+
+            if parsed_layout.operator_rics:
+                if carrier := uic.rics.get_rics(parsed_layout.operator_rics):
+                    if carrier["url"]:
+                        pass_fields["backFields"].append({
+                            "key": "carrier",
+                            "label": "carrier-label",
+                            "value": carrier["full_name"],
+                            "attributedValue": f"<a href=\"{carrier['url']}\">{carrier['full_name']}</a>",
+                        })
+                    else:
+                        pass_fields["backFields"].append({
+                            "key": "carrier",
+                            "label": "carrier-label",
+                            "value": carrier["full_name"],
+                        })
+                else:
+                    pass_fields["backFields"].append({
+                        "key": "carrier",
+                        "label": "carrier-label",
+                        "value": parsed_layout.operator_rics,
+                    })
+
+            if parsed_layout.price:
+                pass_fields["backFields"].append({
+                    "key": "price",
+                    "label": "price-label",
+                    "value": parsed_layout.price,
+                })
+
+            if parsed_layout.conditions:
+                pass_fields["backFields"].append({
+                    "key": "conditions",
+                    "label": "product-conditions-label",
+                    "value": parsed_layout.conditions,
+                })
+
+            if parsed_layout.trips:
+                pass_type = "boardingPass"
+                pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": parsed_layout.trips[0].departure_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].departure_station
+                    }
+                })
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": parsed_layout.trips[0].arrival_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].arrival_station,
+                    }
+                })
+
+                if parsed_layout.trips[0].departure_time:
+                    pass_fields["secondaryFields"].append({
+                        "key": "departure-time",
+                        "label": "departure-time-label",
+                        "value": f"{parsed_layout.trips[0].departure_date} {parsed_layout.trips[0].departure_time}",
+                    })
+                elif parsed_layout.trips[0].departure_date:
+                    pass_fields["secondaryFields"].append({
+                        "key": "valid-from",
+                        "label": "validity-start-label",
+                        "value": parsed_layout.trips[0].departure_date
+                    })
+
+                if parsed_layout.trips[0].arrival_time:
+                    pass_fields["secondaryFields"].append({
+                        "key": "arrival-time",
+                        "label": "arrival-time-label",
+                        "value": f"{parsed_layout.trips[0].arrival_date} {parsed_layout.trips[0].arrival_time}",
+                    })
+                elif parsed_layout.trips[0].arrival_date:
+                    pass_fields["secondaryFields"].append({
+                        "key": "valid-until",
+                        "label": "validity-end-label",
+                        "value": parsed_layout.trips[0].arrival_date
                     })
 
         if distributor := ticket_data.distributor():
@@ -2152,6 +2391,7 @@ PASS_STRINGS = {
 "product-refunds-label" = "Refunds";
 "carrier-label" = "Carrier";
 "reference-num-label" = "Reference number";
+"other-data-label" = "Other data";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -2203,6 +2443,7 @@ PASS_STRINGS = {
 "product-refunds-label" = "Erstattungen";
 "carrier-label" = "Verkehrsbetrieb";
 "reference-num-label" = "Referenznummer";
+"other-data-label" = "Andere Daten";
 """
 }
 
