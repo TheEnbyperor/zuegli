@@ -167,6 +167,9 @@ PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")
 PKPASS_KEY_LOCATION = os.getenv("PKPASS_KEY_LOCATION")
 GOOGLE_CREDS_LOCATION = os.getenv("GOOGLE_CREDS_LOCATION")
 
+NR_USERNAME = os.getenv("NR_USERNAME")
+NR_PASSWORD = os.getenv("NR_PASSWORD")
+
 try:
     with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())

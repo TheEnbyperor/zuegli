@@ -45,6 +45,8 @@ spec:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -93,6 +95,8 @@ spec:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -141,6 +145,8 @@ spec:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
             - name: uic-data
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: IfNotPresent
