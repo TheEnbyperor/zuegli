@@ -1895,7 +1895,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 }])
 
             for i, reservation in enumerate(ticket_data.data.reservations):
-                pass_fields["auxiliaryFields"].append({
+                pass_fields["secondaryFields"].append({
                     "key": f"reservation-{i}-service",
                     "label": "train-number-label",
                     "value": reservation.service_id,
@@ -1913,7 +1913,103 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "value": reservation.seat,
                     })
 
+            if route_data := rsp.ticket_data.get_route_by_id(ticket_data.data.route_code):
+                pass_fields["auxiliaryFields"].append({
+                    "key": "route",
+                    "label": "route-label",
+                    "value": route_data["cc_desc"]
+                })
+                pass_fields["backFields"].append({
+                    "key": "route-description",
+                    "label": "route-label",
+                    "value": route_data["atb_desc"]
+                })
+                if route_data["all_included_crs"]:
+                    stations = []
+                    for crs in route_data["all_included_crs"]:
+                        if station := rsp.ticket_data.get_station_by_crs(crs):
+                            if station.latitude and station.longitude:
+                                maps_link = urllib.parse.urlencode({
+                                    "q": station.name,
+                                    "ll": f"{station.latitude},{station.longitude}"
+                                })
+                                stations.append(f"<a href=\"https://maps.apple.com/?{maps_link}\">{station.name}</a>")
+                            else:
+                                stations.append(station.name)
+                        else:
+                            stations.append(crs)
+                    pass_fields["backFields"].append({
+                        "key": "all-included-crs",
+                        "label": "travel-via-all-label",
+                        "value": "\n".join(stations)
+                    })
+                if route_data["any_included_crs"]:
+                    stations = []
+                    for crs in route_data["any_included_crs"]:
+                        if station := rsp.ticket_data.get_station_by_crs(crs):
+                            if station.latitude and station.longitude:
+                                maps_link = urllib.parse.urlencode({
+                                    "q": station.name,
+                                    "ll": f"{station.latitude},{station.longitude}"
+                                })
+                                stations.append(f"<a href=\"https://maps.apple.com/?{maps_link}\">{station.name}</a>")
+                            else:
+                                stations.append(station.name)
+                        else:
+                            stations.append(crs)
+                    pass_fields["backFields"].append({
+                        "key": "any-included-crs",
+                        "label": "travel-via-any-label",
+                        "value": "\n".join(stations)
+                    })
+                if route_data["excluded_crs"]:
+                    stations = []
+                    for crs in route_data["excluded_crs"]:
+                        if station := rsp.ticket_data.get_station_by_crs(crs):
+                            if station.latitude and station.longitude:
+                                maps_link = urllib.parse.urlencode({
+                                    "q": station.name,
+                                    "ll": f"{station.latitude},{station.longitude}"
+                                })
+                                stations.append(f"<a href=\"https://maps.apple.com/?{maps_link}\">{station.name}</a>")
+                            else:
+                                stations.append(station.name)
+                        else:
+                            stations.append(crs)
+                    pass_fields["backFields"].append({
+                        "key": "excluded-crs",
+                        "label": "travel-via-excl-label",
+                        "value": "\n".join(stations)
+                    })
+                if route_data["included_tocs"]:
+                    tocs = []
+                    for toc in route_data["included_tocs"]:
+                        if toc_data := rsp.ticket_data.get_toc_by_id(toc):
+                            tocs.append(toc_data["name"])
+                        else:
+                            tocs.append(toc)
+                    pass_fields["backFields"].append({
+                        "key": "included-toc",
+                        "label": "travel-inc-toc-label",
+                        "value": "\n".join(tocs)
+                    })
+                if route_data["excluded_tocs"]:
+                    tocs = []
+                    for toc in route_data["excluded_tocs"]:
+                        if toc_data := rsp.ticket_data.get_toc_by_id(toc):
+                            tocs.append(toc_data["name"])
+                        else:
+                            tocs.append(toc)
+                    pass_fields["backFields"].append({
+                        "key": "excluded-toc",
+                        "label": "travel-excl-toc-label",
+                        "value": "\n".join(tocs)
+                    })
+
             if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
+                def format_text(text):
+                    return text.replace("</p>", "\n\n").replace('title=""', "")
+
                 pass_fields["secondaryFields"].append({
                     "key": "product",
                     "label": "product-label",
@@ -1923,47 +2019,47 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     pass_fields["backFields"].extend([{
                         "key": "product-validity-outward-date",
                         "label": "product-validity-outward-date-label",
-                        "attributedValue": ticket_type.validity.day_outward.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.validity.day_outward),
                     }, {
                         "key": "product-validity-outward-time",
                         "label": "product-validity-outward-time-label",
-                        "attributedValue": ticket_type.validity.time_outward.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.validity.time_outward),
                     }, {
                         "key": "product-validity-return-date",
                         "label": "product-validity-return-date-label",
-                        "attributedValue": ticket_type.validity.day_return.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.validity.day_return),
                     }, {
                         "key": "product-validity-return-time",
                         "label": "product-validity-return-time-label",
-                        "attributedValue": ticket_type.validity.time_return.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.validity.time_return),
                     }])
                 if ticket_type.break_of_journey:
                     pass_fields["backFields"].extend([{
                         "key": "product-break-of-journey-outward",
                         "label": "product-break-of-journey-outward-label",
-                        "attributedValue": ticket_type.break_of_journey.outward_note.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.break_of_journey.outward_note),
                     }, {
                         "key": "product-break-of-journey-return",
                         "label": "product-break-of-journey-return-label",
-                        "attributedValue": ticket_type.break_of_journey.return_note.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.break_of_journey.return_note),
                     }])
                 if ticket_type.conditions:
                     pass_fields["backFields"].append({
                         "key": "product-conditions",
                         "label": "product-conditions-label",
-                        "attributedValue": ticket_type.conditions.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.conditions),
                     })
                 if ticket_type.changes_to_travel_plans:
                     pass_fields["backFields"].append({
                         "key": "product-changes",
                         "label": "product-changes-label",
-                        "attributedValue": ticket_type.changes_to_travel_plans.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.changes_to_travel_plans),
                     })
                 if ticket_type.refunds:
                     pass_fields["backFields"].append({
                         "key": "product-refunds",
                         "label": "product-refunds-label",
-                        "attributedValue": ticket_type.refunds.replace('title=""', ""),
+                        "attributedValue": format_text(ticket_type.refunds),
                     })
 
             if ticket_data.issuer_id in RSP_ORG_LOGO:
@@ -2395,6 +2491,12 @@ PASS_STRINGS = {
 "carrier-label" = "Carrier";
 "reference-num-label" = "Reference number";
 "other-data-label" = "Other data";
+"travel-via-all-label" = "Travel must be made via all of";
+"travel-via-any-label" = "Travel must be made via any of";
+"travel-via-excl-label" = "Travel must not be made via";
+"travel-inc-toc-label" = "Travel must include a service operated by";
+"travel-excl-toc-label" = "Travel must not include a service operated by";
+"route-label" = "Route";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -2447,6 +2549,12 @@ PASS_STRINGS = {
 "carrier-label" = "Verkehrsbetrieb";
 "reference-num-label" = "Referenznummer";
 "other-data-label" = "Andere Daten";
+"travel-via-all-label" = "Gültige Fahrt nur über alle";
+"travel-via-any-label" = "Gültige Fahrt nur über mindestens eine";
+"travel-via-excl-label" = "Gültige Fahrt nich über";
+"travel-inc-toc-label" = "Gültige Fahrt nur mit einen Dienst von";
+"travel-excl-toc-label" = "Gültige Fahrt nicht mit Dienste von";
+"route-label" = "Route";
 """
 }
 

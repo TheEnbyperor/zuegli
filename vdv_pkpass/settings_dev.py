@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import json
+import os
+
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
@@ -148,6 +151,15 @@ CRISPY_TEMPLATE_PACK = "gds"
 
 PKPASS_CERTIFICATE_LOCATION = BASE_DIR / "priv" / "pass.crt"
 PKPASS_KEY_LOCATION = BASE_DIR / "priv" / "pass.key"
+
+try:
+    with open(BASE_DIR / "priv" / "nr.json") as f:
+        d = json.load(f)
+        NR_USERNAME = d["username"]
+        NR_PASSWORD = d["password"]
+except FileNotFoundError:
+    NR_USERNAME = None
+    NR_PASSWORD = None
 
 try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:

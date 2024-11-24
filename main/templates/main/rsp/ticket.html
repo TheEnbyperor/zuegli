@@ -85,6 +85,10 @@
                             <dt class="govuk-summary-list__key">Name</dt>
                             <dd class="govuk-summary-list__value">{{ station.name }}</dd>
                         </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">CRS Code</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ station.crs_code }}</code></dd>
+                        </div>
                         {% if station.latitude and station.longitude %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Location</dt>
@@ -113,6 +117,10 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name</dt>
                             <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">CRS Code</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ station.crs_code }}</code></dd>
                         </div>
                         {% if station.latitude and station.longitude %}
                             <div class="govuk-summary-list__row">
@@ -206,6 +214,126 @@
             </dl>
         </dd>
     </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Discount</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Code</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.discount_code }}</code></dd>
+                </div>
+                {% with discount=data.discount_code|rsp_discount %}
+                    {% if discount %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ discount.description }}</dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </dl>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Route</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Code</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.route_code }}</code></dd>
+                </div>
+                {% with route=data.route_code|rsp_route %}
+                    {% if route %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Description</dt>
+                            <dd class="govuk-summary-list__value">{{ route.atb_desc|linebreaksbr }}</dd>
+                        </div>
+                        {% if route.all_included_crs %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel must be made via <em>all</em> of</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list--bullet">
+                                        {% for crs in route.all_included_crs %}
+                                            {% with station=crs|rsp_station_crs %}
+                                                {% if station.latitude and station.longitude %}
+                                                    <li><a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">{{ station.name }}</a></li>
+                                                {% else %}
+                                                    <li>{{ station.name }}</li>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if route.any_included_crs %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel must be made via any of</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list--bullet">
+                                        {% for crs in route.any_included_crs %}
+                                            {% with station=crs|rsp_station_crs %}
+                                                {% if station.latitude and station.longitude %}
+                                                    <li><a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">{{ station.name }}</a></li>
+                                                {% else %}
+                                                    <li>{{ station.name }}</li>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if route.excluded_crs %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel must <em>not</em> be made via</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list--bullet">
+                                        {% for crs in route.excluded_crs %}
+                                            {% with station=crs|rsp_station_crs %}
+                                                {% if station.latitude and station.longitude %}
+                                                    <li><a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">{{ station.name }}</a></li>
+                                                {% else %}
+                                                    <li>{{ station.name }}</li>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if route.included_tocs %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel must include a service operated by</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list--bullet">
+                                        {% for toc in route.included_tocs %}
+                                            {% with toc=toc|rsp_toc %}
+                                                <li>{{ toc.name }}</li>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if route.excluded_tocs %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Travel must <em>not</em> include a service operated by</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list--bullet">
+                                        {% for toc in route.excluded_tocs %}
+                                            {% with toc=toc|rsp_toc %}
+                                                <li>{{ toc.name }}</li>
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endwith %}
+            </dl>
+        </dd>
+    </div>
     {% if data.restriction_code %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Restriction code</dt>
@@ -215,14 +343,6 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Coupon type</dt>
         <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Discount code</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.discount_code }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Route code</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.route_code }}</code></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Passenger name</dt>

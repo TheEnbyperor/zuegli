@@ -7,6 +7,9 @@ from . import gen
 TICKET_TYPES = None
 TICKET_RESTRICTIONS = None
 STATIONS = None
+DISCOUNTS = None
+ROUTES = None
+TOCS = None
 
 parser = xsdata.formats.dataclass.parsers.JsonParser()
 
@@ -46,6 +49,42 @@ def get_stations():
 
     return STATIONS
 
+def get_discounts():
+    global DISCOUNTS
+
+    if DISCOUNTS:
+        return DISCOUNTS
+
+    rsp_storage = django.core.files.storage.storages["rsp-data"]
+    with rsp_storage.open("discounts.json", "r") as f:
+        DISCOUNTS = json.loads(f.read())
+
+    return DISCOUNTS
+
+def get_routes():
+    global ROUTES
+
+    if ROUTES:
+        return ROUTES
+
+    rsp_storage = django.core.files.storage.storages["rsp-data"]
+    with rsp_storage.open("routes.json", "r") as f:
+        ROUTES = json.loads(f.read())
+
+    return ROUTES
+
+def get_tocs():
+    global TOCS
+
+    if TOCS:
+        return TOCS
+
+    rsp_storage = django.core.files.storage.storages["rsp-data"]
+    with rsp_storage.open("tocs.json", "r") as f:
+        TOCS = json.loads(f.read())
+
+    return TOCS
+
 
 def get_ticket_type(code: str) -> typing.Optional[gen.nre_ticket_v4_0.TicketTypeDescription]:
     ticket_types = get_ticket_types()
@@ -72,3 +111,26 @@ def get_station_by_nlc(code: str) -> typing.Optional[gen.nre_station_v4_0.Statio
     if i := stations["nlc"].get(code):
         d = stations["data"]["Station"][i]
         return parser.decode(d, gen.nre_station_v4_0.Station)
+
+
+def get_station_by_crs(code: str) -> typing.Optional[gen.nre_station_v4_0.Station]:
+    stations = get_stations()
+
+    if i := stations["crs"].get(code):
+        d = stations["data"]["Station"][i]
+        return parser.decode(d, gen.nre_station_v4_0.Station)
+
+
+def get_discount_by_id(code: int) -> typing.Optional[dict]:
+    discounts = get_discounts()
+    return discounts.get(str(code))
+
+
+def get_route_by_id(code: int) -> typing.Optional[dict]:
+    routes = get_routes()
+    return routes.get(str(code))
+
+
+def get_toc_by_id(code: str) -> typing.Optional[dict]:
+    tocs = get_tocs()
+    return tocs.get(code)
