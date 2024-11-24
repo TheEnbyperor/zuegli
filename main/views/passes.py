@@ -1776,12 +1776,12 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time_flag == 2 else "PKDateStyleNone",
                 }],
                 "primaryFields": [],
-                "auxiliaryFields": [],
-                "secondaryFields": [{
+                "auxiliaryFields": [{
                     "key": "travel-class",
                     "label": "class-code-label",
                     "value": "class-code-second-label" if ticket_data.data.standard_class else "class-code-first-label",
                 }],
+                "secondaryFields": [],
                 "backFields": [],
             }
 
@@ -1893,6 +1893,14 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     "label": "price-label",
                     "value": f"£{ticket_data.data.purchase_data.price}"
                 }])
+
+            if discount_data := rsp.ticket_data.get_discount_by_id(ticket_data.data.discount_code):
+                if discount_data["description"]:
+                    pass_fields["secondaryFields"].append({
+                        "key": "discount",
+                        "label": "reduction-card-label",
+                        "value": discount_data["description"]
+                    })
 
             for i, reservation in enumerate(ticket_data.data.reservations):
                 pass_fields["secondaryFields"].append({
