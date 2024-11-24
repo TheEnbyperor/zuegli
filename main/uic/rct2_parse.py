@@ -69,14 +69,14 @@ class RCT2Parser:
     def parse(self):
         departure_date_1 =    self.read_area(top=6,  left=1,  width=5,  height=1)[0]
         departure_time_1 =    self.read_area(top=6,  left=7,  width=5,  height=1)[0]
-        departure_station_1 = self.read_area(top=6,  left=13, width=21, height=1)[0]
+        departure_station_1 = self.read_area(top=6,  left=13, width=17, height=1)[0]
         arrival_station_1 =   self.read_area(top=6,  left=34, width=17, height=1)[0]
         arrival_date_1 =      self.read_area(top=6,  left=52, width=5,  height=1)[0]
         arrival_time_1 =      self.read_area(top=6,  left=58, width=5,  height=1)[0]
 
         departure_date_2 =    self.read_area(top=7,  left=1,  width=5,  height=1)[0]
         departure_time_2 =    self.read_area(top=7,  left=7,  width=5,  height=1)[0]
-        departure_station_2 = self.read_area(top=7,  left=13, width=21, height=1)[0]
+        departure_station_2 = self.read_area(top=7,  left=13, width=17, height=1)[0]
         arrival_station_2 =   self.read_area(top=7,  left=34, width=17, height=1)[0]
         arrival_date_2 =      self.read_area(top=7,  left=52, width=5,  height=1)[0]
         arrival_time_2 =      self.read_area(top=7,  left=58, width=5,  height=1)[0]
@@ -96,24 +96,24 @@ class RCT2Parser:
             arrival_date_1 not in ("", "*") or arrival_time_1 not in ("", "*") or \
             departure_station_1 not in ("", "*") or arrival_station_1 not in ("", "*"):
             trips.append(TripPart(
-                departure_date=departure_date_1,
-                departure_time=departure_time_1,
-                departure_station=departure_station_1,
-                arrival_station=arrival_station_1,
-                arrival_date=arrival_date_1,
-                arrival_time=arrival_time_1,
+                departure_date=departure_date_1.strip("*"),
+                departure_time=departure_time_1.strip("*"),
+                departure_station=departure_station_1.strip("*"),
+                arrival_station=arrival_station_1.strip("*"),
+                arrival_date=arrival_date_1.strip("*"),
+                arrival_time=arrival_time_1.strip("*"),
             ))
 
         if departure_date_2 not in ("", "*") or departure_time_2 not in ("", "*") or \
             arrival_date_2 not in ("", "*") or arrival_time_2 not in ("", "*") or \
             departure_station_2 not in ("", "*") or arrival_station_2 not in ("", "*"):
             trips.append(TripPart(
-                departure_date=departure_date_2,
-                departure_time=departure_time_2,
-                departure_station=departure_station_2,
-                arrival_station=arrival_station_2,
-                arrival_date=arrival_date_2,
-                arrival_time=arrival_time_2,
+                departure_date=departure_date_2.strip("*"),
+                departure_time=departure_time_2.strip("*"),
+                departure_station=departure_station_2.strip("*"),
+                arrival_station=arrival_station_2.strip("*"),
+                arrival_date=arrival_date_2.strip("*"),
+                arrival_time=arrival_time_2.strip("*"),
             ))
 
         return ParsedRCT2(
