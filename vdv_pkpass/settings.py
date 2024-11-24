@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+import boto3.s3.transfer
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
@@ -138,27 +139,27 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "vdv-certs",
-            "transfer_config": {
-                "max_concurrency": 32
-            }
+            "transfer_config": boto3.s3.transfer.TransferConfig(
+                max_concurrency=32
+            )
         }
     },
     "uic-data": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "uic-data",
-            "transfer_config": {
-                "max_concurrency": 32
-            }
+            "transfer_config": boto3.s3.transfer.TransferConfig(
+                max_concurrency=32
+            )
         }
     },
     "rsp-data": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "rsp-data",
-            "transfer_config": {
-                "max_concurrency": 32
-            }
+            "transfer_config": boto3.s3.transfer.TransferConfig(
+                max_concurrency=32
+            )
         }
     },
 }
