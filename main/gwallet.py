@@ -109,6 +109,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         "textModulesData": [],
         "linksModuleData": {
             "uris": []
+        },
+        "cardTitle": {
+            "defaultValue": {
+                "language": "de",
+                "value": "BahnCard"
+            }
         }
     }
 
@@ -137,6 +143,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["ticketNumber"] = ticket_id
 
         if distributor := ticket_data.distributor():
+            obj["cardTitle"]["defaultValue"]["value"] = distributor["full_name"]
             if distributor["url"]:
                 obj["linksModuleData"]["uris"].append({
                     "id": "distributor",
@@ -318,13 +325,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     ticket_type = "generic"
                     obj["genericType"] = "GENERIC_LOYALTY_CARD"
                     obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
-
-                    obj["cardTitle"] = {
-                        "defaultValue": {
-                            "language": "de",
-                            "value": "BahnCard"
-                        }
-                    }
                     obj["header"] = {
                         "defaultValue": {
                             "language": "en",
