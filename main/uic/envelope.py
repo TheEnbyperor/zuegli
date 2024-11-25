@@ -69,8 +69,8 @@ class Envelope:
 
     def signing_cert(self):
         uic_storage = django.core.files.storage.storages["uic-data"]
-        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.der"
-        key_meta_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.json"
+        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.der"
+        key_meta_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.json"
         if uic_storage.exists(key_meta_name):
             with uic_storage.open(key_meta_name) as key_file:
                 meta = json.load(key_file)
@@ -107,7 +107,7 @@ class Envelope:
             return False
 
         uic_storage = django.core.files.storage.storages["uic-data"]
-        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}_{self.version}.der"
+        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.der"
         if uic_storage.exists(key_name):
             with uic_storage.open(key_name) as key_file:
                 key = cryptography.x509.load_der_x509_certificate(key_file.read())

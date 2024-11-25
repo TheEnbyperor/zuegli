@@ -166,8 +166,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
                 if document_type == "openTicket":
-                    obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
-
                     validity_start = templatetags.rics.rics_valid_from(document, issued_at)
                     validity_end = templatetags.rics.rics_valid_until(document, issued_at)
                     obj["validTimeInterval"] = {
@@ -240,6 +238,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
                     if "originName" in obj["ticketLegs"][0] and "destinationName" in obj["ticketLegs"][0]:
                         ticket_type = "transit"
+                        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
 
                     obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
 

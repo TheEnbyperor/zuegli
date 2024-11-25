@@ -21,8 +21,8 @@ class Command(BaseCommand):
         for key in data.key:
             if key.public_key.keytype != "CERTIFICATE":
                 continue
-            key_name = f"cert-{key.issuer_code}_{key.id}_{key.barcode_version}.der"
-            key_meta_name = f"cert-{key.issuer_code}_{key.id}_{key.barcode_version}.json"
+            key_name = f"cert-{key.issuer_code}_{key.id}.der"
+            key_meta_name = f"cert-{key.issuer_code}_{key.id}.json"
             with uic_storage.open(key_name, "wb") as f:
                 f.write(key.public_key.value)
             with uic_storage.open(key_meta_name, "w") as f:
