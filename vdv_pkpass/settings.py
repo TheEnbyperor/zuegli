@@ -208,7 +208,7 @@ GWALLET_CONF = {
     "issuer_id": "3388000000009246234",
     "railcard_pass_class": "pass.ch.magicalcodewit.vdv.railcard",
     "train_ticket_pass_class": "pass.ch.magicalcodewit.vdv.ticket",
-    "bahncardpass_class": "pass.ch.magicalcodewit.vdv.bahncard",
+    "bahncard_pass_class": "pass.ch.magicalcodewit.vdv.bahncard",
 }
 
 AZTEC_JAR_PATH = BASE_DIR / "aztec-1.0.jar"
