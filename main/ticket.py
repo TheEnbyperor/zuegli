@@ -825,7 +825,9 @@ def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
             exception=traceback.format_exc()
         )
 
-    if envelope.ticket_type == 2:
+    if envelope.ticket_type == 1:
+        data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics)
+    elif envelope.ticket_type == 2:
         data = ssb.NonReservationTicket.parse(envelope.data)
     elif envelope.ticket_type == 4:
         data = ssb.Pass.parse(envelope.data)

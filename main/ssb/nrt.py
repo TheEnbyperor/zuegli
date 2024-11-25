@@ -29,7 +29,7 @@ class NonReservationTicket:
         return "NRT"
 
     @classmethod
-    def parse(cls, data: util.BitStream):
+    def parse(cls, data: util.BitStream, issuer_rics: int):
         year = data.read_int(105, 109)
         issuing_day = data.read_int(109, 118)
         validity_start_day = data.read_int(119, 128)
@@ -56,8 +56,12 @@ class NonReservationTicket:
                 departure_station_uic = data.read_int(142, 170)
                 arrival_station_uic = data.read_int(170, 198)
         else:
-            departure_station_name = data.read_string(138, 168)
-            arrival_station_name = data.read_string(168, 198)
+            if issuer_rics == 1088:
+                departure_station_uic = data.read_int(138, 168) % 10000000
+                arrival_station_uic = data.read_int(168, 198) % 10000000
+            else:
+                departure_station_name = data.read_string(138, 168)
+                arrival_station_name = data.read_string(168, 198)
 
         return cls(
             specimen=data.read_bool(14),

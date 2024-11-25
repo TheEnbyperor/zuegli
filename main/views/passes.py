@@ -2375,7 +2375,143 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
             "altText": ticket_data.data.pnr
         }]
 
-        if isinstance(ticket_data.data, ssb.NonReservationTicket):
+        if isinstance(ticket_data.data, ssb.IntegratedReservationTicket):
+            pass_type = "boardingPass"
+            pass_fields["transitType"] = "PKTransitTypeTrain"
+
+            pass_fields["backFields"].append({
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": ticket_data.data.pnr,
+                "semantics": {
+                    "confirmationNumber": ticket_data.data.pnr,
+                }
+            })
+
+            if ticket_data.data.departure_station_uic:
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(from_station["latitude"]),
+                            "longitude": float(from_station["longitude"]),
+                        },
+                        "departureStationName": from_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": from_station["name"],
+                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                })
+            elif ticket_data.data.departure_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": ticket_data.data.departure_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.departure_station_name,
+                    }
+                })
+
+            if ticket_data.data.arrival_station_uic:
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(to_station["latitude"]),
+                            "longitude": float(to_station["longitude"]),
+                        },
+                        "departureStationName": to_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": to_station["name"],
+                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                })
+            elif ticket_data.data.arrival_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": ticket_data.data.arrival_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.arrival_station_name,
+                    }
+                })
+
+            if ticket_data.data.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": f"class-code-{ticket_data.data.travel_class}-label",
+                })
+
+            if ticket_data.data.train_number:
+                pass_fields["headerFields"].append({
+                    "key": "train-number",
+                    "label": "train-number-label",
+                    "value": ticket_data.data.train_number,
+                    "semantics": {
+                        "vehicleNumber": ticket_data.data.train_number,
+                    }
+                })
+
+            if ticket_data.data.coach_number:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "coach-number",
+                    "label": "coach-number-label",
+                    "value": ticket_data.data.coach_number,
+                })
+
+            if ticket_data.data.seat_number:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "seat-number",
+                    "label": "seat-number-label",
+                    "value": ticket_data.data.seat_number,
+                })
+
+            pass_fields["secondaryFields"].append({
+                "key": "departure-time",
+                "label": "departure-time-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleMedium",
+                "value": f"{ticket_data.data.departure.isoformat()}Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.issuing_date.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+
+            if ticket_data.data.extra_text:
+                pass_fields["backFields"].append({
+                    "key": "extra-date",
+                    "label": "other-data-label",
+                    "value": ticket_data.data.extra_text,
+                })
+
+        elif isinstance(ticket_data.data, ssb.NonReservationTicket):
             pass_type = "boardingPass"
             pass_fields["transitType"] = "PKTransitTypeTrain"
 
@@ -2488,6 +2624,13 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "ignoresTimeZone": True
             })
 
+            if ticket_data.data.extra_text:
+                pass_fields["backFields"].append({
+                    "key": "extra-date",
+                    "label": "other-data-label",
+                    "value": ticket_data.data.extra_text,
+                })
+
         elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
             pass_fields["headerFields"].append({
                 "key": "card-name",
@@ -2533,6 +2676,12 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "ignoresTimeZone": True
             })
 
+            if ticket_data.data.extra_text:
+                pass_fields["backFields"].append({
+                    "key": "extra-date",
+                    "label": "other-data-label",
+                    "value": ticket_data.data.extra_text,
+                })
 
         if distributor := ticket_data.envelope.issuer():
             pass_json["organizationName"] = distributor["full_name"]
