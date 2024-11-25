@@ -16,68 +16,23 @@
     </div>
     {% with cert=ticket.envelope.signing_cert %}
         {% if cert %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signing key</dt>
-                <dd class="govuk-summary-list__value">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Issuer name</dt>
-                            <dd class="govuk-summary-list__value">{{ cert.0.issuer_name }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Version type</dt>
-                            <dd class="govuk-summary-list__value">{{ cert.0.version_type }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Signature algorithm</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.signature_algorithm }}</code></dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Valid from</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.start_date }}</code></dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Valid until</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.end_date }}</code></dd>
-                        </div>
-                        {% for code in cert.0.allowed_product_owner_codes %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Allowed product owner</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ code }}</code></dd>
-                            </div>
-                        {% endfor %}
-                    </dl>
-                    {% include "main/uic/x509.html" with cert=cert.1 %}
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signature verification</dt>
-                <dd class="govuk-summary-list__value">
-                    {% if ticket.envelope.verify_signature %}
-                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                    {% else %}
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                Signature verification failed, this is likely a forged ticket
-                            </strong>
-                        </div>
-                    {% endif %}
-                </dd>
-            </div>
-        {% else %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signing key</dt>
-                <dd class="govuk-summary-list__value">
+            {% include "main/uic/cert.html" with cert=cert %}
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Signature verification</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.envelope.verify_signature %}
+                    <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                {% else %}
                     <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
-                            Unknown key, likely not a valid ticket
+                            Signature verification failed, this is likely a forged ticket
                         </strong>
                     </div>
-                </dd>
-            </div>
-        {% endif %}
+                {% endif %}
+            </dd>
+        </div>
     {% endwith %}
 </dl>
 

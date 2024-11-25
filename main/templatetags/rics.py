@@ -26,6 +26,8 @@ def get_station(value, code_type):
             return uic.stations.get_station_by_sncf(value)
         elif code_type == "benerail":
             return uic.stations.get_station_by_benerail(value)
+        elif code_type == "uic":
+            return uic.stations.get_station_by_uic(value)
     elif isinstance(code_type, dict):
         if code_type.get("stationCodeTable") == "stationUIC":
             return uic.stations.get_station_by_uic(value)

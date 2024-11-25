@@ -11,3 +11,4 @@ __pycache__
 tickeos.py
 parsed_licenses.lcs
 media/
+.git_hash

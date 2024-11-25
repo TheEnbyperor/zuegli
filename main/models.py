@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp, sncf, elb
+from . import vdv, uic, rsp, sncf, elb, ssb
 
 
 def make_pass_token():
@@ -59,6 +59,7 @@ class Ticket(models.Model):
     TYPE_RESERVIERUNG = "reservierung"
     TYPE_INTERRAIL = "interrail"
     TYPE_RAILCARD = "railcard"
+    TYPE_KEYCARD = "keycard"
     TYPE_UNKNOWN = "unknown"
 
     TICKET_TYPES = (
@@ -69,6 +70,7 @@ class Ticket(models.Model):
         (TYPE_RESERVIERUNG, "Reservierung"),
         (TYPE_INTERRAIL, "Interrail"),
         (TYPE_RAILCARD, "Railcard"),
+        (TYPE_KEYCARD, "Keycard"),
         (TYPE_UNKNOWN, "Unknown"),
     )
 
@@ -134,6 +136,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.elb_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.ssb_instances.first():
             return ticket_instance
 
 
@@ -276,6 +281,37 @@ class ELBTicketInstance(models.Model):
         return t.ELBTicket(
             raw_ticket=bytes(self.barcode_data),
             data=elb.ELBTicket.parse(bytes(self.barcode_data)),
+        )
+
+
+class SSBTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances")
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
+    pnr = models.CharField(max_length=6, verbose_name="PNR", blank=True, null=True, unique=True)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "SSB ticket"
+
+    def __str__(self):
+        return str(self.pnr)
+
+    def as_ticket(self) -> t.SSBTicket:
+        envelope = ssb.Envelope.parse(bytes(self.barcode_data))
+
+        if envelope.ticket_type == 2:
+            data = ssb.NonReservationTicket.parse(envelope.data)
+        elif envelope.ticket_type == 4:
+            data = ssb.Pass.parse(envelope.data)
+        elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
+            data = ssb.ns_keycard.Keycard.parse(envelope.data)
+        else:
+            raise NotImplementedError()
+
+        return t.SSBTicket(
+            raw_ticket=bytes(self.barcode_data),
+            envelope=envelope,
+            data=data
         )
 
 

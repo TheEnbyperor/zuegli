@@ -68,6 +68,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "main.context_processors.git_hash_context",
             ],
         },
     },
@@ -198,6 +199,12 @@ try:
 except FileNotFoundError:
     GOOGLE_CREDS = None
     GOOGLE_SIGNER = None
+
+try:
+    with open("/app/git_hash", "r") as f:
+        GIT_HASH = f.read().strip()
+except FileNotFoundError:
+    GIT_HASH = None
 
 PKPASS_CONF = {
     "organization_name": os.getenv("PKPASS_ORGANIZATION_NAME"),

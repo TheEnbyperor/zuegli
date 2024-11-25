@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import json
-import os
 
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
@@ -80,6 +79,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "main.context_processors.git_hash_context",
             ],
         },
     },
@@ -190,6 +190,8 @@ try:
 except FileNotFoundError:
     GOOGLE_CREDS = None
     GOOGLE_SIGNER = None
+
+GIT_HASH = None
 
 PKPASS_CONF = {
     "organization_name": "VDV PKPass",

@@ -6,7 +6,7 @@ import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
 import django.core.files.storage
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb
 
 
 class TicketError(Exception):
@@ -350,6 +350,34 @@ class ELBTicket:
         hd.update(b"elb")
         hd.update(self.data.pnr.encode("utf-8"))
         hd.update(self.data.sequence_number.to_bytes(2, "big"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class SSBTicket:
+    raw_ticket: bytes
+    envelope: ssb.Envelope
+    data: typing.Union[ssb.NonReservationTicket, ssb.ns_keycard.Keycard]
+
+    @property
+    def ticket_type(self) -> str:
+        return "SSB"
+
+    def type(self) -> str:
+        if isinstance(self.data, ssb.NonReservationTicket):
+            return models.Ticket.TYPE_FAHRKARTE
+        elif isinstance(self.data, ssb.ns_keycard.Keycard):
+            return models.Ticket.TYPE_KEYCARD
+        else:
+            return models.Ticket.TYPE_UNKNOWN
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"ssb")
+        hd.update(self.envelope.issuer_rics.to_bytes(8, "big"))
+        hd.update(self.envelope.ticket_type.to_bytes(8, "big"))
+        hd.update(self.data.pnr.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -786,16 +814,47 @@ def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
         data=data
     )
 
+def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
+    try:
+        envelope = ssb.Envelope.parse(ticket_bytes)
+    except ssb.SSBException:
+        raise TicketError(
+            title="This doesn't look like a valid SSB ticket",
+            message="You may have scanned something that is not an SSB ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    if envelope.ticket_type == 2:
+        data = ssb.NonReservationTicket.parse(envelope.data)
+    elif envelope.ticket_type == 4:
+        data = ssb.Pass.parse(envelope.data)
+    elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
+        data = ssb.ns_keycard.Keycard.parse(envelope.data)
+    else:
+        raise TicketError(
+            title="Unsupported SSB ticket type",
+            message=f"We don't know how to parse type {envelope.ticket_type} SSB tickets"
+        )
+
+    return SSBTicket(
+        raw_ticket=ticket_bytes,
+        envelope=envelope,
+        data=data
+    )
+
 
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket]:
+        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
     )
+    if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
+        return parse_ticket_ssb(ticket_bytes)
     if ticket_bytes[:4] == b"i0CV":
         return parse_ticket_sncf(ticket_bytes)
-    if ticket_bytes[:3] == b"#UT":
+    elif ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
     elif ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)
@@ -899,6 +958,15 @@ def create_ticket_obj(
         _, created = models.ELBTicketInstance.objects.update_or_create(
             pnr=ticket_data.data.pnr,
             sequence_number=ticket_data.data.sequence_number,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, SSBTicket):
+        _, created = models.SSBTicketInstance.objects.update_or_create(
+            distributor_rics=ticket_data.envelope.issuer_rics,
+            pnr=ticket_data.data.pnr,
             defaults={
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,

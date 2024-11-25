@@ -11,7 +11,7 @@ import zlib
 import json
 import django.core.files.storage
 
-from . import util, rics
+from . import util, rics, certs
 
 
 @dataclasses.dataclass
@@ -68,19 +68,14 @@ class Envelope:
         return rics.get_rics(self.issuer_rics)
 
     def signing_cert(self):
-        uic_storage = django.core.files.storage.storages["uic-data"]
-        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.der"
-        key_meta_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.json"
-        if uic_storage.exists(key_meta_name):
-            with uic_storage.open(key_meta_name) as key_file:
-                meta = json.load(key_file)
-            with uic_storage.open(key_name) as key_file:
-                key = cryptography.x509.load_der_x509_certificate(key_file.read())
-
-            return meta, key
+        return certs.signing_cert(self.issuer_rics, self.signature_key_id)
 
     def verify_signature(self):
         if not self.signature or not self.signed_data:
+            return False
+
+        pk = certs.public_key(self.issuer_rics, self.signature_key_id)
+        if not pk:
             return False
 
         if self.version == 1:
@@ -106,22 +101,11 @@ class Envelope:
         else:
             return False
 
-        uic_storage = django.core.files.storage.storages["uic-data"]
-        key_name = f"cert-{self.issuer_rics}_{self.signature_key_id}.der"
-        if uic_storage.exists(key_name):
-            with uic_storage.open(key_name) as key_file:
-                key = cryptography.x509.load_der_x509_certificate(key_file.read())
-
-            pk = key.public_key()
-            print(sig.hex())
-            if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
-                try:
-                    pk.verify(sig, self.signed_data, hasher)
-                    return True
-                except cryptography.exceptions.InvalidSignature as e:
-                    print(f"Invalid signature {e}")
-                    return False
-            else:
+        if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
+            try:
+                pk.verify(sig, self.signed_data, hasher)
+                return True
+            except cryptography.exceptions.InvalidSignature:
                 return False
         else:
             return False

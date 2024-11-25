@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb
 
 
 def index(request):
@@ -2365,6 +2365,205 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
         }]
         add_pkp_img(pkp, "pass/logo-eurostar.png", "logo.png")
         have_logo = True
+    elif isinstance(ticket_instance, models.SSBTicketInstance):
+        ticket_data: ticket.SSBTicket = ticket_instance.as_ticket()
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": ticket_data.data.pnr
+        }]
+
+        if isinstance(ticket_data.data, ssb.NonReservationTicket):
+            pass_type = "boardingPass"
+            pass_fields["transitType"] = "PKTransitTypeTrain"
+
+            pass_fields["backFields"].append({
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": ticket_data.data.pnr,
+                "semantics": {
+                    "confirmationNumber": ticket_data.data.pnr,
+                }
+            })
+
+            if ticket_data.data.departure_station_uic:
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(from_station["latitude"]),
+                            "longitude": float(from_station["longitude"]),
+                        },
+                        "departureStationName": from_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": from_station["name"],
+                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                })
+            elif ticket_data.data.departure_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": ticket_data.data.departure_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.departure_station_name,
+                    }
+                })
+
+            if ticket_data.data.arrival_station_uic:
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(to_station["latitude"]),
+                            "longitude": float(to_station["longitude"]),
+                        },
+                        "departureStationName": to_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": to_station["name"],
+                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                })
+            elif ticket_data.data.arrival_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": ticket_data.data.arrival_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.arrival_station_name,
+                    }
+                })
+
+            if ticket_data.data.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": f"class-code-{ticket_data.data.travel_class}-label",
+                })
+
+            pass_fields["secondaryFields"].append({
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_start.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["secondaryFields"].append({
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.issuing_date.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+
+        elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
+            pass_fields["headerFields"].append({
+                "key": "card-name",
+                "label": "product-label",
+                "value": "Keycard",
+            })
+
+            if ticket_data.data.station_uic:
+                station = templatetags.rics.get_station(ticket_data.data.station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "station",
+                    "label": "station-label",
+                    "value": station["name"],
+                })
+
+            pass_fields["secondaryFields"].append({
+                "key": "card-id",
+                "label": "card-id-label",
+                "value": ticket_data.data.card_id,
+            })
+            pass_fields["secondaryFields"].append({
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_start.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["secondaryFields"].append({
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.issuing_date.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+
+
+        if distributor := ticket_data.envelope.issuer():
+            pass_json["organizationName"] = distributor["full_name"]
+            if distributor["url"]:
+                pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
+                return_pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
+            else:
+                pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
+                return_pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
+
+        if ticket_data.envelope.issuer_rics in RICS_LOGO:
+            add_pkp_img(pkp, RICS_LOGO[ticket_data.envelope.issuer_rics], "logo.png")
+            have_logo = True
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -2471,6 +2670,7 @@ PASS_STRINGS = {
 "passport-number-label" = "Passport number";
 "from-station-label" = "From";
 "to-station-label" = "To";
+"station-label" = "Station";
 "product-id-label" = "Ticket type";
 "valid-region-label" = "Validity";
 "return-included-label" = "Return included";
@@ -2529,6 +2729,7 @@ PASS_STRINGS = {
 "passport-number-label" = "Passnummer";
 "from-station-label" = "Von";
 "to-station-label" = "Nach";
+"station-label" = "Bahnhof";
 "product-id-label" = "Tickettyp";
 "valid-region-label" = "Gültigkeit";
 "return-included-label" = "Rückfahrt inklusive";
@@ -2571,6 +2772,7 @@ RICS_LOGO = {
     1084: "pass/logo-ns.png",
     1154: "pass/logo-cd.png",
     1156: "pass/logo-zssk.png",
+    1179: "pass/logo-szpp.png",
     1184: "pass/logo-ns.png",
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",

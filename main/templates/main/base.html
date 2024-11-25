@@ -162,6 +162,13 @@
                     <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK Design System</a>
                     used under license.
                 </div>
+                <div class="govuk-footer__meta-custom">
+                    {% if git_hash %}
+                        Running version <a href="https://github.com/theenbyperor/vdv-pkpass" class="govuk-footer__link" target="_blank">{{ git_hash }}</a>.
+                    {% else %}
+                        Development build.
+                    {% endif %}
+                </div>
                 <span class="govuk-footer__licence-description">
                     Licensed under the <a href="https://eupl.eu" class="govuk-footer__link" target="_blank">EUPL v1.2</a>.
                 </span>

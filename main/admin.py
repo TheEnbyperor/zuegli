@@ -22,9 +22,14 @@ class RSPTicketInstanceInline(admin.StackedInline):
     model = models.RSPTicketInstance
 
 
-class EDLTicketInstanceInline(admin.StackedInline):
+class ELBTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.ELBTicketInstance
+
+
+class SSBTicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.SSBTicketInstance
 
 
 class AppleRegistrationInline(admin.StackedInline):
@@ -75,7 +80,8 @@ class TicketAdmin(admin.ModelAdmin):
         VDVTicketInstanceInline,
         UICTicketInstanceInline,
         RSPTicketInstanceInline,
-        EDLTicketInstanceInline,
+        ELBTicketInstanceInline,
+        SSBTicketInstanceInline,
         AppleRegistrationInline,
     ]
     view_on_site = True

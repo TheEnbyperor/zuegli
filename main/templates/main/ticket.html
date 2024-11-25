@@ -88,7 +88,7 @@
 
 <div class="govuk-!-margin-7">
     <h2 class="govuk-heading-l">Ticket details</h2>
-    {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count %}
+    {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count %}
         <p class="govuk-body">No instances found for this ticket.</p>
     {% else %}
         {% for instance in ticket.vdv_instances.all %}
@@ -154,6 +154,23 @@
                     </summary>
                     <div class="govuk-details__text">
                         {% include 'main/elb_ticket_details.html' with ticket=ticket_obj %}
+                    </div>
+                </details>
+            {% endwith %}
+        {% endfor %}
+        {% for instance in ticket.ssb_instances.all %}
+            {% with ticket_obj=instance.as_ticket %}
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">Ticket #{{ instance.pnr }}</span>
+                        {% with distributor=ticket_obj.envelope.issuer %}
+                            {% if distributor %}
+                                <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
+                            {% endif %}
+                        {% endwith %}
+                    </summary>
+                    <div class="govuk-details__text">
+                        {% include 'main/ssb_ticket_details.html' with ticket=ticket_obj %}
                     </div>
                 </details>
             {% endwith %}

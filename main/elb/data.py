@@ -97,6 +97,8 @@ class ELBTicket:
         now = timezone.now()
         year = ((now.year // 10) * 10) + year
         year_start = datetime.date(year, 1, 1)
+        if year_start > now.date():
+            year_start = year_start.replace(year=year_start.year - 10)
         emission = year_start + datetime.timedelta(days=emission_day - 1)
         valid_from = year_start + datetime.timedelta(days=begin_validity_day - 1)
         valid_until = year_start + datetime.timedelta(days=end_validity_day - 1)
