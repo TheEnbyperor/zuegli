@@ -129,7 +129,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
     ticket_instance = ticket.active_instance()
     if isinstance(ticket_instance, models.UICTicketInstance):
-        ticket_type = "transit"
+        ticket_type = None
         ticket_data = ticket_instance.as_ticket()
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
 
@@ -237,6 +237,9 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "value": document["toStationIA5"]
                             }
                         }
+
+                    if "originName" in obj["ticketLegs"][0] and "destinationName" in obj["ticketLegs"][0]:
+                        ticket_type = "transit"
 
                     obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
 
@@ -508,7 +511,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             "body": issued_at.isoformat(),
         })
 
-        return obj, ticket_type
+        if ticket_type:
+            return obj, ticket_type
 
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         obj["cardTitle"] = {
