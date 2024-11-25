@@ -1,26 +1,27 @@
 {% extends "main/base.html" %}
 {% load static crispy_forms_tags %}
 
-{% block title %}VDV to Apple Wallet{% endblock title %}
-
 {% block content %}
     <div class="govuk-width-container">
-        <h1 class="govuk-heading-xl">VDV/UIC to Apple Wallet Pass</h1>
+        <h1 class="govuk-heading-xl">Train tickets to Apple/Google Wallet Passes</h1>
         <p class="govuk-body-l">
-            Turn your public transport ticket into an Apple Wallet pass.
+            Turn your public transport ticket into an Apple and Google Wallet pass.
         </p>
         <p class="govuk-body">
-            Both VDV and UIC tickets are supported. UIC tickets are usually issued by Deutsche Bahn and other
-            long-distance
-            operators, while VDV tickets are issued by German local transport operators.
-            UIC tickets may not work as reliably as VDV tickets - they're a lot more complicated.
+            Supported ticket types include:
         </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>VDV - German local transport operators, Deutschlandticket</li>
+            <li>UIC - Deutsche Bahn and other long-distance operators, Klimaticket, InterRail</li>
+            <li>SSB - Select long-distance operators, NS Keycards</li>
+            <li>RSP6 - UK train tickets</li>
+            <li>RSP8 - UK Railcards</li>
+            <li>SNCF domestic tickets</li>
+            <li>ELB - Eurostar</li>
+        </ul>
         <p class="govuk-body">
             If you want your tickets to automatically update when they are renewed you can create an account and add the
             subscription. Currently, DB and SaarVV are supported.
-        </p>
-        <p class="govuk-body">
-            These passes should be able to be imported into Google Wallet as well, but updates won't work.
         </p>
 
         {% if error %}
