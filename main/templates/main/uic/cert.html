@@ -1,34 +1,34 @@
 <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signing key</dt>
-                <dd class="govuk-summary-list__value">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Issuer name</dt>
-                            <dd class="govuk-summary-list__value">{{ cert.0.issuer_name }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Version type</dt>
-                            <dd class="govuk-summary-list__value">{{ cert.0.version_type }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Signature algorithm</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.signature_algorithm }}</code></dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Valid from</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.start_date }}</code></dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Valid until</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ cert.0.end_date }}</code></dd>
-                        </div>
-                        {% for code in cert.0.allowed_product_owner_codes %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Allowed product owner</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ code }}</code></dd>
-                            </div>
-                        {% endfor %}
-                    </dl>
-                    {% include "main/uic/x509.html" with cert=cert.1 %}
-                </dd>
+    <dt class="govuk-summary-list__key">Signing key</dt>
+    <dd class="govuk-summary-list__value">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuer name</dt>
+                <dd class="govuk-summary-list__value">{{ cert.0.issuer_name }}</dd>
             </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Version type</dt>
+                <dd class="govuk-summary-list__value">{{ cert.0.version_type }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signature algorithm</dt>
+                <dd class="govuk-summary-list__value"><code>{{ cert.0.signature_algorithm }}</code></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid from</dt>
+                <dd class="govuk-summary-list__value"><code>{{ cert.0.start_date }}</code></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid until</dt>
+                <dd class="govuk-summary-list__value"><code>{{ cert.0.end_date }}</code></dd>
+            </div>
+            {% for code in cert.0.allowed_product_owner_codes %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Allowed product owner</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ code }}</code></dd>
+                </div>
+            {% endfor %}
+        </dl>
+        {% include "main/uic/x509.html" with cert=cert.1 %}
+    </dd>
+</div>

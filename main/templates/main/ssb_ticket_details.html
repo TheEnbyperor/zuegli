@@ -24,10 +24,12 @@
         <dt class="govuk-summary-list__key">Signature key ID</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.signature_key_id }}</code></dd>
     </div>
-    {% with cert=ticket.envelope.signing_cert %}
-        {% if cert %}
-            {% include "main/uic/cert.html" with cert=cert %}
-        {% endif %}
+    {% if ticket.envelope.can_verify %}
+        {% with cert=ticket.envelope.signing_cert %}
+            {% if cert %}
+                {% include "main/uic/cert.html" with cert=cert %}
+            {% endif %}
+        {% endwith %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Signature verification</dt>
             <dd class="govuk-summary-list__value">
@@ -43,7 +45,19 @@
                 {% endif %}
             </dd>
         </div>
-    {% endwith %}
+    {% else %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Signing key</dt>
+            <dd class="govuk-summary-list__value">
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        Unknown signing key, can't verify ticket
+                    </strong>
+                </div>
+            </dd>
+        </div>
+    {% endif %}
 </dl>
 
 {% if ticket.data.type == "IRT" %}
@@ -80,7 +94,8 @@
                     <code>{{ ticket.data.sub_type }}</code>
                 {% endif %}
             </dd>
-        </div><div class="govuk-summary-list__row">
+        </div>
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Number of adults</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.num_adults }}</dd>
         </div>
