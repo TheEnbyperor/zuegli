@@ -70,7 +70,16 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
                 if document_type == "openTicket":
-                    return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
+                    if (
+                            "fromStationNum" in document or
+                            "fromStationNameUTF8" in document or
+                            "fromStationNameIA5" in document
+                    ) and (
+                            "toStationNum" in document or
+                            "toStationNameUTF8" in document or
+                            "toStationNameIA5" in document
+                    ):
+                        return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
                 elif document_type == "customerCard":
                     return "generic", settings.GWALLET_CONF["bahncard_pass_class"]
     if isinstance(ticket_instance, models.RSPTicketInstance):
