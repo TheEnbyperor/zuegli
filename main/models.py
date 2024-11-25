@@ -287,7 +287,7 @@ class ELBTicketInstance(models.Model):
 class SSBTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances")
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
-    pnr = models.CharField(max_length=6, verbose_name="PNR", blank=True, null=True, unique=True)
+    pnr = models.CharField(max_length=32, verbose_name="PNR", blank=True, null=True, unique=True)
     barcode_data = models.BinaryField()
 
     class Meta:
