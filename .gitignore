@@ -10,3 +10,4 @@ __pycache__
 .keyHash
 tickeos.py
 parsed_licenses.lcs
+media/

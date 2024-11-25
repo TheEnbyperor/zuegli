@@ -592,8 +592,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                                 "value": return_document["validReturnRegionDesc"],
                             })
 
-                        if "validReturnRegion" in return_document and return_document["validReturnRegion"][0][
-                            0] == "trainLink":
+                        if "validReturnRegion" in return_document and return_document["validReturnRegion"][0][0] == "trainLink":
                             train_link = return_document["validReturnRegion"][0][1]
                             departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
                             return_pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -911,7 +910,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                             "timeStyle": "PKDateStyleNone",
                             "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                         })
-
 
                 elif document_type == "pass":
                     validity_start = templatetags.rics.rics_valid_from(document, issued_at)
@@ -1424,7 +1422,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "departureStationName": parsed_layout.trips[0].arrival_station,
                     }
                 })
-
 
         elif ticket_data.dt_ti or ticket_data.dt_pa:
             if ticket_data.dt_ti:
@@ -2016,7 +2013,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
 
             if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
                 def format_text(text):
-                    return text.replace("</p>", "\n\n").replace('title=""', "")
+                    return text.replace("</p>", "\n\n").replace('title=""', "").strip()
 
                 pass_fields["secondaryFields"].append({
                     "key": "product",
