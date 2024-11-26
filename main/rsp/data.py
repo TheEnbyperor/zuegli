@@ -4,23 +4,9 @@ import bitstring
 import pytz
 import typing
 import decimal
-from main.rsp import RSPException
-from . import locations
+from . import locations, util, issuers
 
 TZ = pytz.timezone("Europe/London")
-
-
-def issuer_name(code: str) -> str:
-    if code == "TT":
-        return "Trainline"
-    elif code == "R5":
-        return "Raileasy"
-    elif code == "RE":
-        return "Trainsplit"
-    elif code == "CS":
-        return "Caledonian Sleeper"
-    else:
-        return f"Unknown - {code}"
 
 
 class BitStream:
@@ -108,7 +94,7 @@ class TicketData:
         d = BitStream(payload)
 
         if (len(payload) * 8) != 928:
-            raise RSPException(f"Invalid payload length")
+            raise util.RSPException(f"Invalid payload length")
 
         extended_free_text = d.read_bool(383)
         full_ticket = d.read_bool(384)
@@ -250,7 +236,7 @@ class RailcardData:
     @classmethod
     def parse(cls, payload: bytes):
         if len(payload) != 116:
-            raise RSPException(f"Invalid length for railcard data - expected 116 bytes, got {len(payload)} bytes")
+            raise util.RSPException(f"Invalid length for railcard data - expected 116 bytes, got {len(payload)} bytes")
 
         d = BitStream(payload)
 
@@ -306,7 +292,7 @@ class RailcardData:
         return TZ.localize(self.purchase_date)
 
     def issuer_name(self):
-        return issuer_name(self.issuer_id)
+        return issuers.issuer_name(self.issuer_id)
 
     def railcard_type_name(self):
         if self.railcard_type == "TSU":

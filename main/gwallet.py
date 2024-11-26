@@ -8,7 +8,7 @@ import pytz
 from django.conf import settings
 from django.templatetags.static import static
 from django.shortcuts import reverse
-from . import models, rsp, templatetags
+from . import models, rsp, templatetags, vdv
 
 client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
@@ -80,9 +80,13 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
                             "toStationNameIA5" in document
                     ):
                         return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
+                    else:
+                        return "generic", settings.GWALLET_CONF["train_pass_class"]
                 elif document_type == "customerCard":
                     return "generic", settings.GWALLET_CONF["bahncard_pass_class"]
-    if isinstance(ticket_instance, models.RSPTicketInstance):
+    elif isinstance(ticket_instance, models.VDVTicketInstance):
+        return "generic", settings.GWALLET_CONF["train_pass_class"]
+    elif isinstance(ticket_instance, models.RSPTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         if isinstance(ticket_data.data, rsp.RailcardData):
             return "generic", settings.GWALLET_CONF["railcard_pass_class"]
@@ -115,6 +119,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 }
             }
         },
+        "imageModulesData": [],
         "textModulesData": [],
         "linksModuleData": {
             "uris": []
@@ -126,6 +131,19 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             }
         }
     }
+
+    if ticket.ticket_type == ticket.TYPE_DEUTCHLANDTICKET:
+        obj["imageModulesData"].append({
+            "id": "thumb",
+            "mainImage": {
+                "sourceUri": {
+                    "uri": urllib.parse.urljoin(
+                        settings.EXTERNAL_URL_BASE,
+                        static("pass/logo-dt@3x.png"),
+                    )
+                }
+            }
+        })
 
     ticket_instance = ticket.active_instance()
     if isinstance(ticket_instance, models.UICTicketInstance):
@@ -166,6 +184,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
                 if document_type == "openTicket":
+                    ticket_type = "generic"
+                    obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
                     validity_start = templatetags.rics.rics_valid_from(document, issued_at)
                     validity_end = templatetags.rics.rics_valid_until(document, issued_at)
                     obj["validTimeInterval"] = {
@@ -183,14 +203,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
                     from_station = templatetags.rics.get_station(document["fromStationNum"], document) if "fromStationNum" in document else None
                     to_station = templatetags.rics.get_station(document["toStationNum"], document) if "toStationNum" in document else None
-
-                    if distributor := ticket_data.distributor():
-                        obj["ticketLegs"][0]["transitOperatorName"] = {
-                            "defaultValue": {
-                                "language": "en",
-                                "value": distributor["full_name"],
-                            }
-                        }
 
                     if from_station:
                         obj["ticketLegs"][0]["originName"] = {
@@ -239,24 +251,97 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     if "originName" in obj["ticketLegs"][0] and "destinationName" in obj["ticketLegs"][0]:
                         ticket_type = "transit"
                         obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+                        obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
+                        if distributor := ticket_data.distributor():
+                            obj["ticketLegs"][0]["transitOperatorName"] = {
+                                "defaultValue": {
+                                    "language": "en",
+                                    "value": distributor["full_name"],
+                                }
+                            }
+                    else:
+                        if distributor := ticket_data.distributor():
+                            obj["textModulesData"].append({
+                                "id": "distributor",
+                                "localizedHeader": {
+                                    "translatedValues": [{
+                                        "language": "de",
+                                        "value": "Ausstellende Organisation"
+                                    }],
+                                    "defaultValue": {
+                                        "language": "en-gb",
+                                        "value": "Issuing Organisation"
+                                    }
+                                },
+                                "body": distributor["full_name"],
+                            })
 
-                    obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
 
                     if "classCode" in document:
-                        if document["classCode"] == "first":
-                            obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "FIRST"
-                        elif document["classCode"] == "second":
-                            obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "ECONOMY"
+                        if ticket_type == "transit":
+                            if document["classCode"] == "first":
+                                    obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "FIRST"
+                            elif document["classCode"] == "second":
+                                obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "ECONOMY"
+                        else:
+                            class_name = None
+                            if document["classCode"] == "first":
+                                class_name = {
+                                    "translatedValues": [{
+                                        "language": "de",
+                                        "value": "1."
+                                    }],
+                                    "defaultValue": {
+                                        "language": "en-gb",
+                                        "value": "First"
+                                    }
+                                }
+                            elif document["classCode"] == "second":
+                                class_name = {
+                                    "translatedValues": [{
+                                        "language": "de",
+                                        "value": "2."
+                                    }],
+                                    "defaultValue": {
+                                        "language": "en-gb",
+                                        "value": "Second"
+                                    }
+                                }
+
+                            if class_name:
+                                obj["textModulesData"].append({
+                                    "id": "class",
+                                    "localizedHeader": {
+                                        "translatedValues": [{
+                                            "language": "de",
+                                            "value": "Klasse"
+                                        }],
+                                        "defaultValue": {
+                                            "language": "en-gb",
+                                            "value": "Class"
+                                        }
+                                    },
+                                    "localizedBody": class_name,
+                                })
 
                     if len(document.get("tariffs")) >= 1:
                         tariff = document["tariffs"][0]
                         if "tariffDesc" in tariff:
-                            obj["ticketLegs"][0]["fareName"] = {
-                                "defaultValue": {
-                                    "language": "en",
-                                    "value": tariff["tariffDesc"]
+                            if ticket_type == "transit":
+                                obj["ticketLegs"][0]["fareName"] = {
+                                    "defaultValue": {
+                                        "language": "en",
+                                        "value": tariff["tariffDesc"]
+                                    }
                                 }
-                            }
+                            else:
+                                obj["header"] = {
+                                    "defaultValue": {
+                                        "language": "en",
+                                        "value": tariff["tariffDesc"]
+                                    }
+                                }
+
 
                         for i, card in enumerate(tariff.get("reductionCard", [])):
                             obj["textModulesData"].append({
@@ -282,20 +367,28 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         obj["ticketLegs"][0]["carriage"] = train_number
 
                     if "productIdIA5" in document:
-                        obj["textModulesData"].append({
-                            "id": "product-id",
-                            "localizedHeader": {
-                                "translatedValues": [{
-                                    "language": "de",
-                                    "value": "Produkt"
-                                }],
+                        if "header" in obj or ticket_type == "transit":
+                            obj["textModulesData"].append({
+                                "id": "product-id",
+                                "localizedHeader": {
+                                    "translatedValues": [{
+                                        "language": "de",
+                                        "value": "Produkt"
+                                    }],
+                                    "defaultValue": {
+                                        "language": "en-gb",
+                                        "value": "Product"
+                                    }
+                                },
+                                "body": document["productIdIA5"],
+                            })
+                        else:
+                            obj["header"] = {
                                 "defaultValue": {
-                                    "language": "en-gb",
-                                    "value": "Product"
+                                    "language": "en",
+                                    "value": document["productIdIA5"],
                                 }
-                            },
-                            "body": document["productIdIA5"],
-                        })
+                            }
 
                     if "validRegionDesc" in document:
                         obj["textModulesData"].append({
@@ -386,11 +479,34 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         })
 
                     if "classCode" in document:
-                        class_name = document["classCode"]
+                        class_name = {
+                            "defaultValue": {
+                                "language": "en",
+                                "value": document["classCode"]
+                            }
+                        }
                         if class_name == "first":
-                            class_name = "1."
+                            class_name = {
+                                "translatedValues": [{
+                                    "language": "de",
+                                    "value": "1."
+                                }],
+                                "defaultValue": {
+                                    "language": "en-gb",
+                                    "value": "First"
+                                }
+                            }
                         elif class_name == "second":
-                            class_name = "2."
+                            class_name = {
+                                "translatedValues": [{
+                                    "language": "de",
+                                    "value": "2."
+                                }],
+                                "defaultValue": {
+                                    "language": "en-gb",
+                                    "value": "Second"
+                                }
+                            }
                         obj["textModulesData"].append({
                             "id": "class",
                             "localizedHeader": {
@@ -403,7 +519,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "value": "Class"
                                 }
                             },
-                            "body": class_name
+                            "localizedBody": class_name
                         })
 
                     if "cardTypeDescr" in document:
@@ -513,6 +629,163 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         if ticket_type:
             return obj, ticket_type
 
+    elif isinstance(ticket_instance, models.VDVTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+
+        validity_start = ticket_data.ticket.validity_start.as_datetime().astimezone(pytz.utc)
+        validity_end = ticket_data.ticket.validity_end.as_datetime().astimezone(pytz.utc)
+        issued_at = ticket_data.ticket.transaction_time.as_datetime().astimezone(pytz.utc)
+
+        obj["logo"] = {
+            "sourceUri": {
+                "uri": urllib.parse.urljoin(
+                    settings.EXTERNAL_URL_BASE,
+                    static("pass/icon@3x.png"),
+                )
+            },
+        }
+        obj["hexBackgroundColor"] = "#ffffff"
+        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
+        obj["barcode"] = {
+            "type": "AZTEC",
+            "alternateText": str(ticket_data.ticket.ticket_id),
+            "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+        }
+
+        if ticket_data.ticket.product_org_id == 3000:
+            obj["cardTitle"] = {
+                "defaultValue": {
+                    "language": "en",
+                    "value": ticket_data.ticket.ticket_org_name()
+                }
+            }
+        else:
+            obj["cardTitle"] = {
+                "defaultValue": {
+                    "language": "en",
+                    "value": ticket_data.ticket.product_org_name()
+                }
+            }
+
+        obj["validTimeInterval"] = {
+            "start": {
+                "date": validity_start.isoformat()
+            },
+            "end": {
+                "date": validity_end.isoformat()
+            }
+        }
+        obj["header"] = {
+            "defaultValue": {
+                "language": "en",
+                "value": ticket_data.ticket.product_name()
+            }
+        }
+        obj["textModulesData"].append({
+            "id": "product-org",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Produktorganisation"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Product Organisation"
+                }
+            },
+            "body": ticket_data.ticket.product_org_name()
+        })
+        obj["textModulesData"].append({
+            "id": "ticket-id",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Ticket-ID"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Ticket ID"
+                }
+            },
+            "body": str(ticket_data.ticket.ticket_id)
+        })
+        obj["textModulesData"].append({
+            "id": "ticket-org",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Ticketverkaufsorganisation"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Ticketing Organisation"
+                }
+            },
+            "body": ticket_data.ticket.ticket_org_name()
+        })
+        obj["textModulesData"].append({
+            "id": "issued-at",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Ausgestellt am"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Issued at"
+                }
+            },
+            "body": issued_at.isoformat(),
+        })
+        obj["textModulesData"].append({
+            "id": "issuing-org",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Ausstellende Organisation"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Issuing Organisation"
+                }
+            },
+            "body": ticket_data.ticket.kvp_org_name()
+        })
+
+        for elm in ticket_data.ticket.product_data:
+            if isinstance(elm, vdv.ticket.PassengerData):
+                obj["textModulesData"].append({
+                    "id": "traveler",
+                    "localizedHeader": {
+                        "translatedValues": [{
+                            "language": "de",
+                            "value": "Fahrgast"
+                        }],
+                        "defaultValue": {
+                            "language": "en-gb",
+                            "value": "Traveler"
+                        }
+                    },
+                    "body": f"{elm.forename} {elm.surname}",
+                })
+                if elm.date_of_birth:
+                    obj["textModulesData"].append({
+                        "id": "dob",
+                        "localizedHeader": {
+                            "translatedValues": [{
+                                "language": "de",
+                                "value": "Geburtsdatum"
+                            }],
+                            "defaultValue": {
+                                "language": "en-gb",
+                                "value": "Date of Birth"
+                            }
+                        },
+                        "body": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+        return obj, "generic"
+
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         obj["cardTitle"] = {
             "defaultValue": {
@@ -561,14 +834,14 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 }
             }
             photo_url = reverse("ticket_pass_photo_banner", kwargs={"pk": ticket.pk})
-            obj["imageModulesData"] = [{
+            obj["imageModulesData"].append({
                 "id": "photo",
                 "mainImage": {
                     "sourceUri": {
                         "uri": f"{settings.EXTERNAL_URL_BASE}{photo_url}",
                     }
                 }
-            }]
+            })
             obj["textModulesData"].append({
                 "id": "traveler-1",
                 "header": "Issued to",

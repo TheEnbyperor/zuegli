@@ -202,6 +202,7 @@ GWALLET_CONF = {
     "issuer_id": "3388000000009246234",
     "railcard_pass_class": "pass.ch.magicalcodewit.vdv.railcard",
     "train_ticket_pass_class": "pass.ch.magicalcodewit.vdv.ticket",
+    "train_pass_class": "pass.ch.magicalcodewit.vdv.train",
     "bahncard_pass_class": "pass.ch.magicalcodewit.vdv.bahncard",
 }
 

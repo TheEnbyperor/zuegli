@@ -21,8 +21,8 @@ class Certificate:
             modulus=int.from_bytes(modulus, "big"),
             modulus_len=len(modulus),
             exponent=int(data["public_exponent_hex"], 16),
-            valid_from=datetime.datetime.strptime(data["valid_from"], "%Y-%m-%d %H:%M:%S"),
-            valid_until=datetime.datetime.strptime(data["valid_until"], "%Y-%m-%d %H:%M:%S"),
+            valid_from=datetime.datetime.fromisoformat(data["valid_from"]),
+            valid_until=datetime.datetime.fromisoformat(data["valid_until"]),
         )
 
 

@@ -152,6 +152,110 @@ class Command(BaseCommand):
                                 "firstValue": {
                                     "fields": [{
                                         "fieldPath": "object.textModulesData['issued-at']",
+                                        "dateFormat": "DATE_TIME_YEAR",
+                                    }]
+                                }
+                            },
+                        }, {
+                            "item": {
+                                "firstValue": {
+                                    "fields": [{
+                                        "fieldPath": "object.linksModuleData.uris['distributor']",
+                                    }]
+                                }
+                            },
+                        }]
+                    }
+                },
+                "securityAnimation": {
+                    "animationType": "foilShimmer"
+                },
+                "multipleDevicesAndHoldersAllowedStatus": "oneUserAllDevices"
+            }
+        ).execute()
+        generic_class.update(
+            resourceId=f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}",
+            body={
+                "id": f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}",
+                "enableSmartTap": False,
+                "classTemplateInfo": {
+                    "cardTemplateOverride": {
+                        "cardRowTemplateInfos": [{
+                            "twoItems": {
+                                "startItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.textModulesData['traveler']"
+                                        }, {
+                                            "fieldPath": "object.textModulesData['traveler-0']"
+                                        }]
+                                    }
+                                },
+                                "endItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.textModulesData['dob']",
+                                            "dateFormat": "DATE_YEAR"
+                                        }, {
+                                            "fieldPath": "object.textModulesData['dob-0']",
+                                            "dateFormat": "DATE_YEAR"
+                                        }]
+                                    }
+                                }
+                            }
+                        }, {
+                            "threeItems": {
+                                "startItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.validTimeInterval.start",
+                                            "dateFormat": "DATE_YEAR"
+                                        }]
+                                    }
+                                },
+                                "middleItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.validTimeInterval.end",
+                                            "dateFormat": "DATE_YEAR"
+                                        }]
+                                    }
+                                },
+                                "endItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.imageModulesData['thumb']"
+                                        }]
+                                    }
+                                }
+                            },
+                        }, {
+                            "oneItem": {
+                                "item": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.textModulesData['class']",
+                                        }]
+                                    }
+                                },
+                            },
+                        }],
+                    },
+                    "detailsTemplateOverride": {
+                        "detailsItemInfos": [{
+                            "item": {
+                                "firstValue": {
+                                    "fields": [{
+                                        "fieldPath": "object.textModulesData['product']",
+                                    }]
+                                }
+                            },
+                        }, {
+                            "item": {
+                                "firstValue": {
+                                    "fields": [{
+                                        "fieldPath": "object.textModulesData['issued-at']",
+                                        "dateFormat": "DATE_TIME_YEAR"
                                     }]
                                 }
                             },

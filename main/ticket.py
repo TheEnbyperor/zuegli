@@ -268,7 +268,7 @@ class RSPTicket:
     issuer_id: str
     ticket_ref: str
     raw_ticket: bytes
-    data: typing.Union[rsp.RailcardData]
+    data: typing.Union[rsp.RailcardData, rsp.TicketData]
 
     @property
     def ticket_type(self) -> str:
@@ -310,7 +310,7 @@ class RSPTicket:
         return ":".join(f"{b:02x}" for b in self.raw_ticket)
 
     def issuer_name(self):
-        return rsp.data.issuer_name(self.issuer_id)
+        return rsp.issuers.issuer_name(self.issuer_id)
 
 @dataclasses.dataclass
 class SNCFTicket:
@@ -752,7 +752,7 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
 
     if not ticket_payload:
         raise TicketError(
-            title="Unable to decrypt RS6 ticket",
+            title="Unable to decrypt RSP ticket",
             message="None of the issuer's public keys match the RSP ticket",
         )
 

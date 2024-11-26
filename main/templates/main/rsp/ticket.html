@@ -361,14 +361,18 @@
             <dd class="govuk-summary-list__value"><code>{{ data.restriction_code }}</code></dd>
         </div>
     {% endif %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Coupon type</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Passenger name</dt>
-        <dd class="govuk-summary-list__value">{{ data.passenger_name }}</dd>
-    </div>
+    {% if data.coupon_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Coupon type</dt>
+            <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
+        </div>
+    {% endif %}
+    {% if data.passenger_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger name</dt>
+            <dd class="govuk-summary-list__value">{{ data.passenger_name }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Departure time</dt>
         <dd class="govuk-summary-list__value">
@@ -421,20 +425,24 @@
                         <dt class="govuk-summary-list__key">Price</dt>
                         <dd class="govuk-summary-list__value">{{ data.purchase_data.price_str }}</dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Purchase reference</dt>
-                        <dd class="govuk-summary-list__value">{{ data.purchase_data.purchase_reference }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Days of validity</dt>
-                        <dd class="govuk-summary-list__value">{{ data.purchase_data.days_of_validity }}</dd>
-                    </div>
+                    {% if data.purchase_data.purchase_reference %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Purchase reference</dt>
+                            <dd class="govuk-summary-list__value">{{ data.purchase_data.purchase_reference }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if data.purchase_data.days_of_validity %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Days of validity</dt>
+                            <dd class="govuk-summary-list__value">{{ data.purchase_data.days_of_validity }}</dd>
+                        </div>
+                    {% endif %}
                 </dl>
             </dd>
         </div>
     {% endif %}
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Sale</dt>
+        <dt class="govuk-summary-list__key">Sale location</dt>
         <dd class="govuk-summary-list__value">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
@@ -442,7 +450,7 @@
                     <dd class="govuk-summary-list__value"><code>{{ data.selling_nlc }}</code></dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Location name</dt>
+                    <dt class="govuk-summary-list__key">Name</dt>
                     <dd class="govuk-summary-list__value">{{ data.selling_nlc_name }}</dd>
                 </div>
             </dl>

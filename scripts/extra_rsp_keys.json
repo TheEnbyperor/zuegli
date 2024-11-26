@@ -1,0 +1,12 @@
+{
+  "R5": [
+    {
+      "is_test": false,
+      "issuer_id": "R5",
+      "modulus_hex": "a21f56fac2255ce908fb088ad703319530353416e2778311315d43bd164c9eed6a11aca0675acc65ff15a373724f0ae8729679617e2c725e1b0de4eedb7516e0a376f02b34d805ba1b7ff5ca4089517ba0ea572b60f51541b34c88108122b9c289810abcb23f3d772f85b2904eafc70b3a49013cd55f4a0bb927b185f1bf5939",
+      "public_exponent_hex": "10001",
+      "valid_from": "2022-12-12T11:25:58",
+      "valid_until": "2032-12-09T11:25:58"
+    }
+  ]
+}
