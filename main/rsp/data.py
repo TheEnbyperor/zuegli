@@ -63,6 +63,9 @@ class PurchaseData:
     def purchase_time(self):
         return TZ.localize(self.purchase_date)
 
+    def price_str(self):
+        return f"£{self.price:.2f}"
+
 @dataclasses.dataclass
 class Reservation:
     service_id: str

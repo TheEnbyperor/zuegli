@@ -2021,33 +2021,43 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     "value": ticket_type.ticket_type_name,
                 })
                 if ticket_type.validity:
-                    pass_fields["backFields"].extend([{
-                        "key": "product-validity-outward-date",
-                        "label": "product-validity-outward-date-label",
-                        "attributedValue": format_text(ticket_type.validity.day_outward),
-                    }, {
-                        "key": "product-validity-outward-time",
-                        "label": "product-validity-outward-time-label",
-                        "attributedValue": format_text(ticket_type.validity.time_outward),
-                    }, {
-                        "key": "product-validity-return-date",
-                        "label": "product-validity-return-date-label",
-                        "attributedValue": format_text(ticket_type.validity.day_return),
-                    }, {
-                        "key": "product-validity-return-time",
-                        "label": "product-validity-return-time-label",
-                        "attributedValue": format_text(ticket_type.validity.time_return),
-                    }])
+                    if ticket_type.validity.day_outward:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-outward-date",
+                            "label": "product-validity-outward-date-label",
+                            "attributedValue": format_text(ticket_type.validity.day_outward),
+                        })
+                    if ticket_type.validity.time_outward:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-outward-time",
+                            "label": "product-validity-outward-time-label",
+                            "attributedValue": format_text(ticket_type.validity.time_outward),
+                        })
+                    if ticket_type.validity.day_return:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-return-date",
+                            "label": "product-validity-return-date-label",
+                            "attributedValue": format_text(ticket_type.validity.day_return),
+                        })
+                    if ticket_type.validity.time_return:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-return-time",
+                            "label": "product-validity-return-time-label",
+                            "attributedValue": format_text(ticket_type.validity.time_return),
+                        })
                 if ticket_type.break_of_journey:
-                    pass_fields["backFields"].extend([{
-                        "key": "product-break-of-journey-outward",
-                        "label": "product-break-of-journey-outward-label",
-                        "attributedValue": format_text(ticket_type.break_of_journey.outward_note),
-                    }, {
-                        "key": "product-break-of-journey-return",
-                        "label": "product-break-of-journey-return-label",
-                        "attributedValue": format_text(ticket_type.break_of_journey.return_note),
-                    }])
+                    if ticket_type.break_of_journey.outward_note:
+                        pass_fields["backFields"].append({
+                            "key": "product-break-of-journey-outward",
+                            "label": "product-break-of-journey-outward-label",
+                            "attributedValue": format_text(ticket_type.break_of_journey.outward_note),
+                        })
+                    if ticket_type.break_of_journey.return_note:
+                        pass_fields["backFields"].append({
+                            "key": "product-break-of-journey-return",
+                            "label": "product-break-of-journey-return-label",
+                            "attributedValue": format_text(ticket_type.break_of_journey.return_note),
+                        })
                 if ticket_type.conditions:
                     pass_fields["backFields"].append({
                         "key": "product-conditions",
@@ -2069,6 +2079,9 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
 
             if ticket_data.issuer_id in RSP_ORG_LOGO:
                 add_pkp_img(pkp, RSP_ORG_LOGO[ticket_data.issuer_id], "logo.png")
+                have_logo = True
+            else:
+                add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
                 have_logo = True
 
         elif isinstance(ticket_data.data, rsp.RailcardData):

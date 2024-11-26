@@ -19,8 +19,6 @@ class NonReservationTicket:
     arrival_station_uic: typing.Optional[int]
     departure_station_name: typing.Optional[str]
     arrival_station_name: typing.Optional[str]
-    passenger_name: str
-    countermark: int
     information_message: int
     extra_text: str
 
@@ -77,8 +75,6 @@ class NonReservationTicket:
             arrival_station_uic=arrival_station_uic,
             departure_station_name=departure_station_name,
             arrival_station_name=arrival_station_name,
-            passenger_name=data.read_string(198, 270),
-            countermark=data.read_int(270, 278),
-            information_message=data.read_int(278, 292),
-            extra_text=data.read_string(292, 436),
+            information_message=data.read_int(198, 212),
+            extra_text=data.read_string(212, 434),
         )

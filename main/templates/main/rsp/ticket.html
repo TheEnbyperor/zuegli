@@ -99,6 +99,11 @@
                                 </dd>
                             </div>
                         {% endif %}
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ data.origin_nlc_name }}</dd>
+                        </div>
                     {% endif %}
                 {% endwith %}
             </dl>
@@ -398,7 +403,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Price</dt>
-                        <dd class="govuk-summary-list__value">&pound;{{ data.purchase_data.price }}</dd>
+                        <dd class="govuk-summary-list__value">{{ data.purchase_data.price_str }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Purchase reference</dt>

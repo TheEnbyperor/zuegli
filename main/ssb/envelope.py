@@ -69,8 +69,7 @@ class Envelope:
             try:
                 pk.verify(sig, self.signed_data, hasher)
                 return True
-            except cryptography.exceptions.InvalidSignature as e:
-                print(f"Invalid signature {e}")
+            except cryptography.exceptions.InvalidSignature:
                 return False
         else:
             return False
