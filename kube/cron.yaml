@@ -101,11 +101,11 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: vdv-pkpass-data-sync
+  name: vdv-pkpass-uic-certs
   namespace: q-personal
   labels:
     app: vdv-pkpass
-    part: data-sync
+    part: uic-certs
 spec:
   schedule: "0 4 * * *"
   jobTemplate:
@@ -117,7 +117,7 @@ spec:
           labels:
             app: vdv-pkpass
             class: cron
-            part: data-sync
+            part: uic-certs
         spec:
           restartPolicy: OnFailure
           volumes:
@@ -129,10 +129,10 @@ spec:
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: IfNotPresent
               command: ["sh", "-c", "python3 manage.py download-uic-certs"]
-              volumeMounts: &volumeMounts
+              volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
-              envFrom: &envFrom
+              envFrom:
                 - configMapRef:
                     name: vdv-pkpass
                 - secretRef:
@@ -147,30 +147,156 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vdv-pkpass-uic-data
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: uic-data
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: uic-data
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
             - name: uic-data
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: IfNotPresent
-              command: ["sh", "-c", "python3 manage.py download-uic-data"]
-              volumeMounts: *volumeMounts
-              envFrom: *envFrom
-#            - name: vdv-certs
-#              image: theenbyperor/vdv-pkpass-django:(version)
-#              imagePullPolicy: IfNotPresent
-#              command: ["sh", "-c", "python3 manage.py download-vdv-certs"]
-#              volumeMounts: *volumeMounts
-#              envFrom: *envFrom
+              command: [ "sh", "-c", "python3 manage.py download-uic-data" ]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vdv-pkpass-vdv-orgs
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: vdv-orgs
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: vdv-orgs
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
             - name: vdv-orgs
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: IfNotPresent
-              command: ["sh", "-c", "python3 manage.py download-vdv-orgs"]
-              volumeMounts: *volumeMounts
-              envFrom: *envFrom
+              command: [ "sh", "-c", "python3 manage.py download-vdv-orgs" ]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vdv-pkpass-rsp-data
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: rsp-data
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: rsp-data
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
             - name: rsp-data
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: IfNotPresent
               command: ["sh", "-c", "python3 manage.py download-rsp-data"]
-              volumeMounts: *volumeMounts
-              envFrom: *envFrom
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

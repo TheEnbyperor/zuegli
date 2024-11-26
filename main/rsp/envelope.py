@@ -1,5 +1,6 @@
 import dataclasses
 import base26
+import hashlib
 from . import util, pki, issuers
 
 
@@ -43,6 +44,10 @@ class Envelope:
         h = int.from_bytes(self.payload, 'big')
         m = pow(h, cert.exponent, cert.modulus)
         data = m.to_bytes(cert.modulus_len, 'big')
+
+        data, message_hash = data[:-8], data[-8:]
+
+        # TODO: figure out what this is a hash over, and verify
 
         if data[0] == 0 and data[1] == 1:
             offset = 2

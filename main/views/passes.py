@@ -1509,14 +1509,14 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 pass_fields["backFields"].append({
                     "key": "train-data",
                     "label": "train-number-label",
-                    "value": parsed_layout.train_data,
+                    "value": parsed_layout.train_data.replace("<", "%lt;"),
                 })
 
             if parsed_layout.extra:
                 pass_fields["backFields"].append({
                     "key": "extra-data",
                     "label": "other-data-label",
-                    "value": parsed_layout.extra,
+                    "value": parsed_layout.extra.replace("<", "%lt;"),
                 })
 
             if parsed_layout.operator_rics:
@@ -1552,7 +1552,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 pass_fields["backFields"].append({
                     "key": "conditions",
                     "label": "product-conditions-label",
-                    "value": parsed_layout.conditions,
+                    "value": parsed_layout.conditions.replace("<", "%lt;"),
                 })
 
             if parsed_layout.trips:
