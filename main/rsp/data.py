@@ -87,14 +87,13 @@ class TicketData:
     purchase_data: typing.Optional[PurchaseData]
     reservations: typing.List[Reservation]
     free_use: str
-    sha256_hash: bytes
 
     @classmethod
     def parse(cls, payload: bytes):
         d = BitStream(payload)
 
-        if (len(payload) * 8) != 928:
-            raise util.RSPException(f"Invalid payload length")
+        if len(payload) < 108:
+            raise util.RSPException(f"Invalid length for ticket data - expected 108 bytes, got {len(payload)} bytes")
 
         extended_free_text = d.read_bool(383)
         full_ticket = d.read_bool(384)
@@ -138,8 +137,6 @@ class TicketData:
             free_text = d.read_string(offset, offset+84)
             offset += 84
 
-        hash_offset = (len(payload) * 8) - 64
-
         return cls(
             mandatory_manual_check=d.read_bool(0),
             non_revenue=d.read_bool(1),
@@ -171,11 +168,7 @@ class TicketData:
             purchase_data=purchase_data,
             reservations=reservations,
             free_use=free_text,
-            sha256_hash=d.read_bytes(hash_offset, hash_offset+64)
         )
-
-    def sha256_hash_hex(self):
-        return ":".join(f"{b:02x}" for b in self.sha256_hash)
 
     def validity_start_time(self):
         return TZ.localize(self.start_date)
@@ -231,12 +224,11 @@ class RailcardData:
     selling_transaction_number: int
     no_ipe: bool
     free_use: str
-    sha256_hash: bytes
 
     @classmethod
     def parse(cls, payload: bytes):
-        if len(payload) != 116:
-            raise util.RSPException(f"Invalid length for railcard data - expected 116 bytes, got {len(payload)} bytes")
+        if len(payload) < 108:
+            raise util.RSPException(f"Invalid length for railcard data - expected 108 bytes, got {len(payload)} bytes")
 
         d = BitStream(payload)
 
@@ -267,14 +259,10 @@ class RailcardData:
             no_ipe=d.read_bool(742),
             # 1 bit - RFU
             free_use=d.read_string(744, 864),
-            sha256_hash=d.read_bytes(864, 928)
         )
 
     def has_passenger_2(self):
         return bool(self.passenger_2_title or self.passenger_2_forename or self.passenger_2_surname)
-
-    def sha256_hash_hex(self):
-        return ":".join(f"{b:02x}" for b in self.sha256_hash)
 
     def passenger_1_name(self):
         return f"{self.passenger_1_title + ' ' if self.passenger_1_title else ''}{self.passenger_1_forename} {self.passenger_1_surname}"
