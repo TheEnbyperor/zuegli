@@ -157,7 +157,7 @@
             <dd class="govuk-summary-list__value">
                 <ul class="govuk-list--bullet">
                     {% for carrier in res.carrierNum %}
-                        {% with org=res.productOwnerNum|rics %}
+                        {% with org=carrier|rics %}
                             {% if org %}
                                 <li>{% include 'main/rics.html' with org=org %}</li>
                             {% else %}
