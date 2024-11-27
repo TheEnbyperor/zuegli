@@ -1,5 +1,5 @@
 {% load tz rics %}
-<h2 class="govuk-heading-m">Additional UIC918.3 VU-Record</h2>
+<h2 class="govuk-heading-m">VDV Data</h2>
 <dl class="govuk-summary-list">
     {% if db_vu.terminal_number %}
         <div class="govuk-summary-list__row">
@@ -42,14 +42,22 @@
                                             <dd class="govuk-summary-list__value">{{ auth.authorization_number }}</dd>
                                         </div>
                                     {% endif %}
-                                    {% if auth.issuer %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Issuer</dt>
-                                            <dd class="govuk-summary-list__value">{{ auth.issuer }}
-                                                (ID: {{ auth.issuer_id }})
-                                            </dd>
-                                        </div>
-                                    {% endif %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Issuer ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ auth.issuer_id }}</code>
+                                        </dd>
+                                    </div>
+                                    {% with org_name=auth.issuer %}
+                                        {% if org_name %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Issuer Name</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ org_name }}
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </dl>
                             </dd>
                         </div>
@@ -61,22 +69,36 @@
                             <dt class="govuk-summary-list__key">Product Details</dt>
                             <dd class="govuk-summary-list__value">
                                 <dl class="govuk-summary-list">
-                                    {% if details.product_type %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Type</dt>
-                                            <dd class="govuk-summary-list__value">{{ details.product_type }}
-                                                (ID: {{ details.product_type_id }})
-                                            </dd>
-                                        </div>
-                                    {% endif %}
-                                    {% if details.issuer %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Issuer</dt>
-                                            <dd class="govuk-summary-list__value">{{ details.issuer }}
-                                                (ID: {{ details.issuer_id }})
-                                            </dd>
-                                        </div>
-                                    {% endif %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Product ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ details.product_type_id }}</code>
+                                        </dd>
+                                    </div>
+                                    {% with product_name=details.product_type %}
+                                        {% if product_name %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Product Name</dt>
+                                                <dd class="govuk-summary-list__value">{{ product_name }}</dd>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Issuer ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ details.issuer_id }}</code>
+                                        </dd>
+                                    </div>
+                                    {% with org_name=details.issuer %}
+                                        {% if org_name %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Issuer Name</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ org_name }}
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </dl>
                             </dd>
                         </div>

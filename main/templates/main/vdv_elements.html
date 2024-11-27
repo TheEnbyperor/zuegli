@@ -183,7 +183,7 @@
         {% elif elm.TYPE == "spacial-validity" %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Spacial validity</h2>
+                    <h2 class="govuk-summary-card__title">Spacial validity - variant {{ elm.variant }}</h2>
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
@@ -206,9 +206,9 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Areas</dt>
                             <dd class="govuk-summary-list__value">
-                                <ul class="govuk-list">
-                                    {% for area in elm.area_ids %}
-                                        <li><code>{{ area }}</code></li>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    {% for area in elm.area_names %}
+                                        <li>{{ area }}</li>
                                     {% endfor %}
                                 </ul>
                             </dd>

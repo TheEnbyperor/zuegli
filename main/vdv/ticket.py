@@ -3,7 +3,7 @@ import enum
 import typing
 import ber_tlv.tlv
 import re
-from . import util, org_id, product_id
+from . import util, org_id, product_id, codes
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
@@ -565,7 +565,7 @@ class PassengerData:
 class SpacialValidity:
     TYPE = "spacial-validity"
 
-    definition_type: int
+    variant: str
     organization_id: int
     area_ids: typing.List[int]
 
@@ -574,11 +574,46 @@ class SpacialValidity:
 
     @classmethod
     def parse(cls, data: bytes):
-        if data[0] in (0x0F, 0x10):
+        definition_type = data[0]
+        variant = None
+
+        if definition_type in (0x01, 0x02, 0x03, 0x04):
+            variant = "A"
+        elif definition_type in (0x05, 0x06, 0x07, 0x08):
+            variant = "B"
+        elif definition_type in (0x09, 0x0A, 0x0B, 0x0C):
+            variant = "C"
+        elif definition_type in (0x0D, 0x0E, 0x0F, 0x10):
+            variant = "D"
+        elif definition_type in (0x11, 0x12, 0x13, 0x14):
+            variant = "E"
+        elif definition_type in (0x15, 0x16, 0x17, 0x18):
+            variant = "F"
+        elif definition_type in (0x19, 0x1A, 0x1B, 0x1C):
+            variant = "G"
+        elif definition_type in (0x1D, 0x1E, 0x1F, 0x20):
+            variant = "H"
+        elif definition_type in (0x25, 0x26, 0x27, 0x28):
+            variant = "I"
+        elif definition_type in (0x29, 0x2A, 0x2B, 0x2C):
+            variant = "K"
+
+        if definition_type in (0x01, 0x05, 0x09, 0x0D, 0x11, 0x15, 0x19, 0x1D, 0x25, 0x29):
+            area_ids = [int.from_bytes(data[i:i + 3], 'big') for i in range(3, len(data), 3)]
+        elif definition_type in (0x02, 0x06, 0x0A, 0x0E, 0x12, 0x16, 0x1A, 0x1E, 0x26, 0x2A):
+            area_ids = [int.from_bytes(data[i:i + 3], 'little') for i in range(3, len(data), 3)]
+        elif definition_type in (0x03, 0x07, 0x0B, 0x0F, 0x13, 0x17, 0x1B, 0x1F, 0x27, 0x2B):
+            area_ids = [int.from_bytes(data[i:i + 2], 'big') for i in range(3, len(data), 2)]
+        elif definition_type in (0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20, 0x28, 0x2C):
+            area_ids = [int.from_bytes(data[i:i + 2], 'little') for i in range(3, len(data), 2)]
+        else:
+            area_ids = []
+
+        if variant:
             return cls(
-                definition_type=data[0],
+                variant=variant,
                 organization_id=int.from_bytes(data[1:3], 'big'),
-                area_ids=[int.from_bytes(data[i:i + 2], 'big') for i in range(3, len(data), 2)]
+                area_ids=area_ids
             )
         else:
             return UnknownSpacialValidity(
@@ -591,6 +626,24 @@ class SpacialValidity:
 
     def organization_name_opt(self):
         return map_org_id(self.organization_id, True)
+
+    def area_names(self):
+        out = []
+        if self.organization_id in codes.SPACIAL_VALIDITY:
+            mapping = codes.SPACIAL_VALIDITY[self.organization_id]
+            if isinstance(mapping, dict):
+                for area in self.area_ids:
+                    if name := mapping.get(area):
+                        out.append(name)
+                    else:
+                        out.append(f"Unknown - {area}")
+            elif callable(mapping):
+                for area in self.area_ids:
+                    if name := mapping(area):
+                        out.append(name)
+                    else:
+                        out.append(f"Unknown - {area}")
+        return out
 
 
 @dataclasses.dataclass

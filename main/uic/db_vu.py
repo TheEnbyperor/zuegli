@@ -1,8 +1,7 @@
 import dataclasses
 import typing
 import datetime
-from . import codes, stations
-from ..vdv import ticket
+from ..vdv import ticket, org_id, product_id
 
 class DBVUException(Exception):
     pass
@@ -13,7 +12,7 @@ class DBRecordVU:
   products: typing.List["DBVUProduct"]
 
   @classmethod
-  def parse(cls, data: bytes, version: int, context: ticket.Context):
+  def parse(cls, data: bytes, version: int, context: "ticket.Context"):
     if version != 1:
       raise DBVUException(f"Unsupported record version {version}")
 
@@ -49,9 +48,9 @@ class DBVUProduct:
   validity_end: datetime.datetime                   # GueltigBis
   cost: typing.Optional[str]                        # Preis
   sequence_number: typing.Optional[int]             # Sequenznummer (SAM)
-  product_data: typing.List[ticket.ELEMENT]
+  product_data: typing.List["ticket.ELEMENT"]
 
-  def __init__(self, data: bytes, context: ticket.Context):
+  def __init__(self, data: bytes, context: "ticket.Context"):
     self.__data = data
     offset = 0
     self.product_authorization = DBVUProductAuthorization(data[offset:offset+6])
@@ -116,32 +115,49 @@ class DBVUProduct:
 class DBVUProductAuthorization:
   authorization_number: int # BerechtigungNr
   issuer_id: int            # KVPOrgID
-  issuer: str
 
   def __init__(self, data: bytes):
     self.__data = data
 
     self.authorization_number = int.from_bytes(data[0:4])
-
     self.issuer_id = int.from_bytes(data[4:6])
-    self.issuer = codes.ORGANIZATION_IDS[self.issuer_id] if self.issuer_id in codes.ORGANIZATION_IDS.keys() else "Unknown"
+
+  @property
+  def issuer(self):
+    org, is_test = org_id.get_org(self.issuer_id)
+    if org:
+      if is_test:
+        return f"{org['name']} (Test)"
+      else:
+        return org['name']
+
 
 @dataclasses.dataclass
 class DBVUProductDetails:
   product_type_id: int  # ProduktNr
-  product_type: str
-
   issuer_id: int        # PVOrgID
-  issuer: str
 
   def __init__(self, data: bytes):
     self.__data = data
 
     self.product_type_id = int.from_bytes(data[0:2])
-    self.product_type = codes.PRODUCTS[self.product_type_id] if self.product_type_id in codes.PRODUCTS.keys() else "Unknown"
-
     self.issuer_id = int.from_bytes(data[2:4])
-    self.issuer = codes.ORGANIZATION_IDS[self.issuer_id] if self.issuer_id in codes.ORGANIZATION_IDS.keys() else "Unknown"
+
+  @property
+  def issuer(self):
+    org, is_test = org_id.get_org(self.issuer_id)
+    if org:
+      if is_test:
+        return f"{org['name']} (Test)"
+      else:
+        return org['name']
+
+  @property
+  def product_type(self):
+    product_id_map = product_id.get_product_id_list()
+    if name := product_id_map.get((self.issuer_id, self.product_type_id)):
+      return name
+
 
 class DateTimeCompactParser:
   date: datetime.datetime
