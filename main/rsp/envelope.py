@@ -1,6 +1,7 @@
 import dataclasses
 import base26
 import hashlib
+import typing
 from . import util, pki, issuers
 
 
@@ -40,18 +41,25 @@ class Envelope:
             payload=payload,
         )
 
-    def decrypt_with_cert(self, cert: pki.Certificate) -> bytes:
+    def decrypt_with_cert(self, cert: pki.Certificate) -> typing.Optional[bytes]:
         h = int.from_bytes(self.payload, 'big')
         m = pow(h, cert.exponent, cert.modulus)
         data = m.to_bytes(cert.modulus_len, 'big')
-
-        data, message_hash = data[:-8], data[-8:]
-
-        # TODO: figure out what this is a hash over, and verify
 
         if data[0] == 0 and data[1] == 1:
             offset = 2
             while data[offset] == 0xFF:
                 offset += 1
             if data[offset] == 0:
-                return data[offset+1:]
+                data = data[offset+1:]
+            else:
+                return None
+        else:
+            return None
+
+        data, message_hash = data[:-8], data[-8:]
+
+        if hashlib.sha256(data).digest()[:8] != message_hash:
+            raise util.RSPException("Invalid message integrity hash")
+
+        return data

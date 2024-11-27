@@ -746,7 +746,14 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
 
     ticket_payload = None
     for cert in pki_store.certificates[ticket_envelope.issuer_id]:
-        ticket_payload = ticket_envelope.decrypt_with_cert(cert)
+        try:
+            ticket_payload = ticket_envelope.decrypt_with_cert(cert)
+        except rsp.RSPException:
+            raise TicketError(
+                title="Unable to decrypt RSP ticket",
+                message="Its likely the signature over this ticket has been forged - the ticket is invalid.",
+                exception=traceback.format_exc()
+            )
         if ticket_payload:
             break
 
