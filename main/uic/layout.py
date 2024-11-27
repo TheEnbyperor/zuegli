@@ -41,7 +41,13 @@ class LayoutV1:
     fields: typing.List[LayoutV1Field]
 
     @classmethod
-    def parse(cls, data: bytes) -> "LayoutV1":
+    def parse(cls, data: bytes, issuing_rics: typing.Optional[int] = None) -> "LayoutV1":
+        # The Irish and the Dutch don't know how to zero index
+        if issuing_rics in (60, 1060, 1160, 84, 1084, 1184):
+            offset_x = -1
+        else:
+            offset_x = 0
+
         if len(data) < 8:
             raise util.UICException("UIC ticket layout too short")
 
@@ -99,7 +105,7 @@ class LayoutV1:
 
             fields.append(LayoutV1Field(
                 line=field_line,
-                column=field_column,
+                column=field_column + offset_x,
                 height=field_height,
                 width=field_width,
                 formatting=field_formatting,

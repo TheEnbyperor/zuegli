@@ -1,6 +1,6 @@
 {% load rics plai %}
 <h2 class="govuk-heading-m">Paper ticket</h2>
-{% if layout.standard == "RCT2" %}
+{% if layout.standard == "RCT2" or layout.standard == "RTC2" %}
     <div class="paper-ticket-container">
         <div class="paper-ticket">
             <div class="rct2-ticket-inner">
@@ -52,7 +52,7 @@
     </div>
 {% else %}
     <h2 class="govuk-heading-s">Unknown ticket layout <code>{{ layout.standard }}</code></h2>
-    {% for field in tlayout.fields %}
+    {% for field in layout.fields %}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Field #{{ forloop.counter }}</h2>

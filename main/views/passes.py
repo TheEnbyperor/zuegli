@@ -1273,9 +1273,10 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+            parsed_layout = None
             if ticket_data.layout and ticket_data.layout.standard == "RCT2":
                 parser = uic.rct2_parse.RCT2Parser()
-                parser.read(ticket_data.layout, ticket_data.issuing_rics())
+                parser.read(ticket_data.layout)
                 parsed_layout = parser.parse()
 
                 if parsed_layout.travel_class:
@@ -1323,7 +1324,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     "changeMessage": "validity-end-change"
                 })
 
-            if parsed_layout.document_type:
+            if parsed_layout and parsed_layout.document_type:
                 pass_fields["backFields"].append({
                     "key": "document-type",
                     "label": "product-label",
@@ -1345,28 +1346,28 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
 
-            if parsed_layout.traveller:
+            if parsed_layout and parsed_layout.traveller:
                 pass_fields["backFields"].append({
                     "key": "traveller",
                     "label": "passenger-label",
                     "value": parsed_layout.traveller,
                 })
 
-            if parsed_layout.train_data:
+            if parsed_layout and parsed_layout.train_data:
                 pass_fields["backFields"].append({
                     "key": "train-data",
                     "label": "train-number-label",
                     "value": parsed_layout.train_data,
                 })
 
-            if parsed_layout.extra:
+            if parsed_layout and parsed_layout.extra:
                 pass_fields["backFields"].append({
                     "key": "extra-data",
                     "label": "other-data-label",
                     "value": parsed_layout.extra,
                 })
 
-            if parsed_layout.operator_rics:
+            if parsed_layout and parsed_layout.operator_rics:
                 if carrier := uic.rics.get_rics(parsed_layout.operator_rics):
                     if carrier["url"]:
                         pass_fields["backFields"].append({
@@ -1388,21 +1389,21 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "value": parsed_layout.operator_rics,
                     })
 
-            if parsed_layout.price:
+            if parsed_layout and parsed_layout.price:
                 pass_fields["backFields"].append({
                     "key": "price",
                     "label": "price-label",
                     "value": parsed_layout.price,
                 })
 
-            if parsed_layout.conditions:
+            if parsed_layout and parsed_layout.conditions:
                 pass_fields["backFields"].append({
                     "key": "conditions",
                     "label": "product-conditions-label",
                     "value": parsed_layout.conditions,
                 })
 
-            if parsed_layout.trips:
+            if parsed_layout and parsed_layout.trips:
                 pass_type = "boardingPass"
                 pass_fields["transitType"] = "PKTransitTypeTrain"
 
@@ -1479,9 +1480,9 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                         "value": ticket_data.dt_pa.passenger_name,
                     })
 
-        elif ticket_data.layout and ticket_data.layout.standard == "RCT2":
+        elif ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
             parser = uic.rct2_parse.RCT2Parser()
-            parser.read(ticket_data.layout, ticket_data.issuing_rics())
+            parser.read(ticket_data.layout)
             parsed_layout = parser.parse()
 
             if parsed_layout.travel_class:
