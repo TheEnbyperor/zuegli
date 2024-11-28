@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 
 USER app:app
 
-COPY --from=barkoder /barkoder/build/Barkoder.cpython-312-x86_64-linux-gnu.so /usr/local/lib/python3.12/site-packages/Barkoder.cpython-312-x86_64-linux-gnu.so
+COPY --from=barkoder /barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so /usr/local/lib/python3.13/site-packages/Barkoder.cpython-313-x86_64-linux-gnu.so
 COPY main /app/main
 COPY vdv_pkpass /app/vdv_pkpass
 COPY manage.py /app/manage.py

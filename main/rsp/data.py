@@ -88,6 +88,16 @@ class TicketData:
     reservations: typing.List[Reservation]
     free_use: str
 
+    def version_name(self):
+        if self.spec_version == 2:
+            return "2.0"
+        elif self.spec_version == 3:
+            return "2.1"
+        elif self.spec_version == 0:
+            return "2.2"
+        elif self.spec_version == 1:
+            return "2.3"
+
     @classmethod
     def parse(cls, payload: bytes):
         d = BitStream(payload)

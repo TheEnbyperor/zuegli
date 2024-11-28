@@ -23,12 +23,14 @@
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">RSP Specification Version</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.spec_version }}</code></dd>
+        <dd class="govuk-summary-list__value">{{ data.version_name }}</dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Checksum</dt>
-        <dd class="govuk-summary-list__value"><code>{{ data.checksum }}</code></dd>
-    </div>
+    {% if data.checksum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Checksum</dt>
+            <dd class="govuk-summary-list__value"><code>{{ data.checksum }}</code></dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Barcode Version</dt>
         <dd class="govuk-summary-list__value"><code>{{ data.barcode_version }}</code></dd>
