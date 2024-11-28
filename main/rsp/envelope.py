@@ -46,7 +46,10 @@ class Envelope:
         m = pow(h, cert.exponent, cert.modulus)
         data = m.to_bytes(cert.modulus_len, 'big')
 
-        if data[0] == 0 and data[1] == 1:
+        if data[0] != 0:
+            return None
+
+        if data[1] == 1:
             offset = 2
             while data[offset] == 0xFF:
                 offset += 1
@@ -54,6 +57,11 @@ class Envelope:
                 data = data[offset+1:]
             else:
                 return None
+        elif data[1] == 2:
+            offset = 2
+            while data[offset] != 0x00:
+                offset += 1
+            data = data[offset+1:]
         else:
             return None
 
