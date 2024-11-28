@@ -1,4 +1,4 @@
-FROM python:3.12 AS barkoder
+FROM python:3.13 AS barkoder
 
 RUN apt-get update && apt-get install -y cmake libgl1 libcurl4-openssl-dev pkg-config \
     && rm -rf /var/lib/apt/lists/*
@@ -9,7 +9,7 @@ RUN mkdir /barkoder/build
 WORKDIR /barkoder/build
 RUN cmake .. && make
 
-FROM python:3.12
+FROM python:3.13
 
 RUN mkdir /app
 RUN useradd app
