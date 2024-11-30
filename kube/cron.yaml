@@ -7,7 +7,7 @@ metadata:
     app: vdv-pkpass
     part: db-abo
 spec:
-  schedule: "7 * * * *"
+  schedule: "7/5 * * * *"
   jobTemplate:
     spec:
       template:
@@ -51,13 +51,13 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: vdv-pkpass-db-saarvv
+  name: vdv-pkpass-saarvv
   namespace: q-personal
   labels:
     app: vdv-pkpass
     part: db-saarvv
 spec:
-  schedule: "0 * * * *"
+  schedule: "7/5 * * * *"
   jobTemplate:
     spec:
       template:
