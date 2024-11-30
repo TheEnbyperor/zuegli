@@ -39,7 +39,7 @@
             </div>
         </div>
     </div>
-{% elif layout.standard == "PLAI" %}
+{% elif layout.standard == "PLAI" or layout.standard == "EOSU" %}
     <div class="paper-ticket-container">
         <div class="paper-ticket">
             <div class="plai-ticket-inner" style="width: {{ layout.fields|plai_width }}ch;height: {{ layout.fields|plai_height }}em;">

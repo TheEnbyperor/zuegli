@@ -140,7 +140,7 @@ class VDVTicket:
             sam_version=ticket_issue_data[4],
             sam_sequence_number_2=int.from_bytes(ticket_issue_data[5:9], 'big'),
             sam_id=int.from_bytes(ticket_issue_data[9:12], 'big'),
-            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
+            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), produc_data)),
             product_transaction_data=product_transaction_data[1]
         )
 
