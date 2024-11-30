@@ -24,14 +24,16 @@ def public_key(rics: int, key_id: int):
     cert_name = f"cert-{rics}_{key_id}.der"
     key_name = f"pk-{rics}_{key_id}.der"
 
-    if uic_storage.exists(cert_name):
+    try:
         with uic_storage.open(cert_name) as key_file:
             key = cryptography.x509.load_der_x509_certificate(key_file.read())
 
         return key.public_key()
+    except FileNotFoundError:
+        try:
+            with uic_storage.open(key_name) as key_file:
+                key = cryptography.hazmat.primitives.serialization.load_der_public_key(key_file.read())
 
-    if uic_storage.exists(key_name):
-        with uic_storage.open(key_name) as key_file:
-            key = cryptography.hazmat.primitives.serialization.load_der_public_key(key_file.read())
-
-        return key
+            return key
+        except FileNotFoundError:
+            return None
