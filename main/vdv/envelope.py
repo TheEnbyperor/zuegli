@@ -41,6 +41,9 @@ class EnvelopeV2:
                 residual_data = data
 
             elif tag == util.TAG_CERTIFICATE:
+                if certificate:
+                    raise util.VDVException("Multiple certificates")
+
                 certificate = pki.Certificate.parse_tags(data)
 
             elif tag == util.TAG_CA_REFERENCE:

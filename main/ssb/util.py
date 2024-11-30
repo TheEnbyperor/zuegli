@@ -1,5 +1,4 @@
 import bitstring
-import datetime
 
 class SSBException(Exception):
     pass

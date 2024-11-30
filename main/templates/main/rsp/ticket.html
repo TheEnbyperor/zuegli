@@ -229,25 +229,27 @@
             </dl>
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Discount</dt>
-        <dd class="govuk-summary-list__value">
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Code</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ data.discount_code }}</code></dd>
-                </div>
-                {% with discount=data.discount_code|rsp_discount %}
-                    {% if discount %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Name</dt>
-                            <dd class="govuk-summary-list__value">{{ discount.description }}</dd>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-            </dl>
-        </dd>
-    </div>
+    {% if data.discount_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Discount</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Code</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ data.discount_code }}</code></dd>
+                    </div>
+                    {% with discount=data.discount_code|rsp_discount %}
+                        {% if discount %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Name</dt>
+                                <dd class="govuk-summary-list__value">{{ discount.description }}</dd>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Route</dt>
         <dd class="govuk-summary-list__value">

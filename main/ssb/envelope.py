@@ -1,5 +1,4 @@
 import dataclasses
-import typing
 import cryptography.x509
 import cryptography.exceptions
 import cryptography.hazmat.primitives.hashes

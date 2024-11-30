@@ -1889,7 +1889,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 }, {
                     "key": "price",
                     "label": "price-label",
-                    "value": f"£{ticket_data.data.purchase_data.price}"
+                    "value": ticket_data.data.purchase_data.price_str()
                 }])
 
             if discount_data := rsp.ticket_data.get_discount_by_id(ticket_data.data.discount_code):
