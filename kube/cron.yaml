@@ -21,6 +21,9 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -32,6 +35,8 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -71,6 +76,9 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -82,6 +90,8 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass

@@ -1,6 +1,5 @@
 import niquests
 from django.conf import settings
-from django.db.models import Q
 from django.utils import timezone
 from . import models
 
@@ -24,11 +23,11 @@ def notify_ticket(ticket: "models.Ticket"):
 def notify_ticket_if_renewed(ticket: "models.Ticket"):
     now = timezone.now()
     current_ticket_valid_from = None
-    uic_tickets = ticket.uic_instances.filter(validity_start__lt=now)
+    uic_tickets = ticket.uic_instances.filter(validity_start__lt=now).order_by("-validity_end")
     if uic_tickets.count() != 0:
         current_ticket_valid_from = uic_tickets[0].validity_start
     else:
-        vdv_tickets = ticket.vdv_instances.filter(validity_start__lt=now)
+        vdv_tickets = ticket.vdv_instances.filter(validity_start__lt=now).order_by("-validity_end")
         if vdv_tickets.count() != 0:
             current_ticket_valid_from = vdv_tickets[0].validity_start
 
