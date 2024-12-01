@@ -1,0 +1,15 @@
+<h2>Hi {{ user.get_short_name }},</h2>
+<p>
+    A new ticket (#{{ ticket.public_id }}) has been added to your account.
+</p>
+{% if google_wallet_link %}
+<p>
+    Attached is the Pass file for Apple Wallet, or click the link below to add to your Google Wallet.
+</p>
+<p><a href="{{ google_wallet_link|safe }}">Add to Google Wallet</a></p>
+{% else %}
+<p>
+    Attached is the Pass file for Apple Wallet.
+</p>
+{% endif %}
+<h4>Have a nice trip!</h4>

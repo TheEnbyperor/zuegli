@@ -1,0 +1,9 @@
+Hi {{ user.get_short_name }}
+
+A new ticket (#{{ ticket.public_id }}) has been added to your account.
+
+{% if google_wallet_link %}Attached is the Pass file for Apple Wallet, or click the link below to add to your Google Wallet.
+
+{{ google_wallet_link|safe }}{% else %}Attached is the Pass file for Apple Wallet.{% endif %}
+
+Have a nice trip!

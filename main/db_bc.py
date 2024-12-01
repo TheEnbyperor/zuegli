@@ -40,4 +40,4 @@ def update_all():
                 logger.error("Could not find barcode element")
                 continue
 
-            db_ticket.update_from_img_elm(barcode_elm)
+            db_ticket.update_from_img_elm(barcode_elm, account)

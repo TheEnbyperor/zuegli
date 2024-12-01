@@ -6,7 +6,7 @@ import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
 import django.core.files.storage
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, email
 
 
 class TicketError(Exception):
@@ -987,10 +987,12 @@ def update_from_subscription_barcode(barcode_data: bytes, account: typing.Option
     decoded_ticket = parse_ticket(barcode_data, account=account)
 
     should_update = False
+    created = False
     ticket_pk = decoded_ticket.pk()
     ticket_obj = models.Ticket.objects.filter(pk=ticket_pk).first()
     if not ticket_obj:
         should_update = True
+        created = True
         ticket_obj = models.Ticket.objects.create(
             pk=ticket_pk,
             last_updated=timezone.now(),
@@ -1009,5 +1011,8 @@ def update_from_subscription_barcode(barcode_data: bytes, account: typing.Option
     if should_update:
         apn.notify_ticket(ticket_obj)
         gwallet.sync_ticket(ticket_obj)
+
+    if created:
+        email.send_new_ticket_email(ticket_obj)
 
     return ticket_obj

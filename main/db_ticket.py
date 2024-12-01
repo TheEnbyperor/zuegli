@@ -9,7 +9,7 @@ from . import models, aztec, ticket, apn, views
 logger = logging.getLogger(__name__)
 
 
-def update_from_img_elm(barcode_elm):
+def update_from_img_elm(barcode_elm, account):
     barcode_url = barcode_elm.attrs["src"]
     if not barcode_url.startswith("data:"):
         logger.error("Barcode image not a data URL")
@@ -100,4 +100,4 @@ def update_all():
                         logger.error("Could not find barcode element")
                         continue
 
-                    update_from_img_elm(barcode_elm)
+                    update_from_img_elm(barcode_elm, account)
