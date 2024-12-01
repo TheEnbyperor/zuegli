@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from . import models
+from .. import models
 
 DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
 DB_AUTH_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/auth"
