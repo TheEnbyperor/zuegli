@@ -45,7 +45,7 @@ class Options:
 
 class Carrier:
     def __init__(self, carrier_num: str, points: List):
-        self.carrier_num = carrier_num
+        self.carrier_nums = carrier_num.split(",")
         self.points = points
         self.id = uuid.uuid4()
 
@@ -101,10 +101,14 @@ class Route:
         exit_points = ["start"]
         for carrier in self.carriers:
             self.out.append(f"subgraph cluster_{carrier.id.hex} {{")
-            if c := rics.get_rics(carrier.carrier_num):
-                self.out.append(f"label=\"{c['full_name']}\"")
-            else:
-                self.out.append(f"label=\"{carrier.carrier_num}\"")
+            carrier_names = []
+            for n in carrier.carrier_nums:
+                if c := rics.get_rics(carrier.carrier_num):
+                    carrier_names.append(c["full_name"])
+                else:
+                    carrier_names.append(n)
+            carrier_names = ", ".join(carrier_names)
+            self.out.append(f"label=\"{carrier_names}\"")
             prev_exit_points = exit_points
             entry_points, exit_points = self._print_list(carrier.points)
             for exit_point in prev_exit_points:

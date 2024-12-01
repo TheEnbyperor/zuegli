@@ -9,7 +9,7 @@ from . import db
 def index(request):
     return render(request, "main/account/index.html", {
         "user": request.user,
-        "tickets": request.user.account.tickets,
+        "tickets": request.user.account.tickets.order_by("-last_updated"),
     })
 
 @login_required
