@@ -92,10 +92,6 @@ def update_all():
                     barcode_elm = ticket_layout.find("img", attrs={
                         "id": "ticketbarcode"
                     }, recursive=True)
-                    if barcode_elm:
-                        logger.error("No barcode element present")
-                        continue
-
                     if not barcode_elm:
                         logger.error("Could not find barcode element")
                         continue
