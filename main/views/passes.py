@@ -1485,12 +1485,94 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
             parser.read(ticket_data.layout)
             parsed_layout = parser.parse()
 
+            if parsed_layout.trips:
+                if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
+                    pass_type = "boardingPass"
+                    pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": parsed_layout.trips[0].departure_station,
+                        "semantics": {
+                            "departureStationName": parsed_layout.trips[0].departure_station
+                        }
+                    })
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": parsed_layout.trips[0].arrival_station,
+                        "semantics": {
+                            "departureStationName": parsed_layout.trips[0].arrival_station,
+                        }
+                    })
+
+                    if parsed_layout.trips[0].departure_time:
+                        pass_fields["secondaryFields"].append({
+                            "key": "departure-time",
+                            "label": "departure-time-label",
+                            "value": f"{parsed_layout.trips[0].departure_date} {parsed_layout.trips[0].departure_time}",
+                        })
+                    elif parsed_layout.trips[0].departure_date:
+                        pass_fields["secondaryFields"].append({
+                            "key": "valid-from",
+                            "label": "validity-start-label",
+                            "value": parsed_layout.trips[0].departure_date
+                        })
+
+                    if parsed_layout.trips[0].arrival_time:
+                        pass_fields["secondaryFields"].append({
+                            "key": "arrival-time",
+                            "label": "arrival-time-label",
+                            "value": f"{parsed_layout.trips[0].arrival_date} {parsed_layout.trips[0].arrival_time}",
+                        })
+                    elif parsed_layout.trips[0].arrival_date:
+                        pass_fields["secondaryFields"].append({
+                            "key": "valid-until",
+                            "label": "validity-end-label",
+                            "value": parsed_layout.trips[0].arrival_date
+                        })
+
+                else:
+                    if parsed_layout.trips[0].departure_time:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "value": f"{parsed_layout.trips[0].departure_date} {parsed_layout.trips[0].departure_time}",
+                        })
+                    elif parsed_layout.trips[0].departure_date:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "value": parsed_layout.trips[0].departure_date
+                        })
+
+                    if parsed_layout.trips[0].arrival_time:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-end",
+                            "label": "validity-end-label",
+                            "value": f"{parsed_layout.trips[0].arrival_date} {parsed_layout.trips[0].arrival_time}",
+                        })
+                    elif parsed_layout.trips[0].arrival_date:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-end",
+                            "label": "validity-end-label",
+                            "value": parsed_layout.trips[0].arrival_date
+                        })
+
             if parsed_layout.travel_class:
-                pass_fields["auxiliaryFields"].append({
-                    "key": "class-code",
-                    "label": "class-code-label",
-                    "value": parsed_layout.travel_class,
-                })
+                if pass_type == "boardingPass":
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+                else:
+                    pass_fields["headerFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
 
             if parsed_layout.document_type:
                 pass_fields["backFields"].append({
@@ -1555,53 +1637,6 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                     "label": "product-conditions-label",
                     "value": parsed_layout.conditions.replace("<", "%lt;"),
                 })
-
-            if parsed_layout.trips:
-                pass_type = "boardingPass"
-                pass_fields["transitType"] = "PKTransitTypeTrain"
-
-                pass_fields["primaryFields"].append({
-                    "key": "from-station",
-                    "label": "from-station-label",
-                    "value": parsed_layout.trips[0].departure_station,
-                    "semantics": {
-                        "departureStationName": parsed_layout.trips[0].departure_station
-                    }
-                })
-                pass_fields["primaryFields"].append({
-                    "key": "to-station",
-                    "label": "to-station-label",
-                    "value": parsed_layout.trips[0].arrival_station,
-                    "semantics": {
-                        "departureStationName": parsed_layout.trips[0].arrival_station,
-                    }
-                })
-
-                if parsed_layout.trips[0].departure_time:
-                    pass_fields["secondaryFields"].append({
-                        "key": "departure-time",
-                        "label": "departure-time-label",
-                        "value": f"{parsed_layout.trips[0].departure_date} {parsed_layout.trips[0].departure_time}",
-                    })
-                elif parsed_layout.trips[0].departure_date:
-                    pass_fields["secondaryFields"].append({
-                        "key": "valid-from",
-                        "label": "validity-start-label",
-                        "value": parsed_layout.trips[0].departure_date
-                    })
-
-                if parsed_layout.trips[0].arrival_time:
-                    pass_fields["secondaryFields"].append({
-                        "key": "arrival-time",
-                        "label": "arrival-time-label",
-                        "value": f"{parsed_layout.trips[0].arrival_date} {parsed_layout.trips[0].arrival_time}",
-                    })
-                elif parsed_layout.trips[0].arrival_date:
-                    pass_fields["secondaryFields"].append({
-                        "key": "valid-until",
-                        "label": "validity-end-label",
-                        "value": parsed_layout.trips[0].arrival_date
-                    })
 
         if distributor := ticket_data.distributor():
             pass_json["organizationName"] = distributor["full_name"]
