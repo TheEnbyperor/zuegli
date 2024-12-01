@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from . import models
 
 DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
 DB_AUTH_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/auth"
@@ -18,32 +19,32 @@ DB_CERTS_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/
 DB_CLIENT_ID = "kf_mobile"
 DB_REDIRECT_URI = "dbnav://dbnavigator.bahn.de/auth"
 
-def get_db_token(user):
+def get_db_token(account: models.Account):
     now = timezone.now()
-    if user.account.db_token and user.account.db_token_expires_at and \
-            user.account.db_token_expires_at > now + datetime.timedelta(minutes=5):
-        return user.account.db_token
-    elif user.account.db_refresh_token and user.account.db_refresh_token_expires_at and user.account.db_refresh_token_expires_at > now:
+    if account.db_token and account.db_token_expires_at and \
+            account.db_token_expires_at > now + datetime.timedelta(minutes=5):
+        return account.db_token
+    elif account.db_refresh_token and account.db_refresh_token_expires_at and account.db_refresh_token_expires_at > now:
         r = niquests.post(DB_TOKEN_URL, data={
             "grant_type": "refresh_token",
             "client_id": DB_CLIENT_ID,
-            "refresh_token": user.account.db_refresh_token,
+            "refresh_token": account.db_refresh_token,
         }, headers={
             "User-Agent": "VDV PKPass q@magicalcodewit.ch"
         })
         if r.status_code != 200:
-            user.account.db_refresh_token = None
-            user.account.db_refresh_token_expires_at = None
-            user.account.save()
+            account.db_refresh_token = None
+            account.db_refresh_token_expires_at = None
+            account.save()
             return None
 
         data = r.json()
-        user.account.db_token = data["access_token"]
-        user.account.db_token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
-        user.account.db_refresh_token = data["refresh_token"]
-        user.account.db_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
-        user.account.save()
-        return user.account.db_token
+        account.db_token = data["access_token"]
+        account.db_token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
+        account.db_refresh_token = data["refresh_token"]
+        account.db_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
+        account.save()
+        return account.db_token
     else:
         return None
 

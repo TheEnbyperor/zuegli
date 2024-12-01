@@ -139,7 +139,7 @@ class AccountAdmin(admin.ModelAdmin):
         "db_token",
         "db_token_expires_at",
         "db_refresh_token",
-        "db_token_expires_at",
+        "db_refresh_token_expires_at",
         "saarvv_token",
         "saarvv_device_id",
     ]
