@@ -77,7 +77,7 @@ def update_all():
             apn.notify_ticket_if_renewed(t)
 
 
-def update_saarvv_tickets(account: models.Account):
+def update_saarvv_tickets(account: "models.Account"):
     if not account.saarvv_token or not account.saarvv_device_id:
         return
 

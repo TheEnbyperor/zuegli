@@ -19,7 +19,7 @@ DB_CERTS_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/
 DB_CLIENT_ID = "kf_mobile"
 DB_REDIRECT_URI = "dbnav://dbnavigator.bahn.de/auth"
 
-def get_db_token(account: models.Account):
+def get_db_token(account: "models.Account"):
     now = timezone.now()
     if account.db_token and account.db_token_expires_at and \
             account.db_token_expires_at > now + datetime.timedelta(minutes=5):

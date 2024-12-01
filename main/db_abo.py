@@ -24,7 +24,7 @@ def update_all():
                 apn.notify_ticket_if_renewed(t)
 
 
-def update_abo_tickets(abo: models.DBSubscription):
+def update_abo_tickets(abo: "models.DBSubscription"):
     r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/refreshmultiple", json={
         "aboTicketCheckRequestList": [{
             "deviceToken": abo.device_token,

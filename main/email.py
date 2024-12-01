@@ -4,7 +4,7 @@ from django.conf import settings
 from . import models, gwallet
 from .views import passes
 
-def send_new_ticket_email(ticket: models.Ticket):
+def send_new_ticket_email(ticket: "models.Ticket"):
     if not ticket.account:
         return
 

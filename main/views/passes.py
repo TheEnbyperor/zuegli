@@ -142,7 +142,7 @@ def view_ticket(request, pk):
     })
 
 
-def pass_photo_thumbnail(ticket_obj: models.Ticket, size, padding):
+def pass_photo_thumbnail(ticket_obj: "models.Ticket", size, padding):
     out = Image.new("RGBA", size, (0, 0, 0, 0))
     images = []
     for k in ("first", "second"):
@@ -192,7 +192,7 @@ def ticket_pkpass(request, pk):
     return make_pkpass(ticket_obj)
 
 
-def make_pkpass_file(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
+def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = None):
     pkp = pkpass.PKPass()
     have_logo = False
 
@@ -2843,7 +2843,7 @@ def make_pkpass_file(ticket_obj: models.Ticket, part: typing.Optional[str] = Non
         return "application/vnd.apple.pkpass", f"{ticket_obj.pk}.pkpass", pkp.get_buffer()
 
 
-def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
+def make_pkpass(ticket_obj: "models.Ticket", part: typing.Optional[str] = None):
     content_type, file_name, file_contents = make_pkpass_file(ticket_obj, part)
     response = HttpResponse()
     response['Content-Type'] = content_type

@@ -13,7 +13,7 @@ from main import models, views
 logger = logging.Logger(__name__)
 
 
-def get_ticket(serial_number) -> typing.Optional[typing.Tuple[models.Ticket, str]]:
+def get_ticket(serial_number) -> typing.Optional[typing.Tuple["models.Ticket", str]]:
     serial_number = urllib.parse.unquote(serial_number)
     serial_number = serial_number.split(":", 1)
     if len(serial_number) == 2:
