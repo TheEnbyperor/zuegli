@@ -111,6 +111,61 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
+  name: vdv-pkpass-db-ticket
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: db-ticket
+spec:
+  schedule: "7/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: db-ticket
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
+            - name: django
+              image: theenbyperor/vdv-pkpass-django:(version)
+              imagePullPolicy: Always
+              command: ["sh", "-c", "python3 manage.py update-db-ticket"]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
   name: vdv-pkpass-saarvv
   namespace: q-personal
   labels:
