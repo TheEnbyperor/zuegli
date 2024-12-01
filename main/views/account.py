@@ -15,7 +15,7 @@ def index(request):
 @login_required
 def db_account(request):
     context = {}
-    if db_token := db.get_db_token(request.user):
+    if db_token := db.get_db_token(request.user.account):
         r = niquests.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{request.user.account.db_account_id}", headers={
             "Authorization": f"Bearer {db_token}",
             "Accept": "application/x.db.vendo.mob.kundenkonto.v6+json",

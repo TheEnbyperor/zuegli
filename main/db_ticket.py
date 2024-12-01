@@ -93,7 +93,9 @@ def update_all():
                         "id": "ticketbarcode"
                     }, recursive=True)
                     if not barcode_elm:
-                        logger.error("Could not find barcode element")
+                        logger.error(f"Could not find barcode element - account {account}")
                         continue
+
+                    logger.info(f"Found barcode element - ticket ID {auftragsnummer}")
 
                     update_from_img_elm(barcode_elm, account)
