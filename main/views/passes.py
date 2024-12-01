@@ -2282,29 +2282,15 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
         validity_end = ticket_data.data.validity_end_time()
         departure_date = ticket_data.data.departure_time()
         pass_type = "boardingPass"
-        from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "benerail")
-        to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "benerail")
+        from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "sncf")
+        if not from_station:
+            from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "benerail")
+        to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "sncf")
+        if not to_station:
+            to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "benerail")
 
         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
         pass_json["relevantDate"] = departure_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-        pass_json["locations"].append({
-            "latitude": float(from_station["latitude"]),
-            "longitude": float(from_station["longitude"]),
-            "relevantText": from_station["name"]
-        })
-        from_station_maps_link = urllib.parse.urlencode({
-            "q": from_station["name"],
-            "ll": f"{from_station['latitude']},{from_station['longitude']}"
-        })
-        pass_json["locations"].append({
-            "latitude": float(to_station["latitude"]),
-            "longitude": float(to_station["longitude"]),
-            "relevantText": to_station["name"]
-        })
-        to_station_maps_link = urllib.parse.urlencode({
-            "q": to_station["name"],
-            "ll": f"{to_station['latitude']},{to_station['longitude']}"
-        })
 
         pass_fields = {
             "transitType": "PKTransitTypeTrain",
@@ -2314,29 +2300,7 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "value": departure_date.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 "dateStyle": "PKDateStyleMedium",
             }],
-            "primaryFields": [{
-                "key": "from-station",
-                "label": "from-station-label",
-                "value": from_station["name"],
-                "semantics": {
-                    "departureLocation": {
-                        "latitude": float(from_station["latitude"]),
-                        "longitude": float(from_station["longitude"]),
-                    },
-                    "departureStationName": from_station["name"]
-                }
-            }, {
-                "key": "to-station",
-                "label": "to-station-label",
-                "value": to_station["name"],
-                "semantics": {
-                    "destinationLocation": {
-                        "latitude": float(to_station["latitude"]),
-                        "longitude": float(to_station["longitude"]),
-                    },
-                    "destinationStationName": to_station["name"]
-                }
-            }],
+            "primaryFields": [],
             "secondaryFields": [{
                 "key": "class-code",
                 "label": "class-code-label",
@@ -2355,22 +2319,76 @@ def make_pkpass(ticket_obj: models.Ticket, part: typing.Optional[str] = None):
                 "label": "seat-number-label",
                 "value": ticket_data.data.seat_number,
             }],
-            "backFields": [{
+            "backFields": []
+        }
+
+
+        if from_station:
+            from_station_maps_link = urllib.parse.urlencode({
+                "q": from_station["name"],
+                "ll": f"{from_station['latitude']},{from_station['longitude']}"
+            })
+            pass_fields["primaryFields"].append({
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "semantics": {
+                    "departureLocation": {
+                        "latitude": float(from_station["latitude"]),
+                        "longitude": float(from_station["longitude"]),
+                    },
+                    "departureStationName": from_station["name"]
+                }
+            })
+            pass_fields["backFields"].append({
                 "key": "from-station-back",
                 "label": "from-station-label",
                 "value": from_station["name"],
                 "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
-            }, {
+            })
+        else:
+            pass_fields["primaryFields"].append({
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": ticket_data.data.departure_station,
+            })
+
+        if to_station:
+            to_station_maps_link = urllib.parse.urlencode({
+                "q": to_station["name"],
+                "ll": f"{to_station['latitude']},{to_station['longitude']}"
+            })
+            pass_fields["primaryFields"].append({
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "semantics": {
+                    "destinationLocation": {
+                        "latitude": float(to_station["latitude"]),
+                        "longitude": float(to_station["longitude"]),
+                    },
+                    "destinationStationName": to_station["name"]
+                }
+            })
+            pass_fields["backFields"].append({
                 "key": "to-station-back",
                 "label": "to-station-label",
                 "value": to_station["name"],
                 "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
-            }, {
-                "key": "ticket-id",
-                "label": "ticket-id-label",
-                "value": str(ticket_data.data.booking_number),
-            }]
-        }
+            })
+        else:
+            pass_fields["primaryFields"].append({
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": ticket_data.data.arrival_station,
+            })
+
+        pass_fields["backFields"].append({
+            "key": "ticket-id",
+            "label": "ticket-id-label",
+            "value": str(ticket_data.data.booking_number),
+        })
+
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
             "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),

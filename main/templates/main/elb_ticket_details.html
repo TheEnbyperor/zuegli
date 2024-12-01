@@ -61,7 +61,7 @@
         <dt class="govuk-summary-list__key">Departure station code</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.data.departure_station }}</code></dd>
     </div>
-    {% with station=ticket.data.departure_station|get_station:"benerail" %}
+    {% with station=ticket.data.departure_station|get_station:"sncf" %}
         {% if station %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Departure station</dt>
@@ -75,7 +75,7 @@
         <dt class="govuk-summary-list__key">Arrival station code</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.data.arrival_station }}</code></dd>
     </div>
-    {% with station=ticket.data.arrival_station|get_station:"benerail" %}
+    {% with station=ticket.data.arrival_station|get_station:"sncf" %}
         {% if station %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Arrival station</dt>
