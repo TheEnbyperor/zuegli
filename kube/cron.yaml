@@ -62,7 +62,7 @@ metadata:
     app: vdv-pkpass
     part: db-bc
 spec:
-  schedule: "7 * * * *"
+  schedule: "5/10 * * * *"
   jobTemplate:
     spec:
       template:
@@ -117,7 +117,7 @@ metadata:
     app: vdv-pkpass
     part: db-ticket
 spec:
-  schedule: "7/5 * * * *"
+  schedule: "3/5 * * * *"
   jobTemplate:
     spec:
       template:
@@ -172,7 +172,7 @@ metadata:
     app: vdv-pkpass
     part: db-saarvv
 spec:
-  schedule: "7/5 * * * *"
+  schedule: "1/5 * * * *"
   jobTemplate:
     spec:
       template:
