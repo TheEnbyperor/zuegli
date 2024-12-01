@@ -1,4 +1,5 @@
 import dataclasses
+import decimal
 import enum
 import typing
 import ber_tlv.tlv
@@ -321,7 +322,7 @@ class BasicData:
     transport_category: int
     service_class: int
     price_base: str
-    vat_rate: int
+    vat_rate: decimal.Decimal
     price_level: int
     internal_product_number: int
 
@@ -335,7 +336,7 @@ class BasicData:
             transport_category=data[6],
             service_class=data[7],
             price_base=f"{int.from_bytes(data[8:11]) / 100:.2f}",
-            vat_rate=int.from_bytes(data[11:13]),
+            vat_rate=decimal.Decimal(int.from_bytes(data[11:13])) / decimal.Decimal(100),
             price_level=data[13],
             internal_product_number=int.from_bytes(data[14:17], "big"),
         )
