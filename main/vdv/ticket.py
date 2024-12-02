@@ -653,6 +653,9 @@ class SpacialValidity:
                         out.append(name)
                     else:
                         out.append(f"Unknown - {area}")
+        else:
+            for area in self.area_ids:
+                out.append(f"Unknown - {area}")
         return out
 
 
