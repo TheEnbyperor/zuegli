@@ -85,6 +85,13 @@
             </dl>
         </dd>
     </div>
+</dl>
+
+<h3 class="govuk-heading-s">Product Data</h3>
+{% include "main/vdv_elements.html" with elements=ticket.ticket.product_data %}
+
+<h3 class="govuk-heading-s">Transaction Data</h3>
+<dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Transaction</dt>
         <dd class="govuk-summary-list__value">
@@ -197,6 +204,17 @@
             </dl>
         </dd>
     </div>
+</dl>
+
+<h3 class="govuk-heading-s">Product Transaction Data</h3>
+{% if ticket.ticket.product_transaction_data %}
+    {# TODO #}
+{% else %}
+    <p class="govuk-body">N/A</p>
+{% endif %}
+
+<h3 class="govuk-heading-s">Issuing Data</h3>
+<dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">SAM</dt>
         <dd class="govuk-summary-list__value">
@@ -222,15 +240,6 @@
     </div>
 </dl>
 
-<h3 class="govuk-heading-s">Product Data</h3>
-{% include "main/vdv_elements.html" with elements=ticket.ticket.product_data %}
-
-<h3 class="govuk-heading-s">Product Transaction Data</h3>
-{% if ticket.ticket.product_transaction_data %}
-    {# TODO #}
-{% else %}
-    <p class="govuk-body">N/A</p>
-{% endif %}
 
 <h2 class="govuk-heading-m">Certificate chain</h2>
 <div class="govuk-summary-card">

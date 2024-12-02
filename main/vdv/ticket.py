@@ -123,12 +123,16 @@ class VDVTicket:
 
         return cls(
             version=version,
+
             ticket_id=int.from_bytes(header[0:4], 'big'),
             ticket_org_id=int.from_bytes(header[4:6], 'big'),
             product_number=int.from_bytes(header[6:8], 'big'),
             product_org_id=int.from_bytes(header[8:10], 'big'),
             validity_start=util.DateTime.from_bytes(header[10:14]),
             validity_end=util.DateTime.from_bytes(header[14:18]),
+
+            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
+
             kvp_org_id=int.from_bytes(common_transaction_data[0:2], 'big'),
             terminal_type=common_transaction_data[2],
             terminal_number=int.from_bytes(common_transaction_data[3:5], 'big'),
@@ -137,12 +141,13 @@ class VDVTicket:
             location_type=common_transaction_data[11],
             location_number=int.from_bytes(common_transaction_data[12:15], 'big'),
             location_org_id=int.from_bytes(common_transaction_data[15:17], 'big'),
+
+            product_transaction_data=product_transaction_data[1],
+
             sam_sequence_number_1=int.from_bytes(ticket_issue_data[0:4], 'big'),
             sam_version=ticket_issue_data[4],
             sam_sequence_number_2=int.from_bytes(ticket_issue_data[5:9], 'big'),
             sam_id=int.from_bytes(ticket_issue_data[9:12], 'big'),
-            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
-            product_transaction_data=product_transaction_data[1]
         )
 
     @staticmethod

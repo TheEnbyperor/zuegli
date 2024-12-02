@@ -623,7 +623,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     "value": "Issued at"
                 }
             },
-            "body": issued_at.isoformat(),
+            "body": issued_at.strftime("%H:%M %d.%m.%Y"),
         })
 
         if ticket_type:
@@ -735,7 +735,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     "value": "Issued at"
                 }
             },
-            "body": issued_at.isoformat(),
+            "body": issued_at.strftime("%H:%M %d.%m.%Y"),
         })
         obj["textModulesData"].append({
             "id": "issuing-org",
@@ -781,7 +781,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "value": "Date of Birth"
                             }
                         },
-                        "body": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "body": elm.date_of_birth.as_date().strftime("%d.%m.%Y"),
                     })
 
         return obj, "generic"

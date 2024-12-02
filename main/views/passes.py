@@ -1756,10 +1756,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         for elm in ticket_data.ticket.product_data:
             if isinstance(elm, vdv.ticket.PassengerData):
+                if elm.forename and elm.surname:
+                    name_value = f"{elm.forename}\n{elm.surname}"
+                elif elm.forename:
+                    name_value = elm.forename
+                elif elm.surname:
+                    name_value = elm.surname
+                else:
+                    name_value = ""
                 pass_fields["primaryFields"].append({
                     "key": "passenger",
                     "label": "passenger-label",
-                    "value": f"{elm.forename}\n{elm.surname}",
+                    "value": name_value,
                     "semantics": {
                         "passengerName": {
                             "familyName": elm.surname,
@@ -2810,6 +2818,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
     if ticket_obj.ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
         add_pkp_img(pkp, "pass/logo-dt.png", "thumbnail.png")
 
+    public_id = ticket_obj.public_id
     if has_return:
         pass_json["serialNumber"] = f'{pass_json["serialNumber"]}:outbound'
         return_pass_json["serialNumber"] = f'{return_pass_json["serialNumber"]}:return'
@@ -2818,15 +2827,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
             pkp.sign()
 
-            return f"{ticket_obj.pk}-outbound.pkpass", [
-                (f"{ticket_obj.pk}-outbound.pkpass", pkp.get_buffer())
+            return f"{public_id}_outbound.pkpass", [
+                (f"{public_id}_outbound.pkpass", pkp.get_buffer())
             ]
         elif part == "return":
             pkp.add_file("pass.json", json.dumps(return_pass_json).encode("utf-8"))
             pkp.sign()
 
-            return f"{ticket_obj.pk}-return.pkpass", [
-                (f"{ticket_obj.pk}-return.pkpass", pkp.get_buffer())
+            return f"{public_id}_return.pkpass", [
+                (f"{public_id}_return.pkpass", pkp.get_buffer())
             ]
         else:
             pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
@@ -2837,16 +2846,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pkp.sign()
             buf2 = pkp.get_buffer()
 
-            return f"{ticket_obj.pk}.pkpasses", [
-                (f"{ticket_obj.pk}-outbound.pkpass", buf1),
-                (f"{ticket_obj.pk}-return.pkpass", buf2)
+            return f"{public_id}.pkpasses", [
+                (f"{public_id}_outbound.pkpass", buf1),
+                (f"{public_id}_return.pkpass", buf2)
             ]
     else:
         pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
         pkp.sign()
 
-        return f"{ticket_obj.pk}.pkpass", [
-            (f"{ticket_obj.pk}.pkpass", pkp.get_buffer())
+        return f"{public_id}.pkpass", [
+            (f"{public_id}.pkpass", pkp.get_buffer())
         ]
 
 

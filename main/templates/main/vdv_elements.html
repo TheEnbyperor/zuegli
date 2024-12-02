@@ -203,16 +203,18 @@
                                 <code>{{ elm.organization_id }}</code>
                             </dd>
                         </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Areas</dt>
-                            <dd class="govuk-summary-list__value">
-                                <ul class="govuk-list govuk-list--bullet">
-                                    {% for area in elm.area_names %}
-                                        <li>{{ area }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </dd>
-                        </div>
+                        {% if elm.area_ids %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Areas</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        {% for area in elm.area_names %}
+                                            <li>{{ area }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
                     </dl>
                 </div>
             </div>

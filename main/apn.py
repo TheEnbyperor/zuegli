@@ -1,7 +1,7 @@
 import niquests
 from django.conf import settings
 from django.utils import timezone
-from . import models
+from . import models, gwallet
 
 def notify_device(device: "models.AppleDevice"):
     r = niquests.post(f"https://api.push.apple.com/3/device/{device.push_token}", headers={
@@ -36,3 +36,4 @@ def notify_ticket_if_renewed(ticket: "models.Ticket"):
             ticket.last_updated = now
             ticket.save()
             notify_ticket(ticket)
+            gwallet.sync_ticket(ticket)
