@@ -1,15 +1,26 @@
 import base64
 import niquests
+import niquests.exceptions
+import niquests.adapters
 import logging
 import bs4
 import secrets
+import urllib3.util
 
 from . import models, views, db_ticket
 
 logger = logging.getLogger(__name__)
+retry_strategy = urllib3.util.Retry(
+    total=10,
+    status_forcelist=[403, 429, 500, 502, 503, 504],
+)
 
 
 def update_all():
+    adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
+    session = niquests.Session()
+    session.mount("https://", adapter)
+
     for account in models.Account.objects.all():
         if not account.is_db_authenticated:
             continue
@@ -18,15 +29,19 @@ def update_all():
         if not db_token:
             continue
 
-        r = niquests.get(f"https://app.vendo.noncd.db.de/mob/emobilebahncards", headers={
-            "Authorization": f"Bearer {db_token}",
-            "Accept": "application/x.db.vendo.mob.emobilebahncards.v2+json",
-            "X-Correlation-ID": secrets.token_hex(16),
-            "User-Agent": "VDV PKPass q@magicalcodewit.ch",
-            "Call-Trigger": "manual"
-        })
-        if r.status_code != 200:
-            logger.error(f"Failed to get BahnCards for account {account} - {r.text}")
+        try:
+            r = niquests.get(f"https://app.vendo.noncd.db.de/mob/emobilebahncards", headers={
+                "Authorization": f"Bearer {db_token}",
+                "Accept": "application/x.db.vendo.mob.emobilebahncards.v2+json",
+                "X-Correlation-ID": secrets.token_hex(16),
+                "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                "Call-Trigger": "manual"
+            })
+            if r.status_code != 200:
+                logger.error(f"Failed to get BahnCards for account {account} - {r.text}")
+                continue
+        except niquests.exceptions.RequestException as e:
+            logger.error(f"Failed to get BahnCards for account {account} - {e}")
             continue
 
         data = r.json()
