@@ -103,7 +103,7 @@ class Route:
             self.out.append(f"subgraph cluster_{carrier.id.hex} {{")
             carrier_names = []
             for n in carrier.carrier_nums:
-                if c := rics.get_rics(carrier.carrier_num):
+                if c := rics.get_rics(n):
                     carrier_names.append(c["full_name"])
                 else:
                     carrier_names.append(n)

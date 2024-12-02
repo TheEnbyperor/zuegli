@@ -1,5 +1,6 @@
 import hashlib
 import json
+import typing
 import zipfile
 import io
 import cryptography.hazmat.primitives.hashes
@@ -48,8 +49,11 @@ class MultiPKPass:
         self.zip_buffer = io.BytesIO()
         self.zip = zipfile.ZipFile(self.zip_buffer, "w")
 
-    def add_pkpass(self, pkpass: PKPass):
-        self.zip.writestr(f"pass-{self.counter}.pkpass", pkpass.get_buffer())
+    def add_pkpass(self, pkpass: typing.Union[PKPass, bytes]):
+        if isinstance(pkpass, PKPass):
+            self.zip.writestr(f"pass-{self.counter}.pkpass", pkpass.get_buffer())
+        else:
+            self.zip.writestr(f"pass-{self.counter}.pkpass", pkpass)
         self.counter += 1
 
     def get_buffer(self) -> bytes:

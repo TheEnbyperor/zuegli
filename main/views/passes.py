@@ -2818,39 +2818,56 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
             pkp.sign()
 
-            return "application/vnd.apple.pkpass", f"{ticket_obj.pk}-outbound.pkpass", pkp.get_buffer()
+            return f"{ticket_obj.pk}-outbound.pkpass", [
+                (f"{ticket_obj.pk}-outbound.pkpass", pkp.get_buffer())
+            ]
         elif part == "return":
             pkp.add_file("pass.json", json.dumps(return_pass_json).encode("utf-8"))
             pkp.sign()
 
-            return "application/vnd.apple.pkpass", f"{ticket_obj.pk}-return.pkpass", pkp.get_buffer()
+            return f"{ticket_obj.pk}-return.pkpass", [
+                (f"{ticket_obj.pk}-return.pkpass", pkp.get_buffer())
+            ]
         else:
-            multi_pass = pkpass.MultiPKPass()
-
             pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
             pkp.sign()
-            multi_pass.add_pkpass(pkp)
+            buf1 = pkp.get_buffer()
 
             pkp.add_file("pass.json", json.dumps(return_pass_json).encode("utf-8"))
             pkp.sign()
-            multi_pass.add_pkpass(pkp)
+            buf2 = pkp.get_buffer()
 
-            return "application/vnd.apple.pkpasses", f"{ticket_obj.pk}.pkpasses", multi_pass.get_buffer()
+            return f"{ticket_obj.pk}.pkpasses", [
+                (f"{ticket_obj.pk}-outbound.pkpass", buf1),
+                (f"{ticket_obj.pk}-return.pkpass", buf2)
+            ]
     else:
         pkp.add_file("pass.json", json.dumps(pass_json).encode("utf-8"))
         pkp.sign()
 
-        return "application/vnd.apple.pkpass", f"{ticket_obj.pk}.pkpass", pkp.get_buffer()
+        return f"{ticket_obj.pk}.pkpass", [
+            (f"{ticket_obj.pk}.pkpass", pkp.get_buffer())
+        ]
 
 
 def make_pkpass(ticket_obj: "models.Ticket", part: typing.Optional[str] = None):
-    content_type, file_name, file_contents = make_pkpass_file(ticket_obj, part)
-    response = HttpResponse()
-    response['Content-Type'] = content_type
-    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-    response.write(file_contents)
-    return response
+    file_name, files = make_pkpass_file(ticket_obj, part)
 
+    if len(files) == 1:
+        response = HttpResponse()
+        response['Content-Type'] = "application/vnd.apple.pkpass"
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        response.write(files[0][1])
+        return response
+    else:
+        multi_pass = pkpass.MultiPKPass()
+        for _, file_contents in files:
+            multi_pass.add_pkpass(file_contents)
+        response = HttpResponse()
+        response['Content-Type'] = "application/vnd.apple.pkpasses"
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        response.write(multi_pass.get_buffer())
+        return response
 
 PASS_STRINGS = {
     "en": """

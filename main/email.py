@@ -24,7 +24,8 @@ def send_new_ticket_email(ticket: "models.Ticket"):
     )
     msg.attach_alternative(html_message, "text/html")
 
-    content_type, file_name, file_contents = passes.make_pkpass_file(ticket)
-    msg.attach(file_name, file_contents, content_type)
+    _, files = passes.make_pkpass_file(ticket)
+    for file_name, file_contents in files:
+        msg.attach(file_name, file_contents, "application/vnd.apple.pkpass")
 
     msg.send()
