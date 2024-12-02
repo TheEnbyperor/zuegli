@@ -26,13 +26,19 @@ def public_key(rics: int, key_id: int):
 
     try:
         with uic_storage.open(cert_name) as key_file:
-            key = cryptography.x509.load_der_x509_certificate(key_file.read())
+            try:
+                key = cryptography.x509.load_der_x509_certificate(key_file.read())
+            except ValueError:
+                return None
 
         return key.public_key()
     except FileNotFoundError:
         try:
             with uic_storage.open(key_name) as key_file:
-                key = cryptography.hazmat.primitives.serialization.load_der_public_key(key_file.read())
+                try:
+                    key = cryptography.hazmat.primitives.serialization.load_der_public_key(key_file.read())
+                except ValueError:
+                    return None
 
             return key
         except FileNotFoundError:
