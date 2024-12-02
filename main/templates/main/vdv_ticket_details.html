@@ -208,7 +208,9 @@
 
 <h3 class="govuk-heading-s">Product Transaction Data</h3>
 {% if ticket.ticket.product_transaction_data %}
-    {# TODO #}
+    <p class="govuk-body">
+        <code>{{ ticket.ticket.product_transaction_data_hex }}</code>
+    </p>
 {% else %}
     <p class="govuk-body">N/A</p>
 {% endif %}

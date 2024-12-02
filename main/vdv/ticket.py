@@ -316,6 +316,10 @@ class VDVTicket:
     def location_org_name_opt(self):
         return map_org_id(self.location_org_id, True)
 
+    def product_transaction_data_hex(self):
+        return ":".join(f"{self.product_transaction_data[i]:02x}" for i in range(len(self.product_transaction_data)))
+
+
 @dataclasses.dataclass
 class BasicData:
     TYPE = "basic-data"
