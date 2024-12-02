@@ -93,6 +93,38 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
 
     return None
 
+def ticket_class_name(class_code: str):
+    class_name = {
+        "defaultValue": {
+            "language": "en",
+            "value": class_code,
+        }
+    }
+    if class_code == "first":
+        class_name = {
+            "translatedValues": [{
+                "language": "de",
+                "value": "1."
+            }],
+            "defaultValue": {
+                "language": "en-gb",
+                "value": "First"
+            }
+        }
+    elif class_code == "second":
+        class_name = {
+            "translatedValues": [{
+                "language": "de",
+                "value": "2."
+            }],
+            "defaultValue": {
+                "language": "en-gb",
+                "value": "Second"
+            }
+        }
+    return class_name
+
+
 def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dict, typing.Optional[str]]:
     from .views import passes
 
@@ -284,45 +316,20 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             elif document["classCode"] == "second":
                                 obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "ECONOMY"
                         else:
-                            class_name = None
-                            if document["classCode"] == "first":
-                                class_name = {
+                            obj["textModulesData"].append({
+                                "id": "class",
+                                "localizedHeader": {
                                     "translatedValues": [{
                                         "language": "de",
-                                        "value": "1."
+                                        "value": "Klasse"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
-                                        "value": "First"
+                                        "value": "Class"
                                     }
-                                }
-                            elif document["classCode"] == "second":
-                                class_name = {
-                                    "translatedValues": [{
-                                        "language": "de",
-                                        "value": "2."
-                                    }],
-                                    "defaultValue": {
-                                        "language": "en-gb",
-                                        "value": "Second"
-                                    }
-                                }
-
-                            if class_name:
-                                obj["textModulesData"].append({
-                                    "id": "class",
-                                    "localizedHeader": {
-                                        "translatedValues": [{
-                                            "language": "de",
-                                            "value": "Klasse"
-                                        }],
-                                        "defaultValue": {
-                                            "language": "en-gb",
-                                            "value": "Class"
-                                        }
-                                    },
-                                    "localizedBody": class_name,
-                                })
+                                },
+                                "localizedBody": ticket_class_name(document["classCode"])
+                            })
 
                     if len(document.get("tariffs")) >= 1:
                         tariff = document["tariffs"][0]
@@ -479,34 +486,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         })
 
                     if "classCode" in document:
-                        class_name = {
-                            "defaultValue": {
-                                "language": "en",
-                                "value": document["classCode"]
-                            }
-                        }
-                        if class_name == "first":
-                            class_name = {
-                                "translatedValues": [{
-                                    "language": "de",
-                                    "value": "1."
-                                }],
-                                "defaultValue": {
-                                    "language": "en-gb",
-                                    "value": "First"
-                                }
-                            }
-                        elif class_name == "second":
-                            class_name = {
-                                "translatedValues": [{
-                                    "language": "de",
-                                    "value": "2."
-                                }],
-                                "defaultValue": {
-                                    "language": "en-gb",
-                                    "value": "Second"
-                                }
-                            }
                         obj["textModulesData"].append({
                             "id": "class",
                             "localizedHeader": {
@@ -519,7 +498,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "value": "Class"
                                 }
                             },
-                            "localizedBody": class_name
+                            "localizedBody": ticket_class_name(document["classCode"])
                         })
 
                     if "cardTypeDescr" in document:
