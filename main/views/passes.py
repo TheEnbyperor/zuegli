@@ -2788,6 +2788,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if ticket_data.envelope.issuer_rics in RICS_LOGO:
             add_pkp_img(pkp, RICS_LOGO[ticket_data.envelope.issuer_rics], "logo.png")
             have_logo = True
+        if ticket_data.envelope.issuer_rics in RICS_BG:
+            pass_json["backgroundColor"] = RICS_BG[ticket_data.envelope.issuer_rics]
+        if ticket_data.envelope.issuer_rics in RICS_FG:
+            pass_json["foregroundColor"] = RICS_FG[ticket_data.envelope.issuer_rics]
+        if ticket_data.envelope.issuer_rics in RICS_FG_SECONDARY:
+            pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.envelope.issuer_rics]
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -3020,6 +3026,21 @@ RICS_LOGO = {
     5197: "pass/logo-avv.png",
     5217: "pass/logo-bremerhaven.png",
     9901: "pass/logo-interrail.png",
+}
+
+RICS_BG = {
+    1084: "rgb(255, 201, 23)",
+    1184: "rgb(255, 201, 23)",
+}
+
+RICS_FG = {
+    1084: "rgb(7, 7, 33)",
+    1184: "rgb(7, 7, 33)",
+}
+
+RICS_FG_SECONDARY = {
+    1084: "rgb(32, 32, 55)",
+    1184: "rgb(32, 32, 55)",
 }
 
 UIC_NAME_LOGO = {
