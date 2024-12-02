@@ -14,7 +14,10 @@ def signing_cert(rics: int, key_id: int):
         with uic_storage.open(key_meta_name) as key_file:
             meta = json.load(key_file)
         with uic_storage.open(key_name) as key_file:
-            key = cryptography.x509.load_der_x509_certificate(key_file.read())
+            try:
+                key = cryptography.x509.load_der_x509_certificate(key_file.read())
+            except ValueError:
+                key = None
 
         return meta, key
 
@@ -26,12 +29,16 @@ def public_key(rics: int, key_id: int):
 
     try:
         with uic_storage.open(cert_name) as key_file:
+            key_bytes = key_file.read()
             try:
-                key = cryptography.x509.load_der_x509_certificate(key_file.read())
+                key = cryptography.x509.load_der_x509_certificate(key_bytes)
+                return key.public_key()
             except ValueError:
-                return None
-
-        return key.public_key()
+                try:
+                    key = cryptography.hazmat.primitives.serialization.load_der_public_key(key_bytes)
+                    return key
+                except ValueError:
+                    return None
     except FileNotFoundError:
         try:
             with uic_storage.open(key_name) as key_file:

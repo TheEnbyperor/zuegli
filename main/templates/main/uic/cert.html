@@ -29,6 +29,8 @@
                 </div>
             {% endfor %}
         </dl>
-        {% include "main/uic/x509.html" with cert=cert.1 %}
+        {% if cert.1 %}
+            {% include "main/uic/x509.html" with cert=cert.1 %}
+        {% endif %}
     </dd>
 </div>
