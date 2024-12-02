@@ -4,7 +4,7 @@ from django.urls import path
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
-from . import models, apn
+from . import models, apn, gwallet
 
 
 class VDVTicketInstanceInline(admin.StackedInline):
@@ -112,8 +112,9 @@ class TicketAdmin(admin.ModelAdmin):
         ticket.last_updated = timezone.now()
         ticket.save()
         apn.notify_ticket(ticket)
+        gwallet.sync_ticket(ticket)
 
-        messages.add_message(request, messages.INFO, "Update APN sent")
+        messages.add_message(request, messages.INFO, "Update sent to Apple and Google")
 
         return redirect(
             f"admin:{self.model._meta.app_label}_{self.model._meta.model_name}_change",
