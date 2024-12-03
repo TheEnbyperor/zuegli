@@ -12,6 +12,7 @@ from . import models, rsp, templatetags, vdv
 
 client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
+
 def sync_ticket(ticket: "models.Ticket"):
     object_id = f"{settings.GWALLET_CONF['issuer_id']}.{ticket.pk.replace('=', '')}"
     data, obj_type = make_ticket_obj(ticket, object_id)
@@ -33,6 +34,7 @@ def sync_ticket(ticket: "models.Ticket"):
             client.genericobject().update(resourceId=object_id, body=data).execute()
         elif obj_type == "transit":
             client.transitobject().update(resourceId=object_id, body=data).execute()
+
 
 def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
     object_id = f"{settings.GWALLET_CONF['issuer_id']}.{ticket.pk.replace('=', '')}"
@@ -61,6 +63,7 @@ def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
 
     token = google.auth.jwt.encode(settings.GOOGLE_SIGNER, claims).decode("utf-8")
     return f"https://pay.google.com/gp/v/save/{token}"
+
 
 def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, str]]:
     ticket_instance = ticket.active_instance()
@@ -93,6 +96,7 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
 
     return None
 
+
 def ticket_class_name(class_code: str):
     class_name = {
         "defaultValue": {
@@ -105,6 +109,12 @@ def ticket_class_name(class_code: str):
             "translatedValues": [{
                 "language": "de",
                 "value": "1."
+            }, {
+                "language": "nl",
+                "value": "1e"
+            }, {
+                "language": "cy",
+                "value": "1af"
             }],
             "defaultValue": {
                 "language": "en-gb",
@@ -116,6 +126,12 @@ def ticket_class_name(class_code: str):
             "translatedValues": [{
                 "language": "de",
                 "value": "2."
+            }, {
+                "language": "nl",
+                "value": "2e"
+            }, {
+                "language": "nl",
+                "value": "2ail"
             }],
             "defaultValue": {
                 "language": "en-gb",
@@ -233,8 +249,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "ticketSeat": {}
                     }]
 
-                    from_station = templatetags.rics.get_station(document["fromStationNum"], document) if "fromStationNum" in document else None
-                    to_station = templatetags.rics.get_station(document["toStationNum"], document) if "toStationNum" in document else None
+                    from_station = templatetags.rics.get_station(document["fromStationNum"],
+                                                                 document) if "fromStationNum" in document else None
+                    to_station = templatetags.rics.get_station(document["toStationNum"],
+                                                               document) if "toStationNum" in document else None
 
                     if from_station:
                         obj["ticketLegs"][0]["originName"] = {
@@ -282,7 +300,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
                     if "originName" in obj["ticketLegs"][0] and "destinationName" in obj["ticketLegs"][0]:
                         ticket_type = "transit"
-                        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+                        obj[
+                            "classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
                         obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
                         if distributor := ticket_data.distributor():
                             obj["ticketLegs"][0]["transitOperatorName"] = {
@@ -299,6 +318,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "translatedValues": [{
                                         "language": "de",
                                         "value": "Ausstellende Organisation"
+                                    }, {
+                                        "language": "nl",
+                                        "value": "Uitgevende Organisatie"
+                                    }, {
+                                        "language": "cy",
+                                        "value": "Cwni dyddori"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
@@ -308,11 +333,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "body": distributor["full_name"],
                             })
 
-
                     if "classCode" in document:
                         if ticket_type == "transit":
                             if document["classCode"] == "first":
-                                    obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "FIRST"
+                                obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "FIRST"
                             elif document["classCode"] == "second":
                                 obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "ECONOMY"
                         else:
@@ -322,6 +346,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "translatedValues": [{
                                         "language": "de",
                                         "value": "Klasse"
+                                    }, {
+                                        "language": "nl",
+                                        "value": "Klasse"
+                                    }, {
+                                        "language": "cy",
+                                        "value": "Dosbarth"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
@@ -349,7 +379,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     }
                                 }
 
-
                         for i, card in enumerate(tariff.get("reductionCard", [])):
                             obj["textModulesData"].append({
                                 "id": f"reduction-card-{i}",
@@ -357,6 +386,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "translatedValues": [{
                                         "language": "de",
                                         "value": "BahnCard"
+                                    }, {
+                                        "language": "nl",
+                                        "value": "Kortingskaart"
+                                    }, {
+                                        "language": "cy",
+                                        "value": "Cerdyn gostwng"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
@@ -381,6 +416,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "translatedValues": [{
                                         "language": "de",
                                         "value": "Produkt"
+                                    }, {
+                                        "language": "nl",
+                                        "value": "Product"
+                                    }, {
+                                        "language": "de",
+                                        "value": "Cynnyrch"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
@@ -404,6 +445,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "translatedValues": [{
                                     "language": "de",
                                     "value": "Gültigkeit"
+                                }, {
+                                    "language": "nl",
+                                    "value": "Geldigheid"
+                                }, {
+                                    "language": "cy",
+                                    "value": "Dilysrwydd"
                                 }],
                                 "defaultValue": {
                                     "language": "en-gb",
@@ -423,6 +470,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "translatedValues": [{
                                         "language": "de",
                                         "value": "Ruckfahrt gültigkeit"
+                                    }, {
+                                        "language": "nl",
+                                        "value": "Retour geldigheid"
+                                    }, {
+                                        "language": "cy",
+                                        "value": "Dilysrwydd dychweldaith"
                                     }],
                                     "defaultValue": {
                                         "language": "en-gb",
@@ -435,7 +488,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 elif document_type == "customerCard":
                     ticket_type = "generic"
                     obj["genericType"] = "GENERIC_LOYALTY_CARD"
-                    obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
+                    obj[
+                        "classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
                     obj["header"] = {
                         "defaultValue": {
                             "language": "en",
@@ -461,6 +515,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "translatedValues": [{
                                     "language": "de",
                                     "value": "Kartennummer"
+                                }, {
+                                    "language": "de",
+                                    "value": "Kaart-ID"
+                                }, {
+                                    "language": "cy",
+                                    "value": "Rhif cerdyn"
                                 }],
                                 "defaultValue": {
                                     "language": "en-gb",
@@ -476,6 +536,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "translatedValues": [{
                                     "language": "de",
                                     "value": "Kartennummer"
+                                }, {
+                                    "language": "de",
+                                    "value": "Kaart-ID"
+                                }, {
+                                    "language": "cy",
+                                    "value": "Rhif cerdyn"
                                 }],
                                 "defaultValue": {
                                     "language": "en-gb",
@@ -492,6 +558,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "translatedValues": [{
                                     "language": "de",
                                     "value": "Klasse"
+                                }, {
+                                    "language": "nl",
+                                    "value": "Klasse"
+                                }, {
+                                    "language": "cy",
+                                    "value": "Dosbarth"
                                 }],
                                 "defaultValue": {
                                     "language": "en-gb",
@@ -545,6 +617,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             "translatedValues": [{
                                 "language": "de",
                                 "value": "Geburtsdatum"
+                            }, {
+                                "language": "nl",
+                                "value": "Geboortedatum"
+                            }, {
+                                "language": "de",
+                                "value": "Dyddiad geni"
                             }],
                             "defaultValue": {
                                 "language": "en-gb",
@@ -561,6 +639,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             "translatedValues": [{
                                 "language": "de",
                                 "value": "Reisepassnr."
+                            }, {
+                                "language": "nl",
+                                "value": "Paspoortnummer"
+                            }, {
+                                "language": "cy",
+                                "value": "Rhif pasbort"
                             }],
                             "defaultValue": {
                                 "language": "en-gb",
@@ -581,6 +665,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "translatedValues": [{
                                     "language": "de",
                                     "value": "Fahrgast"
+                                }, {
+                                    "language": "nl",
+                                    "value": "Reiziger"
+                                }, {
+                                    "language": "cy",
+                                    "value": "Teithiwr"
                                 }],
                                 "defaultValue": {
                                     "language": "en-gb",
@@ -596,6 +686,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Ausgestellt am"
+                }, {
+                    "language": "nl",
+                    "value": "Uitgegeven om"
+                }, {
+                    "language": "cy",
+                    "value": "Dyddorwyd am"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -666,6 +762,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Produktorganisation"
+                }, {
+                    "language": "nl",
+                    "value": "Productorganisatie"
+                }, {
+                    "language": "cy",
+                    "value": "Cynnyrchgwni"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -680,6 +782,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Ticket-ID"
+                }, {
+                    "language": "nl",
+                    "value": "Ticket-ID"
+                }, {
+                    "language": "cy",
+                    "value": "Rhif tocyn"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -694,6 +802,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Ticketverkaufsorganisation"
+                }, {
+                    "language": "nl",
+                    "value": "Ticketorganisatie"
+                }, {
+                    "language": "cy",
+                    "value": "Cwni tocynnu"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -708,6 +822,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Ausgestellt am"
+                }, {
+                    "language": "nl",
+                    "value": "Uitgegeven om"
+                }, {
+                    "language": "cy",
+                    "value": "Dyddorwyd am"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -722,6 +842,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "translatedValues": [{
                     "language": "de",
                     "value": "Ausstellende Organisation"
+                }, {
+                    "language": "nl",
+                    "value": "Uitgevende Organisatie"
+                }, {
+                    "language": "cy",
+                    "value": "Cwni dyddori"
                 }],
                 "defaultValue": {
                     "language": "en-gb",
@@ -739,6 +865,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "translatedValues": [{
                             "language": "de",
                             "value": "Fahrgast"
+                        }, {
+                            "language": "nl",
+                            "value": "Reiziger"
+                        }, {
+                            "language": "cy",
+                            "value": "Teithiwr"
                         }],
                         "defaultValue": {
                             "language": "en-gb",
@@ -754,6 +886,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             "translatedValues": [{
                                 "language": "de",
                                 "value": "Geburtsdatum"
+                            }, {
+                                "language": "nl",
+                                "value": "Geboortedatum"
+                            }, {
+                                "language": "cy",
+                                "value": "Dyddiad geni"
                             }],
                             "defaultValue": {
                                 "language": "en-gb",
@@ -823,7 +961,22 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             })
             obj["textModulesData"].append({
                 "id": "traveler-1",
-                "header": "Issued to",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Fahrgast"
+                    }, {
+                        "language": "nl",
+                        "value": "Reiziger"
+                    }, {
+                        "language": "cy",
+                        "value": "Teithiwr"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Traveler"
+                    }
+                },
                 "body": ticket_data.data.passenger_1_name(),
             })
             if ticket_data.data.has_passenger_2():
@@ -834,18 +987,63 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 })
             obj["textModulesData"].append({
                 "id": "issuer",
-                "header": "Issued by",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Ausstellende Organisation"
+                    }, {
+                        "language": "nl",
+                        "value": "Uitgevende Organisatie"
+                    }, {
+                        "language": "cy",
+                        "value": "Cwni dyddori"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Issuing Organisation"
+                    }
+                },
                 "body": ticket_data.data.issuer_name()
             })
             obj["textModulesData"].append({
                 "id": "railcard-number",
-                "header": "Railcard number",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Railcard-Nummer"
+                    }, {
+                        "language": "nl",
+                        "value": "Railcard-nummer"
+                    }, {
+                        "language": "cy",
+                        "value": "Rhif Railcard"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Railcard number",
+                    }
+                },
                 "body": ticket_data.data.railcard_number
             })
             if ticket_data.data.free_use:
                 obj["textModulesData"].append({
                     "id": "notes",
-                    "header": "Notes",
+                    "localizedHeader": {
+                        "translatedValues": [{
+                            "language": "de",
+                            "value": "Notiz"
+                        }, {
+                            "language": "nl",
+                            "value": "Opmerking"
+                        }, {
+                            "language": "cy",
+                            "value": "Nodyn"
+                        }],
+                        "defaultValue": {
+                            "language": "en-gb",
+                            "value": "Notes",
+                        }
+                    },
                     "body": ticket_data.data.free_use
                 })
 

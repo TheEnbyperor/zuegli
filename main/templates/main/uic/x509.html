@@ -35,19 +35,21 @@
                 <dt class="govuk-summary-list__key">Signature algorithm</dt>
                 <dd class="govuk-summary-list__value"><code>{{ cert.signature_algorithm_oid.dotted_string }}</code></dd>
             </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Extensions</dt>
-                <dd class="govuk-summary-list__value">
-                    <dl class="govuk-summary-list">
-                        {% for ext in cert.extensions %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">{{ ext.oid.dotted_string }}</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ ext.value|pprint }}</code></dd>
-                            </div>
-                        {% endfor %}
-                    </dl>
-                </dd>
-            </div>
+            {% if cert.extensions %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Extensions</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% for ext in cert.extensions %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">{{ ext.oid.dotted_string }}</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ ext.value|pprint }}</code></dd>
+                                </div>
+                            {% endfor %}
+                        </dl>
+                    </dd>
+                </div>
+            {% endif %}
         </dl>
     </div>
 </div>

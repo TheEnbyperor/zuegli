@@ -302,6 +302,12 @@ class Command(BaseCommand):
                     "translatedValues": [{
                         "language": "de",
                         "value": "Zug nr."
+                    }, {
+                        "language": "nl",
+                        "value": "Treinnummer"
+                    }, {
+                        "language": "cy",
+                        "value": "Rhif y trên"
                     }],
                     "defaultValue": {
                         "language": "en-gb",
