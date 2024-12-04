@@ -64,6 +64,24 @@
             </div>
         {% endif %}
     {% endwith %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of adults</dt>
+        <dd class="govuk-summary-list__value">{{ db.num_adults }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of children</dt>
+        <dd class="govuk-summary-list__value">{{ db.num_children }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of BahnCards</dt>
+        <dd class="govuk-summary-list__value">{{ db.num_bahncards }}</dd>
+    </div>
+    {% if db.bahncard_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">BahnCard</dt>
+            <dd class="govuk-summary-list__value">{{ db.bahncard_type }}</dd>
+        </div>
+    {% endif %}
     {% if db.route %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Route</dt>
@@ -85,6 +103,12 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Surname</dt>
                             <dd class="govuk-summary-list__value">{{ db.traveller_surname }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if db.traveller_full_name %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Full name</dt>
+                            <dd class="govuk-summary-list__value">{{ db.traveller_full_name }}</dd>
                         </div>
                     {% endif %}
                 </dl>

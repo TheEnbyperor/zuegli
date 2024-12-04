@@ -19,6 +19,11 @@ class DBRecordBL:
     validity_end: typing.Optional[datetime.date]
     traveller_forename: typing.Optional[str]
     traveller_surname: typing.Optional[str]
+    traveller_full_name: typing.Optional[str]
+    num_adults: int
+    num_children: int
+    num_bahncards: int
+    bahncard_type: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -58,6 +63,11 @@ class DBRecordBL:
         validity_end = None
         traveller_forename = None
         traveller_surname = None
+        traveller_full_name = None
+        num_adults = 0
+        num_children = 0
+        num_bahncards = 0
+        bahncard_type = None
         for _ in range(num_sub_blocks):
             try:
                 block_id = data[offset:offset+4].decode("utf-8")
@@ -75,6 +85,25 @@ class DBRecordBL:
 
             if block_id == "S001":
                 product = block_data
+            elif block_id == "S009":
+                parts = block_data.split("-")
+                if len(parts) != 3:
+                    raise DBException(f"Invalid passenger count")
+                num_adults_str, num_bahncards_str, bahncard_type_str = parts
+                try:
+                    num_adults = int(num_adults_str, 10)
+                    num_bahncards = int(num_bahncards_str, 10)
+                except ValueError as e:
+                    raise DBException(f"Invalid passenger count") from e
+                if bahncard_type_str in ("19", "78"):
+                    bahncard_type = "BC50"
+                elif bahncard_type_str in ("49", "27", "39"):
+                    bahncard_type = "BC25"
+            elif block_id == "S012":
+                try:
+                    num_children = int(block_data, 10)
+                except ValueError as e:
+                    raise DBException(f"Invalid children count") from e
             elif block_id == "S015":
                 from_station_name = block_data
             elif block_id == "S035":
@@ -93,6 +122,8 @@ class DBRecordBL:
                 to_station_uic = 8000000 + station_id
             elif block_id == "S021":
                 route = block_data
+            elif block_id == "S023":
+                traveller_full_name = block_data
             elif block_id == "S028":
                 traveller_forename, traveller_surname = block_data.split("#", 1)
             elif block_id == "S031":
@@ -120,9 +151,14 @@ class DBRecordBL:
             route=route,
             traveller_forename=traveller_forename,
             traveller_surname=traveller_surname,
+            traveller_full_name=traveller_full_name,
             validity_start=validity_start,
             validity_end=validity_end,
             other_blocks=blocks,
+            num_adults=num_adults,
+            num_children=num_children,
+            num_bahncards=num_bahncards,
+            bahncard_type=bahncard_type,
         )
 
 

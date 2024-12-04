@@ -1073,6 +1073,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
         elif ticket_data.db_bl:
+            parsed_layout = None
+            if ticket_data.layout and ticket_data.layout.standard == "RCT2":
+                parser = uic.rct2_parse.RCT2Parser()
+                parser.read(ticket_data.layout)
+                parsed_layout = parser.parse()
+
             tz = pytz.timezone("Europe/Berlin")
             if ticket_data.db_bl.product:
                 pass_fields["headerFields"].append({
@@ -1168,6 +1174,42 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "destinationStationName": ticket_data.db_bl.to_station_name
                         }
                     })
+            else:
+                if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
+                    pass_type = "boardingPass"
+                    pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": parsed_layout.trips[0].departure_station,
+                        "semantics": {
+                            "departureStationName": parsed_layout.trips[0].departure_station
+                        }
+                    })
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": parsed_layout.trips[0].arrival_station,
+                        "semantics": {
+                            "departureStationName": parsed_layout.trips[0].arrival_station,
+                        }
+                    })
+
+            if parsed_layout.travel_class:
+                if pass_type == "boardingPass":
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+                else:
+                    pass_fields["headerFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+
 
             if ticket_data.db_bl.validity_start:
                 validity_start = tz.localize(
