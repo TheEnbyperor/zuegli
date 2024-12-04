@@ -94,6 +94,17 @@
         <h2 class="govuk-heading-l">Upload a picture or a PDF instead</h2>
         {% crispy image_form %}
 
+        <h2 class="govuk-heading-l">Paste your ticket as hex</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="type" value="scan">
+            <div id="div_id_ticket" class="govuk-form-group">
+                <label for="ticket_paste" class="govuk-label">Your ticket</label>
+                <input type="text" name="ticket_hex" id="ticket_paste" required class="govuk-input">
+            </div>
+            <button type="submit" class="govuk-button">Submit</button>
+        </form>
+
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
         <h3 class="govuk-heading-m">Not working?</h3>

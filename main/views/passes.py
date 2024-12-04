@@ -16,6 +16,10 @@ from django.core.files.storage import default_storage
 from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb
 
 
+def robots(request):
+    with storages["staticfiles"].open("main/robots.txt") as f:
+        return HttpResponse(f.read(), content_type="text/plain")
+
 def index(request):
     ticket_bytes = None
     error = None
@@ -177,14 +181,18 @@ def add_pkp_img(pkp, img_name: str, pass_path: str):
     with storage.open(f"{img_name}.{img_name_ext}", "rb") as f:
         img_1x = f.read()
         pkp.add_file(f"{pass_path}.{pass_path_ext}", img_1x)
-    if storage.exists(f"{img_name}@2x.{img_name_ext}"):
+    try:
         with storage.open(f"{img_name}@2x.{img_name_ext}", "rb") as f:
             img_2x = f.read()
             pkp.add_file(f"{pass_path}@2x.{pass_path_ext}", img_2x)
-    if storage.exists(f"{img_name}@3x.{img_name_ext}"):
+    except FileNotFoundError:
+        pass
+    try:
         with storages["staticfiles"].open(f"{img_name}@3x.{img_name_ext}", "rb") as f:
             img_3x = f.read()
             pkp.add_file(f"{pass_path}@3x.{pass_path_ext}", img_3x)
+    except FileNotFoundError:
+        pass
 
 
 def ticket_pkpass(request, pk):

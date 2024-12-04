@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /ticket/
+Disallow: /account/
+
+User-agent: *
+Allow: /
