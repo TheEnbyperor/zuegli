@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Barkoder)
 set(CMAKE_CXX_STANDARD 20)
-set(PYBIND11_PYTHON_VERSION 3.12)
+set(PYBIND11_PYTHON_VERSION 3.13)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -fPIC")
 
 find_package(pybind11 REQUIRED)
