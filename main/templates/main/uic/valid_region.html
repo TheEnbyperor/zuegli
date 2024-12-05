@@ -10,6 +10,52 @@
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
+                        {% if region.1.fromStationNum %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">From station number</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ region.1.fromStationNum }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if region.1.fromStationNameUTF8 %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">From station name</dt>
+                                <dd class="govuk-summary-list__value">{{ region.1.fromStationNameUTF8 }}</dd>
+                            </div>
+                        {% endif %}
+                        {% with station=region.1.fromStationNum|get_station:ticket %}
+                            {% if station %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">From station</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% include "main/uic/station.html" with station=station %}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        {% if region.1.toStationNum %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">To station number</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ region.1.toStationNum }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if region.1.toStationNameUTF8 %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">To station name</dt>
+                                <dd class="govuk-summary-list__value">{{ region.1.toStationNameUTF8 }}</dd>
+                            </div>
+                        {% endif %}
+                        {% with station=region.1.toStationNum|get_station:ticket %}
+                            {% if station %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">To station</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% include "main/uic/station.html" with station=station %}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Departure time</dt>
                             <dd class="govuk-summary-list__value">

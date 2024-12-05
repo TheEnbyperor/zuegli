@@ -99,6 +99,24 @@
         <dt class="govuk-summary-list__key">Travel class</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.classCode }}</code></dd>
     </div>
+    {% if ticket.carrierNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list--bullet">
+                    {% for carrier in ticket.carrierNum %}
+                        {% with org=carrier|rics %}
+                            {% if org %}
+                                <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
     {% if ticket.validRegion %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Valid region</dt>

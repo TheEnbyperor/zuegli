@@ -129,16 +129,15 @@
                             <dd class="govuk-summary-list__value">{{ res.places.coach }}</dd>
                         </div>
                     {% endif %}
-                    {% if res.places.placeNum %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Place</dt>
-                            <dd class="govuk-summary-list__value">{{ res.places.placeNum|join:", " }}</dd>
-                        </div>
-                    {% endif %}
                     {% if res.places.placeString %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Place</dt>
                             <dd class="govuk-summary-list__value">{{ res.places.placeString }}</dd>
+                        </div>
+                    {% elif res.places.placeNum %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Place</dt>
+                            <dd class="govuk-summary-list__value">{{ res.places.placeNum|join:", " }}</dd>
                         </div>
                     {% endif %}
                     {% if res.places.placeDescription %}
