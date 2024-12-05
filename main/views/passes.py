@@ -1174,7 +1174,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "destinationStationName": ticket_data.db_bl.to_station_name
                         }
                     })
-            else:
+            elif parsed_layout:
                 if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
                     pass_type = "boardingPass"
                     pass_fields["transitType"] = "PKTransitTypeTrain"
@@ -1196,7 +1196,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         }
                     })
 
-            if parsed_layout.travel_class:
+            if parsed_layout and parsed_layout.travel_class:
                 if pass_type == "boardingPass":
                     pass_fields["auxiliaryFields"].append({
                         "key": "class-code",
@@ -1256,6 +1256,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "valid-region",
                     "label": "valid-region-label",
                     "value": ticket_data.db_bl.route,
+                })
+            elif parsed_layout and parsed_layout.train_data:
+                pass_fields["backFields"].append({
+                    "key": "train-data",
+                    "label": "train-number-label",
+                    "value": parsed_layout.train_data,
                 })
 
             if ticket_data.db_bl.traveller_forename or ticket_data.db_bl.traveller_surname:

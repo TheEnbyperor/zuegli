@@ -205,7 +205,6 @@ Pass Contents</code></pre>
                         for (let i = 0; i < rawBytes.length; ++i)
                             hexOctets.push(("0" + rawBytes[i].toString(16)).slice(-2));
                         dataInput.value = hexOctets.join("");
-                        console.log(dataInput.value);
                         scanForm.submit();
                     });
                 });
