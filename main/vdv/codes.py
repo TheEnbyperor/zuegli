@@ -8,5 +8,10 @@ SPACIAL_VALIDITY = {
     5000: {
         1: "Deutschlandweit",
     },
-    6262: get_db_station_name
+    6100: {
+        1200: "Berlin AB",
+        1201: "Berlin BC",
+        1202: "Berlin ABC"
+    },
+    6262: get_db_station_name,
 }
