@@ -2810,6 +2810,139 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": ticket_data.data.extra_text,
                 })
 
+
+        elif isinstance(ticket_data.data, ssb.GroupTicket):
+            pass_type = "boardingPass"
+            pass_fields["transitType"] = "PKTransitTypeTrain"
+
+            pass_fields["backFields"].append({
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": ticket_data.data.pnr,
+                "semantics": {
+                    "confirmationNumber": ticket_data.data.pnr,
+                }
+            })
+
+            pass_fields["headerFields"].append({
+                "key": "group-ticket",
+                "value": "group-ticket-label"
+            })
+
+            if ticket_data.data.departure_station_uic:
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(from_station["latitude"]),
+                            "longitude": float(from_station["longitude"]),
+                        },
+                        "departureStationName": from_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": from_station["name"],
+                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                })
+            elif ticket_data.data.departure_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": ticket_data.data.departure_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.departure_station_name,
+                    }
+                })
+
+            if ticket_data.data.arrival_station_uic:
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(to_station["latitude"]),
+                            "longitude": float(to_station["longitude"]),
+                        },
+                        "departureStationName": to_station["name"]
+                    }
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": to_station["name"],
+                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                })
+            elif ticket_data.data.arrival_station_name:
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": ticket_data.data.arrival_station_name,
+                    "semantics": {
+                        "departureStationName": ticket_data.data.arrival_station_name,
+                    }
+                })
+
+            if ticket_data.data.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": f"class-code-{ticket_data.data.travel_class}-label",
+                })
+
+            if ticket_data.data.group_leader:
+                pass_fields["secondaryFields"].append({
+                    "key": "group-leader",
+                    "label": "group-leader-label",
+                    "value": ticket_data.data.group_leader,
+                })
+
+            pass_fields["secondaryFields"].append({
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_start.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["secondaryFields"].append({
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+            pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleNone",
+                "value": f"{ticket_data.data.issuing_date.isoformat()}T00:00:00Z",
+                "ignoresTimeZone": True
+            })
+
+            if ticket_data.data.extra_text:
+                pass_fields["backFields"].append({
+                    "key": "extra-date",
+                    "label": "other-data-label",
+                    "value": ticket_data.data.extra_text,
+                })
+
         elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
             pass_fields["headerFields"].append({
                 "key": "card-name",
@@ -3047,6 +3180,8 @@ PASS_STRINGS = {
 "travel-inc-toc-label" = "Travel must include a service operated by";
 "travel-excl-toc-label" = "Travel must not include a service operated by";
 "route-label" = "Route";
+"group-ticket-label" = "Group ticket";
+"group-leader-label" = "Group leader";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -3106,6 +3241,8 @@ PASS_STRINGS = {
 "travel-inc-toc-label" = "Rhaid i'r daith cynnwys gwasanaeth";
 "travel-excl-toc-label" = "Ni all y daith cynnwys gwasanaeth";
 "route-label" = "Llwybr";
+"group-ticket-label" = "Tocyn grwp";
+"group-leader-label" = "Prifdeithiwr";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -3165,6 +3302,8 @@ PASS_STRINGS = {
 "travel-inc-toc-label" = "Gültige Fahrt nur mit einen Dienst von";
 "travel-excl-toc-label" = "Gültige Fahrt nicht mit Dienste von";
 "route-label" = "Route";
+"group-ticket-label" = "Gruppenkarte";
+"group-leader-label" = "Hauptfahrgast";
 """,
     "nl": """
 "product-label" = "Product";

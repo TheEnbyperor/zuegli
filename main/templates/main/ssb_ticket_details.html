@@ -310,6 +310,124 @@
             </div>
         {% endif %}
     </dl>
+{% elif ticket.data.type == "GRT" %}
+    <h2 class="govuk-heading-m">Group ticket</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">PNR</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.pnr }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuing date</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.issuing_date|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Specimen</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.specimen %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Number of adults</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.num_adults }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Number of children</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.num_children }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Travel class</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.travel_class == 1 %}
+                    First
+                {% elif ticket.data.travel_class == 2 %}
+                    Second
+                {% else %}
+                    <code>{{ ticket.data.travel_class }}</code>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.validity_start|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid until</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.validity_end|date:"F d, Y" }}</dd>
+        </div>
+        {% if ticket.data.departure_station_uic %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">From station number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.departure_station_uic }}</code></dd>
+            </div>
+            {% with station=ticket.data.departure_station_uic|get_station:"uic" %}
+                {% if station %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">From station</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/uic/station.html" with station=station %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+        {% if ticket.data.departure_station_name %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">From station</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.departure_station_name }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.arrival_station_uic %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">To station number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.arrival_station_uic }}</code></dd>
+            </div>
+            {% with station=ticket.data.arrival_station_uic|get_station:"uic" %}
+                {% if station %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">To station</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/uic/station.html" with station=station %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+        {% if ticket.data.arrival_station_name %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">To station</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.arrival_station_name }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.group_leader %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Group leader</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.group_leader }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.countermark %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Countermark</dt>
+                <dd class="govuk-summary-list__value">#{{ ticket.data.countermark }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.information_message %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Information message</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.information_message }}</code></dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.extra_text %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extra text</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.extra_text }}</dd>
+            </div>
+        {% endif %}
+    </dl>
 {% elif ticket.data.type == "PASS" %}
     <h2 class="govuk-heading-m">InterRail Pass</h2>
     <dl class="govuk-summary-list">

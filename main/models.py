@@ -303,6 +303,8 @@ class SSBTicketInstance(models.Model):
             data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics)
         elif envelope.ticket_type == 2:
             data = ssb.NonReservationTicket.parse(envelope.data, envelope.issuer_rics)
+        elif envelope.ticket_type == 3:
+            data = ssb.GroupTicket.parse(envelope.data, envelope.issuer_rics)
         elif envelope.ticket_type == 4:
             data = ssb.Pass.parse(envelope.data)
         elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
