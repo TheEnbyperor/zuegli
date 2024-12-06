@@ -590,7 +590,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             if len(travellers) == 1:
                 obj["passengerType"] = "SINGLE_PASSENGER"
             elif len(travellers) > 1:
-                obj["passengerType"] = "MULTIPLE_PASSENGER"
+                obj["passengerType"] = "MULTIPLE_PASSENGERS"
 
             passenger_names = []
             for i, traveller in enumerate(travellers):
