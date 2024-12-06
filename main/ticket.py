@@ -164,8 +164,10 @@ class UICTicket:
                 hd.update(self.flex.data["issuingDetail"].get("issuerNum", 0).to_bytes(8, "big"))
                 if "referenceIA5" in ticket:
                     hd.update(ticket["referenceIA5"].encode("utf-8"))
-                else:
+                elif "referenceNumber" in ticket:
                     hd.update(str(ticket.get("referenceNum", 0)).encode("utf-8"))
+                else:
+                    hd.update(self.ticket_id().encode("utf-8"))
             else:
                 hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(self.ticket_id().encode("utf-8"))
@@ -177,8 +179,10 @@ class UICTicket:
             hd.update(self.flex.data["issuingDetail"].get("issuerNum", 0).to_bytes(8, "big"))
             if "referenceIA5" in ticket:
                 hd.update(ticket["referenceIA5"].encode("utf-8"))
-            else:
+            elif "referenceNumber" in ticket:
                 hd.update(str(ticket.get("referenceNum", 0)).encode("utf-8"))
+            else:
+                hd.update(self.ticket_id().encode("utf-8"))
             return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_INTERRAIL:
@@ -186,8 +190,10 @@ class UICTicket:
             hd.update(b"interrail")
             if "referenceIA5" in interrail_pass:
                 hd.update(interrail_pass["referenceIA5"].encode("utf-8"))
-            else:
+            elif "referenceNumber" in interrail_pass:
                 hd.update(str(interrail_pass.get("referenceNum", 0)).encode("utf-8"))
+            else:
+                hd.update(self.ticket_id().encode("utf-8"))
             return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_KLIMATICKET:
@@ -195,8 +201,10 @@ class UICTicket:
             hd.update(b"klimaticket")
             if "referenceIA5" in klimaticket_pass:
                 hd.update(klimaticket_pass["referenceIA5"].encode("utf-8"))
-            else:
+            elif "referenceNumber" in klimaticket_pass:
                 hd.update(str(klimaticket_pass.get("referenceNum", 0)).encode("utf-8"))
+            else:
+                hd.update(self.ticket_id().encode("utf-8"))
             return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         else:
