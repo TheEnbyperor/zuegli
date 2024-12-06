@@ -269,6 +269,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             add_pkp_img(pkp, RICS_LOGO[issuing_rics], "logo.png")
             have_logo = True
 
+        parsed_layout = None
+        if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(ticket_data.layout)
+            parsed_layout = parser.parse()
+
         if ticket_data.flex:
             pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"]
 
@@ -1073,12 +1079,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
         elif ticket_data.db_bl:
-            parsed_layout = None
-            if ticket_data.layout and ticket_data.layout.standard == "RCT2":
-                parser = uic.rct2_parse.RCT2Parser()
-                parser.read(ticket_data.layout)
-                parsed_layout = parser.parse()
-
             tz = pytz.timezone("Europe/Berlin")
             if ticket_data.db_bl.product:
                 pass_fields["headerFields"].append({
@@ -1174,27 +1174,26 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "destinationStationName": ticket_data.db_bl.to_station_name
                         }
                     })
-            elif parsed_layout:
-                if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
-                    pass_type = "boardingPass"
-                    pass_fields["transitType"] = "PKTransitTypeTrain"
+            elif parsed_layout and (parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station):
+                pass_type = "boardingPass"
+                pass_fields["transitType"] = "PKTransitTypeTrain"
 
-                    pass_fields["primaryFields"].append({
-                        "key": "from-station",
-                        "label": "from-station-label",
-                        "value": parsed_layout.trips[0].departure_station,
-                        "semantics": {
-                            "departureStationName": parsed_layout.trips[0].departure_station
-                        }
-                    })
-                    pass_fields["primaryFields"].append({
-                        "key": "to-station",
-                        "label": "to-station-label",
-                        "value": parsed_layout.trips[0].arrival_station,
-                        "semantics": {
-                            "departureStationName": parsed_layout.trips[0].arrival_station,
-                        }
-                    })
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": parsed_layout.trips[0].departure_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].departure_station
+                    }
+                })
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": parsed_layout.trips[0].arrival_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].arrival_station,
+                    }
+                })
 
             if parsed_layout and parsed_layout.travel_class:
                 if pass_type == "boardingPass":
@@ -1284,6 +1283,58 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["auxiliaryFields"].append(field_data)
 
         elif ticket_data.cd_ut:
+            if parsed_layout and (parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station):
+                pass_type = "boardingPass"
+                pass_fields["transitType"] = "PKTransitTypeTrain"
+
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": parsed_layout.trips[0].departure_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].departure_station
+                    }
+                })
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": parsed_layout.trips[0].arrival_station,
+                    "semantics": {
+                        "departureStationName": parsed_layout.trips[0].arrival_station,
+                    }
+                })
+
+            if parsed_layout and parsed_layout.travel_class:
+                if pass_type == "boardingPass":
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+                else:
+                    pass_fields["headerFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": parsed_layout.travel_class,
+                    })
+
+            for res in ticket_data.cd_ut.reservations:
+                pass_fields["headerFields"].append({
+                    "key": "train-number",
+                    "label": "train-number-label",
+                    "value": res.train,
+                })
+                pass_fields["auxiliaryFields"].append({
+                    "key": f"reservation-coach",
+                    "label": "coach-number-label",
+                    "value": res.carriage,
+                })
+                pass_fields["auxiliaryFields"].append({
+                    "key": f"reservation-seat",
+                    "label": "seat-number-label",
+                    "value": res.seat,
+                })
+
             if ticket_data.cd_ut.validity_start:
                 pass_json["relevantDate"] = ticket_data.cd_ut.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
                 pass_fields["secondaryFields"].append({
@@ -1320,27 +1371,28 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_data.cd_ut.name:
-                pass_fields["primaryFields"].append({
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": ticket_data.cd_ut.name,
-                })
+                if pass_type == "boardingPass":
+                    pass_fields["secondaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": ticket_data.cd_ut.name,
+                    })
+                else:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": ticket_data.cd_ut.name,
+                    })
 
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-            parsed_layout = None
-            if ticket_data.layout and ticket_data.layout.standard == "RCT2":
-                parser = uic.rct2_parse.RCT2Parser()
-                parser.read(ticket_data.layout)
-                parsed_layout = parser.parse()
-
-                if parsed_layout.travel_class:
-                    pass_fields["auxiliaryFields"].append({
-                        "key": "class-code",
-                        "label": "class-code-label",
-                        "value": parsed_layout.travel_class,
-                    })
+            if parsed_layout and parsed_layout.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": parsed_layout.travel_class,
+                })
 
             if ticket_data.oebb_99.train_number:
                 pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -1536,11 +1588,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": ticket_data.dt_pa.passenger_name,
                     })
 
-        elif ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
-            parser = uic.rct2_parse.RCT2Parser()
-            parser.read(ticket_data.layout)
-            parsed_layout = parser.parse()
-
+        elif parsed_layout:
             if parsed_layout.trips:
                 if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
                     pass_type = "boardingPass"

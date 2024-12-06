@@ -93,32 +93,25 @@
 <h3 class="govuk-heading-s">Transaction Data</h3>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Transaction</dt>
+        <dt class="govuk-summary-list__key">Time</dt>
         <dd class="govuk-summary-list__value">
-            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Time</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ ticket.ticket.transaction_time.as_datetime|date:"F d, Y H:i:s" }} UTC
-                    </dd>
-                </div>
-                {% with org_name=ticket.ticket.kvp_org_name_opt %}
-                    {% if org_name %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">KVP Organisation Name</dt>
-                            <dd class="govuk-summary-list__value">
-                                {{ org_name }}
-                            </dd>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">KVP Organization ID</dt>
-                    <dd class="govuk-summary-list__value">
-                        <code>{{ ticket.ticket.kvp_org_id }}</code>
-                    </dd>
-                </div>
-            </dl>
+            {{ ticket.ticket.transaction_time.as_datetime|date:"F d, Y H:i:s" }} UTC
+        </dd>
+    </div>
+    {% with org_name=ticket.ticket.kvp_org_name_opt %}
+        {% if org_name %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation Name</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ org_name }}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Organization ID</dt>
+        <dd class="govuk-summary-list__value">
+            <code>{{ ticket.ticket.kvp_org_id }}</code>
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -215,30 +208,23 @@
     <p class="govuk-body">N/A</p>
 {% endif %}
 
-<h3 class="govuk-heading-s">Issuing Data</h3>
+<h3 class="govuk-heading-s">Issuing SAM Data</h3>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">SAM</dt>
-        <dd class="govuk-summary-list__value">
-            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Version</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_version }}</code></dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">ID</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_id }}</code></dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Sequence number 1</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_sequence_number_1 }}</code></dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Sequence number 2</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_sequence_number_2 }}</code></dd>
-                </div>
-            </dl>
-        </dd>
+        <dt class="govuk-summary-list__key">Version</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_version }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sequence number 1</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_sequence_number_1 }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sequence number 2</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.sam_sequence_number_2 }}</code></dd>
     </div>
 </dl>
 

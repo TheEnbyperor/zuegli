@@ -1,6 +1,18 @@
 {% load tz rics %}
 <h2 class="govuk-heading-m">České dráhy data</h2>
 <dl class="govuk-summary-list">
+    {% if cd.pnr %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">PNR</dt>
+            <dd class="govuk-summary-list__value">{{ cd.pnr }}</dd>
+        </div>
+    {% endif %}
+    {% if cd.reference %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference</dt>
+            <dd class="govuk-summary-list__value">{{ cd.reference }}</dd>
+        </div>
+    {% endif %}
     {% if cd.name %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Traveller name</dt>
@@ -17,6 +29,42 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Validity end</dt>
             <dd class="govuk-summary-list__value">{{ cd.validity_end|date:"F d, Y H:i" }}</dd>
+        </div>
+    {% endif %}
+    {% if cd.distance %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Distance</dt>
+            <dd class="govuk-summary-list__value">{{ cd.distance }}km</dd>
+        </div>
+    {% endif %}
+    {% if cd.reservations %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reservations</dt>
+            <dd class="govuk-summary-list__value">
+                {% for res in cd.reservations %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">Reservation #{{ forloop.counter }}</h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Train</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.train }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carriage</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.carriage }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Seat</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.seat }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
         </div>
     {% endif %}
     {% if cd.other_blocks %}

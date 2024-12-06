@@ -65,14 +65,14 @@ class RCT2Parser:
     def parse(self):
         departure_date_1 =    self.read_area(top=6,  left=1,  width=5,  height=1)[0]
         departure_time_1 =    self.read_area(top=6,  left=7,  width=5,  height=1)[0]
-        departure_station_1 = self.read_area(top=6,  left=13, width=17, height=1)[0]
+        departure_station_1 = self.read_area(top=6,  left=12, width=17, height=1)[0]
         arrival_station_1 =   self.read_area(top=6,  left=34, width=17, height=1)[0]
         arrival_date_1 =      self.read_area(top=6,  left=52, width=5,  height=1)[0]
         arrival_time_1 =      self.read_area(top=6,  left=58, width=5,  height=1)[0]
 
         departure_date_2 =    self.read_area(top=7,  left=1,  width=5,  height=1)[0]
         departure_time_2 =    self.read_area(top=7,  left=7,  width=5,  height=1)[0]
-        departure_station_2 = self.read_area(top=7,  left=13, width=17, height=1)[0]
+        departure_station_2 = self.read_area(top=7,  left=12, width=17, height=1)[0]
         arrival_station_2 =   self.read_area(top=7,  left=34, width=17, height=1)[0]
         arrival_date_2 =      self.read_area(top=7,  left=52, width=5,  height=1)[0]
         arrival_time_2 =      self.read_area(top=7,  left=58, width=5,  height=1)[0]

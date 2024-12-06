@@ -1,4 +1,5 @@
 import dataclasses
+import decimal
 import typing
 import datetime
 
@@ -9,10 +10,22 @@ class CDException(Exception):
     pass
 
 @dataclasses.dataclass
+class Reservation:
+    train: str
+    carriage: str
+    seat: str
+
+
+@dataclasses.dataclass
 class CDRecordUT:
+    ticket_type: typing.Optional[str]
     name: typing.Optional[str]
     validity_start: typing.Optional[datetime.datetime]
     validity_end: typing.Optional[datetime.datetime]
+    pnr: typing.Optional[str]
+    reference: typing.Optional[str]
+    distance: typing.Optional[decimal.Decimal]
+    reservations: typing.List[Reservation]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -25,6 +38,11 @@ class CDRecordUT:
         name = None
         validity_start = None
         validity_end = None
+        pnr = None
+        reference = None
+        distance = None
+        ticket_type = None
+        reservations = []
         blocks = {}
 
         offset = 0
@@ -45,6 +63,17 @@ class CDRecordUT:
 
             if block_id == "KJ":
                 name = block_data
+            elif block_id == "KD":
+                ticket_type = block_data
+            elif block_id == "KC":
+                reference = block_data
+            elif block_id == "KK":
+                pnr = block_data
+            elif block_id == "KM":
+                try:
+                    distance = decimal.Decimal(block_data)
+                except ValueError as e:
+                    raise CDException(f"Invalid distance") from e
             elif block_id == "OD":
                 try:
                     validity_start = tz.localize(
@@ -59,6 +88,17 @@ class CDRecordUT:
                     ).astimezone(pytz.utc)
                 except ValueError as e:
                     raise CDException(f"Invalid validity end date") from e
+            elif block_id == "RT":
+                reservations = []
+                for res in block_data.split("#"):
+                    parts = res.split("|")
+                    if len(parts) != 3:
+                        raise CDException(f"Invalid reservation")
+                    reservations.append(Reservation(
+                        train=parts[0],
+                        carriage=parts[1],
+                        seat=parts[2],
+                    ))
             else:
                 blocks[block_id] = block_data
 
@@ -67,4 +107,9 @@ class CDRecordUT:
             validity_start=validity_start,
             validity_end=validity_end,
             other_blocks=blocks,
+            pnr=pnr,
+            reference=reference,
+            distance=distance,
+            ticket_type=ticket_type,
+            reservations=reservations,
         )
