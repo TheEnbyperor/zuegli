@@ -1886,6 +1886,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "dateStyle": "PKDateStyleMedium",
                         "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
+            elif isinstance(elm, vdv.ticket.SpacialValidity):
+                if elm.organization_id == 6100:  # Verhkersverbund Berlin Brandenburg
+                    if 1200 in elm.area_ids:
+                        add_pkp_img(pkp, "pass/berlin-ab.png", "thumbnail.png")
+                    elif 1202 in elm.area_ids:
+                        add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
 
         if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
             add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.product_org_id], "logo.png")

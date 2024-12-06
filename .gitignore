@@ -12,3 +12,4 @@ tickeos.py
 parsed_licenses.lcs
 media/
 .git_hash
+.DS_Store
