@@ -5,6 +5,7 @@ import typing
 import ber_tlv.tlv
 import re
 from . import util, org_id, product_id, codes
+from ..rsp.gen import Station
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
@@ -131,7 +132,10 @@ class VDVTicket:
             validity_start=util.DateTime.from_bytes(header[10:14]),
             validity_end=util.DateTime.from_bytes(header[14:18]),
 
-            product_data=list(map(lambda e: cls.parse_product_data_element(e, context), product_data)),
+            product_data=list(map(
+                lambda e: cls.parse_product_data_element(e, context),
+                filter(lambda e: any(d != 0 for d in e[1]), product_data)
+            )),
 
             kvp_org_id=int.from_bytes(common_transaction_data[0:2], 'big'),
             terminal_type=common_transaction_data[2],
@@ -152,14 +156,14 @@ class VDVTicket:
 
     @staticmethod
     def parse_product_data_element(elm, context: Context) -> typing.Any:
-        if elm[0] == 0xDB:
-            return PassengerData.parse(elm[1], context)
-        elif elm[0] == 0xDA:
+        if elm[0] == 0xDA:
             return BasicData.parse(elm[1])
-        elif elm[0] == 0xE0:
-            return IdentificationMedium.parse(elm[1])
+        elif elm[0] == 0xDB:
+            return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
             return SpacialValidity.parse(elm[1])
+        elif elm[0] == 0xD7:
+            return IdentificationMedium.parse(elm[1])
         else:
             return UnknownElement(elm[0], elm[1])
 
@@ -286,6 +290,8 @@ class VDVTicket:
             return "Teilzone"
         elif self.location_type == 208:
             return "neutrale Zone"
+        elif self.location_type == 212:
+            return "HAFAS-ID"
         elif self.location_type == 213:
             return "im Fahrzeug an Haltestelle"
         elif self.location_type == 214:
@@ -316,6 +322,9 @@ class VDVTicket:
     def location_org_name_opt(self):
         return map_org_id(self.location_org_id, True)
 
+    def has_location(self):
+        return self.location_type != 0 or self.location_number != 0 or self.location_org_id != 0
+
     def product_transaction_data_hex(self):
         return ":".join(f"{self.product_transaction_data[i]:02x}" for i in range(len(self.product_transaction_data)))
 
@@ -330,7 +339,7 @@ class BasicData:
     second_additional_travelers: typing.Optional["Mitnahme"]
     transport_category: int
     service_class: int
-    price_base: str
+    price_base: typing.Optional[str]
     vat_rate: decimal.Decimal
     price_level: int
     internal_product_number: int
@@ -344,7 +353,7 @@ class BasicData:
             second_additional_travelers=Mitnahme(data[4], data[5]) if data[4] else None,
             transport_category=data[6],
             service_class=data[7],
-            price_base=f"{int.from_bytes(data[8:11]) / 100:.2f}",
+            price_base=f"{int.from_bytes(data[8:11]) / 100:.2f}" if any(d != 0 for d in data[8:11]) else None,
             vat_rate=decimal.Decimal(int.from_bytes(data[11:13])) / decimal.Decimal(100),
             price_level=data[13],
             internal_product_number=int.from_bytes(data[14:17], "big"),
@@ -577,10 +586,13 @@ class SpacialValidity:
 
     variant: str
     organization_id: int
-    area_ids: typing.List[int]
+    start_station: typing.Optional[int] = None
+    area: typing.Optional[int] = None
+    tariff_points: typing.List[int] = list
+    validity_ids: typing.List[int] = list
 
     def __str__(self):
-        return f"Spacial validity: org_id={self.organization_id}, area_ids={','.join(map(str, self.area_ids))}"
+        return f"Spacial validity: org_id={self.organization_id}"
 
     @classmethod
     def parse(cls, data: bytes):
@@ -619,16 +631,45 @@ class SpacialValidity:
         else:
             area_ids = []
 
-        if variant:
+        if variant == "B":
             return cls(
                 variant=variant,
                 organization_id=int.from_bytes(data[1:3], 'big'),
-                area_ids=area_ids
+                area=area_ids[0],
+                tariff_points=[a for a in area_ids[1:] if a != 0]
+            )
+        elif variant == "D":
+            return cls(
+                variant=variant,
+                organization_id=int.from_bytes(data[1:3], 'big'),
+                tariff_points=[a for a in area_ids if a != 0]
+            )
+        elif variant == "E":
+            return cls(
+                variant=variant,
+                organization_id=int.from_bytes(data[1:3], 'big'),
+                start_station=area_ids[0],
+                area=area_ids[1],
+                tariff_points=[a for a in area_ids[2:] if a != 0]
+            )
+        elif variant == "H":
+            return cls(
+                variant=variant,
+                organization_id=int.from_bytes(data[1:3], 'big'),
+                start_station=area_ids[0],
+                tariff_points=[a for a in area_ids[1:] if a != 0]
+            )
+        elif variant:
+            return cls(
+                variant=variant,
+                organization_id=int.from_bytes(data[1:3], 'big'),
+                validity_ids=[a for a in area_ids if a != 0]
             )
         else:
             return UnknownSpacialValidity(
                 definition_type=data[0],
-                value=data[1:]
+                organization_id=int.from_bytes(data[1:3], 'big'),
+                value=data[3:]
             )
 
     def organization_name(self):
@@ -637,26 +678,38 @@ class SpacialValidity:
     def organization_name_opt(self):
         return map_org_id(self.organization_id, True)
 
-    def area_names(self):
+    def map_names(self, ids: typing.List[int]):
         out = []
         if self.organization_id in codes.SPACIAL_VALIDITY:
             mapping = codes.SPACIAL_VALIDITY[self.organization_id]
             if isinstance(mapping, dict):
-                for area in self.area_ids:
+                for area in ids:
                     if name := mapping.get(area):
                         out.append(name)
                     else:
                         out.append(f"Unknown - {area}")
             elif callable(mapping):
-                for area in self.area_ids:
+                for area in ids:
                     if name := mapping(area):
                         out.append(name)
                     else:
                         out.append(f"Unknown - {area}")
         else:
-            for area in self.area_ids:
+            for area in ids:
                 out.append(f"Unknown - {area}")
         return out
+
+    def area_name(self):
+        return self.map_names([self.area])[0] if self.area else None
+
+    def start_station_name(self):
+        return self.map_names([self.start_station])[0] if self.start_station else None
+
+    def tariff_point_names(self):
+        return self.map_names(self.tariff_points)
+
+    def validity_names(self):
+        return self.map_names(self.validity_ids)
 
 
 @dataclasses.dataclass
@@ -664,6 +717,7 @@ class UnknownSpacialValidity:
     TYPE = "unknown-spacial-validity"
 
     definition_type: int
+    organization_id: int
     value: bytes
 
     def __str__(self):
@@ -671,6 +725,12 @@ class UnknownSpacialValidity:
 
     def type_hex(self):
         return f"0x{self.definition_type:02X}"
+
+    def organization_name(self):
+        return map_org_id(self.organization_id)
+
+    def organization_name_opt(self):
+        return map_org_id(self.organization_id, True)
 
     def data_hex(self):
         return ":".join(f"{self.value[i]:02x}" for i in range(len(self.value)))

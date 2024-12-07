@@ -50,11 +50,13 @@
                                         {% endwith %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Passenger Type Code</dt>
-                                            <dd class="govuk-summary-list__value"><code>{{ elm.first_additional_travelers.passenger_type }}</code></dd>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ elm.first_additional_travelers.passenger_type }}</code></dd>
                                         </div>
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Count</dt>
-                                            <dd class="govuk-summary-list__value"><code>{{ elm.first_additional_travelers.passenger_count }}</code></dd>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ elm.first_additional_travelers.passenger_count }}</code></dd>
                                         </div>
                                     </dl>
                                 </dd>
@@ -75,11 +77,13 @@
                                         {% endwith %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Passenger Type Code</dt>
-                                            <dd class="govuk-summary-list__value"><code>{{ elm.second_additional_travelers.passenger_type }}</code></dd>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ elm.second_additional_travelers.passenger_type }}</code></dd>
                                         </div>
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Count</dt>
-                                            <dd class="govuk-summary-list__value"><code>{{ elm.second_additional_travelers.passenger_count }}</code></dd>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ elm.second_additional_travelers.passenger_count }}</code></dd>
                                         </div>
                                     </dl>
                                 </dd>
@@ -97,14 +101,16 @@
                                 <dd class="govuk-summary-list__value">{{ elm.service_class_name }}</dd>
                             </div>
                         {% endif %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Price Base</dt>
-                            <dd class="govuk-summary-list__value">{{ elm.price_base }}</dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">VAT</dt>
-                            <dd class="govuk-summary-list__value">{{ elm.vat_rate }}%</dd>
-                        </div>
+                        {% if elm.price_base %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Price</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.price_base }} EUR</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">VAT</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.vat_rate }}%</dd>
+                            </div>
+                        {% endif %}
                         {% if elm.price_level %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Price Level</dt>
@@ -114,7 +120,8 @@
                         {% if elm.internal_product_number %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Internal Product Number</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ elm.internal_product_number }}</code></dd>
+                                <dd class="govuk-summary-list__value"><code>{{ elm.internal_product_number }}</code>
+                                </dd>
                             </div>
                         {% endif %}
                     </dl>
@@ -203,12 +210,40 @@
                                 <code>{{ elm.organization_id }}</code>
                             </dd>
                         </div>
-                        {% if elm.area_ids %}
+                        {% if elm.start_station %}
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Areas</dt>
+                                <dt class="govuk-summary-list__key">Start station</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ elm.start_station_name }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.area %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Area</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ elm.area_name }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.tariff_points %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Tariff points</dt>
                                 <dd class="govuk-summary-list__value">
                                     <ul class="govuk-list govuk-list--bullet">
-                                        {% for area in elm.area_names %}
+                                        {% for area in elm.tariff_point_names %}
+                                            <li>{{ area }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.validity_ids %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Validity</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        {% for area in elm.validity_names %}
                                             <li>{{ area }}</li>
                                         {% endfor %}
                                     </ul>
@@ -224,7 +259,30 @@
                     <h2 class="govuk-summary-card__title">Unknown spacial validity <code>{{ elm.type_hex }}</code></h2>
                 </div>
                 <div class="govuk-summary-card__content">
-                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
+                    <dl class="govuk-summary-list">
+                        {% with org_name=elm.organization_name_opt %}
+                            {% if org_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Organisation Name</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ org_name }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ elm.organization_id }}</code>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Data</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ elm.data_hex }}</code>
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
             </div>
         {% elif elm.TYPE == "unknown" %}

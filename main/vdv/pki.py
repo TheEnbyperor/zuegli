@@ -222,6 +222,10 @@ class CertificateHolderAuthorization:
     def __str__(self):
         return f"{self.name}:{self.service_indicator}"
 
+    @property
+    def is_ca(self):
+        return bool(self.service_indicator & 0x10)
+
 
 @dataclasses.dataclass
 class RSAPublicKey:

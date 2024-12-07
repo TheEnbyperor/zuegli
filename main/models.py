@@ -371,3 +371,22 @@ class DBSubscription(models.Model):
                 end = datetime.datetime.fromisoformat(info["anzeigeBis"])
                 if start > now and end < now:
                     return info["huelleInfo"]
+
+
+class ZHVStop(models.Model):
+    dhid = models.CharField(max_length=255, verbose_name="DHID", primary_key=True)
+    dhid_raw_id = models.CharField(max_length=255, verbose_name="DHID raw ID")
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="children", db_constraint=False, blank=True, null=True)
+    name = models.TextField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    description = models.TextField(blank=True, null=True)
+    municipality = models.TextField(blank=True, null=True)
+    district = models.TextField(blank=True, null=True)
+    authority = models.CharField(max_length=255, db_index=True)
+    thid = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["dhid_raw_id", "authority"]),
+        ]
