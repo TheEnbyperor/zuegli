@@ -162,6 +162,8 @@ class VDVTicket:
             return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
             return SpacialValidity.parse(elm[1])
+        elif elm[0] == 0xDE:
+            return PrivateData(elm[1])
         elif elm[0] == 0xD7:
             return IdentificationMedium.parse(elm[1])
         else:
@@ -346,6 +348,7 @@ class BasicData:
 
     @classmethod
     def parse(cls, data: bytes) -> "BasicData":
+        vat_rate = decimal.Decimal(int.from_bytes(data[11:13]))
         return cls(
             payment_type=data[0],
             passenger_type=data[1],
@@ -354,7 +357,7 @@ class BasicData:
             transport_category=data[6],
             service_class=data[7],
             price_base=f"{int.from_bytes(data[8:11]) / 100:.2f}" if any(d != 0 for d in data[8:11]) else None,
-            vat_rate=decimal.Decimal(int.from_bytes(data[11:13])) / decimal.Decimal(100),
+            vat_rate=vat_rate / decimal.Decimal(100) if vat_rate >= 100 else vat_rate,
             price_level=data[13],
             internal_product_number=int.from_bytes(data[14:17], "big"),
         )
@@ -483,7 +486,6 @@ class IdentificationMedium:
 
 
 class Gender(enum.Enum):
-    Unspecified = 0
     Male = 1
     Female = 2
     Diverse = 3
@@ -493,7 +495,7 @@ class Gender(enum.Enum):
 class PassengerData:
     TYPE = "passenger-data"
 
-    gender: Gender
+    gender: typing.Optional[Gender]
     date_of_birth: typing.Optional[util.Date]
     forename: str
     original_forename: typing.Optional[str]
@@ -571,7 +573,7 @@ class PassengerData:
             surname = name
 
         return cls(
-            gender=Gender(data[0]),
+            gender=Gender(data[0]) if data[0] != 0 else None,
             date_of_birth=util.Date.from_bytes(data[1:5]) if all(d != 0 for d in data[1:5]) else None,
             forename=forename,
             surname=surname,
@@ -731,6 +733,19 @@ class UnknownSpacialValidity:
 
     def organization_name_opt(self):
         return map_org_id(self.organization_id, True)
+
+    def data_hex(self):
+        return ":".join(f"{self.value[i]:02x}" for i in range(len(self.value)))
+
+
+@dataclasses.dataclass
+class PrivateData:
+    TYPE = "private-data"
+
+    value: bytes
+
+    def __str__(self):
+        return f"Private data: {self.value.hex()}"
 
     def data_hex(self):
         return ":".join(f"{self.value[i]:02x}" for i in range(len(self.value)))

@@ -180,10 +180,12 @@
                                 <dd class="govuk-summary-list__value">{{ elm.date_of_birth.as_date|date:"F d, Y" }}</dd>
                             </div>
                         {% endif %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Gender</dt>
-                            <dd class="govuk-summary-list__value">{{ elm.gender.name }}</dd>
-                        </div>
+                        {% if elm.gender %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Gender</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.gender.name }}</dd>
+                            </div>
+                        {% endif %}
                     </dl>
                 </div>
             </div>
@@ -283,6 +285,15 @@
                             </dd>
                         </div>
                     </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "private-data" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Private-use data</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
                 </div>
             </div>
         {% elif elm.TYPE == "unknown" %}
