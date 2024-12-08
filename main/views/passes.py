@@ -1888,9 +1888,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
             elif isinstance(elm, vdv.ticket.SpacialValidity):
                 if elm.organization_id == 6100:  # Verhkersverbund Berlin Brandenburg
-                    if 1200 in elm.area:
+                    if elm.area == 1200:
                         add_pkp_img(pkp, "pass/berlin-ab.png", "thumbnail.png")
-                    elif 1202 in elm.area:
+                    elif elm.area == 1202:
                         add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
 
         if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
