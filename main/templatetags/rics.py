@@ -87,7 +87,7 @@ def rics_valid_from(value, issuing_time: typing.Optional[datetime.datetime]=None
 def rics_valid_from_date(value):
     valid_time = datetime.datetime(value["validFromYear"], 1, 1, 0, 0, 0)
     valid_time += datetime.timedelta(days=value["validFromDay"]-1)
-    return valid_time
+    return pytz.utc.localize(valid_time)
 
 @register.filter(name="rics_valid_until")
 def rics_valid_until(value, issuing_time: typing.Optional[datetime.datetime]=None):
@@ -114,6 +114,7 @@ def rics_valid_until_date(value):
             year=valid_from.year + value["validUntilYear"],
         )
     valid_from += datetime.timedelta(days=value["validUntilDay"]-1)
+    valid_from = pytz.utc.localize(datetime.datetime.combine(valid_from.date(), datetime.time.max))
     return valid_from
 
 
