@@ -374,6 +374,10 @@ class SSBTicket:
     def type(self) -> str:
         if isinstance(self.data, ssb.NonReservationTicket):
             return models.Ticket.TYPE_FAHRKARTE
+        elif isinstance(self.data, ssb.IntegratedReservationTicket):
+            return models.Ticket.TYPE_RESERVIERUNG
+        elif isinstance(self.data, ssb.GroupTicket):
+            return models.Ticket.TYPE_FAHRKARTE
         elif isinstance(self.data, ssb.ns_keycard.Keycard):
             return models.Ticket.TYPE_KEYCARD
         else:

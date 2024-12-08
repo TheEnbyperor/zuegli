@@ -12,11 +12,12 @@ class Command(BaseCommand):
 
         with storage.open("zHV_aktuell.csv", "r") as f:
             data = csv.DictReader(f, delimiter=";")
+            count = 0
             for batch in itertools.batched(data, 1000):
                 models.ZHVStop.objects.bulk_create(
                     [models.ZHVStop(
                         dhid=row["DHID"],
-                        dhid_raw_id=":".join(row["DHID"].split(":")),
+                        dhid_raw_id=":".join(row["DHID"].split(":")[2:]),
                         parent_id=row["Parent"] if row["Parent"] != row["DHID"] else None,
                         name=row["Name"],
                         longitude=float(row["Longitude"].replace(",", ".")),
@@ -35,3 +36,5 @@ class Command(BaseCommand):
                         "authority", "thid"
                     ],
                 )
+                count += len(batch)
+                print(f"Added {count} records", flush=True)
