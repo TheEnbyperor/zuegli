@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.db import transaction
 import django.core.files.storage
 import csv
+import itertools
 from main import models
 
 class Command(BaseCommand):
@@ -12,21 +12,26 @@ class Command(BaseCommand):
 
         with storage.open("zHV_aktuell.csv", "r") as f:
             data = csv.DictReader(f, delimiter=";")
-            for row in data:
-                dhid_parts = row["DHID"].split(":")
-                with transaction.atomic():
-                    models.ZHVStop.objects.update_or_create(
+            for batch in itertools.batched(data, 1000):
+                models.ZHVStop.objects.bulk_create(
+                    [models.ZHVStop(
                         dhid=row["DHID"],
-                        defaults={
-                            "dhid_raw_id": ":".join(dhid_parts[2:]),
-                            "parent_id": row["Parent"] if row["Parent"] != row["DHID"] else None,
-                            "name": row["Name"],
-                            "longitude": float(row["Longitude"].replace(",", ".")),
-                            "latitude": float(row["Latitude"].replace(",", ".")),
-                            "municipality": row["Municipality"],
-                            "district": row["District"],
-                            "description": row["Description"],
-                            "authority": row["Authority"],
-                            "thid": row["THID"],
-                        },
-                    )
+                        dhid_raw_id=":".join(row["DHID"].split(":")),
+                        parent_id=row["Parent"] if row["Parent"] != row["DHID"] else None,
+                        name=row["Name"],
+                        longitude=float(row["Longitude"].replace(",", ".")),
+                        latitude=float(row["Latitude"].replace(",", ".")),
+                        municipality=row["Municipality"],
+                        district=row["District"],
+                        description=row["Description"],
+                        authority=row["Authority"],
+                        thid=row["THID"],
+                    ) for row in batch],
+                    update_conflicts=True,
+                    unique_fields=["dhid"],
+                    update_fields=[
+                        "dhid_raw_id", "parent_id", "name", "longitude",
+                        "latitude", "municipality", "district", "description",
+                        "authority", "thid"
+                    ],
+                )

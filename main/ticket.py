@@ -922,13 +922,9 @@ def create_ticket_obj(
         validity_end = None
         if ticket_data.flex:
             docs = ticket_data.flex.data.get("transportDocument")
-            if docs:
-                if docs[0]["ticket"][0] == "openTicket":
-                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.issuing_time())
-                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.issuing_time())
-                elif docs[0]["ticket"][0] == "pass":
-                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.issuing_time())
-                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.issuing_time())
+            if docs and docs[0]["ticket"][0] in ("openTicket", "pass", "customerCard"):
+                validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.issuing_time())
+                validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.issuing_time())
 
         _, created = models.UICTicketInstance.objects.update_or_create(
             reference=ticket_data.ticket_id(),
