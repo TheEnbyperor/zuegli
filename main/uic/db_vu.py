@@ -101,7 +101,10 @@ class DBVUProduct:
 
       # Will automatically convert to a DBVUTAGListe type.
       offset += 1
-      self.product_data = [ticket.SpacialValidity.parse(data[offset+2:offset+data_fields_length])]
+      self.product_data = [ticket.SpacialValidity.parse(
+        data[offset+2:offset+data_fields_length],
+        self.product_details.issuer_id
+      )]
 
       offset += data_fields_length
 
