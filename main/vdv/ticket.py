@@ -543,11 +543,11 @@ class PassengerData:
                 forename = " ".join(new_forename)
                 if context.account_forename and len(context.account_forename) == len(forename):
                     if (
-                            context.account_forename.startswith(forename[0]) and
-                            context.account_forename.endswith(forename[-1])
+                            context.account_forename.lower().startswith(forename[0].lower()) and
+                            context.account_forename.lower().endswith(forename[-1].lower())
                     ) or (
-                            (context.account_forename.startswith(forename[0]) or
-                             context.account_forename.endswith(forename[-1])) and
+                            (context.account_forename.lower().startswith(forename[0].lower()) or
+                             context.account_forename.lower().endswith(forename[-1].lower())) and
                             len(forename) == 2
                     ) or (
                             len(forename) == 1
@@ -559,11 +559,11 @@ class PassengerData:
                 surname = " ".join(new_surname)
                 if context.account_surname and len(context.account_surname) == len(surname):
                     if (
-                            context.account_surname.startswith(surname[0]) and
-                            context.account_surname.endswith(surname[-1])
+                            context.account_surname.lower().startswith(surname[0].lower()) and
+                            context.account_surname.lower().endswith(surname[-1].lower())
                     ) or (
-                            (context.account_surname.startswith(surname[0]) or
-                             context.account_surname.endswith(surname[-1])) and
+                            (context.account_surname.lower().startswith(surname[0].lower()) or
+                             context.account_surname.lower().endswith(surname[-1].lower())) and
                             len(surname) == 2
                     ) or (
                             len(surname) == 1
