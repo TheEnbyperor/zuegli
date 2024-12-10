@@ -411,11 +411,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": tariff["tariffDesc"],
                             })
 
-                        for card in tariff.get("reductionCard", []):
+                        reduction_cards = ", ".join(list(map(lambda c: c["cardName"], document["reductionCards"])))
+                        if reduction_cards:
                             pass_fields["auxiliaryFields"].append({
-                                "key": "reduction-card",
+                                "key": f"reduction-card",
                                 "label": "reduction-card-label",
-                                "value": card["cardName"]
+                                "value": reduction_cards,
                             })
 
                     pass_fields["backFields"].append({
