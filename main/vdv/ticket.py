@@ -122,18 +122,19 @@ class VDVTicket:
 
         version = f"{trailer[3] >> 4}.{trailer[3] & 0x0F}.{trailer[4]:02d}"
 
+        product_org_id = int.from_bytes(header[8:10], 'big')
         return cls(
             version=version,
 
             ticket_id=int.from_bytes(header[0:4], 'big'),
             ticket_org_id=int.from_bytes(header[4:6], 'big'),
             product_number=int.from_bytes(header[6:8], 'big'),
-            product_org_id=int.from_bytes(header[8:10], 'big'),
+            product_org_id=product_org_id,
             validity_start=util.DateTime.from_bytes(header[10:14]),
             validity_end=util.DateTime.from_bytes(header[14:18]),
 
             product_data=list(map(
-                lambda e: cls.parse_product_data_element(e, context),
+                lambda e: cls.parse_product_data_element(e, context, product_org_id),
                 filter(lambda e: any(d != 0 for d in e[1]), product_data)
             )),
 
@@ -155,13 +156,13 @@ class VDVTicket:
         )
 
     @staticmethod
-    def parse_product_data_element(elm, context: Context) -> typing.Any:
+    def parse_product_data_element(elm, context: Context, product_org_id: int) -> typing.Any:
         if elm[0] == 0xDA:
             return BasicData.parse(elm[1])
         elif elm[0] == 0xDB:
             return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
-            return SpacialValidity.parse(elm[1])
+            return SpacialValidity.parse(elm[1], product_org_id)
         elif elm[0] == 0xDE:
             return PrivateData(elm[1])
         elif elm[0] == 0xD7:
@@ -597,7 +598,11 @@ class SpacialValidity:
         return f"Spacial validity: org_id={self.organization_id}"
 
     @classmethod
-    def parse(cls, data: bytes):
+    def parse(cls, data: bytes, product_org_id: int):
+        area_org_id = int.from_bytes(data[1:3], 'big')
+        if not area_org_id:
+            area_org_id = product_org_id
+
         definition_type = data[0]
         variant = None
 
@@ -636,20 +641,20 @@ class SpacialValidity:
         if variant == "B":
             return cls(
                 variant=variant,
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 area=area_ids[0],
                 tariff_points=[a for a in area_ids[1:] if a != 0]
             )
         elif variant == "D":
             return cls(
                 variant=variant,
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 tariff_points=[a for a in area_ids if a != 0]
             )
         elif variant == "E":
             return cls(
                 variant=variant,
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 start_station=area_ids[0],
                 area=area_ids[1],
                 tariff_points=[a for a in area_ids[2:] if a != 0]
@@ -657,20 +662,20 @@ class SpacialValidity:
         elif variant == "H":
             return cls(
                 variant=variant,
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 start_station=area_ids[0],
                 tariff_points=[a for a in area_ids[1:] if a != 0]
             )
         elif variant:
             return cls(
                 variant=variant,
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 validity_ids=[a for a in area_ids if a != 0]
             )
         else:
             return UnknownSpacialValidity(
                 definition_type=data[0],
-                organization_id=int.from_bytes(data[1:3], 'big'),
+                organization_id=area_org_id,
                 value=data[3:]
             )
 
