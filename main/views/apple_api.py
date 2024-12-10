@@ -63,8 +63,9 @@ def ticket_updated_date(_request, pass_type_id, serial_number):
 
 @csrf_exempt
 def pass_status(request, device_id, pass_type_id):
-    device_obj = models.AppleDevice.objects.get(device_id=device_id)
-    if not device_obj:
+    try:
+        device_obj = models.AppleDevice.objects.get(device_id=device_id)
+    except models.AppleDevice.DoesNotExist:
         return HttpResponse(status=204)
 
     if pass_type_id != settings.PKPASS_CONF["pass_type"]:
