@@ -120,8 +120,8 @@ class Route:
         self.out.append("end [label=\"End\"]")
         for p in exit_points:
             self.edges.append(f"{p} -> end")
-        self.out.append("}")
         self.out.extend(self.edges)
+        self.out.append("}")
         return "\n".join(self.out)
 
 
