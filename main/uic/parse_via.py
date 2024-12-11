@@ -57,6 +57,7 @@ class Route:
     def __init__(self):
         self.carriers = []
         self.out = []
+        self.edges = []
 
     def append(self, carrier: Carrier):
         self.carriers.append(carrier)
@@ -65,9 +66,9 @@ class Route:
         point_id = f"point_{point.id.hex}"
         db_abbr = get_db_abbr()
         if point.name in db_abbr:
-            self.out.append(f"{point_id} [label=\"{db_abbr[point.name]['name']}\"]")
+            self.out.append(f"{point_id} [label=\"{db_abbr[point.name]['name']}\", shape=\"box\", style=\"rounded\"]")
         else:
-            self.out.append(f"{point_id} [label=\"{point.name}\"]")
+            self.out.append(f"{point_id} [label=\"{point.name}\", shape=\"box\", style=\"rounded\"]")
         return [point_id], [point_id]
 
     def _print_options(self, options: Options) -> typing.Tuple[typing.List[str], typing.List[str]]:
@@ -90,11 +91,12 @@ class Route:
         for i, ee in enumerate(point_ids[:-1]):
             for exit_point in ee[1]:
                 for entry_point in point_ids[i+1][0]:
-                    self.out.append(f"{exit_point} -> {entry_point}")
+                    self.edges.append(f"{exit_point} -> {entry_point}")
         return point_ids[0][0], point_ids[-1][1]
 
     def to_graph(self):
         self.out = []
+        self.edges = []
         self.out.append("digraph {")
         self.out.append("rankdir=\"LR\";")
         self.out.append("start [label=\"Start\"]")
@@ -113,12 +115,13 @@ class Route:
             entry_points, exit_points = self._print_list(carrier.points)
             for exit_point in prev_exit_points:
                 for entry_point in entry_points:
-                    self.out.append(f"{exit_point} -> {entry_point}")
+                    self.edges.append(f"{exit_point} -> {entry_point}")
             self.out.append("}")
         self.out.append("end [label=\"End\"]")
         for p in exit_points:
-            self.out.append(f"{p} -> end")
+            self.edges.append(f"{p} -> end")
         self.out.append("}")
+        self.out.extend(self.edges)
         return "\n".join(self.out)
 
 
