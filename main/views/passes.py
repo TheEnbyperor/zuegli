@@ -1701,11 +1701,17 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if parsed_layout.extra:
-                pass_fields["backFields"].append({
-                    "key": "extra-data",
-                    "label": "other-data-label",
-                    "value": parsed_layout.extra.replace("<", "%lt;"),
-                })
+                if pass_fields["secondaryFields"]:
+                    pass_fields["backFields"].append({
+                        "key": "extra-data",
+                        "label": "other-data-label",
+                        "value": parsed_layout.extra.replace("<", "%lt;"),
+                    })
+                else:
+                    pass_fields["secondaryFields"].append({
+                        "key": "extra-data",
+                        "value": parsed_layout.extra.replace("<", "%lt;"),
+                    })
 
             if parsed_layout.operator_rics:
                 if carrier := uic.rics.get_rics(parsed_layout.operator_rics):

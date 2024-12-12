@@ -84,7 +84,7 @@ class RCT2Parser:
         price_data =          self.read_area(top=13, left=52, width=20, height=2)
         train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
         conditions_data =     self.read_area(top=12, left=0,  width=50, height=3)
-        operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1)[0].lstrip(" 0")
+        operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1)[0].lstrip(" 0").rstrip(" ")
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)[0]
 
         trips = []
