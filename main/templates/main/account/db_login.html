@@ -11,16 +11,42 @@
             To allow you to login on this site please download the below macOS app and install it before continuing.
             This app does nothing other than redirect links from the DB Navigator mobile app to this website.
         </p>
-        <p class="govuk-body-l">
-            <a href="{% static 'main/DB Login Hook.pkg' %}" class="govuk-link govuk-link--no-visited-state">Download app</a>
-        </p>
-        <p class="govuk-body">
-            If you want to inspect the source of what you're about to run it's available on
-            <a href="https://github.com/TheEnbyperor/db-login-hook" class="govuk-link">GitHub</a>.
-        </p>
-        <p class="govuk-body">
-            Currently only macOS is supported, contact me if you'd like to see support for other OSes.
-        </p>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">macOS</span>
+            </summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">
+                    Install this application to continue.<br/>
+                </p>
+                <a href="{% static 'main/DB Login Hook.pkg' %}" class="govuk-button">Download app</a>
+                <p class="govuk-body">
+                    If you want to inspect the source of what you're about to run it's available on
+                    <a href="https://github.com/TheEnbyperor/db-login-hook" class="govuk-link">GitHub</a>.
+                </p>
+            </div>
+        </details>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Linux</span>
+            </summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">
+                    Paste the following into your terminal to install the handler, and continue.
+                </p>
+                <pre><code>curl {% static 'main/db-login-linux.sh' %} | sh</code></pre>
+            </div>
+        </details>
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Windows</span>
+            </summary>
+            <div class="govuk-details__text">
+                <p class="govuk-body">
+                   No Windows support yet. If you really care, please ask Q.
+                </p>
+            </div>
+        </details>
         <a href="{% url 'db_login_start' %}" class="govuk-button govuk-button--start">
             Login
             <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
