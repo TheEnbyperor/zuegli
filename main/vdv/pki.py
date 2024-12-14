@@ -6,7 +6,7 @@ import hashlib
 import string
 import django.core.files.storage
 
-from . import iso9796, util
+from . import iso9796, util, ticket
 
 ROOT = pathlib.Path(__file__).parent
 SHA1 = [1, 3, 14, 3, 2, 26]
@@ -27,28 +27,19 @@ class CAReference:
     algorithm_reference: int
     year: int
 
+    @staticmethod
+    def type():
+        return "ca"
+
     def __str__(self):
-        if name := self.ascii_name():
-            region, name = name
-            return (f"region={region}, name={name}, "
-                    f"service_indicator={self.service_indicator}, algorithm_reference={self.algorithm_reference}, "
-                    f"year={self.year}")
-        else:
-            name = self.hex_name()
-            return f"raw_name={name}"
+        region, name = self.ascii_name()
+        return (f"region={region}, name={name}, "
+                f"service_indicator={self.service_indicator}, algorithm_reference={self.algorithm_reference}, "
+                f"year={self.year}")
 
     def ascii_name(self):
-        try:
-            name = self.name.decode("ascii")
-            if any(c not in string.printable for c in name):
-                return None
-            return name[0:2], name[2:]
-        except UnicodeDecodeError:
-            return None
-
-    def hex_name(self):
-        full_name = self.name + bytes([self.service_indicator, self.algorithm_reference, self.year - 1990])
-        return ":".join(f"{full_name[i]:02x}" for i in range(len(full_name)))
+        name = self.name.decode("ascii", "replace")
+        return name[0:2], name[2:]
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "CAReference":
@@ -64,6 +55,37 @@ class CAReference:
     @classmethod
     def root(cls):
         return cls(b"EUVDV", 16, 1, 1996)
+
+
+@dataclasses.dataclass
+class CertificateReference:
+    org_id: int
+    sam_id: int
+    service_indicator: int
+    algorithm_reference: int
+    year: int
+
+    @staticmethod
+    def type():
+        return "cert"
+
+    @classmethod
+    def from_bytes(cls, data: bytes) -> "CertificateReference":
+        if len(data) != 8:
+            raise ValueError("Invalid certificate reference length")
+        return cls(
+            org_id=int.from_bytes(data[3:5], "big"),
+            sam_id=int.from_bytes(data[5:8], "big"),
+            year=1990 + data[0],
+            service_indicator=data[1],
+            algorithm_reference=data[2],
+        )
+
+    def org_name(self):
+        return ticket.map_org_id(self.org_id)
+
+    def org_name_opt(self):
+        return ticket.map_org_id(self.org_id, True)
 
 
 @dataclasses.dataclass
@@ -299,7 +321,7 @@ def decode_oid(data: bytes):
 class CertificateData:
     certificate_profile_identifier: int
     ca_reference: CAReference
-    certificate_holder_reference: CAReference
+    certificate_holder_reference: typing.Union[CAReference, CertificateReference]
     certificate_holder_authorization: CertificateHolderAuthorization
     expiry_date: util.Date
     public_key: RSAPublicKey
@@ -340,14 +362,17 @@ class CertificateData:
         if components not in (SHA1_WITH_RSA_SIGNATURE, TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA):
             raise util.VDVException("Unknown public key OID")
 
+        cha = CertificateHolderAuthorization(
+            name=data.content[21:27].decode("ascii"),
+            service_indicator=data.content[27]
+        )
+
         return cls(
             certificate_profile_identifier=data.content[0],
             ca_reference=CAReference.from_bytes(data.content[1:9]),
-            certificate_holder_reference=CAReference.from_bytes(data.content[13:21]),
-            certificate_holder_authorization=CertificateHolderAuthorization(
-                name=data.content[21:27].decode("ascii"),
-                service_indicator=data.content[27]
-            ),
+            certificate_holder_reference=CAReference.from_bytes(data.content[13:21])
+            if cha.is_ca else CertificateReference.from_bytes(data.content[13:21]),
+            certificate_holder_authorization=cha,
             expiry_date=util.Date.from_bytes(data.content[28:32]),
             public_key=RSAPublicKey.from_bytes(data.content[oid_offset:], data.content[0])
         )

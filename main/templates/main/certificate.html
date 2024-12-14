@@ -15,13 +15,17 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">CA Reference</dt>
         <dd class="govuk-summary-list__value">
-            {% include "main/certificate_reference.html" with ref=cert.ca_reference %}
+            {% include "main/ca_reference.html" with ref=cert.ca_reference %}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Certificate Holder Reference</dt>
         <dd class="govuk-summary-list__value">
-            {% include "main/certificate_reference.html" with ref=cert.certificate_holder_reference %}
+            {% if cert.certificate_holder_reference.type == "ca" %}
+                {% include "main/ca_reference.html" with ref=cert.certificate_holder_reference %}
+            {% else %}
+                {% include "main/cert_reference.html" with ref=cert.certificate_holder_reference %}
+            {% endif %}
         </dd>
     </div>
     <div class="govuk-summary-list__row">

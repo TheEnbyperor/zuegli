@@ -5,7 +5,6 @@ import typing
 import ber_tlv.tlv
 import re
 from . import util, org_id, product_id, codes
-from ..rsp.gen import Station
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
