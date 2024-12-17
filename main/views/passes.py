@@ -1003,26 +1003,27 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 first_name = passenger.get('firstName', "").strip()
                 last_name = passenger.get('lastName', "").strip()
 
-                field_data = {
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": f"{first_name}\n{last_name}" if pass_type == "generic" else f"{first_name} {last_name}",
-                    "semantics": {
-                        "passengerName": {
-                            "familyName": last_name,
-                            "givenName": first_name,
+                if first_name or last_name:
+                    field_data = {
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": f"{first_name}\n{last_name}" if pass_type == "generic" else f"{first_name} {last_name}",
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": last_name,
+                                "givenName": first_name,
+                            }
                         }
                     }
-                }
-                if pass_type == "generic":
-                    pass_fields["primaryFields"].append(field_data)
-                    return_pass_fields["primaryFields"].append(field_data)
-                elif pass_type == "storeCard":
-                    pass_fields["headerFields"].append(field_data)
-                    return_pass_fields["headerFields"].append(field_data)
-                else:
-                    pass_fields["auxiliaryFields"].append(field_data)
-                    return_pass_fields["auxiliaryFields"].append(field_data)
+                    if pass_type == "generic":
+                        pass_fields["primaryFields"].append(field_data)
+                        return_pass_fields["primaryFields"].append(field_data)
+                    elif pass_type == "storeCard":
+                        pass_fields["headerFields"].append(field_data)
+                        return_pass_fields["headerFields"].append(field_data)
+                    else:
+                        pass_fields["auxiliaryFields"].append(field_data)
+                        return_pass_fields["auxiliaryFields"].append(field_data)
 
                 dob = templatetags.rics.rics_traveler_dob(passenger)
                 if dob:
@@ -1881,17 +1882,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     name_value = elm.surname
                 else:
                     name_value = ""
-                pass_fields["primaryFields"].append({
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": name_value,
-                    "semantics": {
-                        "passengerName": {
-                            "familyName": elm.surname,
-                            "givenName": elm.forename
+                if name_value:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": name_value,
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": elm.surname,
+                                "givenName": elm.forename
+                            }
                         }
-                    }
-                })
+                    })
                 if elm.date_of_birth:
                     pass_fields["secondaryFields"].append({
                         "key": "date-of-birth",
