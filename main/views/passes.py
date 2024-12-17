@@ -268,6 +268,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if issuing_rics in RICS_LOGO:
             add_pkp_img(pkp, RICS_LOGO[issuing_rics], "logo.png")
             have_logo = True
+        if issuing_rics in RICS_BG:
+            pass_json["backgroundColor"] = RICS_BG[ticket_data.envelope.issuer_rics]
+        if issuing_rics in RICS_FG:
+            pass_json["foregroundColor"] = RICS_FG[ticket_data.envelope.issuer_rics]
+        if issuing_rics in RICS_FG_SECONDARY:
+            pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.envelope.issuer_rics]
 
         parsed_layout = None
         if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
