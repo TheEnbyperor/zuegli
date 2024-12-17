@@ -397,7 +397,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": f"class-code-{document['classCode']}-label",
                             })
 
-                    if len(document.get("tariffs")) >= 1:
+                    if len(document.get("tariffs", [])) >= 1:
                         tariff = document["tariffs"][0]
                         if "tariffDesc" in tariff:
                             pass_fields["headerFields"].append({
