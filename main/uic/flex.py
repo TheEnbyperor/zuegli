@@ -19,7 +19,7 @@ class Flex:
     @classmethod
     def parse(cls, version: int, data: bytes) -> "Flex":
         try:
-            if version == 13:
+            if version in (1, 13):
                 return cls(
                     version=version,
                     data=ASN1_SPEC_V1_3.decode("UicRailTicketData", data)

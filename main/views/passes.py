@@ -3397,6 +3397,7 @@ RICS_LOGO = {
     3591: "pass/logo-akn.png",
     5008: "pass/logo-vrn.png",
     5177: "pass/logo-fribus.png",
+    5188: "pass/logo-es.png",
     5197: "pass/logo-avv.png",
     5217: "pass/logo-bremerhaven.png",
     9901: "pass/logo-interrail.png",
@@ -3405,16 +3406,19 @@ RICS_LOGO = {
 RICS_BG = {
     1084: "rgb(255, 201, 23)",
     1184: "rgb(255, 201, 23)",
+    5188: "rgb(64, 0, 44)",
 }
 
 RICS_FG = {
     1084: "rgb(7, 7, 33)",
     1184: "rgb(7, 7, 33)",
+    5188: "rgb(255, 255, 255)",
 }
 
 RICS_FG_SECONDARY = {
     1084: "rgb(32, 32, 55)",
     1184: "rgb(32, 32, 55)",
+    5188: "rgb(255, 54, 0)",
 }
 
 UIC_NAME_LOGO = {
