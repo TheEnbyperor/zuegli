@@ -361,7 +361,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 "localizedBody": ticket_class_name(document["classCode"])
                             })
 
-                    if len(document.get("tariffs")) >= 1:
+                    if len(document.get("tariffs", [])) >= 1:
                         tariff = document["tariffs"][0]
                         if "tariffDesc" in tariff:
                             if ticket_type == "transit":
