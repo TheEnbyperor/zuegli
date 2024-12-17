@@ -40,25 +40,21 @@ class Flex:
             raise util.UICException("Failed to decode UIC rail ticket flexible data") from e
 
     def issuing_rics(self) -> int:
-        if self.version in (13, 2, 3):
-            rics = self.data["issuingDetail"].get("issuerNum", 0)
-            if rics:
-                return rics
-            else:
-                return self.data["issuingDetail"].get("securityProviderNum", 0)
+        rics = self.data["issuingDetail"].get("issuerNum", 0)
+        if rics:
+            return rics
+        else:
+            return self.data["issuingDetail"].get("securityProviderNum", 0)
 
     def ticket_id(self) -> str:
-        if self.version in (13, 2, 3):
-            return self.data["issuingDetail"].get("issuerPNR", "")
+        return self.data["issuingDetail"].get("issuerPNR", "")
 
     def issuing_time(self) -> typing.Optional[datetime.datetime]:
-        if self.version in (13, 2, 3):
-            date = datetime.datetime(self.data["issuingDetail"]["issuingYear"], 1, 1)
-            date += datetime.timedelta(days=self.data["issuingDetail"]["issuingDay"] - 1)
-            if "issuingTime" in self.data["issuingDetail"]:
-                date += datetime.timedelta(minutes=self.data["issuingDetail"]["issuingTime"])
-            return pytz.utc.localize(date)
+        date = datetime.datetime(self.data["issuingDetail"]["issuingYear"], 1, 1)
+        date += datetime.timedelta(days=self.data["issuingDetail"]["issuingDay"] - 1)
+        if "issuingTime" in self.data["issuingDetail"]:
+            date += datetime.timedelta(minutes=self.data["issuingDetail"]["issuingTime"])
+        return pytz.utc.localize(date)
 
     def specimen(self) -> bool:
-        if self.version in (13, 2, 3):
-            return self.data["issuingDetail"]["specimen"]
+        return self.data["issuingDetail"]["specimen"]

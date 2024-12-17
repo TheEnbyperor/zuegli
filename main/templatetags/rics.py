@@ -76,6 +76,8 @@ def rics_valid_from(value, issuing_time: typing.Optional[datetime.datetime]=None
         issuing_time = datetime.datetime.combine(issuing_time.date(), datetime.time.min)
         issuing_time += datetime.timedelta(days=value["validFromDay"], minutes=value.get("validFromTime", 0))
     else:
+        if "validFromYear" not in value:
+            return
         issuing_time = datetime.datetime(value["validFromYear"], 1, 1, 0, 0, 0)
         issuing_time += datetime.timedelta(days=value["validFromDay"]-1, minutes=value.get("validFromTime", 0))
     if "validFromUTCOffset" in value:
@@ -85,6 +87,8 @@ def rics_valid_from(value, issuing_time: typing.Optional[datetime.datetime]=None
 
 @register.filter(name="rics_valid_from_date")
 def rics_valid_from_date(value):
+    if "validFromYear" not in value:
+        return
     valid_time = datetime.datetime(value["validFromYear"], 1, 1, 0, 0, 0)
     valid_time += datetime.timedelta(days=value["validFromDay"]-1)
     return pytz.utc.localize(valid_time)
