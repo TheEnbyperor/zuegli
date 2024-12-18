@@ -33,9 +33,6 @@ def get_db_token(account: "models.Account"):
             "User-Agent": "VDV PKPass q@magicalcodewit.ch"
         })
         if r.status_code != 200:
-            account.db_refresh_token = None
-            account.db_refresh_token_expires_at = None
-            account.save()
             return None
 
         data = r.json()
