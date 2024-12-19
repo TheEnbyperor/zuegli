@@ -55,7 +55,7 @@ class HeadV1:
 
         issuing_time = util.Timestamp.from_bytes(data[24:36])
 
-        if data[36] != b"\x00":
+        if data[36] != 0:
             try:
                 flags_str = data[36:37].decode("ascii")
                 flags = Flags(int(flags_str, 10))
