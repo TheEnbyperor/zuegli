@@ -1678,12 +1678,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             }
                         }
                     })
-                pass_fields["secondaryFields"].append({
-                    "key": "date-of-birth",
-                    "label": "date-of-birth-label",
-                    "dateStyle": "PKDateStyleMedium",
-                    "value": ticket_data.vor_vd.date_of_birth.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                })
+                if ticket_data.vor_vd.date_of_birth:
+                    pass_fields["secondaryFields"].append({
+                        "key": "date-of-birth",
+                        "label": "date-of-birth-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": ticket_data.vor_vd.date_of_birth.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
 
         elif parsed_layout:
             if parsed_layout.trips:
@@ -3518,6 +3519,7 @@ RICS_FG_SECONDARY = {
     1084: "rgb(32, 32, 55)",
     1184: "rgb(32, 32, 55)",
     5188: "rgb(255, 54, 0)",
+    3153: "rgb(227, 0, 21)",
     3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
 }

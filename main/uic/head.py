@@ -55,11 +55,14 @@ class HeadV1:
 
         issuing_time = util.Timestamp.from_bytes(data[24:36])
 
-        try:
-            flags_str = data[36:37].decode("ascii")
-            flags = Flags(int(flags_str, 10))
-        except (UnicodeDecodeError, ValueError) as e:
-            raise util.UICException("Invalid UIC ticket flags") from e
+        if data[36] != b"\x00":
+            try:
+                flags_str = data[36:37].decode("ascii")
+                flags = Flags(int(flags_str, 10))
+            except (UnicodeDecodeError, ValueError) as e:
+                raise util.UICException("Invalid UIC ticket flags") from e
+        else:
+            flags = Flags(0)
 
         try:
             language = data[37:39].decode("ascii").strip()
