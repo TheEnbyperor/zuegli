@@ -175,6 +175,25 @@
             </dd>
         </div>
     {% endif %}
+    {% if ticket.includedAddOns %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Add-ons</dt>
+            <dd class="govuk-summary-list__value">
+                {% for addon in ticket.includedAddOns %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Addon #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% include "main/uic/addon.html" with addon=addon %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
     {% if ticket.returnDescription %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">

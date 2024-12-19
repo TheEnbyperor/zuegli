@@ -74,10 +74,53 @@
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
+                        {% if region.1.carrierNum %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Carrier RICS</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ region.1.carrierNum }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if region.1.carrierIA5 %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Carrier ID</dt>
+                                <dd class="govuk-summary-list__value">{{ region.1.carrierIA5 }}</dd>
+                            </div>
+                        {% endif %}
+                        {% with org=region.1.carrierNum|rics %}
+                            {% if org %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carrier</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% include 'main/rics.html' with org=org %}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        {% with org=region.1.carrierIA5|vdv_org_id %}
+                            {% if org %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carrier</dt>
+                                    <dd class="govuk-summary-list__value">{{ org }}</dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                         {% if region.1.nutsCode %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">NUTS Region</dt>
                                 <dd class="govuk-summary-list__value">{{ region.1.nutsCode|nuts_region_name }}</dd>
+                            </div>
+                        {% endif %}
+                        {% if region.1.zoneId %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Zone IDs</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        {% for zone in region.1|validity_zone_names %}
+                                            <li>{{ zone }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
                             </div>
                         {% endif %}
                     </dl>

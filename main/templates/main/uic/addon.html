@@ -1,0 +1,104 @@
+{% load rics tz %}
+<dl class="govuk-summary-list">
+    {% if addon.productOwnerNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product owner RICS</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.productOwnerNum }}</code>
+            </dd>
+        </div>
+    {% endif %}
+    {% if addon.productOwnerIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product owner ID</dt>
+            <dd class="govuk-summary-list__value">{{ addon.productOwnerIA5 }}</dd>
+        </div>
+    {% endif %}
+    {% with org=addon.productOwnerNum|rics %}
+        {% if org %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product owner</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include 'main/rics.html' with org=org %}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% with org=addon.productOwnerIA5|vdv_org_id %}
+        {% if org %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product owner</dt>
+                <dd class="govuk-summary-list__value">{{ org }}</dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% if addon.externalIssuerId %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">External issuer ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.externalIssuerId }}</code></dd>
+        </div>
+    {% endif %}
+    {% if addon.productIdNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product ID number</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.productIdNum }}</code>
+            </dd>
+        </div>
+    {% endif %}
+    {% if addon.productIdIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product ID</dt>
+            <dd class="govuk-summary-list__value">{{ addon.productIdIA5 }}</dd>
+        </div>
+    {% endif %}
+    {% if addon.issuerAuthorizationId %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer authorization ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.issuerAutorizationId }}</code></dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">
+            {{ addon|rics_valid_from:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid until</dt>
+        <dd class="govuk-summary-list__value">
+            {{ addon|rics_valid_until:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+        </dd>
+    </div>
+    {% if addon.classCode %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Travel class</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.classCode }}</code></dd>
+        </div>
+    {% endif %}
+    {% if addon.carrierNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list--bullet">
+                    {% for carrier in addon.carrierNum %}
+                        {% with org=carrier|rics %}
+                            {% if org %}
+                                <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+    {% if addon.validRegion %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid region</dt>
+            <dd class="govuk-summary-list__value">
+                {% include "main/uic/valid_region.html" with valid_region=addon.validRegion %}
+            </dd>
+        </div>
+    {% endif %}
+    {% include "main/uic/extension.html" with obj=addon %}
+</dl>

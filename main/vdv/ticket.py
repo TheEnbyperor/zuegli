@@ -684,10 +684,11 @@ class SpacialValidity:
     def organization_name_opt(self):
         return map_org_id(self.organization_id, True)
 
-    def map_names(self, ids: typing.List[int]):
+    @staticmethod
+    def map_names(organization_id: int, ids: typing.List[int]):
         out = []
-        if self.organization_id in codes.SPACIAL_VALIDITY:
-            mapping = codes.SPACIAL_VALIDITY[self.organization_id]
+        if organization_id in codes.SPACIAL_VALIDITY:
+            mapping = codes.SPACIAL_VALIDITY[organization_id]
             if isinstance(mapping, dict):
                 for area in ids:
                     if name := mapping.get(area):
@@ -706,16 +707,16 @@ class SpacialValidity:
         return out
 
     def area_name(self):
-        return self.map_names([self.area])[0] if self.area else None
+        return self.map_names(self.organization_id, [self.area])[0] if self.area else None
 
     def start_station_name(self):
-        return self.map_names([self.start_station])[0] if self.start_station else None
+        return self.map_names(self.organization_id, [self.start_station])[0] if self.start_station else None
 
     def tariff_point_names(self):
-        return self.map_names(self.tariff_points)
+        return self.map_names(self.organization_id, self.tariff_points)
 
     def validity_names(self):
-        return self.map_names(self.validity_ids)
+        return self.map_names(self.organization_id, self.validity_ids)
 
 
 @dataclasses.dataclass

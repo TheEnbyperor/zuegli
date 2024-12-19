@@ -881,23 +881,23 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                         "value": str(carrier_id),
                                     })
 
-                    train_number = reservation_document.get("trainIA5") or reservation_document.get("trainNum")
-                    if train_number:
-                        pass_fields["headerFields"] = [{
-                            "key": "train-number",
-                            "label": "train-number-label",
-                            "value": str(train_number),
-                            "semantics": {
-                                "vehicleNumber": str(train_number)
-                            }
-                        }]
+                        train_number = reservation_document.get("trainIA5") or reservation_document.get("trainNum")
+                        if train_number:
+                            pass_fields["headerFields"] = [{
+                                "key": "train-number",
+                                "label": "train-number-label",
+                                "value": str(train_number),
+                                "semantics": {
+                                    "vehicleNumber": str(train_number)
+                                }
+                            }]
 
-                    if "referenceNum" in reservation_document:
-                        pass_fields["backFields"].append({
-                            "key": "reference-num",
-                            "label": "reference-num-label",
-                            "value": str(reservation_document["referenceNum"])
-                        })
+                        if "referenceNum" in reservation_document:
+                            pass_fields["backFields"].append({
+                                "key": "reference-num",
+                                "label": "reference-num-label",
+                                "value": str(reservation_document["referenceNum"])
+                            })
 
                 elif customer_card_document:
                     validity_start = templatetags.rics.rics_valid_from_date(customer_card_document)

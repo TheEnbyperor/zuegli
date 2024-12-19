@@ -4,7 +4,7 @@ import typing
 import uuid
 import iso3166
 from django import template
-from .. import uic
+from .. import uic, vdv
 
 register = template.Library()
 
@@ -163,3 +163,22 @@ def via_as_graphviz(value):
     if value.lower().startswith("via:"):
         via = uic.parse_via.parse_via(value)
         return uuid.uuid4(), via.to_graph()
+
+
+@register.filter(name="vdv_org_id")
+def vdv_org_id(value):
+    if value.startswith("VDV"):
+        org_id = int(value[3:])
+        return vdv.ticket.map_org_id(org_id, True)
+
+
+@register.filter(name="validity_zone_names")
+def validity_zone_names(value):
+    if value.get("carrierIA5").startswith("VDV"):
+        org_id = int(value["carrierIA5"][3:])
+        return vdv.ticket.SpacialValidity.map_names(org_id, value["zoneId"])
+    else:
+        out = []
+        for zone_id in value["zoneId"]:
+            out.append(f"Unknown zone: {zone_id}")
+        return out
