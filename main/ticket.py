@@ -670,7 +670,7 @@ def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 
 def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic.db.DBRecordBL]:
-    bl_record = next(filter(lambda r: r.id == "0080BL" and r.version == 3, ticket_envelope.records), None)
+    bl_record = next(filter(lambda r: r.id == "0080BL", ticket_envelope.records), None)
     if not bl_record:
         return None
 

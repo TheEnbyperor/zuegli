@@ -28,28 +28,33 @@ class DBRecordBL:
 
     @classmethod
     def parse(cls, data: bytes, version: int):
-        if version != 3:
-            raise DBException(f"Unsupported record version {version}")
-
         try:
             unknown_data = data[0:2].decode("utf-8")
         except UnicodeDecodeError as e:
             raise DBException(f"Invalid DB BL record") from e
-        try:
-            num_cert_blocks = int(data[2:3].decode("utf-8"), 10)
-        except (ValueError, UnicodeDecodeError) as e:
-            raise DBException(f"Invalid DB BL record") from e
 
-        offset = 3
-        certs = []
-        for _ in range(num_cert_blocks):
-            certs.append(DBCertBlock(data[offset:offset+26]))
-            offset += 26
+        if version == 3:
+            try:
+                num_cert_blocks = int(data[2:3].decode("utf-8"), 10)
+            except (ValueError, UnicodeDecodeError) as e:
+                raise DBException(f"Invalid DB BL record") from e
+
+            offset = 3
+            certs = []
+            for _ in range(num_cert_blocks):
+                certs.append(DBCertBlock(data[offset:offset+26]))
+                offset += 26
+        elif version == 2:
+            offset = 3 + 11 + 11 + 8 + 8 + 8
+            certs = []
+        else:
+            raise DBException(f"Unsupported record version {version}")
 
         try:
             num_sub_blocks = int(data[offset:offset+2].decode("utf-8"), 10)
         except (ValueError, UnicodeDecodeError) as e:
             raise DBException(f"Invalid DB BL record") from e
+        print(num_sub_blocks)
         offset += 2
 
         blocks = {}
