@@ -44,7 +44,7 @@ class VORRecordFI:
         except ValueError as e:
             raise VORException(f"Invalid validity start date") from e
 
-        if validity_end_str:
+        if validity_end_str.strip():
             try:
                 validity_end = TZ.localize(datetime.datetime.strptime(validity_end_str, "%d.%m.%Y %H:%M")) \
                     .astimezone(tz=pytz.UTC)
@@ -87,7 +87,7 @@ class VORRecordVD:
         dob_str = data[49:57]
         name_str = data[69:]
 
-        if dob_str:
+        if dob_str.strip():
             try:
                 dob = datetime.datetime.strptime(dob_str, "%d%m%Y").date()
             except ValueError as e:

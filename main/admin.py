@@ -22,6 +22,11 @@ class RSPTicketInstanceInline(admin.StackedInline):
     model = models.RSPTicketInstance
 
 
+class SNCFTicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.SNCFTicketInstance
+
+
 class ELBTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.ELBTicketInstance
@@ -80,6 +85,7 @@ class TicketAdmin(admin.ModelAdmin):
         VDVTicketInstanceInline,
         UICTicketInstanceInline,
         RSPTicketInstanceInline,
+        SNCFTicketInstanceInline,
         ELBTicketInstanceInline,
         SSBTicketInstanceInline,
         AppleRegistrationInline,
