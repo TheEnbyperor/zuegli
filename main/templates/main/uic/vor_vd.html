@@ -1,0 +1,29 @@
+<h2 class="govuk-heading-m">VOR Passenger data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Customer ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ vor.customer_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Forename</dt>
+        <dd class="govuk-summary-list__value">{{ vor.forename }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Surname</dt>
+        <dd class="govuk-summary-list__value">{{ vor.surname }}</dd>
+    </div>
+    {% if vor.date_of_birth %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Date of Birth</dt>
+            <dd class="govuk-summary-list__value">{{ vor.date_of_birth|date:"F d, Y" }}</dd>
+        </div>
+    {% endif %}
+    {% if vor.gender %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Gender</dt>
+            <dd class="govuk-summary-list__value">{{ vor.gender.name }}</dd>
+        </div>
+    {% endif %}
+</dl>
+<h3 class="govuk-heading-s">Raw Data</h3>
+<pre><code style="word-break: break-all">{{ vor.raw_data }}</code></pre>

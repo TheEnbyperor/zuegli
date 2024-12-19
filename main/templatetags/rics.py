@@ -172,6 +172,13 @@ def vdv_org_id(value):
         return vdv.ticket.map_org_id(org_id, True)
 
 
+@register.filter(name="vdv_product_id")
+def vdv_product_id(value, org_id: str):
+    if org_id.startswith("VDV"):
+        org_id = int(org_id[3:])
+        return vdv.ticket.product_name(org_id, value, True)
+
+
 @register.filter(name="validity_zone_names")
 def validity_zone_names(value):
     if value.get("carrierIA5").startswith("VDV"):

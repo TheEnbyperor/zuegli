@@ -50,6 +50,14 @@
             <dd class="govuk-summary-list__value">{{ addon.productIdIA5 }}</dd>
         </div>
     {% endif %}
+    {% with product=addon.productIdNum|vdv_product_id:addon.productOwnerIA5 %}
+        {% if product %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product</dt>
+                <dd class="govuk-summary-list__value">{{ product }}</dd>
+            </div>
+        {% endif %}
+    {% endwith %}
     {% if addon.issuerAuthorizationId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Issuer authorization ID</dt>

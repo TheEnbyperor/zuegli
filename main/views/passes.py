@@ -1615,12 +1615,75 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
 
-                if ticket_data.dt_pa and ticket_data.dt_pa.passenger_name:
+            if ticket_data.dt_pa and ticket_data.dt_pa.passenger_name:
+                pass_fields["primaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": ticket_data.dt_pa.passenger_name,
+                })
+
+        elif ticket_data.vor_fi or ticket_data.vor_vd:
+            if ticket_data.vor_fi:
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": ticket_data.vor_fi.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+                pass_fields["backFields"].append({
+                    "key": "validity-start-back",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": ticket_data.vor_fi.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+
+                if ticket_data.vor_fi.validity_end:
+                    pass_json["expirationDate"] = ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-end",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleNone",
+                        "value": ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "changeMessage": "validity-end-change"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "validity-end-back",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+            if ticket_data.vor_vd:
+                if ticket_data.vor_vd.forename and ticket_data.vor_vd.surname:
+                    name_value = f"{ticket_data.vor_vd.forename}\n{ticket_data.vor_vd.surname}"
+                elif ticket_data.vor_vd.forename:
+                    name_value = ticket_data.vor_vd.forename
+                elif ticket_data.vor_vd.surname:
+                    name_value = ticket_data.vor_vd.surname
+                else:
+                    name_value = ""
+                if name_value:
                     pass_fields["primaryFields"].append({
                         "key": "passenger",
                         "label": "passenger-label",
-                        "value": ticket_data.dt_pa.passenger_name,
+                        "value": name_value,
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": ticket_data.vor_vd.surname,
+                                "givenName": ticket_data.vor_vd.forename
+                            }
+                        }
                     })
+                pass_fields["secondaryFields"].append({
+                    "key": "date-of-birth",
+                    "label": "date-of-birth-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "value": ticket_data.vor_vd.date_of_birth.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
 
         elif parsed_layout:
             if parsed_layout.trips:
@@ -3427,6 +3490,7 @@ RICS_LOGO = {
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",
     3076: "pass/logo-transdev.png",
+    3306: "pass/logo-vor.png",
     3509: "pass/logo-ret.png",
     3591: "pass/logo-akn.png",
     5008: "pass/logo-vrn.png",
@@ -3453,6 +3517,7 @@ RICS_FG_SECONDARY = {
     1084: "rgb(32, 32, 55)",
     1184: "rgb(32, 32, 55)",
     5188: "rgb(255, 54, 0)",
+    3306: "rgb(128, 204, 40)",
 }
 
 UIC_NAME_LOGO = {

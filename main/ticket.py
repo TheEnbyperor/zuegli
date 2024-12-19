@@ -5,7 +5,6 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 from django.utils import timezone
-import django.core.files.storage
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, email
 
 
@@ -74,6 +73,8 @@ class UICTicket:
     cd_ut: typing.Optional[uic.cd.CDRecordUT]
     oebb_99: typing.Optional[uic.oebb.OeBBRecord99]
     db_vu: typing.Optional[uic.db_vu.DBRecordVU]
+    vor_fi: typing.Optional[uic.vor.VORRecordFI]
+    vor_vd: typing.Optional[uic.vor.VORRecordVD]
     other_records: typing.List[uic.envelope.Record]
 
     @property
@@ -262,10 +263,13 @@ class UICTicket:
             db_vu=parse_ticket_uic_db_vu(ticket_envelope, context),
             cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
+            vor_fi=parse_ticket_uic_vor_fi(ticket_envelope),
+            vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
                     or r.id == "1154UT" or r.id == "118199" or r.id == "5197TI"
                     or r.id == "5008TI" or r.id == "5197PA" or r.id == "5008PA"
+                    or r.id == "3306FI" or r.id == "3306VD"
             )]
         )
 
@@ -719,6 +723,36 @@ def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[u
         raise TicketError(
             title="Invalid OeBB 99 record",
             message="The OeBB 99 record is invalid - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_vor_fi(ticket_envelope: uic.Envelope) -> typing.Optional[uic.vor.VORRecordFI]:
+    vor_record = next(filter(lambda r: r.id == "3306FI" and r.version == 1, ticket_envelope.records), None)
+    if not vor_record:
+        return None
+
+    try:
+        return uic.vor.VORRecordFI.parse(vor_record.data, vor_record.version)
+    except uic.vor.VORRecordFI:
+        raise TicketError(
+            title="Invalid VOR FI record",
+            message="The VOR FI record is invalid - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional[uic.vor.VORRecordVD]:
+    vor_record = next(filter(lambda r: r.id == "3306VD" and r.version == 1, ticket_envelope.records), None)
+    if not vor_record:
+        return None
+
+    try:
+        return uic.vor.VORRecordVD.parse(vor_record.data, vor_record.version)
+    except uic.vor.VORException:
+        raise TicketError(
+            title="Invalid VOR VD record",
+            message="The VOR VD record is invalid - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 

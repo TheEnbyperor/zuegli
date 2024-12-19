@@ -9,6 +9,27 @@ from . import util, org_id, product_id, codes
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
 
+def product_name(product_org_id: int, product_number: int, opt=False):
+    if product_number == 9999:
+        return "Deutschlandticket"
+    elif product_number == 9998:
+        return "Deutschlandjobticket"
+    elif product_number == 9997:
+        return "Startkarte Deutschlandticket"
+    elif product_number == 9996:
+        return "Deutschlandsemesterticket"
+    elif product_number == 9995:
+        return "Deutschlandschülerticket"
+    else:
+        product_id_map = product_id.get_product_id_list()
+        if name := product_id_map.get((product_org_id, product_number)):
+            return name
+        else:
+            if opt:
+                return None
+            return f"{product_org_name()}:{product_number}"
+
+
 @dataclasses.dataclass
 class Context:
     account_forename: typing.Optional[str]
@@ -170,24 +191,7 @@ class VDVTicket:
             return UnknownElement(elm[0], elm[1])
 
     def product_name(self, opt=False):
-        if self.product_number == 9999:
-            return "Deutschlandticket"
-        elif self.product_number == 9998:
-            return "Deutschlandjobticket"
-        elif self.product_number == 9997:
-            return "Startkarte Deutschlandticket"
-        elif self.product_number == 9996:
-            return "Deutschlandsemesterticket"
-        elif self.product_number == 9995:
-            return "Deutschlandschülerticket"
-        else:
-            product_id_map = product_id.get_product_id_list()
-            if name := product_id_map.get((self.product_org_id, self.product_number)):
-                return name
-            else:
-                if opt:
-                    return None
-                return f"{self.product_org_name()}:{self.product_number}"
+        return product_name(self.product_org_id, self.product_number, opt=opt)
 
     def product_name_opt(self):
         return self.product_name(True)

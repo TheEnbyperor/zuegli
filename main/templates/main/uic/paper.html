@@ -39,7 +39,8 @@
             </div>
         </div>
     </div>
-{% elif layout.standard == "PLAI" or layout.standard == "EOSU" %}
+{% else %}
+    <h2 class="govuk-heading-s">Ticket layout <code>{{ layout.standard }}</code></h2>
     <div class="paper-ticket-container">
         <div class="paper-ticket">
             <div class="plai-ticket-inner" style="width: {{ layout.fields|plai_width }}ch;height: {{ layout.fields|plai_height }}em;">
@@ -50,76 +51,4 @@
             </div>
         </div>
     </div>
-{% else %}
-    <h2 class="govuk-heading-s">Unknown ticket layout <code>{{ layout.standard }}</code></h2>
-    {% for field in layout.fields %}
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Field #{{ forloop.counter }}</h2>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Line</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ field.line }}</code></dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Column</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ field.column }}</code></dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Height</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ field.height }}</code></dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Width</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ field.width }}</code></dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Formatting</dt>
-                        <dd class="govuk-summary-list__value">
-                            <table class="govuk-table">
-                                <tbody class="govuk-table__body">
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">Bold</td>
-                                    <td class="govuk-table__cell">
-                                        {% if field.formatting.bold %}
-                                            <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                                        {% else %}
-                                            <strong class="govuk-tag govuk-tag--red">No</strong>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">Italic</td>
-                                    <td class="govuk-table__cell">
-                                        {% if field.formatting.italic %}
-                                            <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                                        {% else %}
-                                            <strong class="govuk-tag govuk-tag--red">No</strong>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">Small font</td>
-                                    <td class="govuk-table__cell">
-                                        {% if field.formatting.small_font %}
-                                            <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                                        {% else %}
-                                            <strong class="govuk-tag govuk-tag--red">No</strong>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Text</dt>
-                        <dd class="govuk-summary-list__value">{{ field.text }}</dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
-    {% endfor %}
 {% endif %}

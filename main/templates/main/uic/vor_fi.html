@@ -1,0 +1,13 @@
+<h2 class="govuk-heading-m">VOR Validity</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Validity start</dt>
+        <dd class="govuk-summary-list__value">{{ vor.validity_start|date:"F d, Y H:i" }} UTC</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Validity end</dt>
+        <dd class="govuk-summary-list__value">{{ vor.validity_end|date:"F d, Y H:i" }} UTC</dd>
+    </div>
+</dl>
+<h3 class="govuk-heading-s">Raw Data</h3>
+<pre><code style="word-break: break-all">{{ vor.raw_data }}</code></pre>

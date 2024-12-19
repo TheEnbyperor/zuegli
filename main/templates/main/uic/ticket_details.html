@@ -160,6 +160,14 @@
     {% include "main/uic/db_vu.html" with db_vu=ticket.db_vu %}
 {% endif %}
 
+{% if ticket.vor_fi %}
+    {% include "main/uic/vor_fi.html" with vor=ticket.vor_fi %}
+{% endif %}
+
+{% if ticket.vor_vd %}
+    {% include "main/uic/vor_vd.html" with vor=ticket.vor_vd %}
+{% endif %}
+
 {% for record in ticket.other_records %}
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
