@@ -1998,12 +1998,17 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     elif elm.area == 1202:
                         add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
 
-        if ticket_data.ticket.product_org_id in VDV_ORG_ID_LOGO:
-            add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.product_org_id], "logo.png")
+        org_id = ticket_data.ticket.product_org_id if ticket_data.ticket.product_org_id != 3000 else ticket_data.ticket.ticket_org_id
+        if org_id in VDV_ORG_ID_LOGO:
+            add_pkp_img(pkp, VDV_ORG_ID_LOGO[org_id], "logo.png")
             have_logo = True
-        elif ticket_data.ticket.product_org_id == 3000 and ticket_data.ticket.ticket_org_id in VDV_ORG_ID_LOGO:
-            add_pkp_img(pkp, VDV_ORG_ID_LOGO[ticket_data.ticket.ticket_org_id], "logo.png")
-            have_logo = True
+        if org_id in VDV_ORG_ID_BG:
+            pass_json["backgroundColor"] = VDV_ORG_ID_BG[org_id]
+        if org_id in VDV_ORG_ID_FG:
+            pass_json["foregroundColor"] = VDV_ORG_ID_FG[org_id]
+        if org_id in VDV_ORG_ID_FG_SECONDARY:
+            pass_json["labelColor"] = VDV_ORG_ID_FG_SECONDARY[org_id]
+
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         ticket_data: ticket.RSPTicket = ticket_instance.as_ticket()
 
@@ -3545,6 +3550,14 @@ VDV_ORG_ID_LOGO = {
     6441: "pass/logo-kvg.png",
     6496: "pass/logo-naldo.png",
     6613: "pass/logo-arriva.png",
+}
+
+VDV_ORG_ID_BG = {}
+
+VDV_ORG_ID_FG = {}
+
+VDV_ORG_ID_FG_SECONDARY = {
+    6310: "rgb(12, 156, 58)"
 }
 
 RSP_ORG_LOGO = {
