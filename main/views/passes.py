@@ -3490,6 +3490,7 @@ RICS_LOGO = {
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",
     3076: "pass/logo-transdev.png",
+    3268: "pass/logo-graz.png",
     3306: "pass/logo-vor.png",
     3509: "pass/logo-ret.png",
     3591: "pass/logo-akn.png",
@@ -3517,6 +3518,7 @@ RICS_FG_SECONDARY = {
     1084: "rgb(32, 32, 55)",
     1184: "rgb(32, 32, 55)",
     5188: "rgb(255, 54, 0)",
+    3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
 }
 
