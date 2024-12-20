@@ -279,7 +279,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
             parser = uic.rct2_parse.RCT2Parser()
             parser.read(ticket_data.layout)
-            parsed_layout = parser.parse()
+            parsed_layout = parser.parse(issuing_rics)
 
         if ticket_data.flex:
             pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"]
@@ -3501,6 +3501,7 @@ RICS_LOGO = {
     3306: "pass/logo-vor.png",
     3509: "pass/logo-ret.png",
     3591: "pass/logo-akn.png",
+    3606: "pass/logo-qbuzz.png",
     5008: "pass/logo-vrn.png",
     5177: "pass/logo-fribus.png",
     5188: "pass/logo-es.png",
@@ -3520,6 +3521,7 @@ RICS_BG = {
 RICS_FG = {
     1084: "rgb(7, 7, 33)",
     1184: "rgb(7, 7, 33)",
+    3606: "rgb(0, 70, 84)",
     5188: "rgb(255, 255, 255)",
     8999: "rgb(255, 255, 255)",
 }
@@ -3530,6 +3532,7 @@ RICS_FG_SECONDARY = {
     3153: "rgb(227, 0, 21)",
     3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
+    3606: "rgb(247, 147, 48)",
     5188: "rgb(255, 54, 0)",
     8999: "rgb(226, 1, 112)",
 }

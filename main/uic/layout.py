@@ -44,7 +44,10 @@ class LayoutV1:
     def parse(cls, data: bytes, issuing_rics: typing.Optional[int] = None) -> "LayoutV1":
         # The Irish and the Dutch don't know how to zero index
         # Correction: a lot of people don't know it turns out
-        if issuing_rics in (60, 1060, 1160, 84, 1084, 1184, 3268, 5188, 9901):
+        if issuing_rics in (
+                60, 1060, 1160, 84, 1084, 1184, 3268, 5188, 9901, 3095, 3606,
+                3626
+        ):
             offset_x = -1
         else:
             offset_x = 0

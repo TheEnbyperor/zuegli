@@ -269,7 +269,7 @@ class UICTicket:
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
                     or r.id == "1154UT" or r.id == "118199" or r.id == "5197TI"
                     or r.id == "5008TI" or r.id == "5197PA" or r.id == "5008PA"
-                    or r.id == "3306FI" or r.id == "3306VD"
+                    or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
             )]
         )
 
@@ -598,7 +598,7 @@ def parse_ticket_uic_head(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
 
 
 def parse_ticket_uic_layout(ticket_envelope: uic.Envelope) -> typing.Optional[uic.LayoutV1]:
-    layout_record = next(filter(lambda r: r.id == "U_TLAY", ticket_envelope.records), None)
+    layout_record = next(filter(lambda r: r.id in ("U_TLAY", "3606AA"), ticket_envelope.records), None)
     if not layout_record:
         return None
 
