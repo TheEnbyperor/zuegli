@@ -1,12 +1,15 @@
 import dataclasses
 import typing
+import datetime
 from . import layout
 
 @dataclasses.dataclass
 class TripPart:
+    departure: typing.Optional[datetime.datetime]
     departure_date: str
     departure_time: str
 
+    arrival: typing.Optional[datetime.datetime]
     arrival_date: str
     arrival_time: str
 
@@ -16,7 +19,7 @@ class TripPart:
 
 @dataclasses.dataclass
 class ParsedRCT2:
-    operator_rics: str
+    operator_rics: int
     travel_class: str
     trips: typing.List[TripPart]
     document_type: str
@@ -65,12 +68,20 @@ class RCT2Parser:
     def parse(self, issuing_rics: typing.Optional[int] = None) -> ParsedRCT2:
         trips = []
         for line in (6, 7):
+            departure_dt = None
+            arrival_dt = None
+
             departure_station = self.read_area(top=line, left=12, width=17, height=1)
             arrival_station =   self.read_area(top=line, left=34, width=17, height=1)
 
             if issuing_rics in (84, 1084, 1184, 3095, 3606, 3626):
                 departure = self.read_area(top=line, left=1,  width=10, height=1)
                 arrival =   self.read_area(top=line, left=52, width=10, height=1)
+
+                if departure:
+                    departure_dt = datetime.datetime.strptime(departure, "%d%m%y%H%M")
+                if arrival:
+                    arrival_dt = datetime.datetime.strptime(arrival, "%d%m%y%H%M")
 
                 departure_date = f"{departure[0:2]}.{departure[2:4]}.{departure[4:6]}"
                 departure_time = f"{departure[6:8]}:{departure[8:10]}"
@@ -92,6 +103,8 @@ class RCT2Parser:
                     arrival_station=arrival_station.strip("*"),
                     arrival_date=arrival_date.strip("*"),
                     arrival_time=arrival_time.strip("*"),
+                    departure=departure_dt,
+                    arrival=arrival_dt,
                 ))
 
         travel_class =        self.read_area(top=6,  left=66, width=5,  height=1)
@@ -102,6 +115,10 @@ class RCT2Parser:
         train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
         conditions_data =     self.read_area(top=12, left=0,  width=50, height=3)
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
+        try:
+            operator_rics = int(operator_rics, 10)
+        except ValueError:
+            operator_rics = 0
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)
 
         return ParsedRCT2(

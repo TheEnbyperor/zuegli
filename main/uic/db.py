@@ -54,7 +54,6 @@ class DBRecordBL:
             num_sub_blocks = int(data[offset:offset+2].decode("utf-8"), 10)
         except (ValueError, UnicodeDecodeError) as e:
             raise DBException(f"Invalid DB BL record") from e
-        print(num_sub_blocks)
         offset += 2
 
         blocks = {}

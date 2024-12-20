@@ -1709,7 +1709,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         }
                     })
 
-                    if parsed_layout.trips[0].departure_time:
+                    if parsed_layout.trips[0].departure:
+                        pass_fields["secondaryFields"].append({
+                            "key": "departure-time",
+                            "label": "departure-time-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium",
+                            "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                    elif parsed_layout.trips[0].departure_time:
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
                             "label": "departure-time-label",
@@ -1722,7 +1731,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": parsed_layout.trips[0].departure_date
                         })
 
-                    if parsed_layout.trips[0].arrival_time:
+                    if parsed_layout.trips[0].arrival:
+                        pass_fields["secondaryFields"].append({
+                            "key": "arrival-time",
+                            "label": "arrival-time-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium",
+                            "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                    elif parsed_layout.trips[0].arrival_time:
                         pass_fields["secondaryFields"].append({
                             "key": "arrival-time",
                             "label": "arrival-time-label",
@@ -1736,7 +1754,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                 else:
-                    if parsed_layout.trips[0].departure_time:
+                    if parsed_layout.trips[0].departure:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium",
+                            "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                    elif parsed_layout.trips[0].departure_time:
                         pass_fields["secondaryFields"].append({
                             "key": "validity-start",
                             "label": "validity-start-label",
@@ -1749,7 +1776,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": parsed_layout.trips[0].departure_date
                         })
 
-                    if parsed_layout.trips[0].arrival_time:
+                    if parsed_layout.trips[0].arrival:
+                        pass_fields["secondaryFields"].append({
+                            "key": "validity-end",
+                            "label": "validity-end-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium",
+                            "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                    elif parsed_layout.trips[0].arrival_time:
                         pass_fields["secondaryFields"].append({
                             "key": "validity-end",
                             "label": "validity-end-label",
@@ -1762,7 +1798,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": parsed_layout.trips[0].arrival_date
                         })
 
-            if parsed_layout.travel_class:
+            if parsed_layout.travel_class and parsed_layout.travel_class != "0":
                 if pass_type == "boardingPass":
                     pass_fields["auxiliaryFields"].append({
                         "key": "class-code",
