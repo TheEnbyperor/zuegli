@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-import boto3.s3.transfer
+import botocore.config
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
@@ -140,8 +140,8 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "vdv-certs",
-            "transfer_config": boto3.s3.transfer.TransferConfig(
-                use_threads=False,
+            "client_config": botocore.config.Config(
+                max_pool_connections=None,
             )
         }
     },
@@ -149,8 +149,8 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "uic-data",
-            "transfer_config": boto3.s3.transfer.TransferConfig(
-                use_threads=False,
+            "client_config": botocore.config.Config(
+                max_pool_connections=None,
             )
         }
     },
@@ -158,8 +158,8 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
             "bucket_name": "rsp-data",
-            "transfer_config": boto3.s3.transfer.TransferConfig(
-                use_threads=False,
+            "client_config": botocore.config.Config(
+                max_pool_connections=None,
             )
         }
     },
