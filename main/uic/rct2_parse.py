@@ -72,7 +72,7 @@ class RCT2Parser:
             arrival_dt = None
 
             departure_station = self.read_area(top=line, left=12, width=17, height=1)
-            arrival_station =   self.read_area(top=line, left=34, width=17, height=1)
+            arrival_station =   self.read_area(top=line, left=29, width=17, height=1)
 
             if issuing_rics in (84, 1084, 1184, 3095, 3606, 3626):
                 departure = self.read_area(top=line, left=1,  width=10, height=1)
@@ -80,13 +80,12 @@ class RCT2Parser:
 
                 if departure:
                     departure_dt = datetime.datetime.strptime(departure, "%d%m%y%H%M")
+                    departure_date = f"{departure[0:2]}.{departure[2:4]}.{departure[4:6]}"
+                    departure_time = f"{departure[6:8]}:{departure[8:10]}"
                 if arrival:
                     arrival_dt = datetime.datetime.strptime(arrival, "%d%m%y%H%M")
-
-                departure_date = f"{departure[0:2]}.{departure[2:4]}.{departure[4:6]}"
-                departure_time = f"{departure[6:8]}:{departure[8:10]}"
-                arrival_date = f"{arrival[0:2]}.{arrival[2:4]}.{arrival[4:6]}"
-                arrival_time = f"{arrival[6:8]}:{arrival[8:10]}"
+                    arrival_date = f"{arrival[0:2]}.{arrival[2:4]}.{arrival[4:6]}"
+                    arrival_time = f"{arrival[6:8]}:{arrival[8:10]}"
             else:
                 departure_date = self.read_area(top=line, left=1,  width=5, height=1)
                 departure_time = self.read_area(top=line, left=7,  width=5, height=1)

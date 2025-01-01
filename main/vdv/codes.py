@@ -65,8 +65,12 @@ def vbb_tariff(code: int):
 SPACIAL_VALIDITY = {
     70: vrr_tariff,
     102: vrs_tariff,
+    3000: {
+        1: "Deutschlandweit",
+    },
     5000: {
         1: "Deutschlandweit",
+        4096: "Schleswig-Holstein-Ticket",
     },
     6100: vbb_tariff,
     6212: {

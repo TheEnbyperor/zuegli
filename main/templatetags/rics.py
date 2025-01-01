@@ -168,7 +168,13 @@ def via_as_graphviz(value):
 @register.filter(name="vdv_org_id")
 def vdv_org_id(value):
     if value.startswith("VDV"):
-        org_id = int(value[3:])
+        value = value[3:]
+        if value.startswith("KA"):
+            value = value[2:]
+        try:
+            org_id = int(value)
+        except ValueError:
+            return
         return vdv.ticket.map_org_id(org_id, True)
 
 

@@ -173,7 +173,7 @@
     {% endif %}
     {% if flex.data.travelerDetail %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Travelers</dt>
+            <dt class="govuk-summary-list__key">Travellers</dt>
             <dd class="govuk-summary-list__value">
                 {% for traveler in flex.data.travelerDetail.traveler %}
                     <div class="govuk-summary-card">
@@ -185,20 +185,20 @@
                         </div>
                     </div>
                 {% endfor %}
+                {% if flex.data.travelerDetail.preferredLanguage %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Traveler preferred language</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.preferredLanguage }}</code>
+                        </dd>
+                    </div>
+                {% endif %}
+                {% if flex.data.travelerDetail.groupName %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Traveler group name</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.groupName }}</code></dd>
+                    </div>
+                {% endif %}
             </dd>
-            {% if flex.data.travelerDetail.preferredLanguage %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Traveler preferred language</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.preferredLanguage }}</code>
-                    </dd>
-                </div>
-            {% endif %}
-            {% if flex.data.travelerDetail.groupName %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Traveler group name</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.groupName }}</code></dd>
-                </div>
-            {% endif %}
         </div>
     {% endif %}
     {% if flex.data.transportDocument %}

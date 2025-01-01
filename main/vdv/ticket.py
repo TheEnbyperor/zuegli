@@ -27,7 +27,7 @@ def product_name(product_org_id: int, product_number: int, opt=False):
         else:
             if opt:
                 return None
-            return f"{product_org_name()}:{product_number}"
+            return f"{product_org_id}:{product_number}"
 
 
 @dataclasses.dataclass
