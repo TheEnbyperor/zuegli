@@ -185,11 +185,11 @@ def vdv_org_id(value):
 @register.filter(name="vdv_product_id")
 def vdv_product_id(value, org_id: str):
     if org_id.startswith("VDV"):
-        value = value[3:]
-        if value.startswith("KA"):
-            value = value[2:]
+        org_id = org_id[3:]
+        if org_id.startswith("KA"):
+            org_id = org_id[2:]
         try:
-            org_id = int(value)
+            org_id = int(org_id)
         except ValueError:
             return
         return vdv.ticket.product_name(org_id, value, True)
