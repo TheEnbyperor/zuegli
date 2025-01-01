@@ -2034,7 +2034,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     elif elm.area == 1202:
                         add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
 
-        org_id = ticket_data.ticket.product_org_id if ticket_data.ticket.product_org_id != 3000 else ticket_data.ticket.ticket_org_id
+        org_id = ticket_data.ticket.product_org_id if ticket_data.ticket.product_org_id not in (3000, 5000)\
+            else ticket_data.ticket.ticket_org_id
         if org_id in VDV_ORG_ID_LOGO:
             add_pkp_img(pkp, VDV_ORG_ID_LOGO[org_id], "logo.png")
             have_logo = True
