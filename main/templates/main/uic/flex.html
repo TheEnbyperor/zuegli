@@ -185,18 +185,25 @@
                         </div>
                     </div>
                 {% endfor %}
-                {% if flex.data.travelerDetail.preferredLanguage %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Traveler preferred language</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.preferredLanguage }}</code>
-                        </dd>
-                    </div>
-                {% endif %}
-                {% if flex.data.travelerDetail.groupName %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Traveler group name</dt>
-                        <dd class="govuk-summary-list__value"><code>{{ flex.data.travelerDetail.groupName }}</code></dd>
-                    </div>
+                {% if flex.data.travelerDetail.preferredLanguage or flex.data.travelerDetail.groupName %}
+                    <dl class="govuk-summary-list">
+                        {% if flex.data.travelerDetail.preferredLanguage %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Traveler preferred language</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ flex.data.travelerDetail.preferredLanguage }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if flex.data.travelerDetail.groupName %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Traveler group name</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ flex.data.travelerDetail.groupName }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                    </dl>
                 {% endif %}
             </dd>
         </div>

@@ -82,10 +82,16 @@ class RCT2Parser:
                     departure_dt = datetime.datetime.strptime(departure, "%d%m%y%H%M")
                     departure_date = f"{departure[0:2]}.{departure[2:4]}.{departure[4:6]}"
                     departure_time = f"{departure[6:8]}:{departure[8:10]}"
+                else:
+                    departure_date = ""
+                    departure_time = ""
                 if arrival:
                     arrival_dt = datetime.datetime.strptime(arrival, "%d%m%y%H%M")
                     arrival_date = f"{arrival[0:2]}.{arrival[2:4]}.{arrival[4:6]}"
                     arrival_time = f"{arrival[6:8]}:{arrival[8:10]}"
+                else:
+                    arrival_date = ""
+                    arrival_time = ""
             else:
                 departure_date = self.read_area(top=line, left=1,  width=5, height=1)
                 departure_time = self.read_area(top=line, left=7,  width=5, height=1)

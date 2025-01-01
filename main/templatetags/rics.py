@@ -8,6 +8,10 @@ from .. import uic, vdv
 
 register = template.Library()
 
+@register.filter(name="as_hex")
+def as_hex(value: bytes):
+    return value.hex()
+
 @register.filter(name="rics")
 def get_rics_code(value):
     if not value:
@@ -181,7 +185,13 @@ def vdv_org_id(value):
 @register.filter(name="vdv_product_id")
 def vdv_product_id(value, org_id: str):
     if org_id.startswith("VDV"):
-        org_id = int(org_id[3:])
+        value = value[3:]
+        if value.startswith("KA"):
+            value = value[2:]
+        try:
+            org_id = int(value)
+        except ValueError:
+            return
         return vdv.ticket.product_name(org_id, value, True)
 
 

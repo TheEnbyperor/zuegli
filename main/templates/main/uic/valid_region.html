@@ -123,6 +123,14 @@
                                 </dd>
                             </div>
                         {% endif %}
+                        {% if region.1.binaryZoneId %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Binary zone ID</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ region.1.binaryZoneId|as_hex }}
+                                </dd>
+                            </div>
+                        {% endif %}
                     </dl>
                 </div>
             </div>
