@@ -10,7 +10,7 @@ register = template.Library()
 
 @register.filter(name="as_hex")
 def as_hex(value: bytes):
-    return value.hex()
+    return ":".join(f"{b:02x}" for b in value)
 
 @register.filter(name="rics")
 def get_rics_code(value):

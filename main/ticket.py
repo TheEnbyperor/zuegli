@@ -29,23 +29,23 @@ class VDVTicket:
 
     def type(self) -> str:
         if self.ticket.product_number in (
-                9999, # Deutschlandticket subscription
-                9998, # Deutschlandjobticket subscription
-                9997, # Startkarte Deutschlandticket
-                9996, # Semesterticket Deutschlandticket Upgrade subscription
-                9995, # Semesterdeutschlandticket subscription
+                9999,  # Deutschlandticket subscription
+                9998,  # Deutschlandjobticket subscription
+                9997,  # Startkarte Deutschlandticket
+                9996,  # Semesterticket Deutschlandticket Upgrade subscription
+                9995,  # Semesterdeutschlandticket subscription
         ):
             return models.Ticket.TYPE_DEUTCHLANDTICKET
         else:
             return models.Ticket.TYPE_UNKNOWN
-
 
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
 
         ticket_type = self.type()
         if ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
-            passenger_data = next(filter(lambda d: isinstance(d, vdv.ticket.PassengerData), self.ticket.product_data), None)
+            passenger_data = next(filter(lambda d: isinstance(d, vdv.ticket.PassengerData), self.ticket.product_data),
+                                  None)
             if passenger_data:
                 hd.update(b"deutschlandticket")
                 hd.update(self.ticket.product_org_id.to_bytes(8, "big"))
@@ -90,13 +90,18 @@ class UICTicket:
                 ticket_type, ticket = self.flex.data["transportDocument"][0]["ticket"]
                 if ticket_type == "openTicket":
                     if len(self.flex.data.get("travelerDetail", {}).get("traveler", [])) >= 1 and \
-                        issuer_num == 1080: # Deutsche Bahn
+                            issuer_num in (
+                            1080,  # Deutsche Bahn
+                            5143,  # AMCON Software GmbH
+                            5173,  # Nahverkehrsservice Sachsen-Anhalt
+                            3076,  # Transdev GmbH 
+                    ):
                         if ticket.get("productIdNum") in (
-                                9999, # Deutschlandticket subscription
-                                9998, # Deutschlandjobticket subscription
-                                9997, # Startkarte Deutschlandticket
-                                9996, # Semesterticket Deutschlandticket Upgrade subscription
-                                9995, # Semesterdeutschlandticket subscription
+                                9999,  # Deutschlandticket subscription
+                                9998,  # Deutschlandjobticket subscription
+                                9997,  # Startkarte Deutschlandticket
+                                9996,  # Semesterticket Deutschlandticket Upgrade subscription
+                                9995,  # Semesterdeutschlandticket subscription
                         ):
                             return models.Ticket.TYPE_DEUTCHLANDTICKET
                         else:
@@ -250,7 +255,8 @@ class UICTicket:
             return False
 
     @classmethod
-    def from_envelope(cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> "UICTicket":
+    def from_envelope(cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
+                      context: vdv.ticket.Context) -> "UICTicket":
         return cls(
             raw_bytes=ticket_bytes,
             envelope=ticket_envelope,
@@ -323,6 +329,7 @@ class RSPTicket:
 
     def issuer_name(self):
         return rsp.issuers.issuer_name(self.issuer_id)
+
 
 @dataclasses.dataclass
 class SNCFTicket:
@@ -698,7 +705,9 @@ def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic
             exception=traceback.format_exc()
         )
 
-def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> typing.Optional[uic.db_vu.DBRecordVU]:
+
+def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> typing.Optional[
+    uic.db_vu.DBRecordVU]:
     vu_record = next(filter(lambda r: r.id == "0080VU" and r.version == 1, ticket_envelope.records), None)
     if not vu_record:
         return None
@@ -711,6 +720,7 @@ def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope, context: vdv.ticket.Co
             message="The DB VU record is invalid - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
+
 
 def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[uic.oebb.OeBBRecord99]:
     oebb_record = next(filter(lambda r: r.id == "118199" and r.version == 1, ticket_envelope.records), None)
@@ -769,6 +779,7 @@ def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTic
         )
 
     return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
+
 
 def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     pki_store = rsp.CertificateStore()
@@ -835,6 +846,7 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
         data=data
     )
 
+
 def parse_ticket_sncf(ticket_bytes: bytes) -> SNCFTicket:
     try:
         data = sncf.SNCFTicket.parse(ticket_bytes)
@@ -851,6 +863,7 @@ def parse_ticket_sncf(ticket_bytes: bytes) -> SNCFTicket:
         data=data
     )
 
+
 def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
     try:
         data = elb.ELBTicket.parse(ticket_bytes)
@@ -866,6 +879,7 @@ def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
         raw_ticket=ticket_bytes,
         data=data
     )
+
 
 def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
     try:
@@ -1031,7 +1045,9 @@ def create_ticket_obj(
         )
     return created
 
-def update_from_subscription_barcode(barcode_data: bytes, account: typing.Optional["models.Account"]) -> "models.Ticket":
+
+def update_from_subscription_barcode(barcode_data: bytes,
+                                     account: typing.Optional["models.Account"]) -> "models.Ticket":
     decoded_ticket = parse_ticket(barcode_data, account=account)
 
     should_update = False
