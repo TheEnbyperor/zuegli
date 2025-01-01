@@ -94,7 +94,7 @@ class UICTicket:
                             1080,  # Deutsche Bahn
                             5143,  # AMCON Software GmbH
                             5173,  # Nahverkehrsservice Sachsen-Anhalt
-                            3076,  # Transdev GmbH 
+                            3076,  # Transdev GmbH
                     ):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
