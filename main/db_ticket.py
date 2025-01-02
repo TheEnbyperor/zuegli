@@ -65,7 +65,7 @@ def update_all():
                 "X-Correlation-ID": secrets.token_hex(16),
                 "User-Agent": "VDV PKPass q@magicalcodewit.ch",
             })
-            if r.status_code != 200:
+            if not r.ok:
                 logger.error(f"Failed to get profiles for account {account.db_account_id} - {r.text}")
                 continue
         except niquests.exceptions.RequestException as e:
@@ -84,7 +84,7 @@ def update_all():
                     "X-Correlation-ID": secrets.token_hex(16),
                     "User-Agent": "VDV PKPass q@magicalcodewit.ch",
                 })
-                if r.status_code != 200:
+                if not r.ok:
                     logger.error(f"Failed to get bookings for profile {profile_id} - {r.text}")
                     continue
             except niquests.exceptions.RequestException as e:
@@ -102,7 +102,7 @@ def update_all():
                             "X-Correlation-ID": secrets.token_hex(16),
                             "User-Agent": "VDV PKPass q@magicalcodewit.ch",
                         })
-                        if r.status_code != 200:
+                        if not r.ok:
                             logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {r.text}")
                             continue
                     except niquests.exceptions.RequestException as e:

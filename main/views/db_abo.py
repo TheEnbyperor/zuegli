@@ -42,7 +42,7 @@ def new_abo(request):
                     messages.add_message(request, messages.ERROR, "Subscription not found")
                 elif r.status_code == 401:
                     already_present = True
-                elif r.status_code != 200:
+                elif not r.ok:
                     messages.add_message(request, messages.ERROR, "Unknown error")
                 else:
                     data = r.json()

@@ -86,7 +86,7 @@ def update_saarvv_tickets(account: "models.Account"):
     }, headers={
         "Authorization": account.saarvv_token
     })
-    if r.status_code != 200:
+    if not r.ok:
         logger.error(f"Failed to update SaarVV {account.saarvv_device_id}: {r.text}")
     data = r.json()
 
@@ -100,7 +100,7 @@ def update_saarvv_tickets(account: "models.Account"):
     }, headers={
         "Authorization": account.saarvv_token
     })
-    if r.status_code != 200:
+    if not r.ok:
         logger.error(f"Failed to update SaarVV {account.saarvv_device_id}: {r.text}")
     data = r.json()
     for t in data["tickets"].values():

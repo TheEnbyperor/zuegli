@@ -17,7 +17,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
     }, hooks={
         "pre_request": [lambda req: saarvv.sign_request(req, device_id)],
     })
-    if r.status_code != 200:
+    if not r.ok:
         return None
     auth_data = r.json()
     access_token_data = next(filter(lambda t: t["name"] == "tickeos_access_token", auth_data["authorization_types"]), None)

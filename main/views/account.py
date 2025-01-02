@@ -22,7 +22,7 @@ def db_account(request):
             "X-Correlation-ID": secrets.token_hex(16),
             "User-Agent": "VDV PKPass q@magicalcodewit.ch"
         })
-        if r.status_code != 200:
+        if not r.ok:
             messages.add_message(request, messages.ERROR, "Failed to get DB account information")
         else:
             data = r.json()
@@ -34,7 +34,7 @@ def db_account(request):
             "X-Correlation-ID": secrets.token_hex(16),
             "User-Agent": "VDV PKPass q@magicalcodewit.ch"
         })
-        if r.status_code != 200:
+        if not r.ok:
             messages.add_message(request, messages.ERROR, "Failed to get BahnBonus information")
         else:
             data = r.json()

@@ -32,7 +32,7 @@ def get_db_token(account: "models.Account"):
         }, headers={
             "User-Agent": "VDV PKPass q@magicalcodewit.ch"
         })
-        if r.status_code != 200:
+        if not r.ok:
             return None
 
         data = r.json()
@@ -134,7 +134,7 @@ def db_login_callback(request):
         "User-Agent": "VDV PKPass q@magicalcodewit.ch"
     })
     data = r.json()
-    if r.status_code != 200:
+    if not r.ok:
         messages.error(request, f"Login failed - {data.get('error_description', '')}")
         return redirect('db_login')
 

@@ -37,7 +37,7 @@ def update_all():
                 "User-Agent": "VDV PKPass q@magicalcodewit.ch",
                 "Call-Trigger": "manual"
             })
-            if r.status_code != 200:
+            if not r.ok:
                 logger.error(f"Failed to get BahnCards for account {account} - {r.text}")
                 continue
         except niquests.exceptions.RequestException as e:
