@@ -127,6 +127,8 @@ class UICTicket:
             if self.dt_ti.product_name == "Deutschlandticket":
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
             return models.Ticket.TYPE_FAHRKARTE
+        elif self.layout and self.layout.standard in ("RCT2", "RTC2"):
+            return models.Ticket.TYPE_FAHRKARTE
 
         return models.Ticket.TYPE_UNKNOWN
 
