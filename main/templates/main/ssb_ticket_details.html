@@ -137,12 +137,12 @@
                 {% endif %}
             {% endwith %}
         {% endif %}
-        {% if ticket.data.departure_station_sncf %}
+        {% if ticket.data.departure_station_benerail %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">From station SNCF ID</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.data.departure_station_sncf }}</code></dd>
+                <dt class="govuk-summary-list__key">From station BeNeRail ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.departure_station_benerail }}</code></dd>
             </div>
-            {% with station=ticket.data.departure_station_sncf|get_station:"sncf" %}
+            {% with station=ticket.data.departure_station_benerail|get_station:"benerail" %}
                 {% if station %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">From station</dt>
@@ -181,12 +181,12 @@
                 {% endif %}
             {% endwith %}
         {% endif %}
-        {% if ticket.data.arrival_station_sncf %}
+        {% if ticket.data.arrival_station_benerail %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">To station SNCF ID</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.data.arrival_station_sncf }}</code></dd>
+                <dt class="govuk-summary-list__key">To station BeNeRail ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.arrival_station_benerail }}</code></dd>
             </div>
-            {% with station=ticket.data.arrival_station_sncf|get_station:"sncf" %}
+            {% with station=ticket.data.arrival_station_benerail|get_station:"benerail" %}
                 {% if station %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">To station</dt>

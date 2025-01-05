@@ -7,6 +7,31 @@
             <dd class="govuk-summary-list__value">{{ db.product }}</dd>
         </div>
     {% endif %}
+    {% if db.product_class %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product class</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Whole ticket</dt>
+                        <dd class="govuk-summary-list__value">{{ db.product_class }}</dd>
+                    </div>
+                    {% if db.product_class_outbound %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Outbound part</dt>
+                            <dd class="govuk-summary-list__value">{{ db.product_class_outbound }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if db.product_class_return %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Return part</dt>
+                            <dd class="govuk-summary-list__value">{{ db.product_class_return }}</dd>
+                        </div>
+                    {% endif %}
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
     {% if db.validity_start %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Validity start</dt>
@@ -65,6 +90,10 @@
         {% endif %}
     {% endwith %}
     <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of travellers</dt>
+        <dd class="govuk-summary-list__value">{{ db.num_travellers }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Number of adults</dt>
         <dd class="govuk-summary-list__value">{{ db.num_adults }}</dd>
     </div>
@@ -113,6 +142,18 @@
                     {% endif %}
                 </dl>
             </dd>
+        </div>
+    {% endif %}
+    {% if db.service_class %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Service class</dt>
+            <dd class="govuk-summary-list__value">{{ db.service_class }}</dd>
+        </div>
+    {% endif %}
+    {% if db.price_level %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Price level</dt>
+            <dd class="govuk-summary-list__value">{{ db.price_level }}</dd>
         </div>
     {% endif %}
     {% if db.other_blocks %}

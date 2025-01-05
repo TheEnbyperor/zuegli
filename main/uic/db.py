@@ -10,6 +10,9 @@ class DBRecordBL:
     unknown: str
     certs: typing.List["DBCertBlock"]
     product: typing.Optional[str]
+    product_class: typing.Optional[str]
+    product_class_outbound: typing.Optional[str]
+    product_class_return: typing.Optional[str]
     from_station_name: typing.Optional[str]
     from_station_uic: typing.Optional[int]
     to_station_name: typing.Optional[str]
@@ -20,10 +23,13 @@ class DBRecordBL:
     traveller_forename: typing.Optional[str]
     traveller_surname: typing.Optional[str]
     traveller_full_name: typing.Optional[str]
+    num_travellers: int
     num_adults: int
     num_children: int
     num_bahncards: int
     bahncard_type: typing.Optional[str]
+    service_class: typing.Optional[str]
+    price_level: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -58,6 +64,9 @@ class DBRecordBL:
 
         blocks = {}
         product = None
+        product_class = None
+        product_class_outbound = None
+        product_class_return = None
         from_station_name = None
         from_station_uic = None
         to_station_name = None
@@ -68,10 +77,14 @@ class DBRecordBL:
         traveller_forename = None
         traveller_surname = None
         traveller_full_name = None
+        num_travellers = 0
         num_adults = 0
         num_children = 0
         num_bahncards = 0
         bahncard_type = None
+        service_class = None
+        price_level = None
+
         for _ in range(num_sub_blocks):
             try:
                 block_id = data[offset:offset+4].decode("utf-8")
@@ -89,6 +102,19 @@ class DBRecordBL:
 
             if block_id == "S001":
                 product = block_data
+            elif block_id == "S002":
+                if block_data == "0":
+                    product_class = "C"
+                elif block_data == "1":
+                    product_class = "B"
+                elif block_data == "2":
+                    product_class = "A"
+                else:
+                    raise DBException(f"Invalid product class {block_data}")
+            elif block_id == "S003":
+                product_class_outbound = block_data
+            elif block_id == "S004":
+                product_class_return = block_data
             elif block_id == "S009":
                 parts = block_data.split("-")
                 if len(parts) != 3:
@@ -110,6 +136,13 @@ class DBRecordBL:
                     raise DBException(f"Invalid children count") from e
             elif block_id == "S015":
                 from_station_name = block_data
+            elif block_id == "S014":
+                if block_data == "S1":
+                    service_class = "first"
+                elif block_data == "S2":
+                    service_class = "second"
+                else:
+                    raise DBException(f"Invalid service class {block_data}")
             elif block_id == "S035":
                 try:
                     station_id = int(block_data, 10)
@@ -126,6 +159,15 @@ class DBRecordBL:
                 to_station_uic = 8000000 + station_id
             elif block_id == "S021":
                 route = block_data
+            elif block_id == "S026":
+                if block_data == "12":
+                    price_level = "Normalpreis"
+                elif block_data == "13":
+                    price_level = "Sparpreis"
+                elif block_data == "3":
+                    price_level = "Rail&Fly"
+                else:
+                    raise DBException(f"Invalid price level {block_data}")
             elif block_id == "S023":
                 traveller_full_name = block_data
             elif block_id == "S028":
@@ -140,6 +182,11 @@ class DBRecordBL:
                     validity_end = datetime.datetime.strptime(block_data, "%d.%m.%Y").date()
                 except ValueError as e:
                     raise DBException(f"Invalid validity end date") from e
+            elif block_id == "S040":
+                try:
+                    num_travellers = int(block_data, 10)
+                except ValueError as e:
+                    raise DBException(f"Invalid traveller count") from e
             else:
                 blocks[block_id] = block_data
 
@@ -148,6 +195,9 @@ class DBRecordBL:
             unknown=unknown_data,
             certs=certs,
             product=product,
+            product_class=product_class,
+            product_class_outbound=product_class_outbound,
+            product_class_return=product_class_return,
             from_station_name=from_station_name,
             from_station_uic=from_station_uic,
             to_station_name=to_station_name,
@@ -159,10 +209,13 @@ class DBRecordBL:
             validity_start=validity_start,
             validity_end=validity_end,
             other_blocks=blocks,
+            num_travellers=num_travellers,
             num_adults=num_adults,
             num_children=num_children,
             num_bahncards=num_bahncards,
             bahncard_type=bahncard_type,
+            service_class=service_class,
+            price_level=price_level,
         )
 
 

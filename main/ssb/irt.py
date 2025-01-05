@@ -20,8 +20,8 @@ class IntegratedReservationTicket:
     arrival_station_other: typing.Optional[int]
     departure_station_name: typing.Optional[str]
     arrival_station_name: typing.Optional[str]
-    departure_station_sncf: typing.Optional[str]
-    arrival_station_sncf: typing.Optional[str]
+    departure_station_benerail: typing.Optional[str]
+    arrival_station_benerail: typing.Optional[str]
     departure: datetime.datetime
     train_number: str
     coach_number: int
@@ -58,13 +58,13 @@ class IntegratedReservationTicket:
         station_code_table = None
         departure_station_other = None
         arrival_station_other = None
-        departure_station_sncf = None
-        arrival_station_sncf = None
+        departure_station_benerail = None
+        arrival_station_benerail = None
 
         station_code_flag = data.read_bool(120)
         if issuer_rics == 3018:
-            departure_station_sncf = data.read_string(121, 151)
-            arrival_station_sncf = data.read_string(151, 181)
+            departure_station_benerail = data.read_string(121, 151)
+            arrival_station_benerail = data.read_string(151, 181)
         else:
             if not station_code_flag:
                 station_code_table = data.read_int(121, 125)
@@ -97,8 +97,8 @@ class IntegratedReservationTicket:
             station_code_table=station_code_table,
             departure_station_other=departure_station_other,
             arrival_station_other=arrival_station_other,
-            departure_station_sncf=departure_station_sncf,
-            arrival_station_sncf=arrival_station_sncf,
+            departure_station_benerail=departure_station_benerail,
+            arrival_station_benerail=arrival_station_benerail,
             departure=departure_time,
             train_number=data.read_string(201, 231),
             coach_number=data.read_int(231, 241),

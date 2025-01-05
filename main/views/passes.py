@@ -1208,7 +1208,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "destinationStationName": ticket_data.db_bl.to_station_name
                         }
                     })
-            elif parsed_layout and (parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station):
+            elif parsed_layout and len(parsed_layout.trips) and \
+                    (parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station):
                 pass_type = "boardingPass"
                 pass_fields["transitType"] = "PKTransitTypeTrain"
 
@@ -1229,7 +1230,21 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     }
                 })
 
-            if parsed_layout and parsed_layout.travel_class:
+
+            if ticket_data.db_bl.service_class:
+                if pass_type == "boardingPass":
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": f"class-code-{ticket_data.db_bl.service_class}-label",
+                    })
+                else:
+                    pass_fields["headerFields"].append({
+                        "key": "class-code",
+                        "label": "class-code-label",
+                        "value": f"class-code-{ticket_data.db_bl.service_class}-label",
+                    })
+            elif parsed_layout and parsed_layout.travel_class:
                 if pass_type == "boardingPass":
                     pass_fields["auxiliaryFields"].append({
                         "key": "class-code",
@@ -2722,8 +2737,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.data.departure_station_uic:
                 from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
-            elif ticket_data.data.departure_station_sncf:
-                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_sncf, "sncf")
+            elif ticket_data.data.departure_station_benerail:
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_benerail, "benerail")
             else:
                 from_station = None
 
@@ -2762,8 +2777,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.data.arrival_station_uic:
                 to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
-            elif ticket_data.data.arrival_station_sncf:
-                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_sncf, "sncf")
+            elif ticket_data.data.arrival_station_benerail:
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_benerail, "benerail")
             else:
                 to_station = None
 
@@ -3624,6 +3639,7 @@ VDV_ORG_ID_LOGO = {
     6310: "pass/logo-svv.png",
     6377: "pass/logo-db.png",
     6395: "pass/logo-ssw.png",
+    6425: "pass/logo-db.png",
     6441: "pass/logo-kvg.png",
     6478: "pass/logo-bw.png",
     6491: "pass/logo-rnv.png",

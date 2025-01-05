@@ -72,7 +72,7 @@ class RCT2Parser:
             arrival_dt = None
 
             departure_station = self.read_area(top=line, left=12, width=17, height=1)
-            arrival_station =   self.read_area(top=line, left=29, width=17, height=1)
+            arrival_station =   self.read_area(top=line, left=30, width=17, height=1)
 
             if issuing_rics in (84, 1084, 1184, 3095, 3606, 3626):
                 departure = self.read_area(top=line, left=1,  width=10, height=1)
