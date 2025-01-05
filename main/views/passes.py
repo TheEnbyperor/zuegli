@@ -3576,6 +3576,7 @@ RICS_LOGO = {
     5177: "pass/logo-fribus.png",
     5188: "pass/logo-es.png",
     5197: "pass/logo-avv.png",
+    5211: "pass/logo-vetter.png",
     5217: "pass/logo-bremerhaven.png",
     8999: "pass/logo-connexxion.png",
     9901: "pass/logo-interrail.png",
