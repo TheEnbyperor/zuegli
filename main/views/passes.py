@@ -3676,5 +3676,5 @@ BC_STRIP_IMG = {
     "BahnCard 25 (2. Klasse)": "bahncard/BAHNCARD252KLASSE.png",
     "BahnCard 50 (1. Klasse)": "bahncard/BAHNCARD501KLASSE.png",
     "BahnCard 50 (2. Klasse)": "bahncard/BAHNCARD502KLASSE.png",
-    "Jugend BahnCard 25": "banhcard/JUGENDBAHNCARD25BAHN.png",
+    "Jugend BahnCard 25": "bahncard/JUGENDBAHNCARD25BAHN.png",
 }
