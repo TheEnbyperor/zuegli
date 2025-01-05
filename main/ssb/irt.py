@@ -15,8 +15,13 @@ class IntegratedReservationTicket:
     sub_type: int
     departure_station_uic: typing.Optional[int]
     arrival_station_uic: typing.Optional[int]
+    station_code_table: typing.Optional[int]
+    departure_station_other: typing.Optional[int]
+    arrival_station_other: typing.Optional[int]
     departure_station_name: typing.Optional[str]
     arrival_station_name: typing.Optional[str]
+    departure_station_sncf: typing.Optional[str]
+    arrival_station_sncf: typing.Optional[str]
     departure: datetime.datetime
     train_number: str
     coach_number: int
@@ -50,20 +55,32 @@ class IntegratedReservationTicket:
         arrival_station_uic = None
         departure_station_name = None
         arrival_station_name = None
+        station_code_table = None
+        departure_station_other = None
+        arrival_station_other = None
+        departure_station_sncf = None
+        arrival_station_sncf = None
 
         station_code_flag = data.read_bool(120)
-        if not station_code_flag:
-            station_code_table = data.read_int(121, 125)
-            if station_code_table == 1:
-                departure_station_uic = data.read_int(125, 153)
-                arrival_station_uic = data.read_int(153, 181)
+        if issuer_rics == 3018:
+            departure_station_sncf = data.read_string(121, 151)
+            arrival_station_sncf = data.read_string(151, 181)
         else:
-            if issuer_rics == 1088:
-                departure_station_uic = data.read_int(121, 151) % 10000000
-                arrival_station_uic = data.read_int(151, 181) % 10000000
+            if not station_code_flag:
+                station_code_table = data.read_int(121, 125)
+                if station_code_table == 1:
+                    departure_station_uic = data.read_int(125, 153)
+                    arrival_station_uic = data.read_int(153, 181)
+                else:
+                    departure_station_other = data.read_int(125, 153)
+                    arrival_station_other = data.read_int(153, 181)
             else:
-                departure_station_name = data.read_string(121, 151)
-                arrival_station_name = data.read_string(151, 181)
+                if issuer_rics == 1088:
+                    departure_station_uic = data.read_int(121, 151) % 10000000
+                    arrival_station_uic = data.read_int(151, 181) % 10000000
+                else:
+                    departure_station_name = data.read_string(121, 151)
+                    arrival_station_name = data.read_string(151, 181)
 
         return cls(
             specimen=data.read_bool(14),
@@ -77,6 +94,11 @@ class IntegratedReservationTicket:
             arrival_station_uic=arrival_station_uic,
             departure_station_name=departure_station_name,
             arrival_station_name=arrival_station_name,
+            station_code_table=station_code_table,
+            departure_station_other=departure_station_other,
+            arrival_station_other=arrival_station_other,
+            departure_station_sncf=departure_station_sncf,
+            arrival_station_sncf=arrival_station_sncf,
             departure=departure_time,
             train_number=data.read_string(201, 231),
             coach_number=data.read_int(231, 241),

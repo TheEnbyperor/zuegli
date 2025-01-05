@@ -2722,6 +2722,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.data.departure_station_uic:
                 from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+            elif ticket_data.data.departure_station_sncf:
+                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_sncf, "sncf")
+            else:
+                from_station = None
+
+            if from_station:
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
@@ -2756,6 +2762,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.data.arrival_station_uic:
                 to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+            elif ticket_data.data.arrival_station_sncf:
+                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_sncf, "sncf")
+            else:
+                to_station = None
+
+            if to_station:
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
@@ -3532,6 +3544,7 @@ RICS_LOGO = {
     1184: "pass/logo-ns.png",
     1186: "pass/logo-dsb.png",
     1251: "pass/logo-pkp-ic.png",
+    3018: "pass/logo-thalys.png",
     3076: "pass/logo-transdev.png",
     3153: "pass/logo-wl.png",
     3268: "pass/logo-graz.png",
@@ -3553,6 +3566,7 @@ RICS_LOGO = {
 RICS_BG = {
     1084: "rgb(255, 201, 23)",
     1184: "rgb(255, 201, 23)",
+    3018: "rgb(175, 22, 52)",
     5188: "rgb(64, 0, 44)",
     8999: "rgb(11, 130, 143)",
 }
@@ -3560,6 +3574,7 @@ RICS_BG = {
 RICS_FG = {
     1084: "rgb(7, 7, 33)",
     1184: "rgb(7, 7, 33)",
+    3018: "rgb(255, 255, 255)",
     3606: "rgb(0, 70, 84)",
     5188: "rgb(255, 255, 255)",
     8999: "rgb(255, 255, 255)",
@@ -3568,6 +3583,7 @@ RICS_FG = {
 RICS_FG_SECONDARY = {
     1084: "rgb(32, 32, 55)",
     1184: "rgb(32, 32, 55)",
+    3018: "rgb(255, 255, 255)",
     3153: "rgb(227, 0, 21)",
     3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
@@ -3590,6 +3606,8 @@ VDV_ORG_ID_LOGO = {
     103: "pass/logo-swb.png",
     6003: "pass/logo-kvsh.png",
     6055: "pass/logo-mdv.png",
+    6074: "pass/logo-vgn.png",
+    6096: "pass/logo-vmt.png",
     6100: "pass/logo-vbb.png",
     6150: "pass/logo-hnv.png",
     6212: "pass/logo-vrs.png",
@@ -3597,10 +3615,14 @@ VDV_ORG_ID_LOGO = {
     6292: "pass/logo-mvg.png",
     6310: "pass/logo-svv.png",
     6377: "pass/logo-db.png",
+    6395: "pass/logo-ssw.png",
     6441: "pass/logo-kvg.png",
     6478: "pass/logo-bw.png",
+    6491: "pass/logo-rnv.png",
     6496: "pass/logo-naldo.png",
     6613: "pass/logo-arriva.png",
+    6665: "pass/logo-rsag.png",
+    6671: "pass/logo-ewse.png",
     6861: "pass/logo-nst.png",
 }
 
