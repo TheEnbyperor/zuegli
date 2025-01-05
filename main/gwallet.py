@@ -402,9 +402,9 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             })
 
                     if "validRegion" in document and document["validRegion"][0][0] == "trainLink":
-                        train_link = document["validRegion"][0][1]
-                        departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
-                        train_number = train_link.get("trainIA5") or str(train_link.get("trainNum"))
+                        train_links = list(map(lambda l: l[1], filter(lambda l: l[0] == "trainLink", document["validRegion"])))
+                        departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
+                        train_number = ", ".join(list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
                         obj["ticketLegs"][0]["departureDateTime"] = departure_time.isoformat()
                         obj["ticketLegs"][0]["carriage"] = train_number
 
