@@ -26,6 +26,9 @@ def parse_tlv(data: bytes):
             raise DTException(f"Invalid TLV record") from e
         offset += block_len + 7
 
+        if block_data == "null":
+            continue
+
         blocks[block_id] = block_data
 
     return blocks
@@ -53,14 +56,20 @@ class DTRecordTI:
             try:
                 validity_start = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M")) \
                     .astimezone(tz=pytz.UTC)
-            except ValueError as e:
-                raise DTException(f"Invalid validity start date") from e
+            except ValueError:
+                try:
+                    validity_start = datetime.datetime.fromisoformat(block_data).astimezone(tz=pytz.UTC)
+                except ValueError as e:
+                    raise DTException(f"Invalid validity start date") from e
         if block_data := blocks.pop("003"):
             try:
                 validity_end = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M")) \
                     .astimezone(tz=pytz.UTC)
-            except ValueError as e:
-                raise DTException(f"Invalid validity end date") from e
+            except ValueError:
+                try:
+                    validity_end = datetime.datetime.fromisoformat(block_data).astimezone(tz=pytz.UTC)
+                except ValueError as e:
+                    raise DTException(f"Invalid validity end date") from e
 
         return cls(
             product_name=product_name,

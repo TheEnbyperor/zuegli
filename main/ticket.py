@@ -95,6 +95,7 @@ class UICTicket:
                             5143,  # AMCON Software GmbH
                             5173,  # Nahverkehrsservice Sachsen-Anhalt
                             3076,  # Transdev GmbH
+                            3497,  # Regensburger Verkehrsverbund GmbH
                     ):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
@@ -275,8 +276,10 @@ class UICTicket:
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
-                    or r.id == "1154UT" or r.id == "118199" or r.id == "5197TI"
-                    or r.id == "5008TI" or r.id == "5197PA" or r.id == "5008PA"
+                    or r.id == "1154UT" or r.id == "118199"
+                    or r.id == "5197TI" or r.id == "5197PA"
+                    or r.id == "5008TI" or r.id == "5008PA"
+                    or r.id == "3497TI" or r.id == "3497PA"
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
             )]
         )
@@ -644,7 +647,7 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
 
 def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     ti_record = next(filter(
-        lambda r: r.id == "5197TI" or r.id == "5008TI" and r.version == 1,
+        lambda r: r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" and r.version == 1,
         ticket_envelope.records
     ), None)
     if not ti_record:
@@ -662,7 +665,7 @@ def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     pa_record = next(filter(
-        lambda r: r.id == "5197PA" or r.id == "5008PA" and r.version == 1,
+        lambda r: r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" and r.version == 1,
         ticket_envelope.records
     ), None)
     if not pa_record:
