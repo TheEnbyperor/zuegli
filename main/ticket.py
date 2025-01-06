@@ -280,6 +280,7 @@ class UICTicket:
                     or r.id == "5197TI" or r.id == "5197PA"
                     or r.id == "5008TI" or r.id == "5008PA"
                     or r.id == "3497TI" or r.id == "3497PA"
+                    or r.id == "5245TI" or r.id == "5245PA"
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
             )]
         )
@@ -647,7 +648,7 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
 
 def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     ti_record = next(filter(
-        lambda r: r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" and r.version == 1,
+        lambda r: r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" or r.id == "5245TI" and r.version == 1,
         ticket_envelope.records
     ), None)
     if not ti_record:
@@ -665,7 +666,7 @@ def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     pa_record = next(filter(
-        lambda r: r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" and r.version == 1,
+        lambda r: r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" or r.id == "5245PA" and r.version == 1,
         ticket_envelope.records
     ), None)
     if not pa_record:

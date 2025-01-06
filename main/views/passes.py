@@ -3579,6 +3579,7 @@ RICS_LOGO = {
     5197: "pass/logo-avv.png",
     5211: "pass/logo-vetter.png",
     5217: "pass/logo-bremerhaven.png",
+    5245: "pass/logo-wvv.png",
     8999: "pass/logo-connexxion.png",
     9901: "pass/logo-interrail.png",
 }
@@ -3616,6 +3617,7 @@ RICS_FG_SECONDARY = {
     3497: "rgb(149, 200, 125)",
     3606: "rgb(247, 147, 48)",
     5188: "rgb(255, 54, 0)",
+    5245: "rgb(211, 2, 64)",
     8999: "rgb(226, 1, 112)",
 }
 
