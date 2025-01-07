@@ -1,0 +1,11 @@
+{% extends "main/base.html" %}
+{% load static crispy_forms_tags %}
+
+{% block title %}Add SNCB/NMBS Ticket - VDV to Apple Wallet{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-xl">Add SNCB/NMBS ticket</h1>
+        {% crispy form %}
+    </div>
+{% endblock %}

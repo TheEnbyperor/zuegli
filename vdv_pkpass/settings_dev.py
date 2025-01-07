@@ -162,6 +162,13 @@ except FileNotFoundError:
     NR_PASSWORD = None
 
 try:
+    with open(BASE_DIR / "priv" / "sncb.json") as f:
+        d = json.load(f)
+        SNCB_API_KEY = d["api_key"]
+except FileNotFoundError:
+    SNCB_API_KEY = None
+
+try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
 except FileNotFoundError:

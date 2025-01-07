@@ -49,6 +49,11 @@
                     {% endif %}
                 </dd>
             </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">SNCB/NMBS</dt><dd class="govuk-summary-list__value">
+                    <a class="govuk-button" href="{% url 'sncb_add_ticket' %}">Add ticket</a>
+                </dd>
+            </div>
         </dl>
         <h2 class="govuk-heading-l">Tickets</h2>
         {% if tickets.count %}

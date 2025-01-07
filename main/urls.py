@@ -26,6 +26,7 @@ urlpatterns = [
     path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
     path('account/saarvv_login/logout/', views.saarvv.saarvv_logout, name='saarvv_logout'),
     path('account/saarvv/', views.saarvv.saarvv_account, name='saarvv_account'),
+    path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
     path('robots.txt', views.passes.robots, name='robots'),
 ]
