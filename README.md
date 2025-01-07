@@ -68,7 +68,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vdv_pkpass.settings_dev")
 ### Django
 
 ```shell
-mkdir -p ./uid-data
+mkdir -p ./uic-data
 mkdir -p ./vdv-certs
 python manage.py migrate
 python manage.py download-uic-data
