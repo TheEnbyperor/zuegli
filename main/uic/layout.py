@@ -46,7 +46,7 @@ class LayoutV1:
         # Correction: a lot of people don't know it turns out
         if issuing_rics in (
                 60, 1060, 1160, 84, 1084, 1184, 3268, 5188, 9901, 3095, 3606,
-                3306, 3626, 1174
+                3306, 3626, 1174, 1088
         ):
             offset_x = -1
         else:
