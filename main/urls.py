@@ -28,5 +28,7 @@ urlpatterns = [
     path('account/saarvv/', views.saarvv.saarvv_account, name='saarvv_account'),
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
+    path('metrics', views.metrics.metrics, name='metrics'),
+
     path('robots.txt', views.passes.robots, name='robots'),
 ]
