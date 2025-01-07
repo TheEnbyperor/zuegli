@@ -42,7 +42,7 @@ def sncb_add_ticket(request):
                             continue
 
                         try:
-                            barcode_data = aztec.decode(r.content)
+                            barcode_data = aztec.decode(br.content)
                         except aztec.AztecError as e:
                             messages.warning(request, f"Error decoding barcode image: {e} - ticket segment skipped")
                             continue
@@ -52,7 +52,7 @@ def sncb_add_ticket(request):
                             ticket_obj.save()
                         except ticket.TicketError as e:
                             messages.warning(request, f"Error decoding barcode ticket: {e} - ticket segment skipped")
-                            return
+                            continue
 
                         added += 1
 
