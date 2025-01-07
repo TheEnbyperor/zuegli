@@ -110,6 +110,9 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: ingress-nginx
+        - namespaceSelector:
+            matchLabels:
+              role: metrics
       ports:
         - protocol: TCP
           port: 8000

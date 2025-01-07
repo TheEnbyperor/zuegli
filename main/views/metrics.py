@@ -56,6 +56,6 @@ def metrics(request):
     out.append(f'ticket_instance_count{{type="sncf"}} {sncf_count}')
 
     elb_count = models.ELBTicketInstance.objects.all().count()
-    out.append(f'ticket_instance_count{{type="elb"}} {sncf_count}')
+    out.append(f'ticket_instance_count{{type="elb"}} {elb_count}')
 
     return HttpResponse("\n".join(out), content_type="text/plain;charset=UTF-8")

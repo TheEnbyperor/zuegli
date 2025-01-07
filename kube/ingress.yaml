@@ -6,6 +6,11 @@ metadata:
   labels:
     app: vdv-pkpass
     part: django
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/scheme: "http"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "8000"
 spec:
   selector:
     app: vdv-pkpass
