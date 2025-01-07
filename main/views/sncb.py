@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .. import forms, aztec
+from .. import forms, aztec, ticket
 
 
 @login_required
@@ -34,8 +34,8 @@ def sncb_add_ticket(request):
                 data = json.loads(r.text)
                 added = 0
                 for segment in data["Dossier"]["TravelSegments"]:
-                    for ticket in segment["Tickets"]:
-                        barcode_url = f"https://www.bene-system.com{ticket['BarcodeURL']}"
+                    for t in segment["Tickets"]:
+                        barcode_url = f"https://www.bene-system.com{t['BarcodeURL']}"
                         br = niquests.get(barcode_url)
                         if not br.ok:
                             messages.warning(request, "Failed to fetch ticket barcode, ticket segment skipped")
