@@ -26,6 +26,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = os.getenv("HOST", "vdv-pkpass.magicalcodewit.ch").split(",")
 
+if ip := os.getenv("POD_IP"):
+    ALLOWED_HOSTS.append(ip)
+    ALLOWED_HOSTS.append(f"[{ip}]")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

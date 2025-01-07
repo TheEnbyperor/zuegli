@@ -88,6 +88,11 @@ spec:
           volumeMounts: *volumeMounts
           ports:
             - containerPort: 8000
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           envFrom: *envFrom
 ---
 apiVersion: networking.k8s.io/v1
