@@ -72,9 +72,10 @@ class DateTime:
         year = data[0] >> 1
         month = ((data[0] & 0x01) << 3) | ((data[1] & 0xE0) >> 5)
         day = data[1] & 0x1F
+
         hour = (data[2] & 0xF8) >> 3
         minute = ((data[2] & 0x07) << 3) | ((data[3] & 0xE0) >> 5)
-        second = data[3] & 0x1F
+        second = (data[3] & 0x1F) * 2
 
         return cls(
             year=year + 1990,
@@ -90,7 +91,7 @@ class DateTime:
             ((self.year - 1990) << 1) | ((self.month >> 3) & 0x01),
             ((self.month << 5) & 0xE0) | self.day & 0x1F,
             ((self.hour & 0xF8) << 3) | ((self.minute >> 3) & 0x07),
-            ((self.minute << 5) & 0xE0) | self.second & 0x1F
+            ((self.minute << 5) & 0xE0) | (self.second // 2) & 0x1F
         ])
 
 def un_bcd(data: bytes) -> int:

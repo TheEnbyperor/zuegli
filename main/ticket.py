@@ -90,7 +90,7 @@ class UICTicket:
                 ticket_type, ticket = self.flex.data["transportDocument"][0]["ticket"]
                 if ticket_type == "openTicket":
                     if len(self.flex.data.get("travelerDetail", {}).get("traveler", [])) >= 1 and \
-                            issuer_num in (
+                            (issuer_num or security_num) in (
                             1080,  # Deutsche Bahn
                             5143,  # AMCON Software GmbH
                             5173,  # Nahverkehrsservice Sachsen-Anhalt
