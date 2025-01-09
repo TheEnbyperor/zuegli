@@ -68,46 +68,5 @@ class Migration(migrations.Migration):
             field=models.CharField(default='', max_length=64),
             preserve_default=False,
         ),
-        migrations.RemoveField(
-            model_name='elbticketinstance',
-            name='pnr',
-        ),
-        migrations.RemoveField(
-            model_name='elbticketinstance',
-            name='sequence_number',
-        ),
-        migrations.RemoveField(
-            model_name='uicticketinstance',
-            name='reference',
-        ),
-        migrations.RemoveField(
-            model_name='vdvticketinstance',
-            name='ticket_number',
-        ),
         migrations.RunPython(set_hash, lambda a, s: None),
-        migrations.AlterField(
-            model_name='elbticketinstance',
-            name='barcode_hash',
-            field=models.CharField(max_length=64, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='sncfticketinstance',
-            name='barcode_hash',
-            field=models.CharField(max_length=64, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='ssbticketinstance',
-            name='barcode_hash',
-            field=models.CharField(max_length=64, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='uicticketinstance',
-            name='barcode_hash',
-            field=models.CharField(max_length=64, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='vdvticketinstance',
-            name='barcode_hash',
-            field=models.CharField(max_length=64, unique=True),
-        ),
     ]
