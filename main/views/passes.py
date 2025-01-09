@@ -3650,6 +3650,7 @@ UIC_NAME_LOGO = {
 VDV_ORG_ID_LOGO = {
     35: "pass/logo-hvv.png",
     36: "pass/logo-rmv.png",
+    49: "pass/logo-swk.png",
     57: "pass/logo-dsw.png",
     70: "pass/logo-vrr.png",
     77: "pass/logo-wt.png",
@@ -3688,6 +3689,7 @@ VDV_ORG_ID_FG = {
 }
 
 VDV_ORG_ID_FG_SECONDARY = {
+    49: "rgb(226, 1, 26)",
     6072: "rgb(181, 9, 127)",
     6310: "rgb(12, 156, 58)"
 }
