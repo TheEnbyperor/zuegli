@@ -4,6 +4,7 @@ import traceback
 import typing
 import datetime
 import Crypto.Hash.TupleHash128
+import hashlib
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, email
 
@@ -957,12 +958,14 @@ def create_ticket_obj(
         ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket],
 ) -> bool:
     created = False
+    barcode_hash = hashlib.sha256(ticket_bytes).hexdigest()
+
     if isinstance(ticket_data, VDVTicket):
         _, created = models.VDVTicketInstance.objects.update_or_create(
-            ticket_number=ticket_data.ticket.ticket_id,
-            ticket_org_id=ticket_data.ticket.ticket_org_id,
+            barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
+                "ticket_org_id": ticket_data.ticket.ticket_org_id,
                 "validity_start": ticket_data.ticket.validity_start.as_datetime(),
                 "validity_end": ticket_data.ticket.validity_end.as_datetime(),
                 "barcode_data": ticket_bytes,
@@ -989,10 +992,10 @@ def create_ticket_obj(
                     validity_end = templatetags.rics.rics_valid_until_date(docs[0]["ticket"][1])
 
         _, created = models.UICTicketInstance.objects.update_or_create(
-            reference=ticket_data.ticket_id(),
-            distributor_rics=ticket_data.issuing_rics(),
+            barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
+                "distributor_rics": ticket_data.issuing_rics(),
                 "issuing_time": ticket_data.issuing_time(),
                 "barcode_data": ticket_bytes,
                 "validity_start": validity_start,
@@ -1025,7 +1028,7 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, SNCFTicket):
         _, created = models.SNCFTicketInstance.objects.update_or_create(
-            reference=ticket_data.data.ticket_number,
+            barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
@@ -1033,8 +1036,7 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, ELBTicket):
         _, created = models.ELBTicketInstance.objects.update_or_create(
-            pnr=ticket_data.data.pnr,
-            sequence_number=ticket_data.data.sequence_number,
+            barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
@@ -1042,10 +1044,10 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, SSBTicket):
         _, created = models.SSBTicketInstance.objects.update_or_create(
-            distributor_rics=ticket_data.envelope.issuer_rics,
-            pnr=ticket_data.data.pnr,
+            barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
+                "distributor_rics": ticket_data.envelope.issuer_rics,
                 "barcode_data": ticket_bytes,
             }
         )

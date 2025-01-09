@@ -95,7 +95,7 @@
             {% with ticket_obj=instance.as_ticket %}
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">Ticket #{{ instance.ticket_number }}</span>
+                        <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.ticket_id }}</span>
                         <span>{{ instance.validity_start|date:"F d, Y H:i:s" }} - {{ instance.validity_end|date:"F d, Y H:i:s" }}</span>
                     </summary>
                     <div class="govuk-details__text">
@@ -108,7 +108,7 @@
             {% with ticket_obj=instance.as_ticket %}
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
+                        <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket_id }}</span>
                         {% with distributor=ticket_obj.distributor %}
                             {% if distributor %}
                                 <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
@@ -138,7 +138,7 @@
             {% with ticket_obj=instance.as_ticket %}
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
+                        <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
                     </summary>
                     <div class="govuk-details__text">
                         {% include 'main/sncf_ticket_details.html' with ticket=ticket_obj %}
@@ -150,7 +150,7 @@
             {% with ticket_obj=instance.as_ticket %}
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">Ticket #{{ instance.pnr }} - sequence #{{ instance.sequence_number }}</span>
+                        <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence_number }}</span>
                     </summary>
                     <div class="govuk-details__text">
                         {% include 'main/elb_ticket_details.html' with ticket=ticket_obj %}
@@ -162,7 +162,7 @@
             {% with ticket_obj=instance.as_ticket %}
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">Ticket #{{ instance.pnr }}</span>
+                        <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
                         {% with distributor=ticket_obj.envelope.issuer %}
                             {% if distributor %}
                                 <span>{{ distributor.full_name }} - {{ distributor.country }}</span>

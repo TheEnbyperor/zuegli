@@ -10,11 +10,13 @@ from . import models, apn, gwallet
 class VDVTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.VDVTicketInstance
+    readonly_fields = ("barcode_hash", "ticket_org_id")
 
 
 class UICTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.UICTicketInstance
+    readonly_fields = ("barcode_hash", "distributor_rics")
 
 
 class RSPTicketInstanceInline(admin.StackedInline):
@@ -25,16 +27,19 @@ class RSPTicketInstanceInline(admin.StackedInline):
 class SNCFTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.SNCFTicketInstance
+    readonly_fields = ("barcode_hash",)
 
 
 class ELBTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.ELBTicketInstance
+    readonly_fields = ("barcode_hash",)
 
 
 class SSBTicketInstanceInline(admin.StackedInline):
     extra = 0
     model = models.SSBTicketInstance
+    readonly_fields = ("barcode_hash", "distributor_rics")
 
 
 class AppleRegistrationInline(admin.StackedInline):

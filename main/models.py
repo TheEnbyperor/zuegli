@@ -144,7 +144,7 @@ class Ticket(models.Model):
 
 class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances")
-    ticket_number = models.PositiveIntegerField(verbose_name="Ticket number")
+    barcode_hash = models.CharField(unique=True, max_length=64)
     ticket_org_id = models.PositiveIntegerField(verbose_name="Organization ID")
     validity_start = models.DateTimeField()
     validity_end = models.DateTimeField()
@@ -152,14 +152,11 @@ class VDVTicketInstance(models.Model):
     decoded_data = models.JSONField()
 
     class Meta:
-        unique_together = [
-            ["ticket_number", "ticket_org_id"],
-        ]
         ordering = ["-validity_start"]
         verbose_name = "VDV ticket"
 
     def __str__(self):
-        return f"{self.ticket_org_id} - {self.ticket_number}"
+        return f"{self.ticket_org_id} - {self.barcode_hash}"
 
     def as_ticket(self) -> t.VDVTicket:
         config = dacite.Config(type_hooks={bytes: base64.b64decode})
@@ -179,7 +176,7 @@ class VDVTicketInstance(models.Model):
 
 class UICTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances")
-    reference = models.CharField(max_length=20, verbose_name="Ticket ID")
+    barcode_hash = models.CharField(unique=True, max_length=64)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
     issuing_time = models.DateTimeField()
     barcode_data = models.BinaryField()
@@ -188,14 +185,11 @@ class UICTicketInstance(models.Model):
     validity_end = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        unique_together = [
-            ["reference", "distributor_rics"],
-        ]
         ordering = ["-issuing_time"]
         verbose_name = "UIC ticket"
 
     def __str__(self):
-        return f"{self.distributor_rics} - {self.reference}"
+        return f"{self.distributor_rics} - {self.barcode_hash}"
 
     def as_ticket(self) -> t.UICTicket:
         config = dacite.Config(type_hooks={bytes: base64.b64decode})
@@ -246,14 +240,14 @@ class RSPTicketInstance(models.Model):
 
 class SNCFTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sncf_instances")
-    reference = models.CharField(max_length=20, verbose_name="Ticket number", unique=True)
+    barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
     class Meta:
         verbose_name = "SNCF ticket"
 
     def __str__(self):
-        return str(self.reference)
+        return str(self.barcode_hash)
 
     def as_ticket(self) -> t.SNCFTicket:
         return t.SNCFTicket(
@@ -264,18 +258,14 @@ class SNCFTicketInstance(models.Model):
 
 class ELBTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="elb_instances")
-    pnr = models.CharField(max_length=6, verbose_name="PNR")
-    sequence_number = models.PositiveSmallIntegerField(verbose_name="Sequence number")
+    barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
     class Meta:
-        unique_together = [
-            ["pnr", "sequence_number"],
-        ]
         verbose_name = "ELB ticket"
 
     def __str__(self):
-        return f"{self.pnr} - {self.sequence_number}"
+        return str(self.barcode_hash)
 
     def as_ticket(self) -> t.ELBTicket:
         return t.ELBTicket(
@@ -287,14 +277,14 @@ class ELBTicketInstance(models.Model):
 class SSBTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances")
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
-    pnr = models.CharField(max_length=32, verbose_name="PNR", blank=True, null=True, unique=True)
+    barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
     class Meta:
         verbose_name = "SSB ticket"
 
     def __str__(self):
-        return str(self.pnr)
+        return str(self.barcode_hash)
 
     def as_ticket(self) -> t.SSBTicket:
         envelope = ssb.Envelope.parse(bytes(self.barcode_data))
