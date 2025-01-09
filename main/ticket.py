@@ -979,6 +979,7 @@ def create_ticket_obj(
             }
         )
     elif isinstance(ticket_data, UICTicket):
+        barcode_hash = hashlib.sha256(ticket_data.envelope.signed_data).hexdigest()
         validity_start = None
         validity_end = None
         if ticket_data.flex:
