@@ -3636,6 +3636,8 @@ VDV_ORG_ID_LOGO = {
     6003: "pass/logo-kvsh.png",
     6055: "pass/logo-mdv.png",
     6060: "pass/logo-vvo.png",
+    6072: "pass/logo-avv2.png",
+    6073: "pass/logo-aseag.png",
     6074: "pass/logo-vgn.png",
     6096: "pass/logo-vmt.png",
     6100: "pass/logo-vbb.png",
@@ -3659,9 +3661,12 @@ VDV_ORG_ID_LOGO = {
 
 VDV_ORG_ID_BG = {}
 
-VDV_ORG_ID_FG = {}
+VDV_ORG_ID_FG = {
+    6072: "rgb(67, 67, 67)"
+}
 
 VDV_ORG_ID_FG_SECONDARY = {
+    6072: "rgb(181, 9, 127)",
     6310: "rgb(12, 156, 58)"
 }
 
