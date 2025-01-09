@@ -2501,6 +2501,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "sncf")
         to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "sncf")
 
+        tz = pytz.timezone('Europe/Paris')
+        now = timezone.now()
+        travel_date = ticket_data.data.travel_date.replace(year=now.year)
+        if travel_date < now.date():
+            travel_date = travel_date.replace(year=travel_date.year + 1)
+        travel_datetime = tz.localize(datetime.datetime.combine(travel_date, datetime.time.min))\
+            .astimezone(pytz.utc)
+        pass_json["relevantDate"] = travel_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
+
         pass_json["locations"].append({
             "latitude": float(from_station["latitude"]),
             "longitude": float(from_station["longitude"]),
