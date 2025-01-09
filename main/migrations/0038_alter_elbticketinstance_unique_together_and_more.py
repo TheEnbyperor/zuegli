@@ -18,18 +18,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='elbticketinstance',
-            unique_together=set(),
-        ),
-        migrations.AlterUniqueTogether(
-            name='uicticketinstance',
-            unique_together=set(),
-        ),
-        migrations.AlterUniqueTogether(
-            name='vdvticketinstance',
-            unique_together=set(),
-        ),
+        # migrations.AlterUniqueTogether(
+        #     name='elbticketinstance',
+        #     unique_together=set(),
+        # ),
+        # migrations.AlterUniqueTogether(
+        #     name='uicticketinstance',
+        #     unique_together=set(),
+        # ),
+        # migrations.AlterUniqueTogether(
+        #     name='vdvticketinstance',
+        #     unique_together=set(),
+        # ),
         migrations.RemoveField(
             model_name='sncfticketinstance',
             name='reference',
