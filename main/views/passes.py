@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.contrib import messages
 from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb
 
 
@@ -22,6 +23,7 @@ def robots(request):
 
 def index(request):
     ticket_bytes = None
+    tickets = []
     error = None
 
     if request.method == "POST":
@@ -51,49 +53,60 @@ def index(request):
                             image_form.add_error("ticket", f"Error opening PDF: {e}")
                         else:
                             for page_index in range(len(pdf)):
-                                if ticket_bytes:
-                                    break
                                 for pdf_image in pdf.get_page_images(page_index):
                                     pdf_image = pdf.extract_image(pdf_image[0])
                                     try:
                                         ticket_bytes = aztec.decode(pdf_image["image"])
+                                        tickets.append(ticket_bytes)
                                     except aztec.AztecError:
                                         continue
-                                    else:
-                                        break
 
-                            if not ticket_bytes:
+                            if not tickets:
                                 image_form.add_error("ticket", f"Failed to find any Aztec codes in the PDF")
 
     else:
         image_form = forms.TicketUploadForm()
 
-    if ticket_bytes:
-        try:
-            ticket_data = ticket.parse_ticket(ticket_bytes,
-                                              request.user.account if request.user.is_authenticated else None)
-        except ticket.TicketError as e:
-            error = {
-                "title": e.title,
-                "message": e.message,
-                "exception": e.exception,
-                "ticket_contents": ticket_bytes.hex()
-            }
-        else:
-            ticket_pk = ticket_data.pk()
-            defaults = {
-                "ticket_type": ticket_data.type(),
-                "last_updated": timezone.now(),
-            }
-            if request.user.is_authenticated:
-                defaults["account"] = request.user.account
-            ticket_obj, ticket_created = models.Ticket.objects.update_or_create(id=ticket_pk, defaults=defaults)
-            request.session["ticket_updated"] = True
-            request.session["ticket_created"] = ticket_created
-            ticket.create_ticket_obj(ticket_obj, ticket_bytes, ticket_data)
-            apn.notify_ticket(ticket_obj)
-            gwallet.sync_ticket(ticket_obj)
-            return redirect('ticket', pk=ticket_obj.id)
+    if not tickets and ticket_bytes:
+        tickets = [ticket_bytes]
+
+    if tickets:
+        ticket_ids = []
+        errors = []
+        for tb in tickets:
+            try:
+                ticket_data = ticket.parse_ticket(
+                    tb, request.user.account if request.user.is_authenticated else None
+                )
+            except ticket.TicketError as e:
+                errors.append({
+                    "title": e.title,
+                    "message": e.message,
+                    "exception": e.exception,
+                    "ticket_contents": ticket_bytes.hex()
+                })
+            else:
+                ticket_pk = ticket_data.pk()
+                defaults = {
+                    "ticket_type": ticket_data.type(),
+                    "last_updated": timezone.now(),
+                }
+                if request.user.is_authenticated:
+                    defaults["account"] = request.user.account
+                ticket_obj, ticket_created = models.Ticket.objects.update_or_create(id=ticket_pk, defaults=defaults)
+                request.session["ticket_updated"] = True
+                request.session["ticket_created"] = ticket_created
+                ticket.create_ticket_obj(ticket_obj, ticket_bytes, ticket_data)
+                apn.notify_ticket(ticket_obj)
+                gwallet.sync_ticket(ticket_obj)
+                ticket_ids.append(ticket_obj.id)
+
+        if ticket_ids:
+            if len(ticket_ids) > 1:
+                messages.info(request, f"{len(ticket_ids) - 1} other tickets have been added to your account")
+            return redirect('ticket', pk=ticket_ids[0])
+        elif errors:
+            error = errors[0]
 
     return render(request, "main/index.html", {
         "image_form": image_form,
