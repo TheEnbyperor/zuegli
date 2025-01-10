@@ -70,6 +70,7 @@ SPACIAL_VALIDITY = {
     },
     5000: {
         1: "Deutschlandweit",
+        3: "Bayern",
         768: "Bayern",
         4096: "Schleswig-Holstein-Ticket",
     },

@@ -118,6 +118,21 @@ def view_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
     gwallet_url = gwallet.create_jwt_link(ticket_obj)
 
+    is_saarvv = False
+    is_db_abo = False
+    active_instance = ticket_obj.active_instance()
+    if isinstance(active_instance, models.VDVTicketInstance):
+        if active_instance.ticket_org_id == 6310:
+            is_saarvv = True
+        elif active_instance.ticket_org_id == 6061:
+            is_db_abo = True
+    elif isinstance(active_instance, models.UICTicketInstance):
+        if active_instance.distributor_rics in (80, 1080):
+            is_db_abo = True
+
+    has_saarvv = ticket_obj.account.is_saarvv_authenticated()
+    has_db_abo = ticket_obj.account.is_db_authenticated() or ticket_obj.db_subscription
+
     photo_upload_forms = {}
     if rsp_obj := ticket_obj.rsp_instances.first():
         td = rsp_obj.as_ticket()  # type: ticket.RSPTicket
@@ -155,7 +170,11 @@ def view_ticket(request, pk):
         "ticket_updated": request.session.pop("ticket_updated", False),
         "ticket_created": request.session.pop("ticket_created", False),
         "gwallet_url": gwallet_url,
-        "photo_upload_forms": photo_upload_forms
+        "photo_upload_forms": photo_upload_forms,
+        "is_saarvv": is_saarvv,
+        "has_saarvv": has_saarvv,
+        "is_db_abo": is_db_abo,
+        "has_db_abo": has_db_abo,
     })
 
 
