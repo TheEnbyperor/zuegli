@@ -130,8 +130,8 @@ def view_ticket(request, pk):
         if active_instance.distributor_rics in (80, 1080):
             is_db_abo = True
 
-    has_saarvv = ticket_obj.account.is_saarvv_authenticated()
-    has_db_abo = ticket_obj.account.is_db_authenticated() or ticket_obj.db_subscription
+    has_saarvv = ticket_obj.account and ticket_obj.account.is_saarvv_authenticated()
+    has_db_abo = (ticket_obj.account and ticket_obj.account.is_db_authenticated()) or ticket_obj.db_subscription
 
     photo_upload_forms = {}
     if rsp_obj := ticket_obj.rsp_instances.first():
