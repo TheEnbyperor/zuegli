@@ -41,7 +41,7 @@ class LayoutV1:
     fields: typing.List[LayoutV1Field]
 
     @classmethod
-    def parse(cls, data: bytes, issuing_rics: typing.Optional[int] = None) -> "LayoutV1":
+    def parse(cls, data: bytes, issuing_rics: typing.Optional[int] = None, is_utf8_len: bool = False) -> "LayoutV1":
         # The Irish and the Dutch don't know how to zero index
         # Correction: a lot of people don't know it turns out
         if issuing_rics in (
@@ -95,6 +95,13 @@ class LayoutV1:
                 field_text_length = int(field_text_length_str, 10)
             except (UnicodeDecodeError, ValueError) as e:
                 raise util.UICException("Invalid UIC ticket layout field text length") from e
+
+            if is_utf8_len:
+                field_text_length = len(
+                    data[offset + 13:]
+                    .decode("utf-8", "replace")[:field_text_length]
+                    .encode("utf-8", "replace")
+                )
 
             if len(data) < offset + 13 + field_text_length:
                 raise util.UICException("UIC ticket layout field text too short")

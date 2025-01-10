@@ -623,7 +623,7 @@ def parse_ticket_uic_layout(ticket_envelope: uic.Envelope) -> typing.Optional[ui
         )
 
     try:
-        return uic.LayoutV1.parse(layout_record.data, ticket_envelope.issuer_rics)
+        return uic.LayoutV1.parse(layout_record.data, ticket_envelope.issuer_rics, layout_record.is_utf8_len)
     except uic.util.UICException:
         raise TicketError(
             title="Invalid layout record",

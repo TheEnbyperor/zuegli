@@ -15,6 +15,7 @@ class Record:
     id: str
     version: int
     data: bytes
+    is_utf8_len: bool
 
     def data_hex(self):
         return ":".join(f"{b:02x}" for b in self.data)
@@ -41,13 +42,23 @@ class Record:
         except (UnicodeDecodeError, ValueError) as e:
             raise util.UICException("Invalid UIC ticket record data length") from e
 
+        is_utf8_len = False
+        data_utf8 = data[12:].decode("utf8", "replace")[:data_length]
         if len(data) < data_length:
-            raise util.UICException("UIC ticket record data too short")
+            if len(data_utf8) + 12 < data_length:
+                raise util.UICException("UIC ticket record data too short")
+            else:
+                data_length = len(data_utf8.encode("utf8", "replace")) + 12
+                is_utf8_len = True
+        if len(data_utf8) + 12 == data_length:
+            data_length = len(data_utf8.encode("utf8", "replace")) + 12
+            is_utf8_len = True
 
         return cls(
             id=record_id,
             version=version,
-            data=data[12:data_length]
+            data=data[12:data_length],
+            is_utf8_len=is_utf8_len,
         )
 
 
