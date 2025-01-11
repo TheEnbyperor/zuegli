@@ -3695,22 +3695,27 @@ VDV_ORG_ID_LOGO = {
     6478: "pass/logo-bw.png",
     6491: "pass/logo-rnv.png",
     6496: "pass/logo-naldo.png",
+    6517: "pass/logo-rnn.png",
     6613: "pass/logo-arriva.png",
     6665: "pass/logo-rsag.png",
     6671: "pass/logo-ewse.png",
     6861: "pass/logo-nst.png",
 }
 
-VDV_ORG_ID_BG = {}
+VDV_ORG_ID_BG = {
+    6517: "rgb(0, 79, 159)"
+}
 
 VDV_ORG_ID_FG = {
-    6072: "rgb(67, 67, 67)"
+    6072: "rgb(67, 67, 67)",
+    6517: "rgb(255, 255, 255)",
 }
 
 VDV_ORG_ID_FG_SECONDARY = {
     49: "rgb(226, 1, 26)",
     6072: "rgb(181, 9, 127)",
-    6310: "rgb(12, 156, 58)"
+    6310: "rgb(12, 156, 58)",
+    6517: "rgb(255, 204, 2)",
 }
 
 RSP_ORG_LOGO = {

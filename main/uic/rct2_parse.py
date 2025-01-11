@@ -104,8 +104,8 @@ class RCT2Parser:
                 trips.append(TripPart(
                     departure_date=departure_date.strip("*"),
                     departure_time=departure_time.strip("*"),
-                    departure_station=departure_station.strip("*"),
-                    arrival_station=arrival_station.strip("*"),
+                    departure_station=departure_station.strip("*-> "),
+                    arrival_station=arrival_station.strip("*-> "),
                     arrival_date=arrival_date.strip("*"),
                     arrival_time=arrival_time.strip("*"),
                     departure=departure_dt,

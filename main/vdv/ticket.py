@@ -533,6 +533,8 @@ class PassengerData:
                 forename_start = forename_match.group("start")
                 forename_end = forename_match.group("end")
                 forename_len = int(forename_match.group("len"))
+                if forename_len == 0:
+                    forename_len = 10
                 new_forename.append(f"{forename_start}{'_' * forename_len}{forename_end}")
 
             while surname_match := NAME_TYPE_1_RE.match(surname):
@@ -540,6 +542,8 @@ class PassengerData:
                 surname_start = surname_match.group("start")
                 surname_end = surname_match.group("end")
                 surname_len = int(surname_match.group("len"))
+                if surname_len == 0:
+                    surname_len = 10
                 new_surname.append(f"{surname_start}{'_' * surname_len}{surname_end}")
 
             if new_forename:
