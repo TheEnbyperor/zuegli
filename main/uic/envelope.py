@@ -15,7 +15,7 @@ class Record:
     id: str
     version: int
     data: bytes
-    is_utf8_len: bool
+    is_utf8_len: bool = False
 
     def data_hex(self):
         return ":".join(f"{b:02x}" for b in self.data)

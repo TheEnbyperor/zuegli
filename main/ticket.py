@@ -146,7 +146,7 @@ class UICTicket:
                 dob_month = passenger.get("monthOfBirth", 0)
                 dob_day = passenger.get("dayOfBirthInMonth", 0)
                 hd.update(b"deutschlandticket")
-                hd.update(self.flex.data["issuingDetail"]["issuerNum"].to_bytes(8, "big"))
+                hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(passenger.get("firstName").encode("utf-8"))
                 hd.update(passenger.get("lastName").encode("utf-8"))
                 hd.update(f"{dob_year:04d}-{dob_month:02d}-{dob_day:02d}".encode("utf-8"))
