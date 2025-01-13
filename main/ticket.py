@@ -91,13 +91,14 @@ class UICTicket:
                 ticket_type, ticket = self.flex.data["transportDocument"][0]["ticket"]
                 if ticket_type == "openTicket":
                     if len(self.flex.data.get("travelerDetail", {}).get("traveler", [])) >= 1 and \
-                            (issuer_num or security_num) in (
-                            1080,  # Deutsche Bahn
-                            5143,  # AMCON Software GmbH
-                            5173,  # Nahverkehrsservice Sachsen-Anhalt
-                            3076,  # Transdev GmbH
-                            3497,  # Regensburger Verkehrsverbund GmbH
-                    ):
+                            ((issuer_num or security_num) in (
+                                    1080,  # Deutsche Bahn
+                                    5143,  # AMCON Software GmbH
+                                    5173,  # Nahverkehrsservice Sachsen-Anhalt
+                                    3076,  # Transdev GmbH
+                                    3497,  # Regensburger Verkehrsverbund GmbH
+                                    5008,  # Verkehrsverbund Rhein-Neckar GmbH
+                            ) or self.dt_ti or self.dt_pa):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
                                 9998,  # Deutschlandjobticket subscription
