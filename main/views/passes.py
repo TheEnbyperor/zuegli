@@ -3699,6 +3699,7 @@ VDV_ORG_ID_LOGO = {
     6613: "pass/logo-arriva.png",
     6665: "pass/logo-rsag.png",
     6671: "pass/logo-ewse.png",
+    6691: "pass/logo-vgi.png",
     6861: "pass/logo-nst.png",
 }
 
@@ -3716,6 +3717,7 @@ VDV_ORG_ID_FG_SECONDARY = {
     6072: "rgb(181, 9, 127)",
     6310: "rgb(12, 156, 58)",
     6517: "rgb(255, 204, 2)",
+    6691: "rgb(0, 56, 116)",
 }
 
 RSP_ORG_LOGO = {
