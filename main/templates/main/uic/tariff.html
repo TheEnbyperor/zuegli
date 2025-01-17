@@ -1,4 +1,10 @@
 <dl class="govuk-summary-list">
+    {% if tariff.tariffIdNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Tariff ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ tariff.tariffIdNum }}</code></dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
             Number of passengers

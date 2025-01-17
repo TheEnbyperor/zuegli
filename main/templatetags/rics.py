@@ -1,4 +1,6 @@
 import datetime
+import decimal
+
 import pytz
 import typing
 import uuid
@@ -205,3 +207,11 @@ def validity_zone_names(value):
         for zone_id in value["zoneId"]:
             out.append(f"Unknown zone: {zone_id}")
         return out
+
+@register.filter(name="uic_price")
+def uic_price(value: int, issuing_detail: dict):
+    currency_code = issuing_detail.get("currency", "")
+    fraction = 10 ** issuing_detail.get("currencyFract", 0)
+    value = decimal.Decimal(value) / decimal.Decimal(fraction)
+
+    return f"{value:.02f} {currency_code}"

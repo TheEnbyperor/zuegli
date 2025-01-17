@@ -156,6 +156,14 @@
             </dd>
         </div>
     {% endif %}
+    {% if ticket.price %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Price</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.price|uic_price:ticket.issuingDetail }}
+            </dd>
+        </div>
+    {% endif %}
     {% if ticket.tariffs %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Tariffs</dt>
