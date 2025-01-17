@@ -172,7 +172,7 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Price</dt>
             <dd class="govuk-summary-list__value">
-                {{ res.price|uic_price:ticket.issuingDetail }}
+                {{ res.price|uic_price:flex.data.issuingDetail }}
             </dd>
         </div>
     {% endif %}
