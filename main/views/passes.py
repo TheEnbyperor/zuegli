@@ -361,7 +361,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             from_station = templatetags.rics.get_station(ticket_document["fromStationNum"], ticket_document)
                             to_station = templatetags.rics.get_station(ticket_document["toStationNum"], ticket_document)
 
-                            if "classCode" in ticket_document:
+                            if "classCode" in ticket_document and ticket_document["classCode"] != "notApplicable":
                                 pass_fields["auxiliaryFields"].append({
                                     "key": "class-code",
                                     "label": "class-code-label",
@@ -452,7 +452,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                     }
                                 })
                         else:
-                            if "classCode" in ticket_document:
+                            if "classCode" in ticket_document and ticket_document["classCode"] != "notApplicable":
                                 pass_fields["auxiliaryFields"].append({
                                     "key": "class-code",
                                     "label": "class-code-label",
@@ -833,7 +833,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                     }
                                 })
 
-                            if "classCode" in reservation_document:
+                            if "classCode" in reservation_document and reservation_document["classCode"] != "notApplicable":
                                 pass_fields["auxiliaryFields"].append({
                                     "key": "class-code",
                                     "label": "class-code-label",
@@ -945,12 +945,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         if customer_card_document["cardTypeDescr"] in BC_STRIP_IMG:
                             pass_type = "storeCard"
                             add_pkp_img(pkp, BC_STRIP_IMG[customer_card_document["cardTypeDescr"]], "strip.png")
-                        else:
-                            pass_fields["headerFields"].append({
-                                "key": "product",
-                                "label": "product-label",
-                                "value": customer_card_document["cardTypeDescr"]
-                            })
+
+                        pass_fields["headerFields"].append({
+                            "key": "product",
+                            "label": "product-label",
+                            "value": customer_card_document["cardTypeDescr"]
+                        })
 
                     if "cardIdIA5" in customer_card_document:
                         pass_fields["secondaryFields"].append({
@@ -965,7 +965,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": str(customer_card_document["cardIdNum"]),
                         })
 
-                    if "classCode" in customer_card_document:
+                    if "classCode" in customer_card_document and customer_card_document["classCode"] != "notApplicable":
                         pass_fields["secondaryFields"].append({
                             "key": "class-code",
                             "label": "class-code-label",
@@ -1077,8 +1077,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         pass_fields["primaryFields"].append(field_data)
                         return_pass_fields["primaryFields"].append(field_data)
                     elif pass_type == "storeCard":
-                        pass_fields["headerFields"].append(field_data)
-                        return_pass_fields["headerFields"].append(field_data)
+                        pass_fields["secondaryFields"].append(field_data)
+                        return_pass_fields["secondaryFields"].append(field_data)
                     else:
                         pass_fields["auxiliaryFields"].append(field_data)
                         return_pass_fields["auxiliaryFields"].append(field_data)
@@ -1481,7 +1481,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "train-number",
                     "label": "train-number-label",
                     "value": str(ticket_data.oebb_99.train_number),
+                    "semantics": {
+                        "vehicleNumber": str(ticket_data.oebb_99.train_number)
+                    }
                 })
+                if ticket_data.oebb_99.carriage_number:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "coach-number",
+                        "label": "coach-number-label",
+                        "value": str(ticket_data.oebb_99.carriage_number),
+                    })
                 pass_fields["secondaryFields"].append({
                     "key": "departure-time",
                     "label": "departure-time-label",

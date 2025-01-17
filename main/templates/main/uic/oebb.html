@@ -12,7 +12,13 @@
     {% if oebb.train_number %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Train number</dt>
-            <dd class="govuk-summary-list__value"><code>{{ oebb.train_number }}</code></dd>
+            <dd class="govuk-summary-list__value">{{ oebb.train_number }}</dd>
+        </div>
+    {% endif %}
+    {% if oebb.carriage_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriage number</dt>
+            <dd class="govuk-summary-list__value">{{ oebb.carriage_number }}</dd>
         </div>
     {% endif %}
 </dl>
