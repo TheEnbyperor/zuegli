@@ -3614,6 +3614,7 @@ RICS_LOGO = {
     3076: "pass/logo-transdev.png",
     3153: "pass/logo-wl.png",
     3243: "pass/logo-ustra.png",
+    3252: "pass/logo-kd.png",
     3268: "pass/logo-graz.png",
     3306: "pass/logo-vor.png",
     3316: "pass/logo-avg.png",
