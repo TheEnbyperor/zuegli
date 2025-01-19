@@ -25,7 +25,7 @@ class Ticket:
 
     @staticmethod
     def parse_dt(data: int):
-        tz = pytz.timezone("Europe/Prague")
+        tz = pytz.timezone("Europe/Ljubljana")
 
         sec = data & 0b111111
         data >>= 6
