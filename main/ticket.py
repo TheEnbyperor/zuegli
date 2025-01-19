@@ -402,6 +402,8 @@ class SSBTicket:
             return models.Ticket.TYPE_FAHRKARTE
         elif isinstance(self.data, ssb.ns_keycard.Keycard):
             return models.Ticket.TYPE_KEYCARD
+        elif isinstance(self.data, ssb.sz.Ticket):
+            return models.Ticket.TYPE_FAHRKARTE
         else:
             return models.Ticket.TYPE_UNKNOWN
 
