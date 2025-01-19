@@ -75,13 +75,14 @@ class Envelope:
 
     @classmethod
     def parse(cls, data: bytes) -> "Envelope":
-        if len(data) != 114:
+        if len(data) < 114:
             raise util.SSBException("Invalid length for an SSB barcode")
 
-        d = util.BitStream(data[:58])
+        signature_offset = len(data) - 56
+        d = util.BitStream(data[:signature_offset])
 
         version = d.read_int(0, 4)
-        if version != 3:
+        if version not in (2, 3):
             raise util.SSBException("Not an SSB barcode")
 
         return cls(
@@ -90,6 +91,6 @@ class Envelope:
             signature_key_id=d.read_int(18, 22),
             ticket_type=d.read_int(22, 27),
             data=d[27:],
-            signed_data=data[:58],
-            signature=data[58:114]
+            signed_data=data[:signature_offset],
+            signature=data[signature_offset:],
         )

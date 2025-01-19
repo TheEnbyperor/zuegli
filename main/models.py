@@ -279,6 +279,7 @@ class SSBTicketInstance(models.Model):
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
+    ssb_data = models.BinaryField(null=True)
 
     class Meta:
         verbose_name = "SSB ticket"
@@ -287,7 +288,7 @@ class SSBTicketInstance(models.Model):
         return str(self.barcode_hash)
 
     def as_ticket(self) -> t.SSBTicket:
-        envelope = ssb.Envelope.parse(bytes(self.barcode_data))
+        envelope = ssb.Envelope.parse(bytes(self.ssb_data or self.barcode_data))
 
         if envelope.ticket_type == 1:
             data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics)
@@ -299,6 +300,8 @@ class SSBTicketInstance(models.Model):
             data = ssb.Pass.parse(envelope.data)
         elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
             data = ssb.ns_keycard.Keycard.parse(envelope.data)
+        elif envelope.issuer_rics == 1179 and envelope.ticket_type == 21:
+            data = ssb.sz.Ticket.parse(envelope.data)
         else:
             raise NotImplementedError()
 

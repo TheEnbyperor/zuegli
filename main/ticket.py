@@ -5,6 +5,8 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 import hashlib
+
+import binascii
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, email
 
@@ -283,6 +285,7 @@ class UICTicket:
                     or r.id == "5008TI" or r.id == "5008PA"
                     or r.id == "3497TI" or r.id == "3497PA"
                     or r.id == "5245TI" or r.id == "5245PA"
+                    or r.id == "3565TI" or r.id == "3565PA"
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
             )]
         )
@@ -650,7 +653,10 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
 
 def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     ti_record = next(filter(
-        lambda r: r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" or r.id == "5245TI" and r.version == 1,
+        lambda r: (
+                          r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" or r.id == "5245TI" or
+                          r.id == "3565TI"
+                  ) and r.version == 1,
         ticket_envelope.records
     ), None)
     if not ti_record:
@@ -668,7 +674,10 @@ def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     pa_record = next(filter(
-        lambda r: r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" or r.id == "5245PA" and r.version == 1,
+        lambda r: (
+                          r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" or r.id == "5245PA" or
+                          r.id == "3565PA"
+                  ) and r.version == 1,
         ticket_envelope.records
     ), None)
     if not pa_record:
@@ -910,10 +919,12 @@ def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
         data = ssb.Pass.parse(envelope.data)
     elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
         data = ssb.ns_keycard.Keycard.parse(envelope.data)
+    elif envelope.issuer_rics == 1179 and envelope.ticket_type == 21:
+        data = ssb.sz.Ticket.parse(envelope.data)
     else:
         raise TicketError(
             title="Unsupported SSB ticket type",
-            message=f"We don't know how to parse type {envelope.ticket_type} SSB tickets"
+            message=f"We don't know how to parse type {envelope.ticket_type} SSB tickets from {envelope.issuer_rics}",
         )
 
     return SSBTicket(
@@ -931,16 +942,27 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
     )
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
         return parse_ticket_ssb(ticket_bytes)
+
+    try:
+        d = base64.b64decode(ticket_bytes)
+        if (d[0] & 0xF0) >> 4 in (2, 3):
+            return parse_ticket_ssb(d)
+    except binascii.Error as e:
+        pass
+
     if ticket_bytes[:4] == b"i0CV":
         return parse_ticket_sncf(ticket_bytes)
-    elif ticket_bytes[:3] == b"#UT":
+
+    if ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
-    elif ticket_bytes[:2] in (b"06", b"08"):
+
+    if ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)
-    elif ticket_bytes[:1] == b"e":
+
+    if ticket_bytes[:1] == b"e":
         return parse_ticket_elb(ticket_bytes)
-    else:
-        return parse_ticket_vdv(ticket_bytes, context)
+
+    return parse_ticket_vdv(ticket_bytes, context)
 
 
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
@@ -1059,6 +1081,7 @@ def create_ticket_obj(
                 "ticket": ticket_obj,
                 "distributor_rics": ticket_data.envelope.issuer_rics,
                 "barcode_data": ticket_bytes,
+                "ssb_data": ticket_data.raw_ticket,
             }
         )
     return created

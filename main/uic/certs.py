@@ -24,6 +24,9 @@ def signing_cert(rics: int, key_id: int):
     except FileNotFoundError:
         key = None
 
+    if meta is None and key is None:
+        return None
+
     return meta, key
 
 

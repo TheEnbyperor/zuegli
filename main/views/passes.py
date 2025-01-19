@@ -1466,7 +1466,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
         elif ticket_data.oebb_99:
-            pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
             if parsed_layout and parsed_layout.travel_class:
                 pass_fields["auxiliaryFields"].append({
@@ -1475,35 +1475,37 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": parsed_layout.travel_class,
                 })
 
-            if ticket_data.oebb_99.train_number:
-                pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            if ticket_data.oebb_99.trains:
+                pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+                train_number = ", ".join(list(map(lambda t: str(t.train_number), ticket_data.oebb_99.trains)))
                 pass_fields["headerFields"].append({
                     "key": "train-number",
                     "label": "train-number-label",
-                    "value": str(ticket_data.oebb_99.train_number),
+                    "value": train_number,
                     "semantics": {
-                        "vehicleNumber": str(ticket_data.oebb_99.train_number)
+                        "vehicleNumber": train_number,
                     }
                 })
-                if ticket_data.oebb_99.carriage_number:
+                if len(ticket_data.oebb_99.trains) == 1 and ticket_data.oebb_99.trains[0].carriage_number:
                     pass_fields["auxiliaryFields"].append({
                         "key": "coach-number",
                         "label": "coach-number-label",
-                        "value": str(ticket_data.oebb_99.carriage_number),
+                        "value": str(ticket_data.oebb_99.trains[0].carriage_number),
                     })
                 pass_fields["secondaryFields"].append({
                     "key": "departure-time",
                     "label": "departure-time-label",
                     "dateStyle": "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleMedium",
-                    "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["secondaryFields"].append({
                     "key": "arrival-time",
                     "label": "arrival-time-label",
                     "dateStyle": "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleMedium",
-                    "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
             else:
                 pass_fields["secondaryFields"].append({
@@ -1511,14 +1513,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleNone",
-                    "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["secondaryFields"].append({
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleNone",
-                    "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "changeMessage": "validity-end-change"
                 })
 
@@ -1534,14 +1536,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.oebb_99.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             pass_fields["backFields"].append({
                 "key": "validity-end-back",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.oebb_99.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
 
             if parsed_layout and parsed_layout.traveller:
@@ -3224,6 +3226,36 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "other-data-label",
                     "value": ticket_data.data.extra_text,
                 })
+
+        elif isinstance(ticket_data.data, ssb.sz.Ticket):
+            pass_json["expirationDate"] = ticket_data.data.valid_to.astimezone(pytz.utc).isoformat()
+
+            pass_fields["primaryFields"].append({
+                "key": "card-name",
+                "label": "product-label",
+                "value": ticket_data.data.ticket_type_str()
+            })
+
+            pass_fields["secondaryFields"].append({
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_from.astimezone(pytz.utc).isoformat()
+            })
+            pass_fields["secondaryFields"].append({
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_to.astimezone(pytz.utc).isoformat()
+            })
+
+            pass_fields["backFields"].append({
+                "key": "price",
+                "label": "price-label",
+                "value": ticket_data.data.price_str()
+            })
 
         if distributor := ticket_data.envelope.issuer():
             pass_json["organizationName"] = distributor["full_name"]

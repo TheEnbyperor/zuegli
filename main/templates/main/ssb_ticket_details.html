@@ -276,6 +276,16 @@
             </dd>
         </div>
         <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return included</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.return_included %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Number of adults</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.num_adults }}</dd>
         </div>
@@ -375,6 +385,16 @@
             <dt class="govuk-summary-list__key">Specimen</dt>
             <dd class="govuk-summary-list__value">
                 {% if ticket.data.specimen %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return included</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.return_included %}
                     <strong class="govuk-tag govuk-tag--green">Yes</strong>
                 {% else %}
                     <strong class="govuk-tag govuk-tag--red">No</strong>
@@ -619,5 +639,37 @@
                 <dd class="govuk-summary-list__value">{{ ticket.data.extra_text }}</dd>
             </div>
         {% endif %}
+    </dl>
+{% elif ticket.data.type == "SZ_TK" %}
+    <h2 class="govuk-heading-m">Slovenske železnice ticket</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Ticket type</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.ticket_type_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Price level</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.price_level }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reference</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.reference }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y H:i:s e" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid until</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.valid_to|date:"F d, Y H:i:s e" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Unit price</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.price_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Number of travellers</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.num_travellers }}</dd>
+        </div>
     </dl>
 {% endif %}

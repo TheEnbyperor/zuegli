@@ -9,11 +9,15 @@ class OeBBException(Exception):
     pass
 
 @dataclasses.dataclass
+class Train:
+    train_number: str
+    carriage_number: str
+
+@dataclasses.dataclass
 class OeBBRecord99:
     validity_start: datetime.datetime
     validity_end: datetime.datetime
-    train_number: typing.Optional[str]
-    carriage_number: typing.Optional[str]
+    trains: typing.List[Train]
 
     @classmethod
     def parse(cls, data: bytes, version: int):
@@ -29,23 +33,23 @@ class OeBBRecord99:
 
         validity_start = data.pop("V")
         validity_end = data.pop("B")
-        train_number = None
-        carriage_number = None
+        trains = []
 
         if "Z" in data:
-            d = data.pop("Z").split(":", 2)
-            train_number = d[0]
-            if len(d) > 1:
-                carriage_number = d[1]
+            for t in data.pop("Z").split(";"):
+                d = t.split(":", 2)
+                train_number = d[0]
+                if len(d) > 1:
+                    carriage_number = d[1]
+                else:
+                    carriage_number = None
+                trains.append(Train(train_number, carriage_number))
 
-        validity_start = tz.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M"))\
-            .astimezone(tz=pytz.UTC)
-        validity_end = tz.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M"))\
-            .astimezone(tz=pytz.UTC)
+        validity_start = tz.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M"))
+        validity_end = tz.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M"))
 
         return cls(
             validity_start=validity_start,
             validity_end=validity_end,
-            train_number=train_number,
-            carriage_number=carriage_number,
+            trains=trains,
         )

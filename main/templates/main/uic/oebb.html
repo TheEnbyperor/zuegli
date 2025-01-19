@@ -3,22 +3,38 @@
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Validity start</dt>
-        <dd class="govuk-summary-list__value">{{ oebb.validity_start|date:"F d, Y H:i" }}</dd>
+        <dd class="govuk-summary-list__value">{{ oebb.validity_start|date:"F d, Y H:i e" }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Validity end</dt>
-        <dd class="govuk-summary-list__value">{{ oebb.validity_end|date:"F d, Y H:i" }}</dd>
+        <dd class="govuk-summary-list__value">{{ oebb.validity_end|date:"F d, Y H:i e" }}</dd>
     </div>
-    {% if oebb.train_number %}
+    {% if oebb.trains %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Train number</dt>
-            <dd class="govuk-summary-list__value">{{ oebb.train_number }}</dd>
-        </div>
-    {% endif %}
-    {% if oebb.carriage_number %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Carriage number</dt>
-            <dd class="govuk-summary-list__value">{{ oebb.carriage_number }}</dd>
+            <dt class="govuk-summary-list__key">Trains</dt>
+            <dd class="govuk-summary-list__value">
+                {% for train in oebb.trains %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">Train #{{ forloop.counter }}</h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Train number</dt>
+                                    <dd class="govuk-summary-list__value">{{ train.train_number }}</dd>
+                                </div>
+                                {% if train.carriage_number %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Carriage number</dt>
+                                        <dd class="govuk-summary-list__value">{{ train.carriage_number }}</dd>
+                                    </div>
+                                {% endif %}
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
         </div>
     {% endif %}
 </dl>
