@@ -164,10 +164,16 @@ def parse_via(via: str) -> Route:
 
     while not reader.eof():
         if state == State.START:
-            if reader.read() == "<":
+            c = reader.read()
+            if c == "<":
                 state = State.CARRIER
                 carrier_num = ""
                 point = ""
+            elif c.upper() == "V":
+                if reader.peek().upper() == "I" and reader.peek().upper() == "A" and reader.peek() == ":":
+                    state = State.POINTS
+                    carrier_num = ""
+                    point = ""
         elif state == State.CARRIER:
             c = reader.read()
             if c == ">":
