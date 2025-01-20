@@ -227,12 +227,14 @@ class UICTicket:
             return base64.b32encode(hd.digest()).decode("utf-8")
 
     def issuing_rics(self) -> int:
-        if self.head:
+        if self.head and self.head.distributing_rics:
             return self.head.distributing_rics
-        elif self.flex:
-            return self.flex.issuing_rics()
-        else:
-            return 0
+
+        if self.flex:
+            if r := self.flex.issuing_rics():
+                return r
+
+        return self.envelope.issuer_rics
 
     def distributor(self):
         return uic.rics.get_rics(self.issuing_rics())
