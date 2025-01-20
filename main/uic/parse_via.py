@@ -23,7 +23,7 @@ def get_db_abbr():
 
 class Point:
     def __init__(self, name: str):
-        self.name = name
+        self.name = name.strip()
         self.id = uuid.uuid4()
 
 class List:
@@ -171,6 +171,9 @@ def parse_via(via: str) -> Route:
                 point = ""
             elif c.upper() == "V":
                 if reader.peek().upper() == "I" and reader.peek().upper() == "A" and reader.peek() == ":":
+                    reader.read()
+                    reader.read()
+                    reader.read()
                     state = State.POINTS
                     carrier_num = ""
                     point = ""
