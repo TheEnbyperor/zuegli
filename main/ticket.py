@@ -416,7 +416,7 @@ class SSBTicket:
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
 
-        hd.update(b"ssb1")
+        hd.update(b"ssb")
         hd.update(self.envelope.issuer_rics.to_bytes(8, "big"))
         hd.update(self.envelope.ticket_type.to_bytes(8, "big"))
         hd.update(self.data.pnr.encode("utf-8"))
@@ -438,8 +438,9 @@ class SSB1Ticket:
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
 
-        hd.update(b"ssb")
+        hd.update(b"ssb1")
         hd.update(self.ticket.issuer_rics.to_bytes(8, "big"))
+        hd.update(self.ticket.pnr.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 

@@ -216,7 +216,7 @@
                 {% with ticket_obj=instance.as_ticket %}
                     <details class="govuk-details">
                         <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket</span>
+                            <span class="govuk-details__summary-text">Ticket #{{ ticket.ticket.pnr }}</span>
                             {% with distributor=ticket_obj.ticket.issuer %}
                                 {% if distributor %}
                                     <span>{{ distributor.full_name }} - {{ distributor.country }}</span>

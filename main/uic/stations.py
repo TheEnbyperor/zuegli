@@ -51,6 +51,12 @@ def get_station_by_benerail(code) -> typing.Optional[dict]:
 
 
 def get_station_by_finland(code) -> typing.Optional[dict]:
-    if i := get_finnish_stations_list()["station_codes"].get(str(code)):
+    code = str(code)
+    i = get_finnish_stations_list()["station_codes"].get(code)
+    if not i:
+        i = get_finnish_stations_list()["station_codes"].get(code.replace("?", "Ä"))
+    if not i:
+        i = get_finnish_stations_list()["station_codes"].get(code.replace("?", "Ö"))
+    if i:
         station = get_finnish_stations_list()["stations"][i]
         return get_station_by_uic(1000000 + station["stationUICCode"])

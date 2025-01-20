@@ -66,7 +66,7 @@ class BitStream:
     def read_string1(self, start: int, end: int) -> str:
         out = ""
         for i in range(start, end, 6):
-            out += STRING1[self.data[i:i+6].uint]
+            out += STRING1.get(self.data[i:i+6].uint, " ")
 
         return out
 

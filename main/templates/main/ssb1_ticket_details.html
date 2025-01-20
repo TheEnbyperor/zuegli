@@ -38,10 +38,12 @@
             {% endif %}
         </dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Travel class</dt>
-        <dd class="govuk-summary-list__value">{{ ticket.ticket.travel_class }}</dd>
-    </div>
+    {% if ticket.ticket.travel_class %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Travel class</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.travel_class }}</dd>
+        </div>
+    {% endif %}
     {% if ticket.ticket.ticket_type %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Ticket type</dt>
@@ -146,14 +148,18 @@
         <dt class="govuk-summary-list__key">Train number</dt>
         <dd class="govuk-summary-list__value">{{ ticket.ticket.train_number }}</dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Coach number</dt>
-        <dd class="govuk-summary-list__value">{{ ticket.ticket.coach_number }}</dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Seat</dt>
-        <dd class="govuk-summary-list__value">{{ ticket.ticket.seat }}</dd>
-    </div>
+    {% if ticket.ticket.coach_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Coach number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.coach_number }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.ticket.seat %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Seat</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.seat }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Reservation reference</dt>
         <dd class="govuk-summary-list__value">{{ ticket.ticket.reservation_reference }}</dd>
