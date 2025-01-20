@@ -74,6 +74,8 @@ class Ticket:
             return "IJPP potnik"
         elif self.price_level == 94:
             return "Spremlj. skupine - 50%"
+        else:
+            return f"Unknown - {self.ticket_type}"
 
     def ticket_type_str(self):
         if self.ticket_type == 1:
