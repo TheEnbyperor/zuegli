@@ -1,0 +1,171 @@
+{% load rics %}
+
+<h2 class="govuk-heading-m">Security</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Barcode version</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.version }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Issuer RICS</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.ticket.issuer_rics }}</code></dd>
+    </div>
+    {% with org=ticket.ticket.issuer %}
+        {% if org %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuer</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include 'main/rics.html' with org=org %}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+</dl>
+
+<h2 class="govuk-heading-m">SSB Ticket</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PNR</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.pnr }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Specimen</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.ticket.specimen %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Travel class</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.travel_class }}</dd>
+    </div>
+    {% if ticket.ticket.ticket_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Ticket type</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.ticket_type }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Return included</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.ticket.return_included %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    {% if ticket.ticket.number_tickets %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Number of tickets</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.number_tickets }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of adults</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.number_adults }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of children</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.number_children }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.valid_from|date:"F d" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid until</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.valid_until|date:"F d" }}</dd>
+    </div>
+    {% if ticket.ticket.corporate_frequent_traveler_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Corporate frequent traveler ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.corporate_frequent_traveler_id }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.ticket.individual_frequent_traveler_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Individual frequent traveler ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.individual_frequent_traveler_id }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.ticket.departure_station_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">From station number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.departure_station_number }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.ticket.departure_station_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">From station name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.departure_station_name }}</dd>
+        </div>
+        {% with station=ticket.ticket.departure_station_name|get_station:"finland" %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">From station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+    {% if ticket.ticket.arrival_station_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">To station number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.arrival_station_number }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.ticket.arrival_station_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">To station name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.arrival_station_name }}</dd>
+        </div>
+        {% with station=ticket.ticket.arrival_station_name|get_station:"finland" %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">To station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+    {% if ticket.ticket.departure_time %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Departure time</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket.departure_time|date:"H:i" }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Train number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.train_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Coach number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.coach_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Seat</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.seat }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reservation reference</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.ticket.reservation_reference }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Overbooked</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.ticket.overbooked %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+</dl>

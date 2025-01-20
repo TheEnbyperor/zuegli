@@ -89,6 +89,18 @@
             </div>
         {% endif %}
     {% endwith %}
+    {% if db.return_from_station_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return from station name</dt>
+            <dd class="govuk-summary-list__value">{{ db.return_from_station_name }}</dd>
+        </div>
+    {% endif %}
+    {% if db.return_to_station_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return to station name</dt>
+            <dd class="govuk-summary-list__value">{{ db.return_to_station_name }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Number of travellers</dt>
         <dd class="govuk-summary-list__value">{{ db.num_travellers }}</dd>
@@ -114,7 +126,32 @@
     {% if db.route %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Route</dt>
-            <dd class="govuk-summary-list__value">{{ db.route }}</dd>
+            <dd class="govuk-summary-list__value">
+                {{ db.route }}
+                {% with graph=db.route|via_as_graphviz %}
+                    {% if graph %}
+                        <div id="{{ graph.0 }}" class="route-graph"></div>
+                        <script>
+                            window.addEventListener('load', function () {
+                                const graph = `{{ graph.1|safe }}`;
+                                Viz.instance().then(function (viz) {
+                                    const svg = viz.renderSVGElement(graph, {
+                                        graphAttributes: {
+                                            fontname: "GDS Transport",
+                                            fontsize: 12,
+                                        },
+                                        nodeAttributes: {
+                                            fontname: "GDS Transport",
+                                            fontsize: 12,
+                                        }
+                                    });
+                                    document.getElementById('{{ graph.0 }}').appendChild(svg);
+                                });
+                            });
+                        </script>
+                    {% endif %}
+                {% endwith %}
+            </dd>
         </div>
     {% endif %}
     {% if db.traveller_forename or db.traveller_surname %}

@@ -79,4 +79,7 @@ SPACIAL_VALIDITY = {
         904001: "eezy.nrw"
     },
     6262: get_db_station_name,
+    6292: {
+        128: "Zone M"
+    }
 }

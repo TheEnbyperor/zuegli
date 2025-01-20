@@ -77,3 +77,18 @@ class Command(BaseCommand):
 
         with uic_storage.open("stations.json", "w") as f:
             json.dump(out, f)
+
+        finnish_stations_r = niquests.get("https://rata.digitraffic.fi/api/v1/metadata/stations")
+        finnish_stations_r.raise_for_status()
+
+        out = {
+            "stations": [],
+            "station_codes": {},
+        }
+        for station in finnish_stations_r.json():
+            out["stations"].append(station)
+            i = len(out["stations"]) - 1
+            out["station_codes"][station["stationShortCode"]] = i
+
+        with uic_storage.open("finnish-stations.json", "w") as f:
+            json.dump(out, f)

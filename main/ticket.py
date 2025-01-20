@@ -8,7 +8,7 @@ import hashlib
 
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, email
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email
 
 
 class TicketError(Exception):
@@ -389,7 +389,11 @@ class ELBTicket:
 class SSBTicket:
     raw_ticket: bytes
     envelope: ssb.Envelope
-    data: typing.Union[ssb.NonReservationTicket, ssb.ns_keycard.Keycard]
+    data: typing.Union[
+        ssb.NonReservationTicket, ssb.IntegratedReservationTicket,
+        ssb.GroupTicket, ssb.ns_keycard.Keycard,
+        ssb.sz.Ticket
+    ]
 
     @property
     def ticket_type(self) -> str:
@@ -412,10 +416,30 @@ class SSBTicket:
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
 
-        hd.update(b"ssb")
+        hd.update(b"ssb1")
         hd.update(self.envelope.issuer_rics.to_bytes(8, "big"))
         hd.update(self.envelope.ticket_type.to_bytes(8, "big"))
         hd.update(self.data.pnr.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class SSB1Ticket:
+    raw_ticket: bytes
+    ticket: ssb1.Ticket
+
+    @property
+    def ticket_type(self) -> str:
+        return "SSB1"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"ssb")
+        hd.update(self.ticket.issuer_rics.to_bytes(8, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -937,9 +961,25 @@ def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
         data=data
     )
 
+def parse_ticket_ssb1(ticket_bytes: bytes) -> SSB1Ticket:
+    try:
+        ticket = ssb1.Ticket.parse(ticket_bytes)
+    except ssb1.SSB1Exception:
+        raise TicketError(
+            title="This doesn't look like a valid SSB ticket",
+            message="You may have scanned something that is not an SSB ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return SSB1Ticket(
+        raw_ticket=ticket_bytes,
+        ticket=ticket
+    )
+
 
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket]:
+        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
@@ -953,6 +993,9 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
             return parse_ticket_ssb(d)
     except binascii.Error as e:
         pass
+
+    if len(ticket_bytes) == 107 and (ticket_bytes[0] & 0xF0) >> 4 in (1, 2):
+        return parse_ticket_ssb1(ticket_bytes)
 
     if ticket_bytes[:4] == b"i0CV":
         return parse_ticket_sncf(ticket_bytes)
@@ -982,7 +1025,7 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
 def create_ticket_obj(
         ticket_obj: "models.Ticket",
         ticket_bytes: bytes,
-        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket],
+        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket],
 ) -> bool:
     created = False
     barcode_hash = hashlib.sha256(ticket_bytes).hexdigest()
@@ -1086,6 +1129,15 @@ def create_ticket_obj(
                 "distributor_rics": ticket_data.envelope.issuer_rics,
                 "barcode_data": ticket_bytes,
                 "ssb_data": ticket_data.raw_ticket,
+            }
+        )
+    elif isinstance(ticket_data, SSB1Ticket):
+        _, created = models.SSB1TicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "distributor_rics": ticket_data.ticket.issuer_rics,
+                "barcode_data": ticket_bytes,
             }
         )
     return created

@@ -17,6 +17,8 @@ class DBRecordBL:
     from_station_uic: typing.Optional[int]
     to_station_name: typing.Optional[str]
     to_station_uic: typing.Optional[int]
+    return_from_station_name: typing.Optional[str]
+    return_to_station_name: typing.Optional[str]
     route: typing.Optional[str]
     validity_start: typing.Optional[datetime.date]
     validity_end: typing.Optional[datetime.date]
@@ -71,6 +73,8 @@ class DBRecordBL:
         from_station_uic = None
         to_station_name = None
         to_station_uic = None
+        return_from_station_name = None
+        return_to_station_name = None
         route = None
         validity_start = None
         validity_end = None
@@ -143,22 +147,16 @@ class DBRecordBL:
                     service_class = "second"
                 else:
                     raise DBException(f"Invalid service class {block_data}")
-            elif block_id == "S035":
-                try:
-                    station_id = int(block_data, 10)
-                except ValueError as e:
-                    raise DBException(f"Invalid station ID") from e
-                from_station_uic = 8000000 + station_id
             elif block_id == "S016":
                 to_station_name = block_data
-            elif block_id == "S036":
-                try:
-                    station_id = int(block_data, 10)
-                except ValueError as e:
-                    raise DBException(f"Invalid station ID") from e
-                to_station_uic = 8000000 + station_id
+            elif block_id == "S017":
+                return_from_station_name = block_data
+            elif block_id == "S018":
+                return_to_station_name = block_data
             elif block_id == "S021":
                 route = block_data
+            elif block_id == "S023":
+                traveller_full_name = block_data
             elif block_id == "S026":
                 if block_data == "12":
                     price_level = "Normalpreis"
@@ -168,8 +166,6 @@ class DBRecordBL:
                     price_level = "Rail&Fly"
                 else:
                     raise DBException(f"Invalid price level {block_data}")
-            elif block_id == "S023":
-                traveller_full_name = block_data
             elif block_id == "S028":
                 traveller_forename, traveller_surname = block_data.split("#", 1)
             elif block_id == "S031":
@@ -182,6 +178,18 @@ class DBRecordBL:
                     validity_end = datetime.datetime.strptime(block_data, "%d.%m.%Y").date()
                 except ValueError as e:
                     raise DBException(f"Invalid validity end date") from e
+            elif block_id == "S035":
+                try:
+                    station_id = int(block_data, 10)
+                except ValueError as e:
+                    raise DBException(f"Invalid station ID") from e
+                from_station_uic = 8000000 + station_id
+            elif block_id == "S036":
+                try:
+                    station_id = int(block_data, 10)
+                except ValueError as e:
+                    raise DBException(f"Invalid station ID") from e
+                to_station_uic = 8000000 + station_id
             elif block_id == "S040":
                 try:
                     num_travellers = int(block_data, 10)
@@ -202,6 +210,8 @@ class DBRecordBL:
             from_station_uic=from_station_uic,
             to_station_name=to_station_name,
             to_station_uic=to_station_uic,
+            return_from_station_name=return_from_station_name,
+            return_to_station_name=return_to_station_name,
             route=route,
             traveller_forename=traveller_forename,
             traveller_surname=traveller_surname,

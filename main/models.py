@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp, sncf, elb, ssb
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1
 
 
 def make_pass_token():
@@ -139,6 +139,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.ssb_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.ssb1_instances.first():
             return ticket_instance
 
 
@@ -309,6 +312,27 @@ class SSBTicketInstance(models.Model):
             raw_ticket=bytes(self.barcode_data),
             envelope=envelope,
             data=data
+        )
+
+
+class SSB1TicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb1_instances")
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
+    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "SSBv1 ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def as_ticket(self) -> t.SSB1Ticket:
+        ticket = ssb1.Ticket.parse(bytes(self.barcode_data))
+
+        return t.SSB1Ticket(
+            raw_ticket=bytes(self.barcode_data),
+            ticket=ticket,
         )
 
 
