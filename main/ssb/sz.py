@@ -78,25 +78,27 @@ class Ticket:
             return f"Unknown - {self.ticket_type}"
 
     def ticket_type_str(self):
-        if self.ticket_type == 1:
-            return "Enosmerna vozovnica 2R"
-        elif self.ticket_type == 2:
-            return "Povratna vozovnica 2R"
-        elif self.ticket_type == 3:
-            return "Enosmerna vozovnica 1R"
-        elif self.ticket_type == 4:
-            return "Povratna vozovnica 1R"
+        if self.ticket_type in (1, 3):
+            return "Enosmerna vozovnica"
+        elif self.ticket_type in (2, 4):
+            return "Povratna vozovnica"
         elif self.ticket_type == 40:
             return "IZLETka"
         elif self.ticket_type == 44:
             return "Enkratni dodatek IJPP IC EC EN MV"
         elif self.ticket_type == 112:
             return "Dnevna vozovnica - kolo"
-        elif self.ticket_type == 131:
-            return "Turist vikend 1R"
-        elif self.ticket_type == 145:
-            return "Turist vikend 2R"
+        elif self.ticket_type in (131, 145):
+            return "Turist vikend"
         elif self.ticket_type == 153:
             return "Mestna vozovnica"
         else:
             return f"Unknown - {self.ticket_type}"
+
+    def travel_class(self):
+        if self.ticket_type in (1, 2, 145):
+            return "second"
+        elif self.ticket_type in (3, 4, 131):
+            return "first"
+        else:
+            return "notApplicable"

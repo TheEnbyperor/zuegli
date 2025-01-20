@@ -3251,6 +3251,20 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": ticket_data.data.valid_to.astimezone(pytz.utc).isoformat()
             })
 
+            class_code = ticket_data.data.travel_class()
+            if class_code and class_code != "notApplicable":
+                pass_fields["secondaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": f"class-code-{class_code}-label",
+                })
+
+            pass_fields["backFields"].append({
+                "key": "price-level",
+                "label": "price-level-label",
+                "value": ticket_data.data.price_level_str()
+            })
+
             pass_fields["backFields"].append({
                 "key": "price",
                 "label": "price-label",
@@ -3424,6 +3438,7 @@ PASS_STRINGS = {
 "coach-number-label" = "Coach";
 "seat-number-label" = "Seat";
 "price-label" = "Price";
+"price-level-label" = "Price level";
 "product-validity-outward-date-label" = "Outward validity - date";
 "product-validity-outward-time-label" = "Outward validity - time";
 "product-validity-return-date-label" = "Return validity - date";
@@ -3485,6 +3500,7 @@ PASS_STRINGS = {
 "coach-number-label" = "Cerbyd";
 "seat-number-label" = "Sedd";
 "price-label" = "Pris";
+"price-level-label" = "Lefel pris";
 "product-validity-outward-date-label" = "Dilysrwydd alladaith - dyddiad";
 "product-validity-outward-time-label" = "Dilysrwydd alladaith - amser";
 "product-validity-return-date-label" = "Dilysrwydd dychweldaith - dyddiad";
@@ -3546,6 +3562,7 @@ PASS_STRINGS = {
 "coach-number-label" = "Waggon";
 "seat-number-label" = "Sitzpl.";
 "price-label" = "Preis";
+"price-level-label" = "Preisstufe";
 "product-validity-outward-date-label" = "Hinfahrt Gültigkeit - Datum";
 "product-validity-outward-time-label" = "Hinfahrt Gültigkeit - Zeit";
 "product-validity-return-date-label" = "Ruckfahrt Gültigkeit - Datum";
@@ -3607,6 +3624,7 @@ PASS_STRINGS = {
 "coach-number-label" = "Rijtuig";
 "seat-number-label" = "Stoel";
 "price-label" = "Prijs";
+"price-level-label" = "Prijsniveau";
 "product-validity-outward-date-label" = "Geldigheid heenrit - datum";
 "product-validity-outward-time-label" = "Geldigheid heenrit - tijd";
 "product-validity-return-date-label" = "Geldigheid terugrit - datum";
