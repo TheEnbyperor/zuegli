@@ -10,6 +10,16 @@
         <dt class="govuk-summary-list__key">Signing RICS</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.issuer_rics }}</code></dd>
     </div>
+    {% with org=ticket.envelope.issuer %}
+        {% if org %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signer</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include 'main/rics.html' with org=org %}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Signature key ID</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.signature_key_id }}</code></dd>
