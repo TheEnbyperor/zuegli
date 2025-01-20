@@ -61,12 +61,40 @@ class Ticket:
     def price_str(self):
         return f"{self.price:.2f} €"
 
+    def price_level_str(self):
+        if self.price_level == 1:
+            return "Redna cena"
+        elif self.price_level == 2:
+            return "Otroci 6-15"
+        elif self.price_level == 4:
+            return "Otroci do 6"
+        elif self.price_level == 43:
+            return "Skupina do 26 let - 50%"
+        elif self.price_level == 87:
+            return "IJPP potnik"
+        elif self.price_level == 94:
+            return "Spremlj. skupine - 50%"
+
     def ticket_type_str(self):
         if self.ticket_type == 1:
-            return "Enosmerna vozovnica"
+            return "Enosmerna vozovnica 2R"
         elif self.ticket_type == 2:
-            return "Povratna vozovnica"
+            return "Povratna vozovnica 2R"
+        elif self.ticket_type == 3:
+            return "Enosmerna vozovnica 1R"
+        elif self.ticket_type == 4:
+            return "Povratna vozovnica 1R"
+        elif self.ticket_type == 40:
+            return "IZLETka"
+        elif self.ticket_type == 44:
+            return "Enkratni dodatek IJPP IC EC EN MV"
         elif self.ticket_type == 112:
             return "Dnevna vozovnica - kolo"
+        elif self.ticket_type == 131:
+            return "Turist vikend 1R"
+        elif self.ticket_type == 145:
+            return "Turist vikend 2R"
+        elif self.ticket_type == 153:
+            return "Mestna vozovnica"
         else:
             return f"Unknown - {self.ticket_type}"
