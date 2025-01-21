@@ -201,7 +201,7 @@ def vdv_product_id(value, org_id: str):
 
 @register.filter(name="validity_zone_names")
 def validity_zone_names(value):
-    if value.get("carrierIA5").startswith("VDV"):
+    if value.get("carrierIA5", "").startswith("VDV"):
         org_id = int(value["carrierIA5"][3:])
         return vdv.ticket.SpacialValidity.map_names(org_id, value["zoneId"])
     else:
