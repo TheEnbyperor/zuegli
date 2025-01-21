@@ -1,4 +1,5 @@
 import base64
+import base45
 import dataclasses
 import traceback
 import typing
@@ -827,6 +828,44 @@ def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTic
     return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
 
 
+def parse_ticket_uic_qr(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTicket:
+    try:
+        ticket = ticket_bytes.decode("ascii")
+    except UnicodeDecodeError:
+        raise TicketError(
+            title="This doesn't look like a valid UIC QR ticket",
+            message="You may have scanned something that is not a UIC QR ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    parts = ticket.split(":", 2)
+    if len(parts) != 3:
+        raise TicketError(
+            title="This doesn't look like a valid UIC QR ticket",
+            message="There aren't enough sections to this ticket's header."
+        )
+
+    _, encoding, data = parts
+
+    if encoding != "B45":
+        raise TicketError(
+            title="Unsupported UIC QR encoding",
+            message=f"The encoding method {encoding} is not supported yet."
+        )
+
+    try:
+        ticket_bytes = base45.b45decode(data)
+    except ValueError:
+        raise TicketError(
+            title="This doesn't look like a valid UIC QR ticket",
+            message="The Base45 encoding couldn't be read.",
+            exception=traceback.format_exc()
+        )
+
+    return parse_ticket_uic(ticket_bytes, context)
+
+
 def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     pki_store = rsp.CertificateStore()
     pki_store.load_certificates()
@@ -1003,6 +1042,9 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
 
     if ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
+
+    if ticket_bytes[:4] == b"UIC:":
+        return parse_ticket_uic_qr(ticket_bytes, context)
 
     if ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)

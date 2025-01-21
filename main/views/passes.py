@@ -1364,6 +1364,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["auxiliaryFields"].append(field_data)
 
         elif ticket_data.cd_ut:
+            if ticket_data.cd_ut.pnr:
+                pass_json["barcodes"][0]["altText"] = ticket_data.cd_ut.pnr
+
             if ticket_data.cd_ut.route_uic:
                 pass_type = "boardingPass"
                 pass_fields["transitType"] = "PKTransitTypeTrain"
@@ -1504,7 +1507,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleNone",
+                    "timeStyle": "PKDateStyleMedium",
                     "value": ticket_data.cd_ut.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["backFields"].append({
@@ -1521,7 +1524,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleNone",
+                    "timeStyle": "PKDateStyleMedium",
                     "value": ticket_data.cd_ut.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "changeMessage": "validity-end-change"
                 })
@@ -1535,7 +1538,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.cd_ut.name:
                 if pass_type == "boardingPass":
-                    pass_fields["secondaryFields"].append({
+                    pass_fields["auxiliaryFields"].append({
                         "key": "passenger",
                         "label": "passenger-label",
                         "value": ticket_data.cd_ut.name,
@@ -3904,13 +3907,13 @@ RICS_LOGO = {
     1088: "pass/logo-sncb.png",
     1084: "pass/logo-ns.png",
     1154: "pass/logo-cd.png",
-    1155: "pass/logo-mav.png",
     1156: "pass/logo-zssk.png",
     1179: "pass/logo-szpp.png",
     1181: "pass/logo-oebb.png",
     1182: "pass/logo-cfl.png",
     1184: "pass/logo-ns.png",
     1186: "pass/logo-dsb.png",
+    1155: "pass/logo-mav.png",
     1251: "pass/logo-pkp-ic.png",
     3018: "pass/logo-thalys.png",
     3076: "pass/logo-transdev.png",
@@ -3940,6 +3943,7 @@ RICS_LOGO = {
 
 RICS_BG = {
     1084: "rgb(255, 201, 23)",
+    1154: "rgb(0, 160, 220)",
     1184: "rgb(255, 201, 23)",
     3018: "rgb(175, 22, 52)",
     3453: "rgb(1, 142, 74)",
@@ -3951,6 +3955,7 @@ RICS_BG = {
 RICS_FG = {
     10: "rgb(51, 51, 51)",
     1084: "rgb(7, 7, 33)",
+    1154: "rgb(255, 255, 255)",
     1184: "rgb(7, 7, 33)",
     3018: "rgb(255, 255, 255)",
     3453: "rgb(255, 255, 255)",
@@ -3963,6 +3968,7 @@ RICS_FG = {
 RICS_FG_SECONDARY = {
     10: "rgb(0, 161, 73)",
     1084: "rgb(32, 32, 55)",
+    1154: "rgb(255, 255, 255)",
     1184: "rgb(32, 32, 55)",
     3018: "rgb(255, 255, 255)",
     3153: "rgb(227, 0, 21)",
