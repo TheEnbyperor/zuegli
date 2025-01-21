@@ -290,6 +290,7 @@ class UICTicket:
                     or r.id == "5245TI" or r.id == "5245PA"
                     or r.id == "3565TI" or r.id == "3565PA"
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
+                    or r.id == "3697OT"
             )]
         )
 
@@ -739,7 +740,7 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 
 def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic.cd.CDRecordUT]:
-    ut_record = next(filter(lambda r: r.id == "1154UT" and r.version == 1, ticket_envelope.records), None)
+    ut_record = next(filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
     if not ut_record:
         return None
 

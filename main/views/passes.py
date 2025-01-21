@@ -1364,95 +1364,53 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["auxiliaryFields"].append(field_data)
 
         elif ticket_data.cd_ut:
+            pass_type = "boardingPass"
+            pass_fields["transitType"] = "PKTransitTypeTrain"
+
             if ticket_data.cd_ut.pnr:
                 pass_json["barcodes"][0]["altText"] = ticket_data.cd_ut.pnr
 
-            if ticket_data.cd_ut.route_uic:
-                pass_type = "boardingPass"
-                pass_fields["transitType"] = "PKTransitTypeTrain"
+            from_station = None
+            to_station = None
 
+            if ticket_data.cd_ut.route_uic:
                 from_station = templatetags.rics.get_station(ticket_data.cd_ut.route_uic[0], "uic")
                 to_station = templatetags.rics.get_station(ticket_data.cd_ut.route_uic[-1], "uic")
+            elif ticket_data.cd_ut.origin_uic or ticket_data.cd_ut.destination_uic:
+                if ticket_data.cd_ut.origin_uic:
+                    from_station = templatetags.rics.get_station(ticket_data.cd_ut.origin_uic, "uic")
+                if ticket_data.cd_ut.destination_uic:
+                    to_station = templatetags.rics.get_station(ticket_data.cd_ut.destination_uic, "uic")
 
-                if from_station:
-                    pass_fields["primaryFields"].append({
-                        "key": "from-station",
-                        "label": "from-station-label",
-                        "value": from_station["name"],
-                        "semantics": {
-                            "departureLocation": {
-                                "latitude": float(from_station["latitude"]),
-                                "longitude": float(from_station["longitude"]),
-                            },
-                            "departureStationName": from_station["name"]
-                        }
-                    })
-                    pass_json["locations"].append({
-                        "latitude": float(from_station["latitude"]),
-                        "longitude": float(from_station["longitude"]),
-                        "relevantText": from_station["name"]
-                    })
-                    maps_link = urllib.parse.urlencode({
-                        "q": from_station["name"],
-                        "ll": f"{from_station['latitude']},{from_station['longitude']}"
-                    })
-                    pass_fields["backFields"].append({
-                        "key": "from-station-back",
-                        "label": "from-station-label",
-                        "value": from_station["name"],
-                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
-                    })
-                elif parsed_layout and parsed_layout.trips[0].departure_station:
-                    pass_fields["primaryFields"].append({
-                        "key": "from-station",
-                        "label": "from-station-label",
-                        "value": parsed_layout.trips[0].departure_station,
-                        "semantics": {
-                            "departureStationName": parsed_layout.trips[0].departure_station
-                        }
-                    })
-
-                if to_station:
-                    pass_fields["primaryFields"].append({
-                        "key": "to-station",
-                        "label": "to-station-label",
-                        "value": to_station["name"],
-                        "semantics": {
-                            "destinationLocation": {
-                                "latitude": float(from_station["latitude"]),
-                                "longitude": float(from_station["longitude"]),
-                            },
-                            "destinationStationName": to_station["name"]
-                        }
-                    })
-                    pass_json["locations"].append({
-                        "latitude": float(to_station["latitude"]),
-                        "longitude": float(to_station["longitude"]),
-                        "relevantText": to_station["name"]
-                    })
-                    maps_link = urllib.parse.urlencode({
-                        "q": to_station["name"],
-                        "ll": f"{to_station['latitude']},{to_station['longitude']}"
-                    })
-                    pass_fields["backFields"].append({
-                        "key": "to-station-back",
-                        "label": "to-station-label",
-                        "value": to_station["name"],
-                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
-                    })
-                elif parsed_layout and parsed_layout.trips[0].arrival_station:
-                    pass_fields["primaryFields"].append({
-                        "key": "to-station",
-                        "label": "to-station-label",
-                        "value": parsed_layout.trips[0].arrival_station,
-                        "semantics": {
-                            "destinationStationName": parsed_layout.trips[0].arrival_station
-                        }
-                    })
-            elif parsed_layout and (parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station):
-                pass_type = "boardingPass"
-                pass_fields["transitType"] = "PKTransitTypeTrain"
-
+            if from_station:
+                pass_fields["primaryFields"].append({
+                    "key": "from-station",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "semantics": {
+                        "departureLocation": {
+                            "latitude": float(from_station["latitude"]),
+                            "longitude": float(from_station["longitude"]),
+                        },
+                        "departureStationName": from_station["name"]
+                    }
+                })
+                pass_json["locations"].append({
+                    "latitude": float(from_station["latitude"]),
+                    "longitude": float(from_station["longitude"]),
+                    "relevantText": from_station["name"]
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": from_station["name"],
+                    "ll": f"{from_station['latitude']},{from_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": from_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
+                })
+            elif parsed_layout and parsed_layout.trips[0].departure_station:
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
@@ -1461,28 +1419,51 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "departureStationName": parsed_layout.trips[0].departure_station
                     }
                 })
+
+            if to_station:
+                pass_fields["primaryFields"].append({
+                    "key": "to-station",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "semantics": {
+                        "destinationLocation": {
+                            "latitude": float(from_station["latitude"]),
+                            "longitude": float(from_station["longitude"]),
+                        },
+                        "destinationStationName": to_station["name"]
+                    }
+                })
+                pass_json["locations"].append({
+                    "latitude": float(to_station["latitude"]),
+                    "longitude": float(to_station["longitude"]),
+                    "relevantText": to_station["name"]
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": to_station["name"],
+                    "ll": f"{to_station['latitude']},{to_station['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": to_station["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
+                })
+            elif parsed_layout and parsed_layout.trips[0].arrival_station:
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
                     "value": parsed_layout.trips[0].arrival_station,
                     "semantics": {
-                        "departureStationName": parsed_layout.trips[0].arrival_station,
+                        "destinationStationName": parsed_layout.trips[0].arrival_station
                     }
                 })
 
             if parsed_layout and parsed_layout.travel_class:
-                if pass_type == "boardingPass":
-                    pass_fields["auxiliaryFields"].append({
-                        "key": "class-code",
-                        "label": "class-code-label",
-                        "value": parsed_layout.travel_class,
-                    })
-                else:
-                    pass_fields["headerFields"].append({
-                        "key": "class-code",
-                        "label": "class-code-label",
-                        "value": parsed_layout.travel_class,
-                    })
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": parsed_layout.travel_class,
+                })
 
             for res in ticket_data.cd_ut.reservations:
                 pass_fields["headerFields"].append({
@@ -1537,18 +1518,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_data.cd_ut.name:
-                if pass_type == "boardingPass":
-                    pass_fields["auxiliaryFields"].append({
-                        "key": "passenger",
-                        "label": "passenger-label",
-                        "value": ticket_data.cd_ut.name,
-                    })
-                else:
-                    pass_fields["primaryFields"].append({
-                        "key": "passenger",
-                        "label": "passenger-label",
-                        "value": ticket_data.cd_ut.name,
-                    })
+                pass_fields["auxiliaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": ticket_data.cd_ut.name,
+                })
 
         elif ticket_data.oebb_99:
             pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -3930,6 +3904,7 @@ RICS_LOGO = {
     3509: "pass/logo-ret.png",
     3591: "pass/logo-akn.png",
     3606: "pass/logo-qbuzz.png",
+    3697: "pass/logo-cendis.png",
     5008: "pass/logo-vrn.png",
     5173: "pass/logo-nasa.png",
     5177: "pass/logo-fribus.png",
@@ -3950,6 +3925,7 @@ RICS_BG = {
     3018: "rgb(175, 22, 52)",
     3453: "rgb(1, 142, 74)",
     3497: "rgb(20, 24, 26)",
+    3697: "rgb(15, 23, 62)",
     5188: "rgb(64, 0, 44)",
     8999: "rgb(11, 130, 143)",
 }
@@ -3964,6 +3940,7 @@ RICS_FG = {
     3453: "rgb(255, 255, 255)",
     3497: "rgb(255, 255, 255)",
     3606: "rgb(0, 70, 84)",
+    3697: "rgb(255, 255, 255)",
     5188: "rgb(255, 255, 255)",
     8999: "rgb(255, 255, 255)",
 }
@@ -3982,6 +3959,7 @@ RICS_FG_SECONDARY = {
     3453: "rgb(255, 255, 255)",
     3497: "rgb(149, 200, 125)",
     3606: "rgb(247, 147, 48)",
+    3697: "rgb(110, 193, 228)",
     5188: "rgb(255, 54, 0)",
     5245: "rgb(211, 2, 64)",
     8999: "rgb(226, 1, 112)",

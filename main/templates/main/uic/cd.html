@@ -34,14 +34,42 @@
     {% if cd.distance %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Distance</dt>
-            <dd class="govuk-summary-list__value">{{ cd.distance }}km</dd>
+            <dd class="govuk-summary-list__value">{{ cd.distance }} km</dd>
+        </div>
+    {% endif %}
+    {% if cd.origin_uic %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Origin</dt>
+            <dd class="govuk-summary-list__value">
+                {% with station=cd.origin_uic|get_station:"uic" %}
+                    {% if station %}
+                        {% include "main/uic/station.html" with station=station %}
+                    {% else %}
+                        <code>{{ cd.origin_uic }}</code>
+                    {% endif %}
+                {% endwith %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if cd.destination_uic %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Destination</dt>
+            <dd class="govuk-summary-list__value">
+                {% with station=cd.destination_uic|get_station:"uic" %}
+                    {% if station %}
+                        {% include "main/uic/station.html" with station=station %}
+                    {% else %}
+                        <code>{{ cd.destination_uic }}</code>
+                    {% endif %}
+                {% endwith %}
+            </dd>
         </div>
     {% endif %}
     {% if cd.route_uic %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Route</dt>
             <dd class="govuk-summary-list__value">
-                 {% for station_id in cd.route_uic %}
+                {% for station_id in cd.route_uic %}
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">
