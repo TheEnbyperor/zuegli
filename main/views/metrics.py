@@ -39,6 +39,15 @@ def metrics(request):
         org_name = org["full_name"] if org else "Unknown"
         out.append(f'ticket_ssb_issuer{{rics="{rics}", name="{org_name}"}} {o["total"]}')
 
+    ssb1_count = models.SSB1TicketInstance.objects.all().count()
+    out.append(f'ticket_instance_count{{type="ssb1"}} {ssb1_count}')
+
+    for o in models.SSB1TicketInstance.objects.all().values('distributor_rics').annotate(total=Count('distributor_rics')):
+        rics = o["distributor_rics"]
+        org = uic.rics.get_rics(rics)
+        org_name = org["full_name"] if org else "Unknown"
+        out.append(f'ticket_ssb1_issuer{{rics="{rics}", name="{org_name}"}} {o["total"]}')
+
     rsp_count = models.RSPTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="rsp"}} {rsp_count}')
 

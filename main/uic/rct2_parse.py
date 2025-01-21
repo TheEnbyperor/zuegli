@@ -74,7 +74,7 @@ class RCT2Parser:
             departure_station = self.read_area(top=line, left=12, width=20, height=1)
             arrival_station =   self.read_area(top=line, left=32, width=20, height=1)
 
-            if issuing_rics in (84, 1084, 1184, 3095, 3606, 3626):
+            if issuing_rics in (84, 1084, 1184, 3095, 3509, 3606, 3626):
                 departure = self.read_area(top=line, left=1,  width=10, height=1)
                 arrival =   self.read_area(top=line, left=52, width=10, height=1)
 
