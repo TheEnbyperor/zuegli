@@ -229,7 +229,8 @@ def parse_via(via: str) -> Route:
                     point += ")"
             elif c == "<":
                 points.append(Point(point))
-                route.append(Carrier(carrier_num, points))
+                if carrier_num or any(p.name for p in points):
+                    route.append(Carrier(carrier_num, points))
                 state = State.CARRIER
                 carrier_num = ""
                 point = ""
@@ -243,6 +244,7 @@ def parse_via(via: str) -> Route:
     if point:
         points.append(Point(point))
 
-    route.append(Carrier(carrier_num, points))
+    if carrier_num or any(p.name for p in points):
+        route.append(Carrier(carrier_num, points))
 
     return route
