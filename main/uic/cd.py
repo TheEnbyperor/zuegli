@@ -26,7 +26,23 @@ class CDRecordUT:
     reference: typing.Optional[str]
     distance: typing.Optional[decimal.Decimal]
     reservations: typing.List[Reservation]
+    return_reservations: typing.List[Reservation]
+    route_uic: typing.Optional[typing.List[int]]
     other_blocks: typing.Dict[str, str]
+
+    @staticmethod
+    def parse_reservations(data: str) -> typing.List[Reservation]:
+        reservations = []
+        for res in data.split("#"):
+            parts = res.split("|")
+            if len(parts) != 3:
+                raise CDException(f"Invalid reservation")
+            reservations.append(Reservation(
+                train=parts[0],
+                carriage=parts[1],
+                seat=parts[2],
+            ))
+        return reservations
 
     @classmethod
     def parse(cls, data: bytes, version: int):
@@ -43,6 +59,8 @@ class CDRecordUT:
         distance = None
         ticket_type = None
         reservations = []
+        return_reservations = []
+        route_uic = None
         blocks = {}
 
         offset = 0
@@ -74,31 +92,29 @@ class CDRecordUT:
                     distance = decimal.Decimal(block_data)
                 except ValueError as e:
                     raise CDException(f"Invalid distance") from e
+            elif block_id == "KS":
+                try:
+                    route_uic = [int(v) for v in block_data.split("|")]
+                except ValueError as e:
+                    raise CDException(f"Invalid station ID") from e
             elif block_id == "OD":
                 try:
                     validity_start = tz.localize(
                         datetime.datetime.strptime(block_data, "%d.%m.%Y %H:%M")
-                    ).astimezone(pytz.utc)
+                    )
                 except ValueError as e:
                     raise CDException(f"Invalid validity start date") from e
             elif block_id == "DO":
                 try:
                     validity_end = tz.localize(
                         datetime.datetime.strptime(block_data, "%d.%m.%Y %H:%M")
-                    ).astimezone(pytz.utc)
+                    )
                 except ValueError as e:
                     raise CDException(f"Invalid validity end date") from e
             elif block_id == "RT":
-                reservations = []
-                for res in block_data.split("#"):
-                    parts = res.split("|")
-                    if len(parts) != 3:
-                        raise CDException(f"Invalid reservation")
-                    reservations.append(Reservation(
-                        train=parts[0],
-                        carriage=parts[1],
-                        seat=parts[2],
-                    ))
+                reservations = cls.parse_reservations(block_data)
+            elif block_id == "RZ":
+                return_reservations = cls.parse_reservations(block_data)
             else:
                 blocks[block_id] = block_data
 
@@ -112,4 +128,6 @@ class CDRecordUT:
             distance=distance,
             ticket_type=ticket_type,
             reservations=reservations,
+            return_reservations=return_reservations,
+            route_uic=route_uic,
         )

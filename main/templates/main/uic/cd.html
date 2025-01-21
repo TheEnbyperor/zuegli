@@ -22,13 +22,13 @@
     {% if cd.validity_start %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Validity start</dt>
-            <dd class="govuk-summary-list__value">{{ cd.validity_start|date:"F d, Y H:i" }}</dd>
+            <dd class="govuk-summary-list__value">{{ cd.validity_start|date:"F d, Y H:i e" }}</dd>
         </div>
     {% endif %}
     {% if cd.validity_end %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Validity end</dt>
-            <dd class="govuk-summary-list__value">{{ cd.validity_end|date:"F d, Y H:i" }}</dd>
+            <dd class="govuk-summary-list__value">{{ cd.validity_end|date:"F d, Y H:i e" }}</dd>
         </div>
     {% endif %}
     {% if cd.distance %}
@@ -37,11 +37,77 @@
             <dd class="govuk-summary-list__value">{{ cd.distance }}km</dd>
         </div>
     {% endif %}
+    {% if cd.route_uic %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Route</dt>
+            <dd class="govuk-summary-list__value">
+                 {% for station_id in cd.route_uic %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                {% if forloop.first %}
+                                    Origin
+                                {% elif forloop.last %}
+                                    Destination
+                                {% else %}
+                                    Intermediate
+                                {% endif %}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% with station=station_id|get_station:"uic" %}
+                                {% if station %}
+                                    {% include "main/uic/station.html" with station=station %}
+                                {% else %}
+                                    <dl class="govuk-summary-list">
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Station ID</dt>
+                                            <dd class="govuk-summary-list__value"><code>{{ station_id }}</code></dd>
+                                        </div>
+                                    </dl>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
     {% if cd.reservations %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Reservations</dt>
             <dd class="govuk-summary-list__value">
                 {% for res in cd.reservations %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">Reservation #{{ forloop.counter }}</h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Train</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.train }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carriage</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.carriage }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Seat</dt>
+                                    <dd class="govuk-summary-list__value">{{ res.seat }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if cd.return_reservations %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return reservations</dt>
+            <dd class="govuk-summary-list__value">
+                {% for res in cd.return_reservations %}
                     <div class="govuk-summary-card">
                         <div class="govuk-summary-card__title-wrapper">
                             <h2 class="govuk-summary-card__title">Reservation #{{ forloop.counter }}</h2>
