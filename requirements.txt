@@ -11,7 +11,7 @@ pytz
 asn1tools
 niquests
 django-storages
-boto3
+boto3==1.35.99
 django-cockroachdb
 django-xff
 psycopg2-binary
