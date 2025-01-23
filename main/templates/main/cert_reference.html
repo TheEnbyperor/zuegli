@@ -1,8 +1,12 @@
 <dl class="govuk-summary-list govuk-summary-list--no-border">
-    {% with org_name=ref.org_name_opt %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Responsible organisation ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ref.responsible_org_id }}</code></dd>
+    </div>
+    {% with org_name=ref.responsible_org_name_opt %}
         {% if org_name %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Organisation Name</dt>
+                <dt class="govuk-summary-list__key">Responsible organisation Name</dt>
                 <dd class="govuk-summary-list__value">
                     {{ org_name }}
                 </dd>
@@ -10,20 +14,26 @@
         {% endif %}
     {% endwith %}
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Organisation ID</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.org_id }}</code></dd>
+        <dt class="govuk-summary-list__key">Owner organisation ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ref.owner_org_id }}</code></dd>
+    </div>
+    {% with org_name=ref.owner_org_name_opt %}
+        {% if org_name %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Owner organisation Name</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ org_name }}
+                </dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">SAM Valid From</dt>
+        <dd class="govuk-summary-list__value">{{ ref.sam_valid_from }}</dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Year</dt>
-        <dd class="govuk-summary-list__value">{{ ref.year }}</dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Service indicator</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.service_indicator }}</code></dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Algorithm reference</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.algorithm_reference }}</code></dd>
+        <dt class="govuk-summary-list__key">SAM Expiry</dt>
+        <dd class="govuk-summary-list__value">{{ ref.sam_expiry }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">SAM ID</dt>

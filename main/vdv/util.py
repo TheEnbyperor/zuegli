@@ -37,14 +37,26 @@ class Date:
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "Date":
-        if len(data) != 4:
+        if len(data) == 4:
+            return cls(
+                year=un_bcd(data[0:2]),
+                month=un_bcd(data[2:3]),
+                day=un_bcd(data[3:4])
+            )
+        elif len(data) == 3:
+            return cls(
+                year=2000 + un_bcd(data[0:1]),
+                month=un_bcd(data[1:2]),
+                day=un_bcd(data[2:3])
+            )
+        elif len(data) == 2:
+            return cls(
+                year=2000 + un_bcd(data[0:1]),
+                month=un_bcd(data[1:2]),
+                day=1
+            )
+        else:
             raise ValueError("Invalid date length")
-
-        return cls(
-            year=un_bcd(data[0:2]),
-            month=un_bcd(data[2:3]),
-            day=un_bcd(data[3:4])
-        )
 
 
 @dataclasses.dataclass

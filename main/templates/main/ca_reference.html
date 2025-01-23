@@ -1,24 +1,26 @@
 <dl class="govuk-summary-list govuk-summary-list--no-border">
-    {% with ascii_name=ref.ascii_name %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Region</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ascii_name.0 }}</code></dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Name</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ascii_name.1 }}</code></dd>
-        </div>
-    {% endwith %}
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Year</dt>
-        <dd class="govuk-summary-list__value">{{ ref.year }}</dd>
+        <dt class="govuk-summary-list__key">Country code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ref.country_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Issuer</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ref.certificate_issuer }}</code></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Service indicator</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.service_indicator }}</code></dd>
+        <dd class="govuk-summary-list__value">{{ ref.service_indicator_name }}</dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Algorithm reference</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.algorithm_reference }}</code></dd>
+        <dt class="govuk-summary-list__key">Discretionary data</dt>
+        <dd class="govuk-summary-list__value">{{ ref.discretionary_data_name }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Certificate serial</dt>
+        <dd class="govuk-summary-list__value">{{ ref.certificate_serial }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Generation year</dt>
+        <dd class="govuk-summary-list__value">{{ ref.generation_year }}</dd>
     </div>
 </dl>

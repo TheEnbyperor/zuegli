@@ -161,6 +161,12 @@
             </dd>
         </div>
     {% endif %}
+    {% if cd.seller_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Seller ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ cd.seller_id }}</code></dd>
+        </div>
+    {% endif %}
     {% if cd.other_blocks %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Unknown blocks</dt>

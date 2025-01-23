@@ -3,7 +3,6 @@ import typing
 import pathlib
 import ber_tlv.tlv
 import hashlib
-import string
 import django.core.files.storage
 
 from . import iso9796, util, ticket
@@ -22,48 +21,97 @@ KNOWN_OIDS = (
 
 @dataclasses.dataclass
 class CAReference:
-    name: bytes
-    service_indicator: int
-    algorithm_reference: int
-    year: int
+    country_code: str = ""
+    certificate_issuer: str = ""
+    service_indicator: int = 0
+    discretionary_data: int = 0
+    certificate_serial: int = 0
+    generation_year: int = 0
 
     @staticmethod
     def type():
         return "ca"
 
     def __str__(self):
-        region, name = self.ascii_name()
-        return (f"region={region}, name={name}, "
-                f"service_indicator={self.service_indicator}, algorithm_reference={self.algorithm_reference}, "
-                f"year={self.year}")
+        return (f"country_code={self.country_code}, certificate_issuer={self.certificate_issuer}, "
+                f"service_indicator={self.service_indicator}, discretionary_data={self.discretionary_data}, "
+                f"certificate_serial={self.certificate_serial}, generation_year={self.generation_year}")
 
-    def ascii_name(self):
-        name = self.name.decode("ascii", "replace")
-        return name[0:2], name[2:]
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "CAReference":
         if len(data) != 8:
             raise ValueError("Invalid CA reference length")
+
+        try:
+            country_code = data[0:2].decode("ascii")
+        except UnicodeDecodeError:
+            raise ValueError("Invalid CA reference country code")
+
+        try:
+            certificate_issuer = data[2:5].decode("ascii")
+        except UnicodeDecodeError:
+            raise ValueError("Invalid CA reference issuer")
+
         return cls(
-            name=data[0:5],
-            service_indicator=data[5],
-            algorithm_reference=data[6],
-            year=1990 + data[7]
+            country_code=country_code,
+            certificate_issuer=certificate_issuer,
+            service_indicator=(data[5] & 0xF0) >> 4,
+            discretionary_data=data[5] & 0x0F,
+            certificate_serial=data[6],
+            generation_year=2000 + util.un_bcd(data[7:8])
         )
 
     @classmethod
     def root(cls):
-        return cls(b"EUVDV", 16, 1, 1996)
+        return cls("EU", "VDV", 1, 0, 1, 2006)
+
+    @property
+    def service_indicator_name(self):
+        if self.service_indicator == 0:
+            return "Authentication"
+        elif self.service_indicator == 1:
+            return "Digital Signature"
+        elif self.service_indicator == 2:
+            return "Key Encryption"
+        elif self.service_indicator == 3:
+            return "Data Encryption"
+        elif self.service_indicator == 4:
+            return "Key Agreement"
+        else:
+            return f"Unknown - {self.service_indicator}"
+
+    @property
+    def discretionary_data_name(self):
+        if self.discretionary_data == 0:
+            return "Root CA - Production"
+        elif self.discretionary_data == 1:
+            return "Sub CA - Production"
+        elif self.discretionary_data == 2:
+            return "Root CA - Test Environment 1"
+        elif self.discretionary_data == 3:
+            return "Sub CA - Test Environment 1"
+        elif self.discretionary_data == 4:
+            return "Root CA - Test Environment 2"
+        elif self.discretionary_data == 5:
+            return "Sub CA - Test Environment 2"
+        elif self.discretionary_data == 6:
+            return "Root CA - Internal"
+        elif self.discretionary_data == 7:
+            return "Sub CA - Internal"
+        elif self.discretionary_data == 8:
+            return "Root CA - Test Environment 2"
+        elif self.discretionary_data == 9:
+            return "Sub CA - Test Environment 2"
 
 
 @dataclasses.dataclass
 class CertificateReference:
-    org_id: int
+    responsible_org_id: int
+    owner_org_id: int
+    sam_expiry: util.Date
+    sam_valid_from: util.Date
     sam_id: int
-    service_indicator: int
-    algorithm_reference: int
-    year: int
 
     @staticmethod
     def type():
@@ -71,21 +119,71 @@ class CertificateReference:
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "CertificateReference":
-        if len(data) != 8:
+        if len(data) != 12:
             raise ValueError("Invalid certificate reference length")
+
         return cls(
-            org_id=int.from_bytes(data[3:5], "big"),
-            sam_id=int.from_bytes(data[5:8], "big"),
-            year=1990 + data[0],
-            service_indicator=data[1],
-            algorithm_reference=data[2],
+            responsible_org_id=int.from_bytes(data[0:2], "big"),
+            sam_expiry=util.Date.from_bytes(data[2:4]),
+            sam_valid_from=util.Date.from_bytes(data[4:7]),
+            owner_org_id=int.from_bytes(data[7:9], "big"),
+            sam_id=int.from_bytes(data[9:12], "big"),
         )
 
-    def org_name(self):
-        return ticket.map_org_id(self.org_id)
+    def responsible_org_name(self):
+        return ticket.map_org_id(self.responsible_org_id)
 
-    def org_name_opt(self):
-        return ticket.map_org_id(self.org_id, True)
+    def responsible_org_name_opt(self):
+        return ticket.map_org_id(self.responsible_org_id, True)
+
+    def owner_org_name(self):
+        return ticket.map_org_id(self.owner_org_id)
+
+    def owner_org_name_opt(self):
+        return ticket.map_org_id(self.owner_org_id, True)
+
+
+@dataclasses.dataclass
+class CertificateHolderAuthorization:
+    name: str
+    service_indicator: int
+
+    def __str__(self):
+        return f"{self.name}:{self.service_indicator}"
+
+    @property
+    def allowed_command(self):
+        v = (self.service_indicator & 0xF0) >> 4
+
+        if v == 1:
+            return "Load Key - Verification"
+        elif v == 2:
+            return "Verify Digital Signature"
+        elif v == 3:
+            return "Verify Certificate"
+        elif v == 4:
+            return "External/Internal Authenticate"
+        elif v == 5:
+            return "Load Key - Encryption"
+        else:
+            return f"Unknown - {v}"
+
+    @property
+    def certificate_role(self):
+        v = self.service_indicator & 0x0F
+
+        if v == 0:
+            return "CA"
+        elif v == 1:
+            return "User medium"
+        elif v == 2:
+            return "Unrestricted SAM"
+        elif v in (4, 8):
+            return "SAM, without sales process"
+        elif v == 0xA:
+            return "Security management of an external organization"
+        elif v == 0xF:
+            return "Security management of the VDV"
 
 
 @dataclasses.dataclass
@@ -121,10 +219,12 @@ class CertificateStore:
 
     def find_certificate(self, ca_reference: CAReference) -> typing.Optional[RawCertificate]:
         for certificate in self.certificates:
-            if certificate.ca_reference.name == ca_reference.name and \
+            if certificate.ca_reference.country_code == ca_reference.country_code and \
+                    certificate.ca_reference.certificate_issuer == ca_reference.certificate_issuer and \
                     certificate.ca_reference.service_indicator == ca_reference.service_indicator and \
-                    certificate.ca_reference.algorithm_reference == ca_reference.algorithm_reference and \
-                    certificate.ca_reference.year == ca_reference.year:
+                    certificate.ca_reference.discretionary_data == ca_reference.discretionary_data and \
+                    certificate.ca_reference.certificate_serial == ca_reference.certificate_serial and \
+                    certificate.ca_reference.generation_year == ca_reference.generation_year:
                 return certificate
         return None
 
@@ -237,19 +337,6 @@ class Certificate:
 
 
 @dataclasses.dataclass
-class CertificateHolderAuthorization:
-    name: str
-    service_indicator: int
-
-    def __str__(self):
-        return f"{self.name}:{self.service_indicator}"
-
-    @property
-    def is_ca(self):
-        return bool(self.service_indicator & 0x10)
-
-
-@dataclasses.dataclass
 class RSAPublicKey:
     modulus: int
     modulus_len: int
@@ -321,7 +408,7 @@ def decode_oid(data: bytes):
 class CertificateData:
     certificate_profile_identifier: int
     ca_reference: CAReference
-    certificate_holder_reference: typing.Union[CAReference, CertificateReference]
+    certificate_holder_reference: typing.Union[CertificateReference, CAReference]
     certificate_holder_authorization: CertificateHolderAuthorization
     expiry_date: util.Date
     public_key: RSAPublicKey
@@ -362,17 +449,17 @@ class CertificateData:
         if components not in (SHA1_WITH_RSA_SIGNATURE, TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA):
             raise util.VDVException("Unknown public key OID")
 
-        cha = CertificateHolderAuthorization(
-            name=data.content[21:27].decode("ascii"),
-            service_indicator=data.content[27]
-        )
+        chr_data = data.content[9:21]
+        is_ca = chr_data[0:4] == b"\x00\x00\x00\x00"
 
         return cls(
             certificate_profile_identifier=data.content[0],
             ca_reference=CAReference.from_bytes(data.content[1:9]),
-            certificate_holder_reference=CAReference.from_bytes(data.content[13:21])
-            if cha.is_ca else CertificateReference.from_bytes(data.content[13:21]),
-            certificate_holder_authorization=cha,
+            certificate_holder_reference=CAReference.from_bytes(chr_data[4:]) if is_ca else CertificateReference.from_bytes(chr_data),
+            certificate_holder_authorization=CertificateHolderAuthorization(
+                name=data.content[21:27].decode("ascii"),
+                service_indicator=data.content[27]
+            ),
             expiry_date=util.Date.from_bytes(data.content[28:32]),
             public_key=RSAPublicKey.from_bytes(data.content[oid_offset:], data.content[0])
         )

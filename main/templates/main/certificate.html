@@ -38,19 +38,12 @@
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Service indicator</dt>
-                    <dd class="govuk-summary-list__value">
-                        <code>{{ cert.certificate_holder_authorization.service_indicator }}</code></dd>
+                    <dt class="govuk-summary-list__key">Allowed commands</dt>
+                    <dd class="govuk-summary-list__value">{{ cert.certificate_holder_authorization.allowed_command }}</dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">CA cert</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if cert.certificate_holder_authorization.is_ca %}
-                            <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                        {% else %}
-                            <strong class="govuk-tag govuk-tag--red">No</strong>
-                        {% endif %}
-                    </dd>
+                    <dt class="govuk-summary-list__key">Certificate role</dt>
+                    <dd class="govuk-summary-list__value">{{ cert.certificate_holder_authorization.certificate_role }}</dd>
                 </div>
             </dl>
         </dd>
