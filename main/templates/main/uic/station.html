@@ -8,10 +8,10 @@
         <dt class="govuk-summary-list__key">Country</dt>
         <dd class="govuk-summary-list__value">{{ station.country|iso3166 }}</dd>
     </div>
-    {% if station.uicId %}
+    {% if station.uic %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">UIC Code</dt>
-            <dd class="govuk-summary-list__value"><code>{{ station.uicId }}</code></dd>
+            <dd class="govuk-summary-list__value"><code>{{ station.uic }}</code></dd>
         </div>
     {% endif %}
     {% if station.latitude and station.longitude %}
