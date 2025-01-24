@@ -8,10 +8,10 @@
         <dt class="govuk-summary-list__key">Country</dt>
         <dd class="govuk-summary-list__value">{{ station.country|iso3166 }}</dd>
     </div>
-    {% if station.uic %}
+    {% if station.uicId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">UIC Code</dt>
-            <dd class="govuk-summary-list__value"><code>{{ station.uic }}</code></dd>
+            <dd class="govuk-summary-list__value"><code>{{ station.uicId }}</code></dd>
         </div>
     {% endif %}
     {% if station.latitude and station.longitude %}
@@ -22,12 +22,6 @@
                     <code>{{ station.latitude }}, {{ station.longitude }}</code>
                 </a>
             </dd>
-        </div>
-    {% endif %}
-    {% if station.time_zone %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Timezone</dt>
-            <dd class="govuk-summary-list__value"><code>{{ station.time_zone }}</code></dd>
         </div>
     {% endif %}
 </dl>

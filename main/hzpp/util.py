@@ -1,0 +1,2 @@
+class HZPPException(Exception):
+    pass

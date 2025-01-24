@@ -9,7 +9,7 @@ import hashlib
 
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp
 
 
 class TicketError(Exception):
@@ -443,6 +443,26 @@ class SSB1Ticket:
         hd.update(b"ssb1")
         hd.update(self.ticket.issuer_rics.to_bytes(8, "big"))
         hd.update(self.ticket.pnr.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class HZPPTicket:
+    raw_ticket: bytes
+    data: hzpp.HZPPTicket
+
+    @property
+    def ticket_type(self) -> str:
+        return "HZPP"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"hzpp")
+        hd.update(self.data.ticket_number.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1019,8 +1039,25 @@ def parse_ticket_ssb1(ticket_bytes: bytes) -> SSB1Ticket:
     )
 
 
+def parse_ticket_hzpp(ticket_bytes: bytes) -> HZPPTicket:
+    try:
+        data = hzpp.HZPPTicket.parse(ticket_bytes)
+    except hzpp.HZPPException:
+        raise TicketError(
+            title="This doesn't look like a valid HŽPP ticket",
+            message="You may have scanned something that is not an HŽPP ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return HZPPTicket(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket]:
+        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket, HZPPTicket]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
@@ -1050,6 +1087,9 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
     if ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)
 
+    if ticket_bytes[:2] == b"B1":
+        return parse_ticket_hzpp(ticket_bytes)
+
     if ticket_bytes[:1] == b"e":
         return parse_ticket_elb(ticket_bytes)
 
@@ -1069,7 +1109,7 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
 def create_ticket_obj(
         ticket_obj: "models.Ticket",
         ticket_bytes: bytes,
-        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket],
+        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket, HZPPTicket],
 ) -> bool:
     created = False
     barcode_hash = hashlib.sha256(ticket_bytes).hexdigest()
@@ -1181,6 +1221,14 @@ def create_ticket_obj(
             defaults={
                 "ticket": ticket_obj,
                 "distributor_rics": ticket_data.ticket.issuer_rics,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, HZPPTicket):
+        _, created = models.HZPPTicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
             }
         )

@@ -48,6 +48,12 @@ class SSB1TicketInstanceInline(admin.StackedInline):
     readonly_fields = ("barcode_hash", "distributor_rics")
 
 
+class HZPPTicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.HZPPTicketInstance
+    readonly_fields = ("barcode_hash",)
+
+
 class AppleRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AppleRegistration
@@ -100,6 +106,7 @@ class TicketAdmin(admin.ModelAdmin):
         ELBTicketInstanceInline,
         SSBTicketInstanceInline,
         SSB1TicketInstanceInline,
+        HZPPTicketInstanceInline,
         AppleRegistrationInline,
     ]
     view_on_site = True

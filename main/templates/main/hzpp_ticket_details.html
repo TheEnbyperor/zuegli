@@ -1,0 +1,116 @@
+{% load rics %}
+<h2 class="govuk-heading-m">HŽPP Ticket Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Ticket number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.ticket_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Product code</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.product_code }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Price</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.price_str }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y H:i e" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid until</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.valid_until|date:"F d, Y H:i e" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Outbound journey</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                {% with station=ticket.data.outbound_journey.origin_station|get_station:"uic" %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% include "main/uic/station.html" with station=station %}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.data.outbound_journey.origin_station }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with station=ticket.data.outbound_journey.destination_station|get_station:"uic" %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% include "main/uic/station.html" with station=station %}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.data.outbound_journey.destination_station }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Travel class</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.data.outbound_journey.travel_class }}</dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+    {% if ticket.data.return_journey %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Return journey</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                {% with station=ticket.data.return_journey.origin_station|get_station:"uic" %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% include "main/uic/station.html" with station=station %}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.data.return_journey.origin_station }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                {% with station=ticket.data.return_journey.destination_station|get_station:"uic" %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% include "main/uic/station.html" with station=station %}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.data.return_journey.destination_station }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Travel class</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.return_journey.travel_class }}</dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
+</dl>

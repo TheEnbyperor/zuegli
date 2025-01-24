@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp
 
 
 def make_pass_token():
@@ -144,6 +144,9 @@ class Ticket(models.Model):
         if ticket_instance := self.ssb1_instances.first():
             return ticket_instance
 
+        if ticket_instance := self.hzpp_instances.first():
+            return ticket_instance
+
 
 class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances")
@@ -256,6 +259,24 @@ class SNCFTicketInstance(models.Model):
         return t.SNCFTicket(
             raw_ticket=self.barcode_data,
             data=sncf.SNCFTicket.parse(bytes(self.barcode_data))
+        )
+
+
+class HZPPTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="hzpp_instances")
+    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "HŽPP ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def as_ticket(self) -> t.HZPPTicket:
+        return t.HZPPTicket(
+            raw_ticket=self.barcode_data,
+            data=hzpp.HZPPTicket.parse(bytes(self.barcode_data))
         )
 
 

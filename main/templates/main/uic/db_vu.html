@@ -107,13 +107,13 @@
                 {% if product.validity_start %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Valid from</dt>
-                        <dd class="govuk-summary-list__value">{{ product.validity_start|utc|date:"F d, Y H:i" }}</dd>
+                        <dd class="govuk-summary-list__value">{{ product.validity_start|date:"F d, Y H:i e" }}</dd>
                     </div>
                 {% endif %}
                 {% if product.validity_end %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Valid until</dt>
-                        <dd class="govuk-summary-list__value">{{ product.validity_end|utc|date:"F d, Y H:i" }}</dd>
+                        <dd class="govuk-summary-list__value">{{ product.validity_end|date:"F d, Y H:i e" }}</dd>
                     </div>
                 {% endif %}
                 {% if product.cost %}

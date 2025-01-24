@@ -3,6 +3,7 @@ import django.core.files.storage
 import json
 
 STATIONS = None
+UIC_STATIONS = None
 FINNISH_STATIONS = None
 
 def get_stations_list() -> typing.Dict[str, typing.Any]:
@@ -16,6 +17,18 @@ def get_stations_list() -> typing.Dict[str, typing.Any]:
         STATIONS = json.load(f)
 
     return STATIONS
+
+def get_uic_stations_list() -> typing.Dict[str, typing.Any]:
+    global UIC_STATIONS
+
+    if UIC_STATIONS:
+        return UIC_STATIONS
+
+    uic_storage = django.core.files.storage.storages["uic-data"]
+    with uic_storage.open("uic-stations.json", "r") as f:
+        UIC_STATIONS = json.load(f)
+
+    return UIC_STATIONS
 
 def get_finnish_stations_list() -> typing.Dict[str, typing.Any]:
     global FINNISH_STATIONS
@@ -31,23 +44,23 @@ def get_finnish_stations_list() -> typing.Dict[str, typing.Any]:
 
 
 def get_station_by_uic(code) -> typing.Optional[dict]:
-    if i := get_stations_list()["uic_codes"].get(str(code)):
-        return get_stations_list()["stations"][i]
+    if i := get_uic_stations_list()["uic_codes"].get(str(code)):
+        return get_uic_stations_list()["stations"][i]
 
 
 def get_station_by_db(code) -> typing.Optional[dict]:
     if i := get_stations_list()["db_ids"].get(str(code)):
-        return get_stations_list()["stations"][i]
+        return get_station_by_uic(i)
 
 
 def get_station_by_sncf(code) -> typing.Optional[dict]:
     if i := get_stations_list()["sncf_ids"].get(str(code)):
-        return get_stations_list()["stations"][i]
+        return get_station_by_uic(i)
 
 
 def get_station_by_benerail(code) -> typing.Optional[dict]:
     if i := get_stations_list()["benerail_ids"].get(str(code)):
-        return get_stations_list()["stations"][i]
+        return get_station_by_uic(i)
 
 
 def get_station_by_finland(code) -> typing.Optional[dict]:

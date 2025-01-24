@@ -42,6 +42,22 @@ class Command(BaseCommand):
         with uic_storage.open("rics_codes.json", "w") as f:
             json.dump(out, f)
 
+        stations_r = niquests.get("https://api.kontrolor.si/stations", headers={
+            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+        })
+        stations_r.raise_for_status()
+        out = {
+            "stations": [],
+            "uic_codes": {}
+        }
+        for row in stations_r.json():
+            out["stations"].append(row)
+            i = len(out["stations"]) - 1
+            out["uic_codes"][row["uicId"]] = i
+
+        with uic_storage.open("uic-stations.json", "w") as f:
+            json.dump(out, f)
+
         stations_r = niquests.get("https://github.com/trainline-eu/stations/raw/refs/heads/master/stations.csv", headers={
             "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
         })
@@ -49,31 +65,18 @@ class Command(BaseCommand):
         stations = csv.DictReader(stations_r.text.splitlines(), delimiter=";")
 
         out = {
-            "stations": [],
-            "uic_codes": {},
             "db_ids": {},
             "sncf_ids": {},
             "benerail_ids": {}
         }
         for row in stations:
-            station = {}
-            for k, v in row.items():
-                if v == "t":
-                    station[k] = True
-                elif v == "f":
-                    station[k] = False
-                elif v:
-                    station[k] = v
-            out["stations"].append(station)
-            i = len(out["stations"]) - 1
             if row["uic"]:
-                out["uic_codes"][row["uic"]] = i
-            if row["db_id"]:
-                out["db_ids"][row["db_id"]] = i
-            if row["benerail_id"]:
-                out["benerail_ids"][row["benerail_id"]] = i
-            if row["sncf_id"]:
-                out["sncf_ids"][row["sncf_id"]] = i
+                if row["db_id"]:
+                    out["db_ids"][row["db_id"]] = row["uic"]
+                if row["benerail_id"]:
+                    out["benerail_ids"][row["benerail_id"]] = row["uic"]
+                if row["sncf_id"]:
+                    out["sncf_ids"][row["sncf_id"]] = row["uic"]
 
         with uic_storage.open("stations.json", "w") as f:
             json.dump(out, f)
