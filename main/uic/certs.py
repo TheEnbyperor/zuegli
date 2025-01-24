@@ -4,8 +4,10 @@ import cryptography.hazmat.primitives.hashes
 import cryptography.hazmat.primitives.serialization
 import django.core.files.storage
 import json
+import functools
 
 
+@functools.lru_cache
 def signing_cert(rics: int, key_id: int):
     uic_storage = django.core.files.storage.storages["uic-data"]
     key_name = f"cert-{rics}_{key_id}.der"
@@ -30,6 +32,7 @@ def signing_cert(rics: int, key_id: int):
     return meta, key
 
 
+@functools.lru_cache
 def public_key(rics: int, key_id: int):
     uic_storage = django.core.files.storage.storages["uic-data"]
     cert_name = f"cert-{rics}_{key_id}.der"
