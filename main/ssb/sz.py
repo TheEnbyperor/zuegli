@@ -68,14 +68,20 @@ class Ticket:
             return "Otroci 6-15"
         elif self.price_level == 4:
             return "Otroci do 6"
+        elif self.price_level == 23:
+            return "Pes - 50%"
         elif self.price_level == 43:
             return "Skupina do 26 let - 50%"
+        elif self.price_level == 66:
+            return "Družina odrasli LV - 40%"
+        elif self.price_level == 68:
+            return "Družina otr do 6 LV - 100%"
         elif self.price_level == 87:
             return "IJPP potnik"
         elif self.price_level == 94:
             return "Spremlj. skupine - 50%"
         else:
-            return f"Unknown - {self.ticket_type}"
+            return f"Unknown - {self.price_level}"
 
     def ticket_type_str(self):
         if self.ticket_type in (1, 3):
@@ -92,11 +98,19 @@ class Ticket:
             return "Turist vikend"
         elif self.ticket_type == 153:
             return "Mestna vozovnica"
+        elif self.ticket_type in (167):
+            return "Družinska enosmerna"
+        elif self.ticket_type == 209:
+            return "Enkratni dodatek IJPP ICS"
+        elif self.ticket_type in (235):
+            return "Enosmerna vozovnica za psa"
+        elif self.ticket_type in (237):
+            return "Povratna vozovnica za psa"
         else:
             return f"Unknown - {self.ticket_type}"
 
     def travel_class(self):
-        if self.ticket_type in (1, 2, 145):
+        if self.ticket_type in (1, 2, 145, 167, 235, 237):
             return "second"
         elif self.ticket_type in (3, 4, 131):
             return "first"
