@@ -98,13 +98,13 @@ class Ticket:
             return "Turist vikend"
         elif self.ticket_type == 153:
             return "Mestna vozovnica"
-        elif self.ticket_type in (167):
+        elif self.ticket_type == 167:
             return "Družinska enosmerna"
         elif self.ticket_type == 209:
             return "Enkratni dodatek IJPP ICS"
-        elif self.ticket_type in (235):
+        elif self.ticket_type == 235:
             return "Enosmerna vozovnica za psa"
-        elif self.ticket_type in (237):
+        elif self.ticket_type == 237:
             return "Povratna vozovnica za psa"
         else:
             return f"Unknown - {self.ticket_type}"
