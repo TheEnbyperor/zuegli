@@ -8,7 +8,7 @@ import functools
 
 
 @functools.lru_cache
-def signing_cert(rics: int, key_id: int):
+def signing_cert(rics: int, key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
     key_name = f"cert-{rics}_{key_id}.der"
     key_meta_name = f"cert-{rics}_{key_id}.json"
@@ -33,7 +33,7 @@ def signing_cert(rics: int, key_id: int):
 
 
 @functools.lru_cache
-def public_key(rics: int, key_id: int):
+def public_key(rics: int, key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
     cert_name = f"cert-{rics}_{key_id}.der"
     key_name = f"pk-{rics}_{key_id}.der"

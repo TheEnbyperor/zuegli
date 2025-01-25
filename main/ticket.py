@@ -21,11 +21,11 @@ class TicketError(Exception):
 
 @dataclasses.dataclass
 class VDVTicket:
-    root_ca: vdv.CertificateData
-    issuing_ca: vdv.CertificateData
-    envelope_certificate: vdv.CertificateData
+    root_ca: "vdv.CertificateData"
+    issuing_ca: "vdv.CertificateData"
+    envelope_certificate: "vdv.CertificateData"
     raw_ticket: bytes
-    ticket: vdv.VDVTicket
+    ticket: "vdv.VDVTicket"
 
     @property
     def ticket_type(self) -> str:
@@ -67,19 +67,19 @@ class VDVTicket:
 @dataclasses.dataclass
 class UICTicket:
     raw_bytes: bytes
-    envelope: uic.Envelope
-    head: uic.HeadV1
-    layout: typing.Optional[uic.LayoutV1]
-    flex: typing.Optional[uic.Flex]
-    dt_ti: typing.Optional[uic.dt.DTRecordTI]
-    dt_pa: typing.Optional[uic.dt.DTRecordPA]
-    db_bl: typing.Optional[uic.db.DBRecordBL]
-    cd_ut: typing.Optional[uic.cd.CDRecordUT]
-    oebb_99: typing.Optional[uic.oebb.OeBBRecord99]
-    db_vu: typing.Optional[uic.db_vu.DBRecordVU]
-    vor_fi: typing.Optional[uic.vor.VORRecordFI]
-    vor_vd: typing.Optional[uic.vor.VORRecordVD]
-    other_records: typing.List[uic.envelope.Record]
+    envelope: "uic.Envelope"
+    head: "uic.HeadV1"
+    layout: typing.Optional["uic.LayoutV1"]
+    flex: typing.Optional["uic.Flex"]
+    dt_ti: typing.Optional["uic.dt.DTRecordTI"]
+    dt_pa: typing.Optional["uic.dt.DTRecordPA"]
+    db_bl: typing.Optional["uic.db.DBRecordBL"]
+    cd_ut: typing.Optional["uic.cd.CDRecordUT"]
+    oebb_99: typing.Optional["uic.oebb.OeBBRecord99"]
+    db_vu: typing.Optional["uic.db_vu.DBRecordVU"]
+    vor_fi: typing.Optional["uic.vor.VORRecordFI"]
+    vor_vd: typing.Optional["uic.vor.VORRecordVD"]
+    other_records: typing.List["uic.envelope.Record"]
 
     @property
     def ticket_type(self) -> str:
@@ -265,8 +265,10 @@ class UICTicket:
             return False
 
     @classmethod
-    def from_envelope(cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
-                      context: vdv.ticket.Context) -> "UICTicket":
+    def from_envelope(
+            cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
+            context: "vdv.ticket.Context"
+    ) -> "UICTicket":
         return cls(
             raw_bytes=ticket_bytes,
             envelope=ticket_envelope,
@@ -466,7 +468,7 @@ class HZPPTicket:
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
-def parse_ticket_vdv(ticket_bytes: bytes, context: vdv.ticket.Context) -> VDVTicket:
+def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVTicket:
     pki_store = vdv.CertificateStore()
     try:
         pki_store.load_certificates()
@@ -774,8 +776,9 @@ def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic
         )
 
 
-def parse_ticket_uic_db_vu(ticket_envelope: uic.Envelope, context: vdv.ticket.Context) -> typing.Optional[
-    uic.db_vu.DBRecordVU]:
+def parse_ticket_uic_db_vu(
+        ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
+) -> typing.Optional["uic.db_vu.DBRecordVU"]:
     vu_record = next(filter(lambda r: r.id == "0080VU" and r.version == 1, ticket_envelope.records), None)
     if not vu_record:
         return None
@@ -805,7 +808,7 @@ def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[u
         )
 
 
-def parse_ticket_uic_vor_fi(ticket_envelope: uic.Envelope) -> typing.Optional[uic.vor.VORRecordFI]:
+def parse_ticket_uic_vor_fi(ticket_envelope: uic.Envelope) -> typing.Optional["uic.vor.VORRecordFI"]:
     vor_record = next(filter(lambda r: r.id == "3306FI" and r.version == 1, ticket_envelope.records), None)
     if not vor_record:
         return None
@@ -820,7 +823,7 @@ def parse_ticket_uic_vor_fi(ticket_envelope: uic.Envelope) -> typing.Optional[ui
         )
 
 
-def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional[uic.vor.VORRecordVD]:
+def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional["uic.vor.VORRecordVD"]:
     vor_record = next(filter(lambda r: r.id == "3306VD" and r.version == 1, ticket_envelope.records), None)
     if not vor_record:
         return None
@@ -835,7 +838,7 @@ def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional[ui
         )
 
 
-def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTicket:
+def parse_ticket_uic(ticket_bytes: bytes, context: "vdv.ticket.Context") -> UICTicket:
     try:
         ticket_envelope = uic.Envelope.parse(ticket_bytes)
     except uic.util.UICException:
@@ -849,7 +852,7 @@ def parse_ticket_uic(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTic
     return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
 
 
-def parse_ticket_uic_qr(ticket_bytes: bytes, context: vdv.ticket.Context) -> UICTicket:
+def parse_ticket_uic_qr(ticket_bytes: bytes, context: "vdv.ticket.Context") -> UICTicket:
     try:
         ticket = ticket_bytes.decode("ascii")
     except UnicodeDecodeError:

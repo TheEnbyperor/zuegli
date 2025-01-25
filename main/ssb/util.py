@@ -1,4 +1,7 @@
 import bitstring
+import typing
+import dataclasses
+from ..templatetags import rics
 
 STRING1 = {
     0: "0",
@@ -76,3 +79,17 @@ class BitStream:
     def __getitem__(self, index) -> "BitStream":
         if isinstance(index, slice):
             return BitStream(self.data[index])
+
+
+@dataclasses.dataclass
+class Station:
+   id: typing.Union[int, str]
+   type: str
+
+   def station(self):
+       if self.type == "uic":
+           return rics.get_station(self.id, "uic")
+       elif self.type == "db_hafas":
+           return rics.get_station(self.id, "db")
+       elif self.type == "benerail":
+           return rics.get_station(self.id, "benerail")

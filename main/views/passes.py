@@ -2858,13 +2858,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 }
             })
 
-            if ticket_data.data.departure_station_uic:
-                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
-            elif ticket_data.data.departure_station_benerail:
-                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_benerail, "benerail")
-            else:
-                from_station = None
-
+            from_station = ticket_data.data.departure_station.station()
             if from_station:
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
@@ -2888,23 +2882,17 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": from_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
                 })
-            elif ticket_data.data.departure_station_name:
+            elif ticket_data.data.departure_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
-                    "value": ticket_data.data.departure_station_name,
+                    "value": ticket_data.data.departure_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.departure_station_name,
+                        "departureStationName": ticket_data.data.departure_station.id
                     }
                 })
 
-            if ticket_data.data.arrival_station_uic:
-                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
-            elif ticket_data.data.arrival_station_benerail:
-                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_benerail, "benerail")
-            else:
-                to_station = None
-
+            to_station = ticket_data.data.arrival_station.station()
             if to_station:
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
@@ -2928,13 +2916,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": to_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
                 })
-            elif ticket_data.data.arrival_station_name:
+            elif ticket_data.data.arrival_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
-                    "value": ticket_data.data.arrival_station_name,
+                    "value": ticket_data.data.arrival_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.arrival_station_name,
+                        "departureStationName": ticket_data.data.arrival_station.id,
                     }
                 })
 
@@ -3006,8 +2994,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 }
             })
 
-            if ticket_data.data.departure_station_uic:
-                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+            from_station = ticket_data.data.departure_station.station()
+            if from_station:
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
@@ -3030,18 +3018,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": from_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
                 })
-            elif ticket_data.data.departure_station_name:
+            elif ticket_data.data.departure_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
-                    "value": ticket_data.data.departure_station_name,
+                    "value": ticket_data.data.departure_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.departure_station_name,
+                        "departureStationName": ticket_data.data.departure_station.id,
                     }
                 })
 
-            if ticket_data.data.arrival_station_uic:
-                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+            to_station = ticket_data.data.arrival_station.station()
+            if to_station:
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
@@ -3064,13 +3052,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": to_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
                 })
-            elif ticket_data.data.arrival_station_name:
+            elif ticket_data.data.arrival_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
-                    "value": ticket_data.data.arrival_station_name,
+                    "value": ticket_data.data.arrival_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.arrival_station_name,
+                        "departureStationName": ticket_data.data.arrival_station.id,
                     }
                 })
 
@@ -3107,6 +3095,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             })
 
             if ticket_data.data.extra_text:
+                if ticket_data.data.extra_text == "GATING_ONLY":
+                    pass_fields["headerFields"].append({
+                        "key": "card-name",
+                        "label": "product-label",
+                        "value": "Keycard",
+                    })
+
                 pass_fields["backFields"].append({
                     "key": "extra-date",
                     "label": "other-data-label",
@@ -3132,8 +3127,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": "group-ticket-label"
             })
 
-            if ticket_data.data.departure_station_uic:
-                from_station = templatetags.rics.get_station(ticket_data.data.departure_station_uic, "uic")
+            from_station = ticket_data.data.departure_station.station()
+            if from_station:
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
@@ -3156,18 +3151,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": from_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station['name']}</a>",
                 })
-            elif ticket_data.data.departure_station_name:
+            elif ticket_data.data.departure_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "from-station",
                     "label": "from-station-label",
-                    "value": ticket_data.data.departure_station_name,
+                    "value": ticket_data.data.departure_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.departure_station_name,
+                        "departureStationName": ticket_data.data.departure_station.id,
                     }
                 })
 
-            if ticket_data.data.arrival_station_uic:
-                to_station = templatetags.rics.get_station(ticket_data.data.arrival_station_uic, "uic")
+            to_station = ticket_data.data.arrival_station.station()
+            if to_station:
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
@@ -3190,13 +3185,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": to_station["name"],
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station['name']}</a>",
                 })
-            elif ticket_data.data.arrival_station_name:
+            elif ticket_data.data.arrival_station.type == "name":
                 pass_fields["primaryFields"].append({
                     "key": "to-station",
                     "label": "to-station-label",
-                    "value": ticket_data.data.arrival_station_name,
+                    "value": ticket_data.data.arrival_station.id,
                     "semantics": {
-                        "departureStationName": ticket_data.data.arrival_station_name,
+                        "departureStationName": ticket_data.data.arrival_station.id
                     }
                 })
 

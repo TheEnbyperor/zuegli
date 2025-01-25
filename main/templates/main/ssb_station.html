@@ -1,0 +1,30 @@
+{% load rics %}
+{% if station.type == "uic" %}
+{% with s=station.id|get_station:"uic" %}
+    {% if s %}
+        {% include "main/uic/station.html" with station=s %}
+    {% else %}
+        UIC: <code>{{ station.id }}</code>
+    {% endif %}
+{% endwith %}
+{% elif station.type == "benerail" %}
+{% with s=station.id|get_station:"berenail" %}
+    {% if s %}
+        {% include "main/uic/station.html" with station=s %}
+    {% else %}
+        BENERAIL: <code>{{ station.id }}</code>
+    {% endif %}
+{% endwith %}
+{% elif station.type == "db_hafas" %}
+{% with s=station.id|get_station:"db" %}
+    {% if s %}
+        {% include "main/uic/station.html" with station=s %}
+    {% else %}
+        HAFAS: <code>{{ station.id }}</code>
+    {% endif %}
+{% endwith %}
+{% elif station.type == "other" %}
+Other: <code>{{ station.id }}</code>
+{% elif station.type == "name" %}
+{{ station.id }}
+{% endif %}

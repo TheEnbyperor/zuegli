@@ -18,7 +18,7 @@ def main():
 
     keys = r.json()
 
-    with open(ROOT_DIR / "scripts" / "extra_rsp_keys.json") as f:
+    with open(ROOT_DIR / "data" / "extra_rsp_keys.json") as f:
         extra_keys = json.load(f)
 
     out = {}

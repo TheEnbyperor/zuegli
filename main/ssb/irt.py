@@ -13,15 +13,9 @@ class IntegratedReservationTicket:
     pnr: str
     issuing_date: datetime.date
     sub_type: int
-    departure_station_uic: typing.Optional[int]
-    arrival_station_uic: typing.Optional[int]
     station_code_table: typing.Optional[int]
-    departure_station_other: typing.Optional[int]
-    arrival_station_other: typing.Optional[int]
-    departure_station_name: typing.Optional[str]
-    arrival_station_name: typing.Optional[str]
-    departure_station_benerail: typing.Optional[str]
-    arrival_station_benerail: typing.Optional[str]
+    departure_station: util.Station
+    arrival_station: util.Station
     departure: datetime.datetime
     train_number: str
     coach_number: int
@@ -51,36 +45,31 @@ class IntegratedReservationTicket:
         departure_date = issuing_date + datetime.timedelta(days=departure_day)
         departure_time = datetime.datetime.combine(departure_date, datetime.time.min) + datetime.timedelta(minutes=departure_time)
 
-        departure_station_uic = None
-        arrival_station_uic = None
-        departure_station_name = None
-        arrival_station_name = None
         station_code_table = None
-        departure_station_other = None
-        arrival_station_other = None
-        departure_station_benerail = None
-        arrival_station_benerail = None
-
         station_code_flag = data.read_bool(120)
         if issuer_rics == 3018:
-            departure_station_benerail = data.read_string(121, 151)
-            arrival_station_benerail = data.read_string(151, 181)
+            departure_station = util.Station(id=data.read_string(121, 151), type="benerail")
+            arrival_station = util.Station(id=data.read_string(151, 181), type="benerail")
         else:
             if not station_code_flag:
                 station_code_table = data.read_int(121, 125)
                 if station_code_table == 1:
-                    departure_station_uic = data.read_int(125, 153)
-                    arrival_station_uic = data.read_int(153, 181)
+                    departure_station = util.Station(id=data.read_int(125, 153), type="uic")
+                    arrival_station = util.Station(id=data.read_int(153, 181), type="uic")
                 else:
-                    departure_station_other = data.read_int(125, 153)
-                    arrival_station_other = data.read_int(153, 181)
+                    departure_station = util.Station(id=data.read_int(125, 153), type="other")
+                    arrival_station = util.Station(id=data.read_int(153, 181), type="other")
             else:
-                if issuer_rics == 1088:
-                    departure_station_uic = data.read_int(121, 151) % 10000000
-                    arrival_station_uic = data.read_int(151, 181) % 10000000
+                if issuer_rics in (1080, 1088):
+                    departure_station = util.Station(id=data.read_int(125, 153) % 10000000, type="uic")
+                    arrival_station = util.Station(id=data.read_int(153, 181) % 10000000, type="uic")
+                    if 8000000 <= departure_station.id <= 8099999:
+                        departure_station.type = "db_hafas"
+                    if 8000000 <= arrival_station.id <= 8099999:
+                        arrival_station.type = "db_hafas"
                 else:
-                    departure_station_name = data.read_string(121, 151)
-                    arrival_station_name = data.read_string(151, 181)
+                    departure_station = util.Station(id=data.read_string(125, 153), type="name")
+                    arrival_station = util.Station(id=data.read_string(153, 181), type="name")
 
         return cls(
             specimen=data.read_bool(14),
@@ -90,15 +79,9 @@ class IntegratedReservationTicket:
             pnr=data.read_string(21, 105),
             issuing_date=issuing_date,
             sub_type=data.read_int(118, 120),
-            departure_station_uic=departure_station_uic,
-            arrival_station_uic=arrival_station_uic,
-            departure_station_name=departure_station_name,
-            arrival_station_name=arrival_station_name,
+            departure_station=departure_station,
+            arrival_station=arrival_station,
             station_code_table=station_code_table,
-            departure_station_other=departure_station_other,
-            arrival_station_other=arrival_station_other,
-            departure_station_benerail=departure_station_benerail,
-            arrival_station_benerail=arrival_station_benerail,
             departure=departure_time,
             train_number=data.read_string(201, 231),
             coach_number=data.read_int(231, 241),
