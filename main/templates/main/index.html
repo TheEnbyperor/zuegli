@@ -178,8 +178,6 @@ Pass Contents</code></pre>
             async function barkoderInit() {
                 const scanButton = document.getElementById("scan-button");
                 const videoContainer = document.getElementById("video-container");
-                const scanForm = document.getElementById("scan-form");
-                const dataInput = document.getElementById("data");
 
                 var Barkoder = await BarkoderSDK.initialize("PEmBIohr9EZXgCkySoetbwP4gvOfMcGzgxKPL2X6uqOYS_kq3Dg29ETQUylj0B7tX0Qjf7OADh49UOuXd3lLay9853Akr1i-RGjOaTUVnYXgcwJWDlQCw_hdEoq8mlpW6kE-OCxLu1sGWWMK2cxflKL4Dgvjdq1BbCIZxwsuRb2EqVTF0JY2DkwXSr4Fi565lAIMd6_gBbiQyuOnj_zXYTFyR4N1z9k_1kB2PBw_12mdDPzmCvSLqq4Qsi6d3qX8HzYwjSmZ7zXXusyhtoTqo1imBWSoXlGEyRJPij4cdKr9frbzqPZ-EOdcHopW_YhN0LOjJOKc4ugS9gVtjgSZTQ..");
 
@@ -193,24 +191,48 @@ Pass Contents</code></pre>
                 );
                 Barkoder.setCameraResolution(Barkoder.constants.CameraResolution.FHD);
                 Barkoder.setDecodingSpeed(Barkoder.constants.DecodingSpeed.Normal);
-                Barkoder.setEncodingCharacterSet(Barkoder.constants.EncodingCharacterSet.BINARY);
+                Barkoder.setScannerTimeout(0);
                 Barkoder.setCloseEnabled(false);
                 Barkoder.setContinuous(false);
 
                 scanButton.addEventListener('click', function () {
                     videoContainer.style.display = "block";
                     Barkoder.startScanner(function (result) {
+                        Barkoder.stopScanner();
                         videoContainer.style.display = "none";
-                        const rawBytes = result.binaryData;
-                        const hexOctets = new Array(rawBytes.length * 2);
-                        for (let i = 0; i < rawBytes.length; ++i)
-                            hexOctets.push(("0" + rawBytes[i].toString(16)).slice(-2));
-                        dataInput.value = hexOctets.join("");
-                        scanForm.submit();
+
+                        if (result.barcodeTypeName === "QR") {
+                            const canvas = document.createElement("canvas");
+                            canvas.width = result.capturedFrame.width;
+                            canvas.height = result.capturedFrame.height;
+                            const ctx = canvas.getContext("2d");
+                            console.log(result.capturedFrame);
+                            ctx.putImageData(result.capturedFrame, 0, 0);
+                            const dataURL = canvas.toDataURL("image/png");
+
+                            Barkoder.setEncodingCharacterSet(Barkoder.constants.EncodingCharacterSet.BINARY);
+                            Barkoder.scanImage(dataURL, function (result) {
+                                submitResult(result);
+                            });
+                        } else {
+                            submitResult(result);
+                        }
                     });
                 });
 
                 scanButton.disabled = false;
+            }
+
+            function submitResult(result) {
+                const scanForm = document.getElementById("scan-form");
+                const dataInput = document.getElementById("data");
+
+                const rawBytes = result.binaryData;
+                const hexOctets = new Array(rawBytes.length * 2);
+                for (let i = 0; i < rawBytes.length; ++i)
+                    hexOctets.push(("0" + rawBytes[i].toString(16)).slice(-2));
+                dataInput.value = hexOctets.join("");
+                scanForm.submit();
             }
 
             window.addEventListener('load', barkoderInit);
