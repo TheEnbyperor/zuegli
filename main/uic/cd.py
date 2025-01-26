@@ -107,10 +107,11 @@ class CDRecordUT:
                 except ValueError as e:
                     raise CDException(f"Invalid distance") from e
             elif block_id == "KS":
-                try:
-                    route_uic = [int(v) for v in block_data.split("|")]
-                except ValueError as e:
-                    raise CDException(f"Invalid station ID") from e
+                if block_data != "0":
+                    try:
+                        route_uic = [int(v) for v in block_data.split("|")]
+                    except ValueError as e:
+                        raise CDException(f"Invalid station ID") from e
             elif block_id == "OD":
                 try:
                     validity_start = tz.localize(
