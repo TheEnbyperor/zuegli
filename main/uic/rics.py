@@ -17,5 +17,5 @@ def get_rics_list() -> typing.Dict[str, dict]:
     return RICS
 
 
-def get_rics(code: int) -> typing.Optional[dict]:
+def get_rics(code: typing.Union[int, str]) -> typing.Optional[dict]:
     return get_rics_list().get(str(code))

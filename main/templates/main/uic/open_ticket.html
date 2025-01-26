@@ -1,4 +1,5 @@
 {% load tz rics %}
+{% localtime off %}
 <dl class="govuk-summary-list">
     {% if ticket.referenceNum %}
         <div class="govuk-summary-list__row">
@@ -297,3 +298,4 @@
     {% endif %}
     {% include "main/uic/extension.html" with obj=card %}
 </dl>
+{% endlocaltime %}

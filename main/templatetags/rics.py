@@ -6,7 +6,7 @@ import typing
 import uuid
 import iso3166
 from django import template
-from .. import uic, vdv
+from .. import uic, vdv, swisspass
 
 register = template.Library()
 
@@ -197,6 +197,11 @@ def vdv_product_id(value, org_id: str):
         except ValueError:
             return
         return vdv.ticket.product_name(org_id, value, True)
+
+
+@register.filter(name="swisspass_org_id")
+def swisspass_org_id(value):
+    return swisspass.org_id.get_org(value)
 
 
 @register.filter(name="validity_zone_names")

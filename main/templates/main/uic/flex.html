@@ -1,8 +1,8 @@
-{% load tz %}
-{% load rics %}
+{% load tz rics %}
 
 <h2 class="govuk-heading-m">Flexible data</h2>
 
+{% localtime off %}
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Version</dt>
@@ -247,6 +247,7 @@
     {% endif %}
     {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
 </dl>
+{% endlocaltime %}
 
 <details class="govuk-details">
     <summary class="govuk-details__summary">

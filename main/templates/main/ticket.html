@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-{% load static %}
+{% load static tz %}
 
 {% block title %}Ticket {{ ticket.public_id }} - Train Tickets to Wallet Passes{% endblock title %}
 
@@ -45,9 +45,11 @@
                 <div class="govuk-notification-banner__content">
                     This appears to be a SaarVV ticket.
                     {% if user.is_authenticated %}
-                        <a href="{% url 'saarvv_login' %}">Link your SaarVV account</a>  to have it automatically refresh in the background.
+                        <a href="{% url 'saarvv_login' %}">Link your SaarVV account</a>  to have it automatically
+                        refresh in the background.
                     {% else %}
-                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your SaarVV account to have it automatically refresh in the background.
+                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your SaarVV account to
+                        have it automatically refresh in the background.
                     {% endif %}
                 </div>
             </div>
@@ -60,9 +62,12 @@
                 <div class="govuk-notification-banner__content">
                     This appears to be a Deutsche Bahn ticket.
                     {% if user.is_authenticated %}
-                        <a href="{% url 'db_login' %}">Link your DB account</a> or <a href="{% url 'new_db_abo' %}">add your DB subscription</a> to have it automatically refresh in the background.
+                        <a href="{% url 'db_login' %}">Link your DB account</a> or
+                        <a href="{% url 'new_db_abo' %}">add your DB subscription</a> to have it automatically refresh
+                        in the background.
                     {% else %}
-                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your DB account or add your DB subscription to have it automatically refresh in the background.
+                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your DB account or add
+                        your DB subscription to have it automatically refresh in the background.
                     {% endif %}
                 </div>
             </div>
@@ -125,122 +130,136 @@
 
     <div class="govuk-!-margin-7">
         <h2 class="govuk-heading-l">Ticket details</h2>
-        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count %}
+        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count %}
             <p class="govuk-body">No instances found for this ticket.</p>
         {% else %}
-            {% for instance in ticket.vdv_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.ticket_id }}</span>
-                            <span>{{ instance.validity_start|date:"F d, Y H:i:s" }} - {{ instance.validity_end|date:"F d, Y H:i:s" }}</span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/vdv_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.uic_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket_id }}</span>
-                            {% with distributor=ticket_obj.distributor %}
-                                {% if distributor %}
-                                    <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
-                                {% endif %}
-                            {% endwith %}
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/uic/ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.rsp_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
-                            Type {{ instance.ticket_type }} - {{ instance.issuer_id }}
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/rsp/rsp_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.sncf_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/sncf_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.elb_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence_number }}</span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/elb_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.ssb_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
-                            {% with distributor=ticket_obj.envelope.issuer %}
-                                {% if distributor %}
-                                    <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
-                                {% endif %}
-                            {% endwith %}
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/ssb_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.ssb1_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.pnr }}</span>
-                            {% with distributor=ticket_obj.ticket.issuer %}
-                                {% if distributor %}
-                                    <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
-                                {% endif %}
-                            {% endwith %}
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/ssb1_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
-            {% for instance in ticket.hzpp_instances.all %}
-                {% with ticket_obj=instance.as_ticket %}
-                    <details class="govuk-details">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.ticket_number }}</span>
-                        </summary>
-                        <div class="govuk-details__text">
-                            {% include 'main/hzpp_ticket_details.html' with ticket=ticket_obj %}
-                        </div>
-                    </details>
-                {% endwith %}
-            {% endfor %}
+            {% localtime off %}
+                {% for instance in ticket.vdv_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.ticket_id }}</span>
+                                <span>{{ instance.validity_start|date:"F d, Y H:i:s" }} - {{ instance.validity_end|date:"F d, Y H:i:s" }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/vdv_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.uic_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket_id }}</span>
+                                {% with distributor=ticket_obj.distributor %}
+                                    {% if distributor %}
+                                        <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/uic/ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.rsp_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
+                                Type {{ instance.ticket_type }} - {{ instance.issuer_id }}
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/rsp/rsp_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.sncf_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/sncf_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.elb_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence_number }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/elb_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.ssb_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
+                                {% with distributor=ticket_obj.envelope.issuer %}
+                                    {% if distributor %}
+                                        <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/ssb_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.ssb1_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.pnr }}</span>
+                                {% with distributor=ticket_obj.ticket.issuer %}
+                                    {% if distributor %}
+                                        <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/ssb1_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.hzpp_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.ticket_number }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/hzpp_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.swisspass_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.ticket.ticket_data.ticket_id }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/swisspass_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+            {% endlocaltime %}
         {% endif %}
     </div>
 

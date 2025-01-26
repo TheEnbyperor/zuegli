@@ -14,7 +14,7 @@ from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib import messages
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb, swisspass
 
 
 def robots(request):
@@ -3548,7 +3548,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         pass_type = "boardingPass"
         pass_fields["transitType"] = "PKTransitTypeTrain"
-        pass_json["backgroundColor"]  = "rgb(239, 239, 239)"
+        pass_json["backgroundColor"] = "rgb(239, 239, 239)"
         pass_json["labelColor"] = "rgb(255, 51, 51)"
         pass_json["foregroundColor"] = "rgb(5, 80, 160)"
 
@@ -3743,6 +3743,218 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         add_pkp_img(pkp, "pass/logo-hzpp.png", "logo.png")
         have_logo = True
+    elif isinstance(ticket_instance, models.SwissPassTicketInstance):
+        ticket_data: ticket.SwissPassTicket = ticket_instance.as_ticket()
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatQR",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": str(ticket_data.data.ticket.ticket_data.ticket_id),
+        }]
+
+        pass_fields["backFields"].append({
+            "key": "ticket-id",
+            "label": "ticket-id-label",
+            "value": str(ticket_data.data.ticket.ticket_data.ticket_id),
+            "semantics": {
+                "confirmationNumber": str(ticket_data.data.ticket.ticket_data.ticket_id),
+            }
+        })
+
+        if ticket_data.data.ticket.ticket_data.train_data:
+            train_number = ", ".join([t.train_id for t in ticket_data.data.ticket.ticket_data.train_data])
+            pass_fields["headerFields"].append({
+                "key": "train-number",
+                "label": "train-number-label",
+                "value": train_number,
+                "semantics": {
+                    "vehicleNumber": train_number
+                }
+            })
+        else:
+            pass_fields["headerFields"].append({
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.data.ticket.ticket_data.trip_data.ticket_type.name
+            })
+
+        pass_fields["backFields"].append({
+            "key": "product-back",
+            "label": "product-label",
+            "value": ticket_data.data.ticket.ticket_data.trip_data.ticket_type.name
+        })
+
+        if ticket_data.data.ticket.ticket_data.trip_data.departure_station or \
+            ticket_data.data.ticket.ticket_data.trip_data.arrival_station:
+            pass_type = "boardingPass"
+            pass_fields["transitType"] = "PKTransitTypeTrain"
+
+        if ticket_data.data.ticket.ticket_data.trip_data.departure_station:
+            pass_fields["primaryFields"].append({
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": ticket_data.data.ticket.ticket_data.trip_data.departure_station,
+                "semantics": {
+                    "departureStationName": ticket_data.data.ticket.ticket_data.trip_data.departure_station
+                }
+            })
+
+        if ticket_data.data.ticket.ticket_data.trip_data.arrival_station:
+            pass_fields["primaryFields"].append({
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": ticket_data.data.ticket.ticket_data.trip_data.arrival_station,
+                "semantics": {
+                    "arrivalStationName": ticket_data.data.ticket.ticket_data.trip_data.arrival_station
+                }
+            })
+
+        one_day_ticket = ticket_data.data.valid_from.date() == ticket_data.data.valid_until.date()
+        pass_fields["secondaryFields"].append({
+            "key": "validity-start",
+            "label": "validity-start-label",
+            "dateStyle": "PKDateStyleMedium",
+            "timeStyle": "PKDateStyleMedium" if one_day_ticket else "PKDateStyleNone",
+            "value": ticket_data.data.valid_from.isoformat(),
+        })
+        pass_fields["backFields"].append({
+            "key": "validity-start-back",
+            "label": "validity-start-label",
+            "dateStyle": "PKDateStyleFull",
+            "timeStyle": "PKDateStyleFull",
+            "value": ticket_data.data.valid_from.isoformat(),
+        })
+        pass_fields["secondaryFields"].append({
+            "key": "validity-end",
+            "label": "validity-end-label",
+            "dateStyle": "PKDateStyleMedium",
+            "timeStyle": "PKDateStyleMedium" if one_day_ticket else "PKDateStyleNone",
+            "value": ticket_data.data.valid_until.isoformat(),
+        })
+        pass_fields["backFields"].append({
+            "key": "validity-start-back",
+            "label": "validity-start-label",
+            "dateStyle": "PKDateStyleFull",
+            "timeStyle": "PKDateStyleFull",
+            "value": ticket_data.data.valid_until.isoformat(),
+        })
+
+        pass_json["expirationDate"] = ticket_data.data.valid_until.isoformat()
+
+        if ticket_data.data.ticket.ticket_data.trip_data.route:
+            pass_fields["auxiliaryFields"].append({
+                "key": "route",
+                "label": "route-label",
+                "value": ticket_data.data.ticket.ticket_data.trip_data.route
+            })
+
+        if ticket_data.data.ticket.ticket_data.trip_data.travel_class:
+            pass_fields["auxiliaryFields"].append({
+                "key": "class-code",
+                "label": "class-code-label",
+                "value": f"class-code-{ticket_data.data.ticket.ticket_data.trip_data.travel_class}-label"
+            })
+
+        if ticket_data.data.ticket.ticket_data.HasField("traveler"):
+            name_value = (f"{ticket_data.data.ticket.ticket_data.traveler.forename} "
+                          f"{ticket_data.data.ticket.ticket_data.traveler.surname}").strip()
+            if name_value:
+                if pass_type == "boardingPass":
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": name_value,
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": ticket_data.data.ticket.ticket_data.traveler.surname,
+                                "givenName": ticket_data.data.ticket.ticket_data.traveler.forename,
+                            }
+                        }
+                    })
+                else:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": name_value,
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": ticket_data.data.ticket.ticket_data.traveler.surname,
+                                "givenName": ticket_data.data.ticket.ticket_data.traveler.forename,
+                            }
+                        }
+                    })
+            if ticket_data.data.ticket.ticket_data.traveler.birthday:
+                if pass_type == "boardingPass":
+                    pass_fields["secondaryFields"].append({
+                        "key": "date-of-birth",
+                        "label": "date-of-birth-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": ticket_data.data.traveler_birthday.isoformat(),
+                    })
+                else:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "date-of-birth",
+                        "label": "date-of-birth-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": ticket_data.data.traveler_birthday.isoformat(),
+                    })
+
+        pass_fields["backFields"].append({
+            "key": "issued-date",
+            "label": "issued-at-label",
+            "dateStyle": "PKDateStyleFull",
+            "timeStyle": "PKDateStyleFull",
+            "value": ticket_data.data.issuing_time.isoformat(),
+        })
+
+        if ticket_data.data.ticket.ticket_data.trip_data.article_number:
+            pass_fields["backFields"].append({
+                "key": "article-number",
+                "label": "article-number-label",
+                "value": str(ticket_data.data.ticket.ticket_data.trip_data.article_number)
+            })
+
+        if ticket_data.data.ticket.ticket_data.HasField("payment"):
+            pass_fields["backFields"].append({
+                "key": "price",
+                "label": "price-label",
+                "value": f"{ticket_data.data.ticket.ticket_data.payment.price} "
+                         f"{ticket_data.data.ticket.ticket_data.payment.currency}"
+            })
+
+        if distributor := ticket_data.data.issuer():
+            if distributor["url"]:
+                pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
+            else:
+                pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
+
+        if seller := swisspass.org_id.get_org(ticket_data.data.ticket.ticket_data.ticket_issue.issuing_org):
+            pass_fields["backFields"].append({
+                "key": "ticket-org",
+                "label": "ticketing-organisation-label",
+                "value": f"{seller['short_name']} - {seller['name']}"
+            })
+
+        issuer_id = ticket_data.data.ticket.ticket_data.ticket_issue.issuing_org
+        if issuer_id in SWISSPASS_LOGO:
+            add_pkp_img(pkp, SWISSPASS_LOGO[issuer_id], "logo.png")
+            have_logo = True
+        if issuer_id in SWISSPASS_BG:
+            pass_json["backgroundColor"] = SWISSPASS_BG[issuer_id]
+        if issuer_id in SWISSPASS_FG:
+            pass_json["foregroundColor"] = SWISSPASS_FG[issuer_id]
+        if issuer_id in SWISSPASS_FG_SECONDARY:
+            pass_json["labelColor"] = SWISSPASS_FG_SECONDARY[issuer_id]
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
@@ -3896,6 +4108,7 @@ PASS_STRINGS = {
 "route-label" = "Route";
 "group-ticket-label" = "Group ticket";
 "group-leader-label" = "Group leader";
+"article-number-label" = "Article number";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -3958,6 +4171,7 @@ PASS_STRINGS = {
 "route-label" = "Llwybr";
 "group-ticket-label" = "Tocyn grwp";
 "group-leader-label" = "Prifdeithiwr";
+"article-number-label" = "Rhif articl";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -4020,6 +4234,7 @@ PASS_STRINGS = {
 "route-label" = "Route";
 "group-ticket-label" = "Gruppenkarte";
 "group-leader-label" = "Hauptfahrgast";
+"article-number-label" = "Artikel-nr.";
 """,
     "nl": """
 "product-label" = "Product";
@@ -4231,6 +4446,26 @@ VDV_ORG_ID_FG_SECONDARY = {
     6310: "rgb(12, 156, 58)",
     6517: "rgb(255, 204, 2)",
     6691: "rgb(0, 56, 116)",
+}
+
+SWISSPASS_LOGO = {
+    11: "pass/logo-sbb.png",
+    490: "pass/logo-zvv.png"
+}
+
+SWISSPASS_BG = {
+    11: "rgb(246, 246, 246)",
+    490: "rgb(255, 255, 255)"
+}
+
+SWISSPASS_FG = {
+    11: "rgb(33, 33, 33)",
+    490: "rgb(99, 99, 99)"
+}
+
+SWISSPASS_FG_SECONDARY = {
+    11: "rgb(255, 0, 0)",
+    490: "rgb(4, 121, 204)"
 }
 
 RSP_ORG_LOGO = {

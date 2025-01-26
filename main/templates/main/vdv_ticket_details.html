@@ -1,3 +1,5 @@
+{% load tz %}
+{% localtime off %}
 <h2 class="govuk-heading-m">Ticket Data</h2>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
@@ -256,3 +258,4 @@
         {% include "main/certificate.html" with cert=ticket.envelope_certificate %}
     </div>
 </div>
+{% endlocaltime %}

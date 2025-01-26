@@ -1,0 +1,92 @@
+syntax = "proto3";
+package swisspass;
+
+message Ticket {
+  TicketData ticket_data = 1;
+  reserved 2;
+  SigningKey signing_key = 4;
+  bytes signature = 5; // ASN.1
+}
+
+message TicketData {
+  uint64 ticket_id = 1;
+  TripData trip_data = 2;
+  TravelerData traveler = 3;
+  TicketIssue ticket_issue = 5;
+  PaymentData payment = 6;
+  reserved 7;
+  repeated TrainData train_data = 8;
+  uint32 train_data_count = 9;
+  repeated Tariff tariffs = 10;
+}
+
+message TripData {
+  TicketType ticket_type = 1;
+  string departure_station = 2;
+  string arrival_station = 3;
+  uint32 travel_class = 4;
+  reserved 5;
+  string route = 6;
+  reserved 7;
+  Time valid_from = 8;
+  Time valid_until = 9;
+  uint32 article_number = 12;
+  ZoneInformation zone_info = 13;
+  string tariff = 15;
+  reserved 17;
+  reserved 19;
+  reserved 20;
+}
+
+message TicketType {
+  uint32 id = 1;
+  string name = 2;
+}
+
+message ZoneInformation {
+  uint32 zone_id = 2;
+  uint32 zone_org = 3;
+}
+
+message TravelerData {
+  string sbb_id = 1;
+  string swisspass_id = 2;
+  string surname = 3;
+  string forename = 4;
+  Time birthday = 5;
+  string tariff = 7;
+}
+
+message TicketIssue {
+  Time issue_time = 1;
+  reserved 2;
+  reserved 3;
+  uint32 issuing_org = 4;
+}
+
+message TrainData {
+  string train_id = 11;
+  string coach = 12;
+  string seat = 13;
+}
+
+message PaymentData {
+  string payment_method = 1;
+  string currency = 2;
+  string price = 3;
+}
+
+message Tariff {
+  string name = 1;
+  uint32 passenger_count = 2;
+  reserved 3;
+}
+
+message SigningKey {
+  string rics = 1;
+  string key_id = 2;
+}
+
+message Time {
+  uint64 msecs = 1;
+}

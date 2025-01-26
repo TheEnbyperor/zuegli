@@ -30,3 +30,5 @@ numpy
 urllib3
 protobuf
 base45
+protobuf
+mypy-protobuf

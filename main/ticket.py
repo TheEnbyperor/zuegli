@@ -9,7 +9,7 @@ import hashlib
 
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass
 
 
 class TicketError(Exception):
@@ -465,6 +465,26 @@ class HZPPTicket:
 
         hd.update(b"hzpp")
         hd.update(self.data.ticket_number.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class SwissPassTicket:
+    raw_ticket: bytes
+    data: swisspass.SwissPassTicket
+
+    @property
+    def ticket_type(self) -> str:
+        return "SwissPass"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"swisspass")
+        hd.update(self.data.ticket.ticket_data.ticket_id.to_bytes(8, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1059,8 +1079,29 @@ def parse_ticket_hzpp(ticket_bytes: bytes) -> HZPPTicket:
     )
 
 
-def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]) -> \
-        typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket, HZPPTicket]:
+def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
+    try:
+        data = swisspass.SwissPassTicket.parse(ticket_bytes)
+    except hzpp.HZPPException:
+        raise TicketError(
+            title="This doesn't look like a valid SwissPass ticket",
+            message="You may have scanned something that is not an SwissPass ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return SwissPassTicket(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
+def parse_ticket(
+        ticket_bytes: bytes, account: typing.Optional["models.Account"]
+) -> typing.Union[
+    VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
+    SSB1Ticket, HZPPTicket, SwissPassTicket,
+]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
@@ -1095,6 +1136,9 @@ def parse_ticket(ticket_bytes: bytes, account: typing.Optional["models.Account"]
 
     if ticket_bytes[:1] == b"e":
         return parse_ticket_elb(ticket_bytes)
+
+    if ticket_bytes[0] == 0x0a:
+        return parse_ticket_swiss_pass(ticket_bytes)
 
     return parse_ticket_vdv(ticket_bytes, context)
 
@@ -1229,6 +1273,14 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, HZPPTicket):
         _, created = models.HZPPTicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, SwissPassTicket):
+        _, created = models.SwissPassTicketInstance.objects.update_or_create(
             barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,

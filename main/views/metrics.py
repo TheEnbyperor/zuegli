@@ -67,4 +67,10 @@ def metrics(request):
     elb_count = models.ELBTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="elb"}} {elb_count}')
 
+    hzpp_count = models.HZPPTicketInstance.objects.all().count()
+    out.append(f'ticket_instance_count{{type="hzpp"}} {hzpp_count}')
+
+    swisspass_count = models.SwissPassTicketInstance.objects.all().count()
+    out.append(f'ticket_instance_count{{type="swisspass"}} {swisspass_count}')
+
     return HttpResponse("\n".join(out), content_type="text/plain;charset=UTF-8")

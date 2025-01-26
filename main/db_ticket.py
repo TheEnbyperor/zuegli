@@ -56,6 +56,7 @@ def update_all():
 
         db_token = views.db.get_db_token(account)
         if not db_token:
+            logger.error(f"Failed to get access token for account {account.db_account_id}")
             continue
 
         try:
