@@ -179,6 +179,7 @@ class VDVTicketInstance(models.Model):
             ticket=vdv.VDVTicket.parse(raw_ticket, vdv.ticket.Context(
                 account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
                 account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
+                email=self.ticket.account.user.email if self.ticket.account else None,
             ))
         )
 
@@ -205,6 +206,7 @@ class UICTicketInstance(models.Model):
         context = vdv.ticket.Context(
             account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
             account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
+            email=self.ticket.account.user.email if self.ticket.account else None,
         )
 
         ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)

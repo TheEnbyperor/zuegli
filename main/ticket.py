@@ -133,6 +133,8 @@ class UICTicket:
             if self.dt_ti.product_name == "Deutschlandticket":
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
             return models.Ticket.TYPE_FAHRKARTE
+        elif self.vor_fi:
+            return models.Ticket.TYPE_FAHRKARTE
         elif self.layout and self.layout.standard in ("RCT2", "RTC2"):
             return models.Ticket.TYPE_FAHRKARTE
 
@@ -279,7 +281,7 @@ class UICTicket:
             dt_pa=parse_ticket_uic_dt_pa(ticket_envelope),
             db_bl=parse_ticket_uic_db_bl(ticket_envelope),
             db_vu=parse_ticket_uic_db_vu(ticket_envelope, context),
-            cd_ut=parse_ticket_uic_cd_ut(ticket_envelope),
+            cd_ut=parse_ticket_uic_cd_ut(ticket_envelope, context),
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
             vor_fi=parse_ticket_uic_vor_fi(ticket_envelope),
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
@@ -781,13 +783,15 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic
         )
 
 
-def parse_ticket_uic_cd_ut(ticket_envelope: uic.Envelope) -> typing.Optional[uic.cd.CDRecordUT]:
+def parse_ticket_uic_cd_ut(
+        ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
+) -> typing.Optional[uic.cd.CDRecordUT]:
     ut_record = next(filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
     if not ut_record:
         return None
 
     try:
-        return uic.cd.CDRecordUT.parse(ut_record.data, ut_record.version)
+        return uic.cd.CDRecordUT.parse(ut_record.data, ut_record.version, context)
     except uic.cd.CDException:
         raise TicketError(
             title="Invalid CD UT record",
@@ -1105,6 +1109,7 @@ def parse_ticket(
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
         account_surname=account.user.last_name if account else None,
+        email=account.user.email if account else None,
     )
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
         return parse_ticket_ssb(ticket_bytes)

@@ -2,8 +2,10 @@ import dataclasses
 import decimal
 import typing
 import datetime
-
+import base64
+import hashlib
 import pytz
+from .. import vdv
 
 
 class CDException(Exception):
@@ -31,6 +33,8 @@ class CDRecordUT:
     destination_uic: typing.Optional[int]
     route_uic: typing.Optional[typing.List[int]]
     seller_id: typing.Optional[str]
+    email_hash: typing.Optional[bytes]
+    email: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @staticmethod
@@ -48,7 +52,7 @@ class CDRecordUT:
         return reservations
 
     @classmethod
-    def parse(cls, data: bytes, version: int):
+    def parse(cls, data: bytes, version: int, context: "vdv.ticket.Context"):
         if version != 1:
             raise CDException(f"Unsupported record version {version}")
 
@@ -67,6 +71,8 @@ class CDRecordUT:
         origin_uic = None
         destination_uic = None
         seller_id = None
+        email_hash = None
+        email = None
         blocks = {}
 
         offset = 0
@@ -149,6 +155,14 @@ class CDRecordUT:
                 return_reservations = cls.parse_reservations(block_data)
             elif block_id == "VY":
                 seller_id = block_data
+            elif block_id == "EM":
+                try:
+                    email_hash = base64.b64decode(block_data)
+                except ValueError as e:
+                    raise CDException(f"Invalid email hash") from e
+
+                if context.email and hashlib.sha512(context.email.encode("utf-8")).digest()[:8] == email_hash:
+                    email = context.email
             elif block_data:
                 blocks[block_id] = block_data
 
@@ -166,5 +180,11 @@ class CDRecordUT:
             origin_uic=origin_uic,
             destination_uic=destination_uic,
             seller_id=seller_id,
+            email_hash=email_hash,
+            email=email,
             other_blocks=blocks,
         )
+
+    @property
+    def email_hash_hex(self):
+        return ":".join(f"{b:02x}" for b in self.email_hash)

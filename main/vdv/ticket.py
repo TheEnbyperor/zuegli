@@ -34,6 +34,7 @@ def product_name(product_org_id: int, product_number: int, opt=False):
 class Context:
     account_forename: typing.Optional[str]
     account_surname: typing.Optional[str]
+    email: typing.Optional[str]
 
 
 @dataclasses.dataclass
