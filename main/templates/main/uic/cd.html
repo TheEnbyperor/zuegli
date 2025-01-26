@@ -167,6 +167,15 @@
             <dd class="govuk-summary-list__value"><code>{{ cd.seller_id }}</code></dd>
         </div>
     {% endif %}
+    {% if cd.email_hash %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Email hash</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ cd.email_hash_hex }}</code>
+                {% if cd.email %}({{ cd.email }}){% endif %}
+            </dd>
+        </div>
+    {% endif %}
     {% if cd.other_blocks %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Unknown blocks</dt>
