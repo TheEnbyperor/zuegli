@@ -4,14 +4,32 @@
         <dt class="govuk-summary-list__key">Customer ID</dt>
         <dd class="govuk-summary-list__value"><code>{{ vor.customer_id }}</code></dd>
     </div>
+    {% if vor.title %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Title</dt>
+            <dd class="govuk-summary-list__value">{{ vor.title }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Forename</dt>
         <dd class="govuk-summary-list__value">{{ vor.forename }}</dd>
     </div>
+    {% if vor.middle_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Title</dt>
+            <dd class="govuk-summary-list__value">{{ vor.middle_name }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Surname</dt>
         <dd class="govuk-summary-list__value">{{ vor.surname }}</dd>
     </div>
+    {% if vor.suffix %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Suffix</dt>
+            <dd class="govuk-summary-list__value">{{ vor.suffix }}</dd>
+        </div>
+    {% endif %}
     {% if vor.date_of_birth %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Date of Birth</dt>

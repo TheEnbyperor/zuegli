@@ -6,7 +6,6 @@ import enum
 import typing
 
 TZ = pytz.timezone("Europe/Vienna")
-NAME_RE = re.compile(r"\|(?P<name>[^|]+)\|")
 
 class VORException(Exception):
     pass
@@ -66,8 +65,11 @@ class VORRecordVD:
     customer_id: str
     date_of_birth: typing.Optional[datetime.date]
     gender: typing.Optional[Gender]
+    title: typing.Optional[str] = None
     forename: typing.Optional[str] = None
+    middle_name: typing.Optional[str] = None
     surname: typing.Optional[str] = None
+    suffix: typing.Optional[str] = None
 
     @classmethod
     def parse(cls, data: bytes, version: int):
@@ -95,13 +97,22 @@ class VORRecordVD:
         else:
             dob = None
 
+        title = None
         forename = None
+        middle_name = None
         surname = None
+        suffix = None
 
-        name_parts = NAME_RE.findall(name_str)
-        if name_parts:
-            forename = " ".join(name_parts[:-1])
-            surname = name_parts[-1]
+        if name_str:
+            name_parts = name_str.split("|")
+            if len(name_parts) != 5:
+                raise VORException("Invalid VD record name - unexpected number of parts")
+
+            title = name_parts[0]
+            forename = name_parts[1]
+            middle_name = name_parts[2]
+            surname = name_parts[3]
+            suffix = name_parts[4]
 
         if gender_str == "M":
             gender = Gender.Male
@@ -117,8 +128,11 @@ class VORRecordVD:
         return cls(
             customer_id=customer_id,
             date_of_birth=dob,
+            title=title,
             forename=forename,
+            middle_name=middle_name,
             surname=surname,
+            suffix=suffix,
             gender=gender,
             raw_data=data,
         )
