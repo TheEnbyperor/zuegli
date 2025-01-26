@@ -1086,7 +1086,7 @@ def parse_ticket_hzpp(ticket_bytes: bytes) -> HZPPTicket:
 def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     try:
         data = swisspass.SwissPassTicket.parse(ticket_bytes)
-    except hzpp.HZPPException:
+    except swisspass.SwissPassException:
         raise TicketError(
             title="This doesn't look like a valid SwissPass ticket",
             message="You may have scanned something that is not an SwissPass ticket, the ticket is corrupted, or there "
