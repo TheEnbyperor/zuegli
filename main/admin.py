@@ -54,6 +54,12 @@ class HZPPTicketInstanceInline(admin.StackedInline):
     readonly_fields = ("barcode_hash",)
 
 
+class SwissPassTicketInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.SwissPassTicketInstance
+    readonly_fields = ("barcode_hash",)
+
+
 class AppleRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AppleRegistration
@@ -107,6 +113,7 @@ class TicketAdmin(admin.ModelAdmin):
         SSBTicketInstanceInline,
         SSB1TicketInstanceInline,
         HZPPTicketInstanceInline,
+        SwissPassTicketInstanceInline,
         AppleRegistrationInline,
     ]
     view_on_site = True
