@@ -290,7 +290,7 @@ class UICTicket:
     ) -> "UICTicket":
         layout = parse_ticket_uic_layout(ticket_envelope)
         st01 = None
-        if layout.standard == "ST01":
+        if layout and layout.standard == "ST01":
             parser = uic.st01_parse.ST01Parser()
             parser.read(layout)
             st01 = parser.parse()
