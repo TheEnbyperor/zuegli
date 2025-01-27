@@ -20,6 +20,8 @@ def uic_signature(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
+    
     dependencies = [
         ('main', '0043_swisspassticketinstance'),
     ]
