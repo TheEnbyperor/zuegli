@@ -8,13 +8,13 @@ import main.models
 def uic_signature(apps, schema_editor):
     model = apps.get_model("main", "UICTicketInstance")
     for i in model.objects.all():
-        t = main.models.UICTicketInstance.as_ticket(i)
+        try:
+            t = main.models.UICTicketInstance.as_ticket(i)
+        except main.ticket.TicketError:
+            traceback.print_exc()
+            continue
         if not t.envelope.signed_data:
-            try:
-                e = main.uic.Envelope.parse(t.raw_bytes)
-            except main.ticket.TicketError:
-                traceback.print_exc()
-                continue
+            e = main.uic.Envelope.parse(t.raw_bytes)
             i.decoded_data["envelope"] = dataclasses.asdict(e, dict_factory=main.ticket.to_dict_json)
             i.save()
 
