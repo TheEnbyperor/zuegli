@@ -79,6 +79,7 @@ class UICTicket:
     db_vu: typing.Optional["uic.db_vu.DBRecordVU"]
     vor_fi: typing.Optional["uic.vor.VORRecordFI"]
     vor_vd: typing.Optional["uic.vor.VORRecordVD"]
+    st01: typing.Optional["uic.st01_parse.ParsedST01"]
     other_records: typing.List["uic.envelope.Record"]
 
     @property
@@ -137,6 +138,11 @@ class UICTicket:
             return models.Ticket.TYPE_FAHRKARTE
         elif self.layout and self.layout.standard in ("RCT2", "RTC2"):
             return models.Ticket.TYPE_FAHRKARTE
+        elif self.st01:
+            if self.st01.ticket_type == "Deutschlandticket":
+                return models.Ticket.TYPE_DEUTCHLANDTICKET
+            else:
+                return models.Ticket.TYPE_FAHRKARTE
 
         return models.Ticket.TYPE_UNKNOWN
 
@@ -162,6 +168,14 @@ class UICTicket:
                 hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(self.dt_pa.passenger_name.encode("utf-8"))
                 return base64.b32hexencode(hd.digest()).decode("utf-8")
+            elif self.st01:
+                hd.update(b"deutschlandticket")
+                hd.update(self.issuing_rics().to_bytes(8, "big"))
+                if self.st01.passenger_name:
+                    hd.update(self.st01.passenger_name.encode("utf-8"))
+                if self.st01.passenger_dob:
+                    hd.update(self.st01.passenger_dob.isoformat().encode("utf-8"))
+                return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_BAHNCARD:
             card = self.flex.data["transportDocument"][0]["ticket"][1]
@@ -184,6 +198,9 @@ class UICTicket:
                     hd.update(str(ticket["referenceNum"]).encode("utf-8"))
                 else:
                     hd.update(self.ticket_id().encode("utf-8"))
+            elif self.st01:
+                hd.update(self.issuing_rics().to_bytes(8, "big"))
+                hd.update(self.st01.ticket_id.encode("utf-8"))
             else:
                 hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(self.ticket_id().encode("utf-8"))
@@ -271,11 +288,18 @@ class UICTicket:
             cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
             context: "vdv.ticket.Context"
     ) -> "UICTicket":
+        layout = parse_ticket_uic_layout(ticket_envelope)
+        st01 = None
+        if layout.standard == "ST01":
+            parser = uic.st01_parse.ST01Parser()
+            parser.read(layout)
+            st01 = parser.parse()
+
         return cls(
             raw_bytes=ticket_bytes,
             envelope=ticket_envelope,
             head=parse_ticket_uic_head(ticket_envelope),
-            layout=parse_ticket_uic_layout(ticket_envelope),
+            layout=layout,
             flex=parse_ticket_uic_flex(ticket_envelope),
             dt_ti=parse_ticket_uic_dt_ti(ticket_envelope),
             dt_pa=parse_ticket_uic_dt_pa(ticket_envelope),
@@ -285,6 +309,7 @@ class UICTicket:
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
             vor_fi=parse_ticket_uic_vor_fi(ticket_envelope),
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
+            st01=st01,
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
                     or r.id == "1154UT" or r.id == "118199"
@@ -1204,6 +1229,9 @@ def create_ticket_obj(
                 elif docs[0]["ticket"][0] == "customerCard":
                     validity_start = templatetags.rics.rics_valid_from_date(docs[0]["ticket"][1])
                     validity_end = templatetags.rics.rics_valid_until_date(docs[0]["ticket"][1])
+        elif ticket_data.st01:
+            validity_start = datetime.datetime.combine(ticket_data.st01.valid_from, datetime.time.min) if ticket_data.st01 else None
+            validity_end = datetime.datetime.combine(ticket_data.st01.valid_to, datetime.time.max) if ticket_data.st01 else None
 
         _, created = models.UICTicketInstance.objects.update_or_create(
             barcode_hash=barcode_hash,

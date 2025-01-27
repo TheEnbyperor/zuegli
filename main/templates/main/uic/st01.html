@@ -1,0 +1,37 @@
+<h2 class="govuk-heading-m">ST01 Layout</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Ticket ID</dt>
+        <dd class="govuk-summary-list__value">{{ st01.ticket_id }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Ticket type</dt>
+        <dd class="govuk-summary-list__value">{{ st01.ticket_type }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Validity</dt>
+        <dd class="govuk-summary-list__value">{{ st01.validity }}</dd>
+    </div>
+    {% if st01.valid_from %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">{{ st01.valid_from|date:"F d, Y" }}</dd>
+        </div>
+    {% endif %}
+    {% if st01.valid_to %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid to</dt>
+            <dd class="govuk-summary-list__value">{{ st01.valid_to|date:"F d, Y" }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Passenger name</dt>
+        <dd class="govuk-summary-list__value">{{ st01.passenger_name }}</dd>
+    </div>
+    {% if st01.valid_to %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger date of birth</dt>
+            <dd class="govuk-summary-list__value">{{ st01.passenger_dob|date:"F d, Y" }}</dd>
+        </div>
+    {% endif %}
+</dl>
