@@ -12,6 +12,26 @@
             <dd class="govuk-summary-list__value"><code>{{ pass.referenceIA5 }}</code></dd>
         </div>
     {% endif %}
+    {% if pass.productIdIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ pass.productIdIA5 }}</code></dd>
+        </div>
+    {% endif %}
+    {% if pass.productOwnerNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product Owner</dt>
+            <dd class="govuk-summary-list__value">
+                {% with org=pass.productOwnerNum|rics %}
+                    {% if org %}
+                        {% include 'main/rics.html' with org=org %}
+                    {% else %}
+                        <code>{{ pass.productOwnerNum }}</code>
+                    {% endif %}
+                {% endwith %}
+            </dd>
+        </div>
+    {% endif %}
     {% if pass.passType %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Pass type</dt>
@@ -63,6 +83,24 @@
                 <ul class="govuk-list">
                     {% for country in pass.countries %}
                         <li>{{ country|uic_country }}</li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+    {% if pass.includedCarrierIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Included carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list">
+                    {% for carrier in pass.includedCarrierIA5 %}
+                        {% with org=carrier|rics %}
+                            {% if org %}
+                                <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
                     {% endfor %}
                 </ul>
             </dd>

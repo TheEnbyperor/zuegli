@@ -1038,14 +1038,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": product_name,
                         })
 
-                    pass_fields["secondaryFields"].append({
+                    pass_fields["auxiliaryFields"].append({
                         "key": "validity-start",
                         "label": "validity-start-label",
                         "dateStyle": "PKDateStyleMedium",
                         "timeStyle": "PKDateStyleNone",
                         "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
-                    pass_fields["secondaryFields"].append({
+                    pass_fields["auxiliaryFields"].append({
                         "key": "validity-end",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleMedium",
@@ -4195,7 +4195,7 @@ PASS_STRINGS = {
 "date-of-birth-label" = "Geburtsdatum";
 "month-of-birth-label" = "Geburtsmonat";
 "year-of-birth-label" = "Geburtsjahr";
-"country-of-residence-label" = "Land des Wohnsitzes";
+"country-of-residence-label" = "Wohnsitzland";
 "passport-number-label" = "Passnummer";
 "from-station-label" = "Von";
 "to-station-label" = "Nach";
