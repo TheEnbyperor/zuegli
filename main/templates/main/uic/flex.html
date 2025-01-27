@@ -45,7 +45,7 @@
     {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Issuing time</dt>
-        <dd class="govuk-summary-list__value">{{ flex.issuing_time|utc|date:"F d, Y H:i" }} UTC</dd>
+        <dd class="govuk-summary-list__value">{{ flex.issuing_time|date:"F d, Y H:i e" }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Specimen</dt>
