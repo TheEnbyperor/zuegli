@@ -88,6 +88,8 @@ class Envelope:
         if not pk:
             return False
 
+        meta, _ = certs.signing_cert(self.issuer_rics, self.signature_key_id)
+
         if self.version == 1:
             sig_data = ber_tlv.tlv.Tlv.parse(self.signature, True)
             sig = ber_tlv.tlv.Tlv.build(sig_data)
@@ -107,7 +109,13 @@ class Envelope:
                 sig.extend([0x02, 0x20])
             sig.extend(self.signature[32:64])
             sig = bytes(sig)
-            hasher = cryptography.hazmat.primitives.hashes.SHA256()
+            if meta:
+                if meta["signature_algorithm"] == "SHA224withDSA":
+                    hasher = cryptography.hazmat.primitives.hashes.SHA224()
+                else:
+                    hasher = cryptography.hazmat.primitives.hashes.SHA256()
+            else:
+                hasher = cryptography.hazmat.primitives.hashes.SHA256()
         else:
             return False
 

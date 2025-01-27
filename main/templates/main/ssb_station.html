@@ -8,7 +8,7 @@
     {% endif %}
 {% endwith %}
 {% elif station.type == "benerail" %}
-{% with s=station.id|get_station:"berenail" %}
+{% with s=station.id|get_station:"benerail" %}
     {% if s %}
         {% include "main/uic/station.html" with station=s %}
     {% else %}
