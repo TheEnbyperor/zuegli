@@ -139,7 +139,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.ticket_id }}</span>
-                                <span>{{ instance.validity_start|date:"F d, Y H:i:s" }} - {{ instance.validity_end|date:"F d, Y H:i:s" }}</span>
+                                <span>{{ instance.validity_start|date:"F d, Y H:i:s e" }} - {{ instance.validity_end|date:"F d, Y H:i:s e" }}</span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/vdv_ticket_details.html' with ticket=ticket_obj %}

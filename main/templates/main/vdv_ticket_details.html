@@ -75,13 +75,13 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Start</dt>
                     <dd class="govuk-summary-list__value">
-                        {{ ticket.ticket.validity_start.as_datetime|date:"F d, Y H:i:s" }} UTC
+                        {{ ticket.ticket.validity_start.as_datetime|date:"F d, Y H:i:s e" }}
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">End</dt>
                     <dd class="govuk-summary-list__value">
-                        {{ ticket.ticket.validity_end.as_datetime|date:"F d, Y H:i:s" }} UTC
+                        {{ ticket.ticket.validity_end.as_datetime|date:"F d, Y H:i:s e" }}
                     </dd>
                 </div>
             </dl>
