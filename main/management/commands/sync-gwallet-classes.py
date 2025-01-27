@@ -135,15 +135,41 @@ class Command(BaseCommand):
                                 }
                             }
                         }, {
-                            "oneItem": {
-                                "item": {
+                            "twoItems": {
+                                "startItem": {
                                     "firstValue": {
                                         "fields": [{
                                             "fieldPath": "object.textModulesData['traveler-0']"
                                         }]
                                     }
+                                },
+                                "endItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.textModulesData['dob-0']"
+                                        }]
+                                    }
                                 }
                             }
+                        }, {
+                            "twoItems": {
+                                "startItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.validTimeInterval.start",
+                                            "dateFormat": "DATE_YEAR"
+                                        }]
+                                    }
+                                },
+                                "endItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.validTimeInterval.end",
+                                            "dateFormat": "DATE_YEAR"
+                                        }]
+                                    }
+                                },
+                            },
                         }],
                     },
                     "detailsTemplateOverride": {

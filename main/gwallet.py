@@ -551,7 +551,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             "body": str(document["cardIdNum"]),
                         })
 
-                    if "classCode" in document:
+                    if "classCode" in document and document["classCode"] != "notApplicable":
                         obj["textModulesData"].append({
                             "id": "class",
                             "localizedHeader": {
