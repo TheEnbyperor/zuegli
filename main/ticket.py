@@ -1154,7 +1154,6 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
             return base64.b64encode(v).decode("ascii")
         else:
             return v
-
     return {k: encode_value(v) for k, v in elements}
 
 
