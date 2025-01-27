@@ -87,13 +87,13 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Valid from</dt>
         <dd class="govuk-summary-list__value">
-            {{ ticket|rics_valid_from:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ ticket|rics_valid_from:flex.issuing_time|date:"F d, Y H:i:s e" }}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Valid until</dt>
         <dd class="govuk-summary-list__value">
-            {{ ticket|rics_valid_until:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ ticket|rics_valid_until:flex.issuing_time|date:"F d, Y H:i:s e" }}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
