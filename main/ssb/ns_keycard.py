@@ -48,7 +48,7 @@ class Keycard:
         return cls(
             number_adults=data.read_int(0, 7),
             number_children=data.read_int(7, 14),
-            specimen=data.read_bool(14),
+            specimen=not data.read_bool(14),
             travel_class=data.read_int(15, 21),
             card_id=data.read_string(21, 105),
             issuing_date=issuing_date,
@@ -74,5 +74,7 @@ class Keycard:
             return "Meereiskaart Spoordeelweken"
         elif self.product_code == 9:
             return "Landencoupon"
+        elif self.product_code == 15:
+            return "Interrail Pass Cover"
         else:
             return f"Unknown - {self.product_code}"
