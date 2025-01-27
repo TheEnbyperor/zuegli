@@ -1754,38 +1754,41 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
                 if ticket_data.dt_ti.validity_start:
-                    pass_json["relevantDate"] = ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    pass_fields["secondaryFields"].append({
+                    pass_fields["auxiliaryFields"].append({
                         "key": "validity-start",
                         "label": "validity-start-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleNone",
-                        "value": ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "timeStyle": "PKDateStyleMedium",
+                        "value": ticket_data.dt_ti.validity_start.isoformat(),
+                        "ignoresTimeZone": True,
                     })
                     pass_fields["backFields"].append({
                         "key": "validity-start-back",
                         "label": "validity-start-label",
                         "dateStyle": "PKDateStyleFull",
                         "timeStyle": "PKDateStyleFull",
-                        "value": ticket_data.dt_ti.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "value": ticket_data.dt_ti.validity_start.isoformat(),
+                        "ignoresTimeZone": True,
                     })
 
                 if ticket_data.dt_ti.validity_end:
-                    pass_json["expirationDate"] = ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    pass_fields["secondaryFields"].append({
+                    pass_json["expirationDate"] = ticket_data.dt_ti.validity_end.isoformat()
+                    pass_fields["auxiliaryFields"].append({
                         "key": "validity-end",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleNone",
-                        "value": ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                        "changeMessage": "validity-end-change"
+                        "timeStyle": "PKDateStyleMedium",
+                        "value": ticket_data.dt_ti.validity_end.isoformat(),
+                        "changeMessage": "validity-end-change",
+                        "ignoresTimeZone": True
                     })
                     pass_fields["backFields"].append({
                         "key": "validity-end-back",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleFull",
                         "timeStyle": "PKDateStyleFull",
-                        "value": ticket_data.dt_ti.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "value": ticket_data.dt_ti.validity_end.isoformat(),
+                        "ignoresTimeZone": True,
                     })
 
             if ticket_data.dt_pa and ticket_data.dt_pa.passenger_name:
@@ -1858,6 +1861,81 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "dateStyle": "PKDateStyleMedium",
                         "value": ticket_data.vor_vd.date_of_birth.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
+
+        elif ticket_data.st01:
+            tz = pytz.timezone("Europe/Berlin")
+
+            pass_fields["headerFields"].append({
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.st01.ticket_type,
+            })
+            pass_fields["backFields"].append({
+                "key": "product-back",
+                "label": "product-label",
+                "value": ticket_data.st01.ticket_type,
+            })
+
+            pass_fields["primaryFields"].append({
+                "key": "passenger",
+                "label": "passenger-label",
+                "value": ticket_data.st01.passenger_name,
+            })
+
+            if ticket_data.st01.passenger_dob:
+                pass_fields["secondaryFields"].append({
+                    "key": "date-of-birth",
+                    "label": "date-of-birth-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "value": ticket_data.st01.passenger_dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+
+            if ticket_data.st01.validity:
+                pass_fields["secondaryFields"].append({
+                    "key": "valid-region",
+                    "label": "valid-region-label",
+                    "value": ticket_data.st01.validity,
+                })
+
+            if ticket_data.st01.valid_from:
+                validity_start = tz.localize(datetime.datetime.combine(ticket_data.st01.valid_from, datetime.time.min))
+                pass_fields["auxiliaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": validity_start.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+                pass_fields["backFields"].append({
+                    "key": "validity-start-back",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": validity_start.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+
+            if ticket_data.st01.valid_to:
+                validity_end = tz.localize(datetime.datetime.combine(ticket_data.st01.valid_to, datetime.time.max))
+                pass_json["expirationDate"] = validity_end.isoformat()
+                pass_fields["auxiliaryFields"].append({
+                    "key": "validity-end",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": validity_end.isoformat(),
+                    "changeMessage": "validity-end-change",
+                    "ignoresTimeZone": True
+                })
+                pass_fields["backFields"].append({
+                    "key": "validity-end-back",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": validity_end.isoformat(),
+                    "ignoresTimeZone": True,
+                })
 
         elif parsed_layout:
             if parsed_layout.trips:

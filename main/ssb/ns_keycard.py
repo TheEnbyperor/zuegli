@@ -69,7 +69,7 @@ class Keycard:
         elif self.product_code == 6:
             return "Preprinted ATB"
         elif self.product_code == 7:
-            return "UvB"
+            return "Uitstel van Betaling"
         elif self.product_code == 8:
             return "Meereiskaart Spoordeelweken"
         elif self.product_code == 9:

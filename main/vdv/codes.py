@@ -72,6 +72,7 @@ SPACIAL_VALIDITY = {
         1: "Deutschlandweit",
         3: "Bayern",
         768: "Bayern",
+        3584: "Sachsen-Ticket",
         4096: "Schleswig-Holstein-Ticket",
     },
     6100: vbb_tariff,

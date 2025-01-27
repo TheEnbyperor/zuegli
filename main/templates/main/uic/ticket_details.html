@@ -178,6 +178,10 @@
     {% include "main/uic/vor_vd.html" with vor=ticket.vor_vd %}
 {% endif %}
 
+{% if ticket.st01 %}
+    {% include "main/uic/st01.html" with st01=ticket.st01 %}
+{% endif %}
+
 {% for record in ticket.other_records %}
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">

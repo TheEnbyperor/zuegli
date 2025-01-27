@@ -54,20 +54,18 @@ class DTRecordTI:
             product_name = block_data
         if block_data := blocks.pop("002"):
             try:
-                validity_start = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M")) \
-                    .astimezone(tz=pytz.UTC)
+                validity_start = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M"))
             except ValueError:
                 try:
-                    validity_start = datetime.datetime.fromisoformat(block_data).astimezone(tz=pytz.UTC)
+                    validity_start = datetime.datetime.fromisoformat(block_data)
                 except ValueError as e:
                     raise DTException(f"Invalid validity start date") from e
         if block_data := blocks.pop("003"):
             try:
-                validity_end = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M")) \
-                    .astimezone(tz=pytz.UTC)
+                validity_end = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M"))
             except ValueError:
                 try:
-                    validity_end = datetime.datetime.fromisoformat(block_data).astimezone(tz=pytz.UTC)
+                    validity_end = datetime.datetime.fromisoformat(block_data)
                 except ValueError as e:
                     raise DTException(f"Invalid validity end date") from e
 
