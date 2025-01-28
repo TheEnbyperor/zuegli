@@ -1,5 +1,7 @@
 import icalendar
 import pytz
+from django.conf import settings
+from django.shortcuts import reverse
 from . import models, templatetags
 
 
@@ -16,7 +18,14 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
                     ),
                 ), None)
                 if ticket_document:
-                    return True
+                    if (
+                            "fromStationNum" in ticket_document or "fromStationNameUTF8" in ticket_document or
+                            "fromStationIA5" in ticket_document
+                    ) and (
+                            "toStationNum" in ticket_document or "toStationNameUTF8" in ticket_document or
+                            "toStationIA5" in ticket_document
+                    ):
+                        return True
 
     return False
 
@@ -24,8 +33,22 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
 def make_calendar(ticket: "models.Ticket") -> bytes:
     cal = icalendar.Calendar()
     cal.add("version", "2.0")
+    add_ticket_to_calendar(cal, ticket)
+    return cal.to_ical()
 
+
+def make_user_calendar(account: "models.Account") -> bytes:
+    cal = icalendar.Calendar()
+    cal.add("version", "2.0")
+    for ticket in account.tickets.all():
+        add_ticket_to_calendar(cal, ticket)
+    return cal.to_ical()
+
+
+def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
     ticket_instance = ticket.active_instance()
+    ticket_url = reverse('ticket', kwargs={"pk": ticket.pk})
+
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
@@ -34,6 +57,7 @@ def make_calendar(ticket: "models.Ticket") -> bytes:
                 if doc["ticket"][0] == "openTicket":
                     ticket_document = doc["ticket"][1]
                     event = icalendar.Event()
+                    event.add("url", f"{settings.EXTERNAL_URL_BASE}{ticket_url}")
 
                     ref = ticket_document.get("referenceIA5") or int(ticket_document.get("referenceNum", 0))
                     event.add("uid", f"{ticket.public_id()}:{ref}")
@@ -65,7 +89,7 @@ def make_calendar(ticket: "models.Ticket") -> bytes:
                     elif "fromStationNameIA5" in ticket_document:
                         from_station_name = ticket_document["fromStationNameIA5"]
                     else:
-                        from_station_name = ""
+                        continue
 
                     event.add("location", from_station_name)
 
@@ -76,7 +100,7 @@ def make_calendar(ticket: "models.Ticket") -> bytes:
                     elif "toStationNameIA5" in ticket_document:
                         to_station_name = ticket_document["toStationNameIA5"]
                     else:
-                        to_station_name = ""
+                        continue
 
                     departure_time = None
                     train_number = None
@@ -106,5 +130,3 @@ def make_calendar(ticket: "models.Ticket") -> bytes:
                         event.add("summary", f"{from_station_name} ➡ {to_station_name}")
 
                     cal.add_component(event)
-
-    return cal.to_ical()

@@ -175,6 +175,7 @@ class AccountAdmin(admin.ModelAdmin):
         "db_refresh_token_expires_at",
         "saarvv_token",
         "saarvv_device_id",
+        "calendar_token",
     ]
     inlines = [
         TicketAccountInline,

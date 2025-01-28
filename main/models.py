@@ -27,6 +27,7 @@ class Account(models.Model):
     db_account_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Deutsche Bahn Account ID")
     saarvv_token = models.TextField(null=True, blank=True, verbose_name="SaarVV Token")
     saarvv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="SaarVV Device ID")
+    calendar_token = models.CharField(max_length=255, verbose_name="iCal token", default=make_pass_token)
 
     def __str__(self):
         return str(self.user)

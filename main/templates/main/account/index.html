@@ -57,6 +57,10 @@
         </dl>
         <h2 class="govuk-heading-l">Tickets</h2>
         {% if tickets.count %}
+            <p class="govuk-body">
+                Subscribe to your trains as a calendar:<br/>
+                <small><code>{{ calendar_url }}</code></small>
+            </p>
             <ul class="govuk-list govuk-list--spaced">
                 {% for ticket in tickets.all %}
                     <li>
