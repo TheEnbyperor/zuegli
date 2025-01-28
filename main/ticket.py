@@ -412,6 +412,7 @@ class ELBTicket:
 
         hd.update(b"elb")
         hd.update(self.data.pnr.encode("utf-8"))
+        hd.update(self.data.booking_number.encode("utf-8"))
         hd.update(self.data.sequence_number.to_bytes(2, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
