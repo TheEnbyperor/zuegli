@@ -5,7 +5,7 @@ import main.models
 from django.db import migrations, models
 
 def set_defaults(apps, schema_editor):
-    for account in apps.get_model('main', 'Account').objects.all().iterator():
+    for account in apps.get_model('main', 'Account').objects.all():
         account.calendar_token = main.models.make_pass_token()
         account.save()
 

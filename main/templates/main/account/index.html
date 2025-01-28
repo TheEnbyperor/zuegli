@@ -32,8 +32,17 @@
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'db_login' %}">Login with DB</a>
-                        <p class="govuk-body-s">Logging in with DB isn't required for subscription tickets.</p>
+                        <p class="govuk-body-s">
+                            Logging in with DB isn't required for subscription tickets,
+                            or adding tickets via booking number.
+                        </p>
                     {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">DB</dt>
+                <dd class="govuk-summary-list__value">
+                    <a class="govuk-button" href="{% url 'db_add_ticket' %}">Add ticket</a>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -50,7 +59,8 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">SNCB/NMBS</dt><dd class="govuk-summary-list__value">
+                <dt class="govuk-summary-list__key">SNCB/NMBS</dt>
+                <dd class="govuk-summary-list__value">
                     <a class="govuk-button" href="{% url 'sncb_add_ticket' %}">Add ticket</a>
                 </dd>
             </div>

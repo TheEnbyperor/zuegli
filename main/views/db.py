@@ -6,11 +6,12 @@ import binascii
 import niquests
 import jwt
 import datetime
+import bs4
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import models
+from .. import models, forms, db_ticket
 
 DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
 DB_AUTH_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/auth"
@@ -176,3 +177,55 @@ def db_login_callback(request):
     request.user.account.save()
 
     return redirect('account')
+
+@login_required
+def db_add_ticket(request):
+    initial = {
+        "surname": request.user.last_name,
+    }
+
+    if request.method == "POST":
+        form = forms.DBTicketForm(request.POST, initial=initial)
+        if form.is_valid():
+            booking_number = form.cleaned_data["booking_number"]
+            surname = form.cleaned_data["surname"]
+            r = niquests.post(f"https://app.vendo.noncd.db.de/mob/auftrag/{booking_number}/manuellLaden", headers={
+                "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
+                "Content-Type": "application/x.db.vendo.mob.auftraege.v7+json",
+                "X-Correlation-ID": secrets.token_hex(16),
+                "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+            }, json={
+                "nachname": surname,
+            })
+            if r.status_code == 404:
+                messages.error(request, "Ticket not found")
+            elif not r.ok:
+                print(r.text, r.status_code)
+                messages.error(request, "Failed to fetch ticket")
+            else:
+                data = r.json()
+                added = []
+                for ticket in data["auftragsbezogeneReisen"]:
+                    ticket_data = base64.urlsafe_b64decode(ticket["ticket"]["ticket"] + '==')
+                    ticket_layout = bs4.BeautifulSoup(ticket_data, 'html.parser')
+                    barcode_elm = ticket_layout.find("img", attrs={
+                        "id": "ticketbarcode"
+                    }, recursive=True)
+                    if not barcode_elm:
+                        continue
+
+                    ticket_obj = db_ticket.update_from_img_elm(barcode_elm, request.user.account)
+                    if ticket_obj:
+                        added.append(ticket_obj)
+
+                if len(added) == 1:
+                    return redirect('ticket', added[0].id)
+                else:
+                    messages.success(request, f"Successfully added {len(added)} ticket(s)")
+                    return redirect('account')
+    else:
+        form = forms.DBTicketForm(initial=initial)
+
+    return render(request, "main/account/db_ticket.html", {
+        "form": form,
+    })

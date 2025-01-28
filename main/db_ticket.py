@@ -40,6 +40,7 @@ def update_from_img_elm(barcode_elm, account):
         ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
         ticket_obj.save()
         apn.notify_ticket_if_renewed(ticket_obj)
+        return ticket_obj
     except ticket.TicketError as e:
         logger.error("Error decoding barcode ticket: %s", e)
         return

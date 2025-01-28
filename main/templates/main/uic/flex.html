@@ -6,7 +6,17 @@
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Version</dt>
-        <dd class="govuk-summary-list__value"><code>{{ flex.version }}</code></dd>
+        <dd class="govuk-summary-list__value">
+            {% if flex.version == 13 %}
+                v1.3
+            {% elif flex.version == 2 %}
+                v2
+            {% elif flex.version == 3 %}
+                v3
+            {% else %}
+                <code>{{ flex.version }}</code>
+            {% endif %}
+        </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Security Provider RICS</dt>

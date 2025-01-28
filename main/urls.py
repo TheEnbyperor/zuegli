@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('account/', views.account.index, name='account'),
     path('account/db/', views.account.db_account, name='db_account'),
+    path('account/db/add_ticket/', views.db.db_add_ticket, name='db_add_ticket'),
     path('account/db_abo/', views.db_abo.view_db_abo, name='db_abo'),
     path('account/db_abo/new/', views.db_abo.new_abo, name='new_db_abo'),
     path('account/db_abo/abo/<abo_id>/delete/', views.db_abo.delete_abo, name='delete_db_abo'),

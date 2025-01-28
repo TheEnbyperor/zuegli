@@ -46,3 +46,13 @@ class SNCBTicketForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Add"))
+
+
+class DBTicketForm(forms.Form):
+    booking_number = forms.CharField(label="Booking number", required=True)
+    surname = forms.CharField(label="Surname", required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Add"))
