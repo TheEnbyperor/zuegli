@@ -499,7 +499,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": ticket_document["productIdIA5"],
                             })
 
-                        pass_fields["auxiliaryFields"].append({
+                        f = "secondaryFields" if pass_type == "boardingPass" else "auxiliaryFields"
+                        pass_fields[f].append({
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "dateStyle": "PKDateStyleMedium",
@@ -507,7 +508,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
                             "ignoresTimeZone": True,
                         })
-                        pass_fields["auxiliaryFields"].append({
+                        pass_fields[f].append({
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "dateStyle": "PKDateStyleMedium",
@@ -1156,27 +1157,51 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     dob_year = passenger.get("yearOfBirth", 0)
                     dob_month = passenger.get("monthOfBirth", 0)
                     if dob_year != 0 and dob_month != 0:
-                        pass_fields["secondaryFields"].append({
-                            "key": "month-of-birth",
-                            "label": "month-of-birth-label",
-                            "value": f"{dob_month:02d}.{dob_year:04d}",
-                        })
-                        return_pass_fields["secondaryFields"].append({
-                            "key": "month-of-birth",
-                            "label": "month-of-birth-label",
-                            "value": f"{dob_month:02d}.{dob_year:04d}",
-                        })
+                        if pass_type == "boardingPass":
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "month-of-birth",
+                                "label": "month-of-birth-label",
+                                "value": f"{dob_month:02d}.{dob_year:04d}",
+                            })
+                            return_pass_fields["auxiliaryFields"].append({
+                                "key": "month-of-birth",
+                                "label": "month-of-birth-label",
+                                "value": f"{dob_month:02d}.{dob_year:04d}",
+                            })
+                        else:
+                            pass_fields["secondaryFields"].append({
+                                "key": "month-of-birth",
+                                "label": "month-of-birth-label",
+                                "value": f"{dob_month:02d}.{dob_year:04d}",
+                            })
+                            return_pass_fields["secondaryFields"].append({
+                                "key": "month-of-birth",
+                                "label": "month-of-birth-label",
+                                "value": f"{dob_month:02d}.{dob_year:04d}",
+                            })
                     elif dob_year != 0:
-                        pass_fields["secondaryFields"].append({
-                            "key": "year-of-birth",
-                            "label": "year-of-birth-label",
-                            "value": f"{dob_year:04d}",
-                        })
-                        return_pass_fields["secondaryFields"].append({
-                            "key": "year-of-birth",
-                            "label": "year-of-birth-label",
-                            "value": f"{dob_year:04d}",
-                        })
+                        if pass_type == "boardingPass":
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "year-of-birth",
+                                "label": "year-of-birth-label",
+                                "value": f"{dob_year:04d}",
+                            })
+                            return_pass_fields["auxiliaryFields"].append({
+                                "key": "year-of-birth",
+                                "label": "year-of-birth-label",
+                                "value": f"{dob_year:04d}",
+                            })
+                        else:
+                            pass_fields["secondaryFields"].append({
+                                "key": "year-of-birth",
+                                "label": "year-of-birth-label",
+                                "value": f"{dob_year:04d}",
+                            })
+                            return_pass_fields["secondaryFields"].append({
+                                "key": "year-of-birth",
+                                "label": "year-of-birth-label",
+                                "value": f"{dob_year:04d}",
+                            })
 
                 if "countryOfResidence" in passenger:
                     pass_fields["secondaryFields"].append({
