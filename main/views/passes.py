@@ -1151,8 +1151,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "dateStyle": "PKDateStyleMedium",
                         "value": dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     }
-                    pass_fields["secondaryFields"].append(dob_field)
-                    return_pass_fields["secondaryFields"].append(dob_field)
+                    if pass_type == "boardingPass":
+                        pass_fields["auxiliaryFields"].append(dob_field)
+                        return_pass_fields["auxiliaryFields"].append(dob_field)
+                    else:
+                        pass_fields["secondaryFields"].append(dob_field)
+                        return_pass_fields["secondaryFields"].append(dob_field)
                 else:
                     dob_year = passenger.get("yearOfBirth", 0)
                     dob_month = passenger.get("monthOfBirth", 0)
