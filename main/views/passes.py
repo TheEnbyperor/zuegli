@@ -1589,9 +1589,19 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": parsed_layout.travel_class,
                 })
 
+            one_day_ticket = ticket_data.oebb_99.validity_start.date() == ticket_data.oebb_99.validity_end.date()
+            if one_day_ticket:
+                pass_fields["headerFields"].append({
+                    "key": "departure-date",
+                    "label": "departure-date-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleNone",
+                    "value": ticket_data.oebb_99.validity_start.isoformat(),
+                    "ignoresTimeZone": True
+                })
+
             if ticket_data.oebb_99.trains:
-                pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ")
+                pass_json["relevantDate"] = ticket_data.oebb_99.validity_start.isoformat()
 
                 train_number = ", ".join(list(map(lambda t: str(t.train_number), ticket_data.oebb_99.trains)))
                 pass_fields["headerFields"].append({
@@ -1611,32 +1621,36 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 pass_fields["secondaryFields"].append({
                     "key": "departure-time",
                     "label": "departure-time-label",
-                    "dateStyle": "PKDateStyleMedium",
+                    "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleMedium",
-                    "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_start.isoformat(),
+                    "ignoresTimeZone": True,
                 })
                 pass_fields["secondaryFields"].append({
                     "key": "arrival-time",
                     "label": "arrival-time-label",
-                    "dateStyle": "PKDateStyleMedium",
+                    "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleMedium",
-                    "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_end.isoformat(),
+                    "ignoresTimeZone": True,
                 })
             else:
                 pass_fields["secondaryFields"].append({
                     "key": "validity-start",
                     "label": "validity-start-label",
-                    "dateStyle": "PKDateStyleMedium",
+                    "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleNone",
-                    "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.oebb_99.validity_start.isoformat(),
+                    "ignoresTimeZone": True,
                 })
                 pass_fields["secondaryFields"].append({
                     "key": "validity-end",
                     "label": "validity-end-label",
-                    "dateStyle": "PKDateStyleMedium",
+                    "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
                     "timeStyle": "PKDateStyleNone",
-                    "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "changeMessage": "validity-end-change"
+                    "value": ticket_data.oebb_99.validity_end.isoformat(),
+                    "changeMessage": "validity-end-change",
+                    "ignoresTimeZone": True,
                 })
 
             if parsed_layout and parsed_layout.document_type:
@@ -1651,14 +1665,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.oebb_99.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.oebb_99.validity_start.isoformat(),
+                "ignoresTimeZone": True,
             })
             pass_fields["backFields"].append({
                 "key": "validity-end-back",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.oebb_99.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.oebb_99.validity_end.isoformat(),
+                "ignoresTimeZone": True,
             })
 
             if parsed_layout and parsed_layout.traveller:

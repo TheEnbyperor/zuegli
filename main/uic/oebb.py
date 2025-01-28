@@ -24,7 +24,7 @@ class OeBBRecord99:
         if version != 1:
             raise OeBBException(f"Unsupported record version {version}")
 
-        tz = pytz.UTC
+        tz = pytz.timezone("Europe/Vienna")
 
         try:
             data = json.loads(data.decode("utf-8"))
@@ -45,8 +45,8 @@ class OeBBRecord99:
                     carriage_number = None
                 trains.append(Train(train_number, carriage_number))
 
-        validity_start = tz.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M"))
-        validity_end = tz.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M"))
+        validity_start = pytz.UTC.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M")).astimezone(tz)
+        validity_end = pytz.UTC.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M")).astimezone(tz)
 
         return cls(
             validity_start=validity_start,
