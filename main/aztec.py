@@ -18,6 +18,7 @@ def decode(img_data: bytes):
     assert cfg_response.get_result() == Barkoder.ConfigResult.OK
     config = cfg_response.get_config()
 
+    config.encodingCharacterSet = "BINARY"
     config.decodingSpeed = Barkoder.DecodingSpeed.Slow
     assert config.set_enabled_decoders([
         Barkoder.DecoderType.Aztec,
