@@ -139,8 +139,8 @@ def rics_departure_time(value, issuing_time: datetime.datetime):
     travel_time = travel_time.replace(hour=0, minute=0, second=0, microsecond=0)
     travel_time += datetime.timedelta(minutes=value["departureTime"])
     if "departureUTCOffset" in value:
-        travel_time += datetime.timedelta(minutes=15 * value["departureUTCOffset"])
-        travel_time = travel_time.replace(tzinfo=pytz.utc)
+        tz = datetime.timezone(-datetime.timedelta(minutes=15 * value["departureUTCOffset"]))
+        travel_time = travel_time.replace(tzinfo=tz)
     return travel_time
 
 
@@ -155,8 +155,8 @@ def rics_arrival_time(value, issuing_time: datetime.datetime):
     travel_time = travel_time.replace(hour=0, minute=0, second=0, microsecond=0)
     travel_time += datetime.timedelta(minutes=value["arrivalTime"])
     if "arrivalUTCOffset" in value:
-        travel_time += datetime.timedelta(minutes=15 * value["arrivalUTCOffset"])
-        travel_time = travel_time.replace(tzinfo=pytz.utc)
+        tz = datetime.timezone(-datetime.timedelta(minutes=15 * value["arrivalUTCOffset"]))
+        travel_time = travel_time.replace(tzinfo=tz)
     return travel_time
 
 

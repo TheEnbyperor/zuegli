@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from . import apple_api, passes, account, db, db_abo, saarvv, api, sncb, metrics
+from . import apple_api, passes, account, db, db_abo, saarvv, api, sncb, metrics, ical
 
 
 def page_not_found(request, exception):
