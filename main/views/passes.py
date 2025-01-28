@@ -14,7 +14,7 @@ from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib import messages
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, elb, uic, ssb, swisspass
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, uic, ssb, swisspass, cal
 
 
 def robots(request):
@@ -171,6 +171,7 @@ def view_ticket(request, pk):
         "ticket_updated": request.session.pop("ticket_updated", False),
         "ticket_created": request.session.pop("ticket_created", False),
         "gwallet_url": gwallet_url,
+        "ical_url": reverse("ticket_ics", args=(ticket_obj.id,)) if cal.supports_calendar(ticket_obj) else None,
         "photo_upload_forms": photo_upload_forms,
         "is_saarvv": is_saarvv,
         "has_saarvv": has_saarvv,
@@ -523,44 +524,47 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": ticket_document["validRegionDesc"],
                             })
 
-                        if "validRegion" in ticket_document and ticket_document["validRegion"][0][0] == "trainLink":
-                            train_links = list(map(lambda l: l[1], filter(lambda l: l[0] == "trainLink",
-                                                                          ticket_document["validRegion"])))
-                            departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
-                            pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-                            train_number = ", ".join(
-                                list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
-                            pass_fields["auxiliaryFields"] = list(filter(
-                                lambda f: f["key"] not in ("validity-start", "validity-end"),
-                                pass_fields["auxiliaryFields"]
+                        if "validRegion" in ticket_document:
+                            train_links = list(map(
+                                lambda l: l[1],
+                                filter(lambda l: l[0] == "trainLink", ticket_document["validRegion"])
                             ))
-                            departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
-                            pass_fields["headerFields"] = [{
-                                "key": "train-number",
-                                "label": "train-number-label",
-                                "value": train_number,
-                                "semantics": {
-                                    "vehicleNumber": train_number
-                                }
-                            }, {
-                                "key": "departure-date",
-                                "label": "departure-date-label",
-                                "value": departure_time_str,
-                                "dateStyle": "PKDateStyleShort",
-                                "timeStyle": "PKDateStyleNone",
-                                "ignoresTimeZone": True,
-                            }]
-                            pass_fields["secondaryFields"].append({
-                                "key": "departure-time",
-                                "label": "departure-time-label",
-                                "value": departure_time_str,
-                                "dateStyle": "PKDateStyleNone",
-                                "timeStyle": "PKDateStyleShort",
-                                "ignoresTimeZone": True,
-                                "semantics": {
-                                    "originalDepartureDate": departure_time_str,
-                                }
-                            })
+                            if train_links:
+                                departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
+                                pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                                train_number = ", ".join(
+                                    list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
+                                pass_fields["auxiliaryFields"] = list(filter(
+                                    lambda f: f["key"] not in ("validity-start", "validity-end"),
+                                    pass_fields["auxiliaryFields"]
+                                ))
+                                departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                                pass_fields["headerFields"] = [{
+                                    "key": "train-number",
+                                    "label": "train-number-label",
+                                    "value": train_number,
+                                    "semantics": {
+                                        "vehicleNumber": train_number
+                                    }
+                                }, {
+                                    "key": "departure-date",
+                                    "label": "departure-date-label",
+                                    "value": departure_time_str,
+                                    "dateStyle": "PKDateStyleShort",
+                                    "timeStyle": "PKDateStyleNone",
+                                    "ignoresTimeZone": True,
+                                }]
+                                pass_fields["secondaryFields"].append({
+                                    "key": "departure-time",
+                                    "label": "departure-time-label",
+                                    "value": departure_time_str,
+                                    "dateStyle": "PKDateStyleNone",
+                                    "timeStyle": "PKDateStyleShort",
+                                    "ignoresTimeZone": True,
+                                    "semantics": {
+                                        "originalDepartureDate": departure_time_str,
+                                    }
+                                })
 
                         if "returnDescription" in ticket_document:
                             return_document = ticket_document["returnDescription"]

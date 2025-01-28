@@ -1,4 +1,5 @@
 {% load tz rics %}
+{% localtime off %}
 <dl class="govuk-summary-list">
     {% for region in valid_region %}
         {% if region.0 == "trainLink" %}
@@ -59,7 +60,7 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Departure time</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ region.1|rics_departure_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+                                {{ region.1|rics_departure_time:flex.issuing_time|date:"F d, Y H:i:s e" }}
                             </dd>
                         </div>
                     </dl>
@@ -148,3 +149,4 @@
         {% endif %}
     {% endfor %}
 </dl>
+{% endlocaltime %}
