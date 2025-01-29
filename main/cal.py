@@ -100,9 +100,9 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
                 event.add("location", from_station_name)
 
                 if "toStationNameUTF8" in reservation_document:
-                    to_station_name = ticket_document["toStationNameUTF8"]
+                    to_station_name = reservation_document["toStationNameUTF8"]
                 elif "toStationNameIA5" in reservation_document:
-                    to_station_name = ticket_document["toStationNameIA5"]
+                    to_station_name = reservation_document["toStationNameIA5"]
                 else:
                     return
 
