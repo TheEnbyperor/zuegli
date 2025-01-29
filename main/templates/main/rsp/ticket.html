@@ -384,6 +384,14 @@
             {% if data.depart_time_flag == 2 %}(mandatory){% elif data.depart_time_flag == 3 %}(suggested){% endif %}
         </dd>
     </div>
+    {% if data.limited_duration_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Limited duration</dt>
+            <dd class="govuk-summary-list__value">
+                {{ data.limited_duration_value }}
+            </dd>
+        </div>
+    {% endif %}
     {% if data.reservations %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Reservations</dt>

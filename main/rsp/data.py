@@ -180,12 +180,48 @@ class TicketData:
             free_use=free_text,
         )
 
+    def limited_duration_value(self):
+        if self.limited_duration_code == 1:
+            return datetime.timedelta(minutes=15)
+        elif self.limited_duration_code == 2:
+            return datetime.timedelta(minutes=30)
+        elif self.limited_duration_code == 3:
+            return datetime.timedelta(minutes=45)
+        elif self.limited_duration_code == 4:
+            return datetime.timedelta(hours=1)
+        elif self.limited_duration_code == 5:
+            return datetime.timedelta(minutes=90)
+        elif self.limited_duration_code == 6:
+            return datetime.timedelta(hours=2)
+        elif self.limited_duration_code == 7:
+            return datetime.timedelta(hours=3)
+        elif self.limited_duration_code == 8:
+            return datetime.timedelta(hours=4)
+        elif self.limited_duration_code == 9:
+            return datetime.timedelta(hours=5)
+        elif self.limited_duration_code == 10:
+            return datetime.timedelta(hours=6)
+        elif self.limited_duration_code == 11:
+            return datetime.timedelta(hours=8)
+        elif self.limited_duration_code == 12:
+            return datetime.timedelta(hours=10)
+        elif self.limited_duration_code == 13:
+            return datetime.timedelta(hours=12)
+        elif self.limited_duration_code == 14:
+            return datetime.timedelta(hours=18)
+        else:
+            return None
+
     def validity_start_time(self):
         return TZ.localize(self.start_date)
 
     def validity_end_time(self):
+        limited_duration = self.limited_duration_value()
+        if limited_duration:
+            return TZ.localize(self.start_date + limited_duration)
+
         if self.purchase_data:
-            base = self.validity_start_time() + datetime.timedelta(days=min(self.purchase_data.days_of_validity - 1, 0))
+            base = self.validity_start_time() + datetime.timedelta(days=max(self.purchase_data.days_of_validity - 1, 0))
         else:
             base = self.validity_start_time()
         return TZ.localize(datetime.datetime.combine(base.date(), datetime.time.max))
