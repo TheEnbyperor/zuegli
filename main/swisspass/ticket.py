@@ -61,3 +61,18 @@ class SwissPassTicket:
             self.ticket.ticket_data.ticket_issue.issue_time.msecs / 1000,
             tz=TZ
         )
+
+    @property
+    def payment_method_name(self):
+        if self.ticket.ticket_data.payment.payment_method == "MC":
+            return "Mastercard"
+        elif self.ticket.ticket_data.payment.payment_method == "VIS":
+            return "Visa"
+        elif self.ticket.ticket_data.payment.payment_method == "TWI":
+            return "Twint"
+        elif self.ticket.ticket_data.payment.payment_method == "PLU":
+            return "Halbtax Plus"
+        elif self.ticket.ticket_data.payment.payment_method == "PCD":
+            return "Postcard Debit"
+        else:
+            return f"Unknown - {self.ticket.ticket_data.payment.payment_method}"
