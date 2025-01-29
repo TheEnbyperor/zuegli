@@ -17,8 +17,16 @@
 #include <string>
 #include <map>
 #include <iterator>
+#include <unordered_map>
 #include "SpecificConfigs.hpp"
 
+
+typedef enum {
+    BKCF_Grayscale = 0,
+    BKCF_YUV = 1,
+    BKCF_BGRA = 2
+
+} BKColorFormat;
 
 
 /**
@@ -52,7 +60,15 @@ typedef enum {
     BKCOOP25,              /**< COOP 25 barcode. */
     BKCode32,              /**< Code 32 barcode. */
     BKTelepen,             /**< Telepen barcode. */
-    BKDotcode              /**< Dotcode barcode. */
+    BKDotcode,              /**< Dotcode barcode. */
+    BKIDDocument,
+    BKIDMRZ,
+    BKIDPicture,
+    BKIDSignature,
+    BKDatabar14,              /**< Databar 14 barcode. */
+    BKDatabarLimited,         /**< Databar Limited barcode. */
+    BKDatabarExpanded,        /**< Databar Expanded barcode. */
+
 } BKSymbology;
 
 inline std::string SymbologyToString(BKSymbology symbology)
@@ -87,8 +103,17 @@ inline std::string SymbologyToString(BKSymbology symbology)
         case BKMatrix25: return "BKMatrix25";
         case BKDatalogic25: return "BKDatalogic25";
         case BKCOOP25: return "BKCOOP25";
+        case BKDatabar14: return "BKDatabar14";
+        case BKDatabarLimited: return "BKDatabarLimited";
+        case BKDatabarExpanded: return "BKDatabarExpanded";
+        case BKIDDocument: return "BKIDDocument";
+        case BKIDMRZ: return "BKIDMRZ";
+        case BKIDPicture: return "BKIDPicture";
+        case BKIDSignature: return "BKIDSignature";
+
+
     }
-    
+
     return "Unknown";
 }
 
@@ -117,6 +142,10 @@ typedef struct {
 } BKPoint;
 
 typedef struct {
+    float width, height;
+} BKSize;
+
+typedef struct {
     float x, y;
     BKPoint delta1, delta2;
     int black;
@@ -131,7 +160,7 @@ typedef struct {
 class DLL_API BaseResult {
 private:
 public:
-    
+
     /**
      * @brief Default constructor.
      */
@@ -144,25 +173,26 @@ public:
     std::string textualData; /**< The textual data of the barcode. */
     std::string characterSet; /**< The character set used for encoding. */
     BKPoint location[4]; /**< The location of the barcode corners. */
-    
+
     std::vector<BKPoint> polygonLocation; /**< The location of the barcode as a polygon. */
-    int gs1; /**< GS1 compliance value. */
-    
-    std::map<std::string, std::string> extra; /**< Extra data associated with the barcode result. */
-    
+    int gs1 = 0; /**< GS1 compliance value. */
+    int linkageFlag = 0; /**< Linkage flag for composite barcodes */
+
+    std::unordered_map<std::string, std::string> extra; /**< Extra data associated with the barcode result. */
+
     /**
      * @brief Gets the string value associated with the given key from extra result data.
      * @param key The key to search for.
      * @return The value associated with the key, or an empty string if not found.
      */
     std::string GetStringForKey(std::string key){
-            std::map<std::string, std::string>::iterator it = extra.find(key);
+            std::unordered_map<std::string, std::string>::iterator it = extra.find(key);
             if (it != extra.end()){
                 return it->second;
             } else {
                 return "";
             }
-            
+
         }
 
     /**
@@ -170,7 +200,7 @@ public:
      * @return A vector containing all keys stored in the extra data.
      */
     std::vector<std::string> GetAllKeys(){
-            std::map<std::string, std::string>::iterator it = extra.begin();
+            std::unordered_map<std::string, std::string>::iterator it = extra.begin();
             std::vector<std::string> keys;
             while(it != extra.end())
             {

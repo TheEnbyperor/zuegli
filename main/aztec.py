@@ -1,4 +1,3 @@
-import json
 import numpy as np
 import cv2
 from django.conf import settings
@@ -11,8 +10,8 @@ class AztecError(Exception):
 def decode(img_data: bytes):
     try:
         import Barkoder
-    except ImportError:
-        raise AztecError("Barkoder SDK not available")
+    except ImportError as e:
+        raise AztecError("Barkoder SDK not available") from e
 
     cfg_response = Barkoder.Config.InitializeWithLicenseKey(settings.BARKODER_LICENSE)
     assert cfg_response.get_result() == Barkoder.ConfigResult.OK

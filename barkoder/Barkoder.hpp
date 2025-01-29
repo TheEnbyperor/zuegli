@@ -34,7 +34,7 @@ public:
      * @param height Height of the image.
      * @return A vector of BaseResult objects containing decoded results.
      */
-    static std::vector<BaseResult> DecodeImageMemory(NSBarkoder::Config *config, uint8_t *pixels, int width, int height);
+    static std::vector<BaseResult> DecodeImageMemory(NSBarkoder::Config *config, uint8_t *pixels, int width, int height, BKColorFormat colorFormat = BKCF_Grayscale);
 
     /**
      * @brief Decodes an image stored in memory asynchronously.
@@ -47,7 +47,7 @@ public:
      * @param taskAlreadyAdded Flag indicating whether the decoding task has already been added.
      * @return An ID representing the decoding task.
      */
-    static int DecodeImageMemoryAsync(NSBarkoder::Config *config, uint8_t *pixels, int width, int height, void (*decodeMemoryCallback)(std::vector<BaseResult>, int), int callbackId = 0, bool taskAlreadyAdded = 0);
+    static int DecodeImageMemoryAsync(NSBarkoder::Config *config, uint8_t *pixels, int width, int height, BKColorFormat colorFormat, void (*decodeMemoryCallback)(std::vector<BaseResult>, int), int callbackId = 0, bool taskAlreadyAdded = 0);
 
     /**
      * @brief Decodes an image using GPU asynchronously (Beta - works only on Apple platforms).
@@ -59,7 +59,7 @@ public:
      * @param callbackId An ID for the callback.
      * @return An ID representing the decoding task.
      */
-    static int DecodeImageInGPUAsync(NSBarkoder::Config *config, void *GPUImageRef, int width, int height, void (*decodeMemoryCallback)(std::vector<BaseResult>, int), int callbackId);
+    static int DecodeImageInGPUAsync(NSBarkoder::Config *config, void *GPUImageRef, int width, int height, BKColorFormat colorFormat, void (*decodeMemoryCallback)(std::vector<BaseResult>, int), int callbackId);
 
     /**
      * @brief Retrieves the version of the Barkoder library.
@@ -72,6 +72,14 @@ public:
      * @return 1 if the decoder is busy, 0 otherwise.
      */
     static int IsDecoderBusy();
+
+    /**
+     * @brief Check if input string satisfy VIN rules.
+     * @param VINString VIN string to validate
+     * @param checkLevel 0 - strict rules, 1 - allow similar characters tollerance, 2 - allow invalid check digit
+     * @return 1 if VIN is valid, 0 otherwise.
+     */
+    static int IsStringVINCompliant(std::string VINString, int checkLevel);
 };
 
 #endif /* Barkoder_h */

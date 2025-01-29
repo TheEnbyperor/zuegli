@@ -1,6 +1,16 @@
 #ifndef SpecificConfigs_hpp
 #define SpecificConfigs_hpp
 
+#ifdef _MSC_VER
+#ifdef DLL_EXPORTS
+#define DLL_API __declspec(dllexport)
+#else
+#define DLL_API __declspec(dllimport)
+#endif
+#else
+#define DLL_API __attribute__ ((visibility ("default")))
+#endif
+
 #include <string>
 #include <stdexcept>
 
@@ -32,6 +42,15 @@
 #define MATRIX_25_TYPENAME "Matrix 25";
 #define DATALOGIC_25_TYPENAME "Datalogic 25";
 #define COOP_25_TYPENAME "COOP 25";
+#define DATABAR_14_TYPENAME "Databar 14";
+#define DATABAR_LIMITED_TYPENAME "Databar Limited";
+#define DATABAR_EXPANDED_TYPENAME "Databar Expanded";
+
+#define ID_DOCUMENT_TYPENAME "ID Document";
+#define ID_MRZ_TYPENAME "MRZ";
+#define ID_PICTURE_TYPENAME "Picture";
+#define ID_SIGNATURE_TYPENAME "Signature";
+
 
 namespace NSBarkoder {
     class Config;
@@ -58,7 +77,9 @@ namespace NSBarkoder {
     enum class DecodingSpeed {
         Fast = 0,
         Normal,
-        Slow
+        Slow,
+        Rigorous
+
     };
 
     enum class Formatting {
@@ -96,10 +117,17 @@ namespace NSBarkoder {
         COOP25,
         Code32,
         Telepen,
-        Dotcode
+        Dotcode,
+        IDDocument,
+        IDMRZ,
+        IDPicture,
+        IDSignature,
+        Databar14,
+        DatabarLimited,
+        DatabarExpanded
     };
 
-    enum class DecoderType {
+    enum class DLL_API DecoderType {
         Aztec,
         AztecCompact,
         QR,
@@ -127,26 +155,37 @@ namespace NSBarkoder {
         COOP25,
         Code32,
         Telepen,
-        Dotcode
+        Dotcode,
+        IDDocument,
+        Databar14,
+        DatabarLimited,
+        DatabarExpanded
     };
 
 enum class LengthType {
     Unlimited = 0
-    
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Specific Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Base class for all specific configs
-    class SpecificConfig {
+    class DLL_API SpecificConfig {
+
     public:
+
+        enum class ChecksumType {
+            Disabled,
+            Enabled
+        };
+
         bool enabled;
         int expectedCount = 0;
         int minimumLength;
         int maximumLength;
         int SetLengthRange(int minimumLength, int maximumLength) {
-            
+
             if (minimumLength >= 0 && maximumLength >= 0){
                 if (minimumLength > 0 && maximumLength > 0 && maximumLength < minimumLength){
                     throw std::invalid_argument( "Maximum length can't be smaller than minimum" );
@@ -180,7 +219,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code 11 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code11Config : public SpecificConfig {
+    class DLL_API Code11Config : public SpecificConfig {
     public:
         enum class ChecksumType {
             Disabled,
@@ -200,7 +239,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code 39 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code39Config : public SpecificConfig {
+    class DLL_API Code39Config : public SpecificConfig {
     public:
         enum class ChecksumType {
             Disabled,
@@ -218,7 +257,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Telepen Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class TelepenConfig : public SpecificConfig {
+    class DLL_API TelepenConfig : public SpecificConfig {
     public:
         TelepenConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = TELEPEN_TYPENAME;
@@ -229,7 +268,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Dotcode Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class DotcodeConfig : public SpecificConfig {
+    class DLL_API DotcodeConfig : public SpecificConfig {
     public:
         DotcodeConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = DOTCODE_TYPENAME;
@@ -240,7 +279,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code 32 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code32Config : public SpecificConfig {
+    class DLL_API Code32Config : public SpecificConfig {
     public:
 
         Code32Config(DecoderType decoderType) : SpecificConfig (decoderType) {
@@ -254,7 +293,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Msi Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class MsiConfig : public SpecificConfig {
+    class DLL_API MsiConfig : public SpecificConfig {
     public:
         enum class ChecksumType {
             Disabled,
@@ -278,12 +317,9 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code25Config : public SpecificConfig {
+    class DLL_API Code25Config : public SpecificConfig {
     public:
-        enum class ChecksumType {
-            Disabled,
-            Enabled
-        };
+
 
         ChecksumType checksumType{ChecksumType::Disabled};
 
@@ -296,10 +332,10 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // IATA 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class IATA25Config : public SpecificConfig {
+    class DLL_API IATA25Config : public SpecificConfig {
     public:
-      
-       
+
+
         Code25Config::ChecksumType checksumType{Code25Config::ChecksumType::Disabled};
         IATA25Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = IATA_25_TYPENAME;
@@ -310,10 +346,10 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Matrix 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Matrix25Config : public SpecificConfig {
+    class DLL_API Matrix25Config : public SpecificConfig {
     public:
-      
-       
+
+
         Code25Config::ChecksumType checksumType{Code25Config::ChecksumType::Disabled};
         Matrix25Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = MATRIX_25_TYPENAME;
@@ -324,10 +360,10 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Datalogic 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Datalogic25Config : public SpecificConfig {
+    class DLL_API Datalogic25Config : public SpecificConfig {
     public:
-      
-       
+
+
         Code25Config::ChecksumType checksumType{Code25Config::ChecksumType::Disabled};
         Datalogic25Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = DATALOGIC_25_TYPENAME;
@@ -338,10 +374,10 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // COOP 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class COOP25Config : public SpecificConfig {
+    class DLL_API COOP25Config : public SpecificConfig {
     public:
-      
-       
+
+
         Code25Config::ChecksumType checksumType{Code25Config::ChecksumType::Disabled};
         COOP25Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = COOP_25_TYPENAME;
@@ -352,9 +388,9 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Interleaved 25 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Interleaved25Config : public SpecificConfig {
+    class DLL_API Interleaved25Config : public SpecificConfig {
     public:
-        
+
 
         Code25Config::ChecksumType checksumType{Code25Config::ChecksumType::Disabled};
 
@@ -367,7 +403,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // ITF 14 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class ITF14Config : public SpecificConfig {
+    class DLL_API ITF14Config : public SpecificConfig {
     public:
 
         ITF14Config(DecoderType decoderType) : SpecificConfig (decoderType) {
@@ -380,7 +416,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Aztec Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class AztecConfig : public SpecificConfig {
+    class DLL_API AztecConfig : public SpecificConfig {
     public:
         AztecConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = AZTEC_TYPENAME;
@@ -391,7 +427,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // AztecCompact Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class AztecCompactConfig : public SpecificConfig {
+    class DLL_API AztecCompactConfig : public SpecificConfig {
     public:
         AztecCompactConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = AZTEC_COMPACT_TYPENAME;
@@ -402,7 +438,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Datamatrix Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class DatamatrixConfig : public SpecificConfig {
+    class DLL_API DatamatrixConfig : public SpecificConfig {
     public:
         int dpmMode = 0;
         DatamatrixConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
@@ -414,9 +450,10 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // QR Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class QRConfig : public SpecificConfig {
-        
+    class DLL_API QRConfig : public SpecificConfig {
+
     public:
+        int dpmMode = 0;
         bool multiPartMerge = 0;
         QRConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = QR_TYPENAME;
@@ -427,8 +464,9 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // QRMicro Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class QRMicroConfig : public SpecificConfig {
+    class DLL_API QRMicroConfig : public SpecificConfig {
     public:
+        int dpmMode = 0;
         QRMicroConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = QR_MICRO_TYPENAME;
         }
@@ -438,7 +476,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code128 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code128Config : public SpecificConfig {
+    class DLL_API Code128Config : public SpecificConfig {
     public:
         Code128Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = CODE_128_TYPENAME;
@@ -449,7 +487,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Code93 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Code93Config : public SpecificConfig {
+    class DLL_API Code93Config : public SpecificConfig {
     public:
         Code93Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = CODE_93_TYPENAME;
@@ -460,7 +498,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Codabar Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class CodabarConfig : public SpecificConfig {
+    class DLL_API CodabarConfig : public SpecificConfig {
     public:
         CodabarConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = CODABAR_TYPENAME;
@@ -472,7 +510,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UpcA Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class UpcAConfig : public SpecificConfig {
+    class DLL_API UpcAConfig : public SpecificConfig {
     public:
         UpcAConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = UPCA_TYPENAME;
@@ -483,7 +521,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UpcE Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class UpcEConfig : public SpecificConfig {
+    class DLL_API UpcEConfig : public SpecificConfig {
     public:
         bool expandToUPCA = false;
         UpcEConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
@@ -495,7 +533,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // UpcE1 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class UpcE1Config : public SpecificConfig {
+    class DLL_API UpcE1Config : public SpecificConfig {
     public:
         bool expandToUPCA = false;
         UpcE1Config(DecoderType decoderType) : SpecificConfig (decoderType) {
@@ -507,7 +545,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Ean13 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Ean13Config : public SpecificConfig {
+    class DLL_API Ean13Config : public SpecificConfig {
     public:
         Ean13Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = EAN13_TYPENAME;
@@ -518,7 +556,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Ean8 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class Ean8Config : public SpecificConfig {
+    class DLL_API Ean8Config : public SpecificConfig {
     public:
         Ean8Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = EAN8_TYPENAME;
@@ -529,7 +567,7 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PDF417 Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class PDF417Config : public SpecificConfig {
+    class DLL_API PDF417Config : public SpecificConfig {
     public:
         PDF417Config(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = PDF417_TYPENAME;
@@ -540,13 +578,60 @@ enum class LengthType {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PDF417Micro Config
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-    class PDF417MicroConfig : public SpecificConfig {
+    class DLL_API PDF417MicroConfig : public SpecificConfig {
     public:
         PDF417MicroConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
             configTypeName = PDF417_MICRO_TYPENAME;
         }
         virtual ~PDF417MicroConfig() {};
     };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Databar 14 Config
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    class DLL_API Databar14Config : public SpecificConfig {
+    public:
+        Databar14Config(DecoderType decoderType) : SpecificConfig (decoderType) {
+            configTypeName = DATABAR_14_TYPENAME;
+        }
+        virtual ~Databar14Config() {};
+    };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// DatabarLimited Config
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    class DLL_API DatabarLimitedConfig : public SpecificConfig {
+    public:
+        DatabarLimitedConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
+            configTypeName = DATABAR_LIMITED_TYPENAME;
+        }
+        virtual ~DatabarLimitedConfig() {};
+    };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Databar Expanded Config
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    class DLL_API DatabarExpandedConfig : public SpecificConfig {
+    public:
+        DatabarExpandedConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
+            configTypeName = DATABAR_EXPANDED_TYPENAME;
+        }
+        virtual ~DatabarExpandedConfig() {};
+    };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// ID Document Config
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    class DLL_API IDDocumentConfig : public SpecificConfig {
+    public:
+        ChecksumType masterChecksumType{ChecksumType::Disabled};
+        IDDocumentConfig(DecoderType decoderType) : SpecificConfig (decoderType) {
+            configTypeName = ID_DOCUMENT_TYPENAME;
+        }
+        virtual ~IDDocumentConfig() {};
+    };
 }
+
+
 
 #endif // SpecificConfigs_hpp
