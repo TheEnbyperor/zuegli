@@ -248,7 +248,11 @@ def parse_via(via: str) -> Route:
     if point:
         points.append(Point(point))
 
-    if carrier_num or any(p.name for p in points):
+    if carrier_num or any(
+            isinstance(p, Options) or
+            (isinstance(p, Point) and p.name)
+            for p in points
+    ):
         route.append(Carrier(carrier_num, points))
 
     return route
