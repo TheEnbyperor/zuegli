@@ -3776,8 +3776,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["backFields"].append({
-            "key": "validity-start-back",
-            "label": "validity-start-label",
+            "key": "validity-end-back",
+            "label": "validity-end-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
             "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -3810,8 +3810,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["backFields"].append({
-                "key": "validity-start-back",
-                "label": "validity-start-label",
+                "key": "validity-end-back",
+                "label": "validity-end-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
                 "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -4013,8 +4013,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "value": ticket_data.data.valid_until.isoformat(),
         })
         pass_fields["backFields"].append({
-            "key": "validity-start-back",
-            "label": "validity-start-label",
+            "key": "validity-end-back",
+            "label": "validity-end-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
             "value": ticket_data.data.valid_until.isoformat(),

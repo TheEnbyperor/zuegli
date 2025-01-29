@@ -6,7 +6,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 import hashlib
-
+import string
 import binascii
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass
@@ -1141,10 +1141,10 @@ def parse_ticket(
         return parse_ticket_ssb(ticket_bytes)
 
     try:
-        d = base64.b64decode(ticket_bytes)
+        d = base64.b64decode(ticket_bytes, validate=True)
         if (d[0] & 0xF0) >> 4 in (2, 3):
             return parse_ticket_ssb(d)
-    except binascii.Error as e:
+    except binascii.Error:
         pass
 
     if len(ticket_bytes) == 107 and (ticket_bytes[0] & 0xF0) >> 4 in (1, 2):
