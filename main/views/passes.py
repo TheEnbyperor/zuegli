@@ -522,7 +522,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             pass_fields["backFields"].append({
                                 "key": "valid-region",
                                 "label": "valid-region-label",
-                                "value": ticket_document["validRegionDesc"],
+                                "value": ticket_document["validRegionDesc"].replace("<", "&lt;").replace(">", "&gt;"),
                             })
 
                         if "validRegion" in ticket_document:
