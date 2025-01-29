@@ -238,7 +238,7 @@ class Certificate:
     @classmethod
     def parse(cls, raw_cert: RawCertificate):
         try:
-            elms = ber_tlv.tlv.Tlv.Parser.parse(raw_cert.data, True, [], False, 0)
+            elms = ber_tlv.tlv.Tlv.Parser.parse(raw_cert.data, False, [], False, 0)
         except Exception as e:
             raise util.VDVException("Failed to parse certificate") from e
 
@@ -256,12 +256,17 @@ class Certificate:
         return cls.parse_tags(certificate)
 
     @classmethod
-    def parse_tags(cls, certificate: typing.List[typing.Tuple[int, typing.Any]]):
+    def parse_tags(cls, certificate: bytes):
+        try:
+            elms = ber_tlv.tlv.Tlv.Parser.parse(certificate, False, [], False, 0)
+        except Exception as e:
+            raise util.VDVException("Failed to parse certificate contents") from e
+
         certificate_content = None
         certificate_signature = None
         certificate_signature_remainder = None
 
-        for tag, data in certificate:
+        for tag, data in elms:
             if tag == util.TAG_CERTIFICATE_CONTENT:
                 certificate_content = data
             elif tag == util.TAG_CERTIFICATE_SIGNATURE:

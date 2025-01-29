@@ -18,7 +18,7 @@ class EnvelopeV2:
     @classmethod
     def parse(cls, data: bytes) -> "EnvelopeV2":
         try:
-            elms = ber_tlv.tlv.Tlv.Parser.parse(data, True, [], False, 0)
+            elms = ber_tlv.tlv.Tlv.Parser.parse(data, False, [], False, 0)
         except Exception as e:
             raise util.VDVException("Failed to parse envelope, invalid BER-TLV") from e
 
