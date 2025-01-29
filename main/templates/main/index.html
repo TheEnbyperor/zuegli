@@ -207,7 +207,6 @@ Pass Contents</code></pre>
                             canvas.width = result.capturedFrame.width;
                             canvas.height = result.capturedFrame.height;
                             const ctx = canvas.getContext("2d");
-                            console.log(result.capturedFrame);
                             ctx.putImageData(result.capturedFrame, 0, 0);
                             const dataURL = canvas.toDataURL("image/png");
 

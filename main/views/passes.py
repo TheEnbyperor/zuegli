@@ -4064,7 +4064,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             }
                         }
                     })
-            if ticket_data.data.ticket.ticket_data.traveler.birthday:
+            if ticket_data.data.ticket.ticket_data.traveler.birthday and ticket_data.data.traveler_birthday:
                 if pass_type == "boardingPass":
                     pass_fields["secondaryFields"].append({
                         "key": "date-of-birth",
