@@ -2373,15 +2373,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-            pass_type = "boardingPass"
             pass_fields = {
                 "transitType": "PKTransitTypeTrain",
                 "headerFields": [{
                     "key": "departure-time",
                     "label": "departure-time-label",
-                    "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": validity_start.isoformat(),
                     "dateStyle": "PKDateStyleShort",
                     "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time_flag == 2 else "PKDateStyleNone",
+                    "ignoresTimeZone": True,
                 }],
                 "primaryFields": [],
                 "auxiliaryFields": [{
@@ -2393,79 +2393,106 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "backFields": [],
             }
 
-            if from_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.origin_nlc):
-                pass_fields["primaryFields"].append({
-                    "key": "from-station",
-                    "label": "from-station-label",
-                    "value": from_station.crs_code,
-                    "semantics": {
-                        "departureLocation": {
-                            "latitude": float(from_station.latitude),
-                            "longitude": float(from_station.longitude),
-                        },
-                        "departureStationName": from_station.name,
-                    }
+            if ticket_data.data.depart_time_flag != 2 and ticket_data.data.limited_duration_code:
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": validity_start.isoformat(),
+                    "ignoresTimeZone": True,
                 })
-                maps_link = urllib.parse.urlencode({
-                    "q": from_station.name,
-                    "ll": f"{from_station.latitude},{from_station.longitude}"
-                })
-                pass_fields["backFields"].append({
-                    "key": "from-station-back",
-                    "label": "from-station-label",
-                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station.name}</a>",
-                })
-            elif from_station := rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc):
-                pass_fields["primaryFields"].append({
-                    "key": "from-station",
-                    "label": "from-station-label",
-                    "value": from_station["3ALPHA"],
-                    "semantics": {
-                        "departureStationName": from_station["NLCDESC"]
-                    }
-                })
-                pass_fields["backFields"].append({
-                    "key": "from-station-back",
-                    "label": "from-station-label",
-                    "value": from_station["NLCDESC"]
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-end",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": validity_end.isoformat(),
+                    "changeMessage": "validity-end-change",
+                    "ignoresTimeZone": True,
                 })
 
-            if to_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.destination_nlc):
+            if ticket_data.data.origin_nlc == "Z036" and ticket_data.data.destination_nlc == "Z036":
                 pass_fields["primaryFields"].append({
-                    "key": "to-station",
-                    "label": "to-station-label",
-                    "value": to_station.crs_code,
-                    "semantics": {
-                        "departureLocation": {
-                            "latitude": float(to_station.latitude),
-                            "longitude": float(to_station.longitude),
-                        },
-                        "departureStationName": to_station.name,
-                    }
+                    "key": "product",
+                    "label": "product-label",
+                    "value": "Scotrail\nTap & Pay"
                 })
-                maps_link = urllib.parse.urlencode({
-                    "q": to_station.name,
-                    "ll": f"{to_station.latitude},{to_station.longitude}"
-                })
-                pass_fields["backFields"].append({
-                    "key": "to-station-back",
-                    "label": "to-station-label",
-                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station.name}</a>",
-                })
-            elif to_station := rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc):
-                pass_fields["primaryFields"].append({
-                    "key": "to-station",
-                    "label": "to-station-label",
-                    "value": to_station["3ALPHA"],
-                    "semantics": {
-                        "departureStationName": to_station["NLCDESC"]
-                    }
-                })
-                pass_fields["backFields"].append({
-                    "key": "to-station-back",
-                    "label": "to-station-label",
-                    "value": to_station["NLCDESC"]
-                })
+            else:
+                pass_type = "boardingPass"
+                if from_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.origin_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": from_station.crs_code,
+                        "semantics": {
+                            "departureLocation": {
+                                "latitude": float(from_station.latitude),
+                                "longitude": float(from_station.longitude),
+                            },
+                            "departureStationName": from_station.name,
+                        }
+                    })
+                    maps_link = urllib.parse.urlencode({
+                        "q": from_station.name,
+                        "ll": f"{from_station.latitude},{from_station.longitude}"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "from-station-back",
+                        "label": "from-station-label",
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station.name}</a>",
+                    })
+                elif from_station := rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": from_station["3ALPHA"],
+                        "semantics": {
+                            "departureStationName": from_station["NLCDESC"]
+                        }
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "from-station-back",
+                        "label": "from-station-label",
+                        "value": from_station["NLCDESC"]
+                    })
+
+                if to_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.destination_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": to_station.crs_code,
+                        "semantics": {
+                            "departureLocation": {
+                                "latitude": float(to_station.latitude),
+                                "longitude": float(to_station.longitude),
+                            },
+                            "departureStationName": to_station.name,
+                        }
+                    })
+                    maps_link = urllib.parse.urlencode({
+                        "q": to_station.name,
+                        "ll": f"{to_station.latitude},{to_station.longitude}"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "to-station-back",
+                        "label": "to-station-label",
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station.name}</a>",
+                    })
+                elif to_station := rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": to_station["3ALPHA"],
+                        "semantics": {
+                            "departureStationName": to_station["NLCDESC"]
+                        }
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "to-station-back",
+                        "label": "to-station-label",
+                        "value": to_station["NLCDESC"]
+                    })
 
             pass_fields["backFields"].append({
                 "key": "return-included",
