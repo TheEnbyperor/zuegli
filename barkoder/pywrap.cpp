@@ -19,6 +19,7 @@ PYBIND11_MODULE(Barkoder, m) {
     py::class_<NSBarkoder::Config>(m, "Config")
     .def_static("InitializeWithLicenseKey", &NSBarkoder::Config::InitializeWithLicenseKey)
     .def_readwrite("decodingSpeed", &NSBarkoder::Config::decodingSpeed)
+    .def_readwrite("encodingCharacterSet", &NSBarkoder::Config::encodingCharacterSet)
     .def("set_enabled_decoders", &NSBarkoder::Config::SetEnabledDecoders);
 
     py::class_<NSBarkoder::ConfigResponse>(m, "ConfigResponse")
