@@ -11,6 +11,7 @@ TZ = pytz.timezone('Europe/Zurich')
 class SwissPassException(Exception):
     pass
 
+
 @dataclasses.dataclass
 class SwissPassTicket:
     ticket: swisspass_pb2.Ticket
@@ -36,31 +37,43 @@ class SwissPassTicket:
 
     @property
     def valid_from(self):
-        return datetime.datetime.fromtimestamp(
-            self.ticket.ticket_data.trip_data.valid_from.msecs / 1000,
-            tz=TZ
-        )
+        try:
+            return datetime.datetime.fromtimestamp(
+                self.ticket.ticket_data.trip_data.valid_from.msecs / 1000,
+                tz=TZ
+            )
+        except ValueError:
+            return None
 
     @property
     def valid_until(self):
-        return datetime.datetime.fromtimestamp(
-            self.ticket.ticket_data.trip_data.valid_until.msecs / 1000,
-            tz=TZ
-        )
+        try:
+            return datetime.datetime.fromtimestamp(
+                self.ticket.ticket_data.trip_data.valid_until.msecs / 1000,
+                tz=TZ
+            )
+        except ValueError:
+            return None
 
     @property
     def traveler_birthday(self):
-        return datetime.datetime.fromtimestamp(
-            self.ticket.ticket_data.traveler.birthday.msecs / 1000,
-            tz=TZ
-        )
+        try:
+            return datetime.datetime.fromtimestamp(
+                self.ticket.ticket_data.traveler.birthday.msecs / 1000,
+                tz=TZ
+            )
+        except ValueError:
+            return None
 
     @property
     def issuing_time(self):
-        return datetime.datetime.fromtimestamp(
-            self.ticket.ticket_data.ticket_issue.issue_time.msecs / 1000,
-            tz=TZ
-        )
+        try:
+            return datetime.datetime.fromtimestamp(
+                self.ticket.ticket_data.ticket_issue.issue_time.msecs / 1000,
+                tz=TZ
+            )
+        except ValueError:
+            return None
 
     @property
     def payment_method_name(self):

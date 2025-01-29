@@ -174,12 +174,14 @@
                             {{ ticket.data.ticket.ticket_data.traveler.surname }}
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Birthday</dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ ticket.data.traveler_birthday|date:"F d, Y H:i:s e" }}
-                        </dd>
-                    </div>
+                    {% if ticket.data.ticket.ticket_data.traveler.birthday and ticket.data.traveler_birthday %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Birthday</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.traveler_birthday|date:"F d, Y H:i:s e" }}
+                            </dd>
+                        </div>
+                    {% endif %}
                     {% if ticket.data.ticket.ticket_data.traveler.tariff %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Tariff</dt>
