@@ -1,3 +1,4 @@
+import datetime
 import typing
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -8,7 +9,7 @@ import pytz
 from django.conf import settings
 from django.templatetags.static import static
 from django.shortcuts import reverse
-from . import models, rsp, templatetags, vdv
+from . import models, rsp, templatetags, vdv, ssb
 
 client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
@@ -89,6 +90,11 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
                     return "generic", settings.GWALLET_CONF["bahncard_pass_class"]
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         return "generic", settings.GWALLET_CONF["train_pass_class"]
+    elif isinstance(ticket_instance, models.SSBTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+
+        if isinstance(ticket_data.data, ssb.IntegratedReservationTicket) or isinstance(ticket_data.data, ssb.NonReservationTicket):
+            return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         if isinstance(ticket_data.data, rsp.RailcardData):
@@ -902,6 +908,117 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     })
 
         return obj, "generic"
+
+
+    elif isinstance(ticket_instance, models.SSBTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+
+        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+        obj["logo"] = {
+            "sourceUri": {
+                "uri": urllib.parse.urljoin(
+                    settings.EXTERNAL_URL_BASE,
+                    static("pass/icon@3x.png"),
+                )
+            },
+        }
+        obj["hexBackgroundColor"] = "#ffffff"
+        obj["barcode"] = {
+            "type": "AZTEC",
+            "alternateText": ticket_data.data.pnr,
+            "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+        }
+        obj["ticketNumber"] = ticket_data.data.pnr
+
+        if distributor := ticket_data.envelope.issuer():
+            obj["cardTitle"]["defaultValue"]["value"] = distributor["full_name"]
+            if distributor["url"]:
+                obj["linksModuleData"]["uris"].append({
+                    "id": "distributor",
+                    "description": distributor["full_name"],
+                    "uri": distributor["url"],
+                })
+
+        if isinstance(ticket_data.data, ssb.NonReservationTicket):
+            obj["tripType"] = "ROUND_TRIP" if ticket_data.data.return_included else "ONE_WAY"
+            obj["ticketLegs"] = [{
+                "ticketSeat": {}
+            }]
+
+            if ticket_data.data.num_adults + ticket_data.data.num_children <= 1:
+                obj["passengerType"] = "SINGLE_PASSENGER"
+                if ticket_data.data.num_adults:
+                    obj["concessionCategory"] = "ADULT"
+                elif ticket_data.data.num_children:
+                    obj["concessionCategory"] = "CHILD"
+            else:
+                obj["passengerType"] = "MULTIPLE_PASSENGERS"
+
+            validity_start = datetime.datetime.combine(ticket_data.data.validity_start, datetime.time.min)
+            validity_end = datetime.datetime.combine(ticket_data.data.validity_end, datetime.time.max)
+            obj["validTimeInterval"] = {
+                "start": {
+                    "date": validity_start.isoformat()
+                },
+                "end": {
+                    "date": validity_end.isoformat()
+                }
+            }
+
+            from_station = ticket_data.data.departure_station.station()
+            to_station = ticket_data.data.arrival_station.station()
+
+            if from_station:
+                obj["ticketLegs"][0]["originName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": from_station["name"]
+                    }
+                }
+
+            if to_station:
+                obj["ticketLegs"][0]["destinationName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": to_station["name"]
+                    }
+                }
+
+            if distributor := ticket_data.envelope.issuer():
+                obj["ticketLegs"][0]["transitOperatorName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": distributor["full_name"],
+                    }
+                }
+
+            if ticket_data.data.travel_class == 1:
+                obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "FIRST"
+            elif ticket_data.data.travel_class == 2:
+                obj["ticketLegs"][0]["ticketSeat"]["fareClass"] = "ECONOMY"
+
+            obj["textModulesData"].append({
+                "id": "issued-at",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Ausgestellt am"
+                    }, {
+                        "language": "nl",
+                        "value": "Uitgegeven om"
+                    }, {
+                        "language": "cy",
+                        "value": "Dyddorwyd am"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Issued at"
+                    }
+                },
+                "body": ticket_data.data.issuing_date.strftime("%d.%m.%Y"),
+            })
+
+        return obj, "transit"
 
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         obj["cardTitle"] = {
