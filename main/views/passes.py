@@ -3315,7 +3315,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": ticket_data.data.extra_text,
                 })
 
-
         elif isinstance(ticket_data.data, ssb.GroupTicket):
             pass_type = "boardingPass"
             pass_fields["transitType"] = "PKTransitTypeTrain"
