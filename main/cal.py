@@ -188,5 +188,7 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
                     event.add("summary", f"{train_number}: {from_station_name} ➡ {to_station_name}")
                 else:
                     event.add("summary", f"{from_station_name} ➡ {to_station_name}")
+            else:
+                return
 
     cal.add_component(event)

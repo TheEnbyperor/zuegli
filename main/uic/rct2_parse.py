@@ -33,7 +33,7 @@ class ParsedRCT2:
 class RCT2Parser:
     def __init__(self):
         self.contents = [
-            [None for _ in range(72)]
+            [None for _ in range(73)]
             for _ in range(16)
         ]
 
@@ -48,7 +48,7 @@ class RCT2Parser:
                     x = 0
                     continue
 
-                if y + field.line < 16 and x + field.column < 72:
+                if y + field.line < 16 and x + field.column < 73:
                     self.contents[y + field.line][x + field.column] = c
                 x += 1
                 if (not already_new_lined) and x == field.width:
@@ -112,7 +112,7 @@ class RCT2Parser:
                     arrival=arrival_dt,
                 ))
 
-        travel_class =        self.read_area(top=6,  left=66, width=5,  height=1)
+        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1)
 
         document_data =       self.read_area(top=0,  left=18, width=34, height=3)
         traveller_data =      self.read_area(top=0,  left=52, width=20, height=3)
