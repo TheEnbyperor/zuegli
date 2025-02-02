@@ -3164,6 +3164,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": ticket_data.data.seat_number,
                 })
 
+            if from_station and from_station.get("time_zone"):
+                tz = pytz.timezone(from_station["time_zone"])
+            else:
+                tz = pytz.utc
+
+            pass_json["relevantDate"] = tz.localize(ticket_data.data.departure).isoformat()
+
             pass_fields["secondaryFields"].append({
                 "key": "departure-time",
                 "label": "departure-time-label",
@@ -3275,6 +3282,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "class-code-label",
                     "value": f"class-code-{ticket_data.data.travel_class}-label",
                 })
+
+            validity_end = datetime.datetime.combine(ticket_data.data.validity_end, datetime.time.max)
+            if to_station and to_station.get("time_zone"):
+                tz = pytz.timezone(to_station["time_zone"])
+            else:
+                tz = pytz.utc
+
+            validity_end += datetime.timedelta(hours=3)
+            pass_json["expirationDate"] = tz.localize(validity_end).isoformat()
 
             pass_fields["secondaryFields"].append({
                 "key": "validity-start",
@@ -3415,6 +3431,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": ticket_data.data.group_leader,
                 })
 
+            validity_end = datetime.datetime.combine(ticket_data.data.validity_end, datetime.time.max)
+            if to_station and to_station.get("time_zone"):
+                tz = pytz.timezone(to_station["time_zone"])
+            else:
+                tz = pytz.utc
+                
+            validity_end += datetime.timedelta(hours=3)
+            pass_json["expirationDate"] = tz.localize(validity_end).isoformat()
+
             pass_fields["secondaryFields"].append({
                 "key": "validity-start",
                 "label": "validity-start-label",
@@ -3513,14 +3538,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
                 "timeStyle": "PKDateStyleMedium",
-                "value": ticket_data.data.valid_from.astimezone(pytz.utc).isoformat()
+                "value": ticket_data.data.valid_from.isoformat()
             })
             pass_fields["secondaryFields"].append({
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
                 "timeStyle": "PKDateStyleMedium",
-                "value": ticket_data.data.valid_to.astimezone(pytz.utc).isoformat()
+                "value": ticket_data.data.valid_to.isoformat()
             })
 
             class_code = ticket_data.data.travel_class()
