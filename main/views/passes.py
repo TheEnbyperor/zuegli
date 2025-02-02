@@ -535,9 +535,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
                                 train_number = ", ".join(
                                     list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
-                                pass_fields["auxiliaryFields"] = list(filter(
-                                    lambda f: f["key"] not in ("validity-start", "validity-end"),
-                                    pass_fields["auxiliaryFields"]
+                                pass_fields[f] = list(filter(
+                                    lambda e: e["key"] not in ("validity-start", "validity-end"),
+                                    pass_fields[f]
                                 ))
                                 departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
                                 pass_fields["headerFields"] = [{
@@ -3436,7 +3436,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 tz = pytz.timezone(to_station["time_zone"])
             else:
                 tz = pytz.utc
-                
+
             validity_end += datetime.timedelta(hours=3)
             pass_json["expirationDate"] = tz.localize(validity_end).isoformat()
 
