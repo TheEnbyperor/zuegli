@@ -1,4 +1,4 @@
-Hi {{ user.get_short_name }}
+Hi {{ user.get_short_name }},
 
 A new ticket (#{{ ticket.public_id }}) has been added to your account.
 
