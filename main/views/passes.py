@@ -4533,6 +4533,7 @@ RICS_LOGO = {
     10: "pass/logo-vr.png",
     60: "pass/logo-ir.png",
     80: "pass/logo-db.png",
+    83: "pass/logo-trenitalia.png",
     1080: "pass/logo-db.png",
     1088: "pass/logo-sncb.png",
     1084: "pass/logo-ns.png",
@@ -4608,6 +4609,7 @@ RICS_FG = {
 RICS_FG_SECONDARY = {
     10: "rgb(0, 161, 73)",
     60: "rgb(61, 165, 53)",
+    83: "rgb(0, 106, 106)",
     1084: "rgb(32, 32, 55)",
     1154: "rgb(255, 255, 255)",
     1174: "rgb(255, 255, 255)",
