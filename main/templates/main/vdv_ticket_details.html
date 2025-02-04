@@ -97,7 +97,7 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Time</dt>
         <dd class="govuk-summary-list__value">
-            {{ ticket.ticket.transaction_time.as_datetime|date:"F d, Y H:i:s" }} UTC
+            {{ ticket.ticket.transaction_time.as_datetime|date:"F d, Y H:i:s e" }}
         </dd>
     </div>
     {% with org_name=ticket.ticket.kvp_org_name_opt %}
