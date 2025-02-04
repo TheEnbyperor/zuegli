@@ -1,8 +1,11 @@
 import dataclasses
+import enum
 import typing
 import pathlib
 import ber_tlv.tlv
 import hashlib
+
+import cryptography.hazmat.primitives.asymmetric.ec
 import django.core.files.storage
 
 from . import iso9796, util, ticket
@@ -12,6 +15,9 @@ SHA1 = [1, 3, 14, 3, 2, 26]
 RSA_ENCRYPTION = [1, 2, 840, 113549, 1, 1, 1]
 SHA1_WITH_RSA_SIGNATURE = [1, 2, 840, 113549, 1, 1, 5]
 TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA = [1, 3, 36, 3, 4, 2, 2, 1]
+BRAINPOOL_P256_R1 = [1, 3, 36, 3, 3, 2, 8, 1, 1, 7]
+BRAINPOOL_P384_R1 = [1, 3, 36, 3, 3, 2, 8, 1, 1, 11]
+SECP_256_R1 = [1, 2, 840, 10045, 3, 1, 7]
 KNOWN_OIDS = (
     RSA_ENCRYPTION,
     SHA1_WITH_RSA_SIGNATURE,
@@ -232,6 +238,7 @@ class CertificateStore:
 @dataclasses.dataclass
 class Certificate:
     content: typing.Optional[bytes]
+    constructed_content: typing.Optional[bytes]
     signature: bytes
     signature_residual: typing.Optional[bytes]
 
@@ -263,12 +270,15 @@ class Certificate:
             raise util.VDVException("Failed to parse certificate contents") from e
 
         certificate_content = None
+        certificate_constructed_content = None
         certificate_signature = None
         certificate_signature_remainder = None
 
         for tag, data in elms:
             if tag == util.TAG_CERTIFICATE_CONTENT:
                 certificate_content = data
+            elif tag == util.TAG_CERTIFICATE_CONTENT_CONSTRUCTED:
+                certificate_constructed_content = data
             elif tag == util.TAG_CERTIFICATE_SIGNATURE:
                 certificate_signature = data
             elif tag == util.TAG_CERTIFICATE_SIGNATURE_REMAINDER:
@@ -279,24 +289,25 @@ class Certificate:
         if not certificate_signature:
             raise util.VDVException("No certificate signature")
 
-        if not certificate_content:
+        if not certificate_content and not certificate_constructed_content:
             if not certificate_signature_remainder:
                 raise util.VDVException("No certificate content")
 
         return cls(
             certificate_content,
+            certificate_constructed_content,
             certificate_signature,
             certificate_signature_remainder
         )
 
     def needs_ca_key(self):
-        return self.signature_residual is not None and self.content is None
+        return self.signature_residual is not None and (self.content is None and self.constructed_content is None)
 
     def decrypt_with_ca_key(self, ca: "CertificateData"):
         self.content = iso9796.decrypt_with_cert(self.signature, self.signature_residual, ca)
 
     def verify_signature(self, ca: "CertificateData"):
-        assert self.content is not None
+        assert self.content is not None or self.content is not None
         assert isinstance(ca.public_key, RSAPublicKey)
 
         h = int.from_bytes(self.signature, 'big')
@@ -324,7 +335,7 @@ class Certificate:
         if algorithm[1][0][0] != util.TAG_OID:
             raise util.VDVException("Invalid message structure - signature verification failed")
 
-        signature_oid = decode_oid(algorithm[1][0][1])
+        signature_oid = util.decode_oid(algorithm[1][0][1])
         if signature_oid != SHA1:
             raise util.VDVException("Invalid signature algorithm - signature verification failed")
 
@@ -337,7 +348,7 @@ class Certificate:
             raise util.VDVException("Invalid message structure - signature verification failed")
         signature = signature[1]
 
-        if signature != hashlib.sha1(self.content).digest():
+        if signature != hashlib.sha1(self.content if self.content else self.constructed_content).digest():
             raise util.VDVException("Invalid signature - signature verification failed")
 
 
@@ -374,40 +385,75 @@ class RSAPublicKey:
         )
 
 
-def read_oid_component(int_bytes):
-    ret = 0
-    i = 0
-    while int_bytes[i] & 0x80:
-        num = int_bytes[i] & 0x7f
-        if not ret and not num:
-            raise util.VDVException("Leading 0x80 octets in the encoding of an OID component")
-        ret |= num
-        ret <<= 7
-        i += 1
+class ECDSACurve(enum.Enum):
+    brainpoolP256r1 = enum.auto()
+    brainpoolP384r1 = enum.auto()
+    secp256r1 = enum.auto()
 
-    ret |= int_bytes[i]
-    return ret, i + 1
+    def cryptography_curve(self):
+        if self.value == ECDSACurve.secp256r1.value:
+            return cryptography.hazmat.primitives.asymmetric.ec.SECP256R1()
+        elif self.value == ECDSACurve.brainpoolP256r1.value:
+            return cryptography.hazmat.primitives.asymmetric.ec.BrainpoolP256R1()
+        elif self.value == ECDSACurve.brainpoolP384r1.value:
+            return cryptography.hazmat.primitives.asymmetric.ec.BrainpoolP384R1()
 
-def decode_oid(data: bytes):
-    components = []
-    oid_offset = 0
 
-    first, num = read_oid_component(data[oid_offset:])
-    oid_offset += num
-    if first < 40:
-        components += [0, first]
-    elif first < 80:
-        components += [1, first - 40]
-    else:
-        components += [2, first - 80]
+@dataclasses.dataclass
+class ECDSAPublicKey:
+    curve: ECDSACurve
+    pk_bytes: bytes
 
-    while data[oid_offset:]:
-        component, num = read_oid_component(data[oid_offset:])
-        oid_offset += num
-        components.append(component)
+    @classmethod
+    def from_bytes(cls, data: bytes) -> "ECDSAPublicKey":
+        elms = ber_tlv.tlv.Tlv.Parser.parse(data, False, [], False, 0)
 
-    return components
+        oid = None
+        pk_bytes = None
 
+        for tag, data in elms:
+            if tag == util.TAG_OID:
+                if oid:
+                    raise util.VDVException("Multiple curve OIDs")
+
+                oid = util.decode_oid(data)
+            elif tag == util.TAG_PUBLIC_BYTES:
+                if pk_bytes:
+                    raise util.VDVException("Multiple public bytes")
+
+                pk_bytes = data
+            else:
+                raise util.VDVException(f"Unknown tag: 0x{tag:02X}")
+
+        if not oid:
+            raise util.VDVException("No curve OID")
+        if not pk_bytes:
+            raise util.VDVException("No public bytes")
+
+        if oid == BRAINPOOL_P256_R1:
+            curve = ECDSACurve.brainpoolP256r1
+        elif oid == BRAINPOOL_P384_R1:
+            curve = ECDSACurve.brainpoolP384r1
+        elif oid == SECP_256_R1:
+            curve = ECDSACurve.secp256r1
+        else:
+            n = ".".join(list(map(str, oid)))
+            raise util.VDVException(f"Unknown curve: {n}")
+
+        return ECDSAPublicKey(
+            curve=curve,
+            pk_bytes=pk_bytes,
+        )
+
+    @property
+    def pk_bytes_hex(self):
+        return ":".join(f"{b:02x}" for b in self.pk_bytes)
+
+    def as_cryptography(self):
+        return cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey.from_encoded_point(
+            self.curve.cryptography_curve(),
+            self.pk_bytes
+        )
 
 @dataclasses.dataclass
 class CertificateData:
@@ -430,11 +476,12 @@ class CertificateData:
     @classmethod
     def parse(cls, data: Certificate) -> "CertificateData":
         assert not data.needs_ca_key()
+        assert data.content is not None
 
         oid_offset = 32
         components = []
 
-        first, num = read_oid_component(data.content[oid_offset:])
+        first, num = util.read_oid_component(data.content[oid_offset:])
         oid_offset += num
         if first < 40:
             components += [0, first]
@@ -444,7 +491,7 @@ class CertificateData:
             components += [2, first - 80]
 
         while data.content[oid_offset:]:
-            component, num = read_oid_component(data.content[oid_offset:])
+            component, num = util.read_oid_component(data.content[oid_offset:])
             oid_offset += num
             components.append(component)
 

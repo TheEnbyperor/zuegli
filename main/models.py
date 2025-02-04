@@ -169,7 +169,12 @@ class VDVTicketInstance(models.Model):
         return f"{self.ticket_org_id} - {self.barcode_hash}"
 
     def as_ticket(self) -> t.VDVTicket:
-        config = dacite.Config(type_hooks={bytes: base64.b64decode})
+        config = dacite.Config(type_hooks={
+            bytes: base64.b64decode,
+            datetime.datetime: datetime.datetime.fromisoformat,
+            datetime.date: datetime.date.fromisoformat,
+            vdv.pki.ECDSACurve: vdv.pki.ECDSACurve,
+        })
         raw_ticket = base64.b64decode(self.decoded_data["ticket"])
 
         return t.VDVTicket(
@@ -181,7 +186,8 @@ class VDVTicketInstance(models.Model):
                 account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
                 account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
                 email=self.ticket.account.user.email if self.ticket.account else None,
-            ))
+            )),
+            motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if "motics" in self.decoded_data else None,
         )
 
 

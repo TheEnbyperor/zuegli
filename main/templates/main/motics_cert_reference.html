@@ -1,0 +1,40 @@
+{% if ref.type == "root_ca" %}
+    Root CA: <code>{{ ref.root_ca_name }}</code>
+{% elif ref.type == "sub_ca" %}
+    Sub CA: <code>{{ ref.sub_ca_name }}</code>
+{% elif ref.type == "ee" %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Owner ID</dt>
+            <dd class="govuk-summary-list__value">{{ ref.owner_id }}</dd>
+        </div>
+        {% with name=ref.owner_name_opt %}
+            {% if name %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Owner name</dt>
+                    <dd class="govuk-summary-list__value">{{ name }}</dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Registration authority ID</dt>
+            <dd class="govuk-summary-list__value">{{ ref.se_id.reg_auth_id }}</dd>
+        </div>
+        {% with name=ref.se_id.reg_auth_name_opt %}
+            {% if name %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Registration authority name</dt>
+                    <dd class="govuk-summary-list__value">{{ name }}</dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">End-entity type</dt>
+            <dd class="govuk-summary-list__value">{{ ref.se_id.ee_type }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">End-entity serial</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ref.se_id.ee_serial_hex }}</code></dd>
+        </div>
+    </dl>
+{% endif %}

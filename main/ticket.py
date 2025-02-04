@@ -6,7 +6,7 @@ import typing
 import datetime
 import Crypto.Hash.TupleHash128
 import hashlib
-import string
+import enum
 import binascii
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass
@@ -26,6 +26,7 @@ class VDVTicket:
     envelope_certificate: "vdv.CertificateData"
     raw_ticket: bytes
     ticket: "vdv.VDVTicket"
+    motics: typing.Optional["vdv.Motics"]
 
     @property
     def ticket_type(self) -> str:
@@ -575,11 +576,23 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
         )
 
     try:
-        envelope = vdv.EnvelopeV2.parse(ticket_bytes)
+        motics = vdv.Motics.parse(ticket_bytes)
+        envelope = vdv.EnvelopeV2.parse(motics.application_data)
+    except vdv.motics.NotAMoticsException:
+        try:
+            motics = None
+            envelope = vdv.EnvelopeV2.parse(ticket_bytes)
+        except vdv.util.VDVException:
+            raise TicketError(
+                title="This doesn't look like a valid VDV ticket",
+                message="You may have scanned something that is not a VDV ticket, the ticket is corrupted, or there "
+                        "is a bug in this program.",
+                exception=traceback.format_exc()
+            )
     except vdv.util.VDVException:
         raise TicketError(
-            title="This doesn't look like a valid VDV ticket",
-            message="You may have scanned something that is not a VDV ticket, the ticket is corrupted, or there "
+            title="This doesn't look like a valid VDV Motics ticket",
+            message="You may have scanned something that is not a VDV Motics ticket, the ticket is corrupted, or there "
                     "is a bug in this program.",
             exception=traceback.format_exc()
         )
@@ -691,7 +704,8 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
         issuing_ca=issuing_ca_data,
         envelope_certificate=envelope_certificate_data,
         raw_ticket=ticket_data,
-        ticket=ticket
+        ticket=ticket,
+        motics=motics,
     )
 
 
@@ -1178,6 +1192,10 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
     def encode_value(v):
         if isinstance(v, bytes) or isinstance(v, bytearray):
             return base64.b64encode(v).decode("ascii")
+        elif isinstance(v, datetime.datetime) or isinstance(v, datetime.date):
+            return v.isoformat()
+        elif isinstance(v, enum.Enum):
+            return v.value
         else:
             return v
     return {k: encode_value(v) for k, v in elements}
@@ -1206,6 +1224,7 @@ def create_ticket_obj(
                     "envelope_certificate":
                         dataclasses.asdict(ticket_data.envelope_certificate, dict_factory=to_dict_json),
                     "ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
+                    "motics": dataclasses.asdict(ticket_data.motics, dict_factory=to_dict_json) if ticket_data.motics else None,
                 }
             }
         )

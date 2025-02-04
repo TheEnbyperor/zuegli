@@ -4,7 +4,7 @@ import enum
 import typing
 import ber_tlv.tlv
 import re
-from . import util, org_id, product_id, codes
+from . import util, org_id, product_id, codes, motics
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
@@ -186,6 +186,8 @@ class VDVTicket:
             return SpacialValidity.parse(elm[1], product_org_id)
         elif elm[0] == 0xDE:
             return PrivateData(elm[1])
+        elif elm[0] == 0xD6:
+            return SEId(motics.SEId.parse(elm[1]))
         elif elm[0] == 0xD7:
             return IdentificationMedium.parse(elm[1])
         else:
@@ -763,6 +765,15 @@ class PrivateData:
 
     def data_hex(self):
         return ":".join(f"{self.value[i]:02x}" for i in range(len(self.value)))
+
+@dataclasses.dataclass
+class SEId:
+    TYPE = "se-id"
+
+    value: motics.SEId
+
+    def __str__(self):
+        return f"SE ID: {self.value}"
 
 
 @dataclasses.dataclass

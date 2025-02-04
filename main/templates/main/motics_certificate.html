@@ -1,0 +1,51 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Certificate Holder Reference</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/motics_cert_reference.html" with ref=cert.certificate_holder_reference %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">CA Reference</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/motics_cert_reference.html" with ref=cert.certificate_authority_reference %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">
+            {{ cert.valid_from|date:"F d, Y" }}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Expiry date</dt>
+        <dd class="govuk-summary-list__value">
+            {{ cert.valid_to|date:"F d, Y" }}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Signature algorithm</dt>
+        <dd class="govuk-summary-list__value">
+            <code>{{ cert.signature_name }}</code>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Public key</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Curve</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ cert.public_key.curve.name }}</code>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Public bytes</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ cert.public_key.pk_bytes_hex }}</code>
+                    </dd>
+                </div>
+            </dl>
+        </dd>
+    </div>
+</dl>

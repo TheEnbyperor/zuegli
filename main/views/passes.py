@@ -532,7 +532,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             ))
                             if train_links:
                                 departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
-                                pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
                                 train_number = ", ".join(
                                     list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
                                 pass_fields[f] = list(filter(
@@ -540,6 +539,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                     pass_fields[f]
                                 ))
                                 departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                                pass_json["relevantDate"] = departure_time_str
                                 pass_fields["headerFields"] = [{
                                     "key": "train-number",
                                     "label": "train-number-label",
@@ -2294,9 +2294,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             }]
         }
         pass_json["organizationName"] = ticket_data.ticket.kvp_org_name()
+
+        barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
-            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "message": bytes(barcode_data).decode("iso-8859-1"),
             "messageEncoding": "iso-8859-1",
             "altText": str(ticket_data.ticket.ticket_id),
         }]

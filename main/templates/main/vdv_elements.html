@@ -296,6 +296,36 @@
                     <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
                 </div>
             </div>
+        {% elif elm.TYPE == "se-id" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Secure Element ID</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Registration authority ID</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.value.reg_auth_id }}</dd>
+                        </div>
+                        {% with name=elm.value.reg_auth_name_opt %}
+                            {% if name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Registration authority name</dt>
+                                    <dd class="govuk-summary-list__value">{{ name }}</dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">End-entity type</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.value.ee_type }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">End-entity serial</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ elm.value.ee_serial_hex }}</code></dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
         {% elif elm.TYPE == "unknown" %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">

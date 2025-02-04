@@ -233,6 +233,57 @@
 </dl>
 
 
+{% if ticket.motics %}
+<h2 class="govuk-heading-m">Motics</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Identifier</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.motics.identifier }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Version</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.motics.version_name }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Timestamp</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.motics.timestamp|date:"F d, Y H:i:s e" }}</dd>
+    </div>
+    {% if ticket.motics.time_offset %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Time offset</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.motics.time_offset }} seconds</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Signature algorithm</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.motics.signature_name }}</code></dd>
+    </div>
+    {% if ticket.motics.random_data %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Random data</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.motics.random_data_hex }}</code></dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Signature verifies</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.motics.verify_signature %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Certificate</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/motics_certificate.html" with cert=ticket.motics.certificate_data %}
+        </dd>
+    </div>
+</dl>
+{% endif %}
+
+
 <h2 class="govuk-heading-m">Certificate chain</h2>
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">

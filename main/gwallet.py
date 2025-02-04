@@ -411,7 +411,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         train_links = list(map(lambda l: l[1], filter(lambda l: l[0] == "trainLink", document["validRegion"])))
                         departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
                         train_number = ", ".join(list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
-                        obj["ticketLegs"][0]["departureDateTime"] = departure_time.isoformat()
+                        departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        obj["ticketLegs"][0]["departureDateTime"] = departure_time_str
                         obj["ticketLegs"][0]["carriage"] = train_number
 
                     if "productIdIA5" in document:
@@ -727,10 +728,12 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         }
         obj["hexBackgroundColor"] = "#ffffff"
         obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
+
+        barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
         obj["barcode"] = {
             "type": "AZTEC",
             "alternateText": str(ticket_data.ticket.ticket_id),
-            "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "value": bytes(barcode_data).decode("iso-8859-1"),
         }
 
         if ticket_data.ticket.product_org_id == 3000:
@@ -908,7 +911,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     })
 
         return obj, "generic"
-
 
     elif isinstance(ticket_instance, models.SSBTicketInstance):
         ticket_data = ticket_instance.as_ticket()

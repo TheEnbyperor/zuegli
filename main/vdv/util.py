@@ -12,9 +12,24 @@ TAG_CA_REFERENCE = 0x42
 TAG_TICKET_PRODUCT_DATA = 0x85
 TAG_TICKET_PRODUCT_TRANSACTION_DATA = 0x8A
 TAG_CERTIFICATE = 0x7F21
+TAG_CERTIFICATE_HOLDER_REFERENCE = 0x5F20
+TAG_CERTIFICATE_VALID_UNTIL = 0x5F24
+TAG_CERTIFICATE_VALID_FROM = 0x5F25
 TAG_CERTIFICATE_SIGNATURE = 0x5F37
 TAG_CERTIFICATE_SIGNATURE_REMAINDER = 0x5F38
 TAG_CERTIFICATE_CONTENT = 0x5F4E
+TAG_CERTIFICATE_CONTENT_CONSTRUCTED = 0x7F4E
+TAG_CERTIFICATE_PUBLIC_KEY = 0x7F49
+TAG_COPY_PROTECTION_CONTAINER = 0x7F70
+TAG_PUBLIC_BYTES = 0x86
+TAG_MOTICS_IDENTIFIER = 0x5F71
+TAG_MOTICS_VERSION = 0x5F72
+TAG_MOTICS_SE_ID = 0x5F73
+TAG_MOTICS_RANDOM_DATA = 0x5F74
+TAG_MOTICS_TIMESTAMP = 0x5F75
+TAG_MOTICS_TIME_OFFSET = 0x5F76
+TAG_MOTICS_APPLICATION_DATA = 0x5F77
+TAG_MOTICS_SE_SIGNATURE = 0x5F78
 
 VDV_TZ = pytz.timezone("Europe/Berlin")
 
@@ -112,3 +127,39 @@ def un_bcd(data: bytes) -> int:
         v *= 100
         v += ((data[i] & 0xF0) >> 4) * 10 + (data[i] & 0x0F)
     return v
+
+
+def read_oid_component(int_bytes):
+    ret = 0
+    i = 0
+    while int_bytes[i] & 0x80:
+        num = int_bytes[i] & 0x7f
+        if not ret and not num:
+            raise VDVException("Leading 0x80 octets in the encoding of an OID component")
+        ret |= num
+        ret <<= 7
+        i += 1
+
+    ret |= int_bytes[i]
+    return ret, i + 1
+
+
+def decode_oid(data: bytes):
+    components = []
+    oid_offset = 0
+
+    first, num = read_oid_component(data[oid_offset:])
+    oid_offset += num
+    if first < 40:
+        components += [0, first]
+    elif first < 80:
+        components += [1, first - 40]
+    else:
+        components += [2, first - 80]
+
+    while data[oid_offset:]:
+        component, num = read_oid_component(data[oid_offset:])
+        oid_offset += num
+        components.append(component)
+
+    return components
