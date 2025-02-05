@@ -357,6 +357,7 @@ class RSPTicket:
         hd.update(self.rsp_type.encode("utf-8"))
         hd.update(self.issuer_id.encode("utf-8"))
         hd.update(self.ticket_ref.encode("utf-8"))
+        hd.update(self.data.coupon_type.value.to_bytes(1, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
     @property
