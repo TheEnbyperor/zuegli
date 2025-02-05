@@ -187,7 +187,7 @@ class VDVTicketInstance(models.Model):
                 account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
                 email=self.ticket.account.user.email if self.ticket.account else None,
             )),
-            motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if "motics" in self.decoded_data else None,
+            motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if self.decoded_data.get("motics") else None,
         )
 
 
