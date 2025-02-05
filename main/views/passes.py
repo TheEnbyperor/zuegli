@@ -35,6 +35,13 @@ def index(request):
                 pass
 
             image_form = forms.TicketUploadForm()
+        elif request.POST.get("type") == "text":
+            try:
+                ticket_bytes = bytes.fromhex(request.POST.get("ticket_text"))
+            except ValueError:
+                ticket_bytes = request.POST.get("ticket_text").encode("utf-8")
+
+            image_form = forms.TicketUploadForm()
         else:
             image_form = forms.TicketUploadForm(request.POST, request.FILES)
             if image_form.is_valid():
