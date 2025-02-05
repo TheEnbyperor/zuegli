@@ -62,8 +62,15 @@ def upload_aztec_img(request):
             "message": "The photo must be a JPEG or PNG"
         }), status=422, content_type="application/json")
 
+    scan_speed = request.POST.get("scan_speed", "slow")
+    if scan_speed not in [ "slow", "normal", "fast" ]:
+        return HttpResponse(json.dumps({
+            "title": "Bad setting",
+            "message": "Scan speed can only be one of 'slow', 'normal' or 'fast'"
+        }), status=400, content_type="application/json")
+
     try:
-        barcode_data = aztec.decode(file.read())
+        barcode_data = aztec.decode(file.read(), scan_speed=scan_speed)
     except aztec.AztecError as e:
         return HttpResponse(json.dumps({
             "title": "Unable to decode",
