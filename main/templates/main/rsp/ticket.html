@@ -12,6 +12,32 @@
         </dd>
     </div>
     <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Multiple Supplements Apply</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.multiple_supplements_apply %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">On paper</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.on_paper %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Static dynamic indicator</dt>
+        <dd class="govuk-summary-list__value">
+            <code>{{ data.static_dynamic_indicator }}</code>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Non Revenue Ticket</dt>
         <dd class="govuk-summary-list__value">
             {% if data.non_revenue %}
@@ -60,13 +86,9 @@
         </dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Return included</dt>
+        <dt class="govuk-summary-list__key">Coupon type</dt>
         <dd class="govuk-summary-list__value">
-            {% if data.bidirectional %}
-                <strong class="govuk-tag govuk-tag--green">Yes</strong>
-            {% else %}
-                <strong class="govuk-tag govuk-tag--red">No</strong>
-            {% endif %}
+            {{ data.coupon_type }}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -365,23 +387,11 @@
             <dd class="govuk-summary-list__value"><code>{{ data.restriction_code }}</code></dd>
         </div>
     {% endif %}
-    {% if data.coupon_type %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Coupon type</dt>
-            <dd class="govuk-summary-list__value"><code>{{ data.coupon_type }}</code></dd>
-        </div>
-    {% endif %}
-    {% if data.passenger_name %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Passenger name</dt>
-            <dd class="govuk-summary-list__value">{{ data.passenger_name }}</dd>
-        </div>
-    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Departure time</dt>
         <dd class="govuk-summary-list__value">
             {{ data.start_date|date:"F d, Y H:i" }}
-            {% if data.depart_time_flag == 2 %}(mandatory){% elif data.depart_time_flag == 3 %}(suggested){% endif %}
+            ({{ data.depart_time }})
         </dd>
     </div>
     {% if data.limited_duration_code %}
@@ -392,6 +402,78 @@
             </dd>
         </div>
     {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Via London</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.via_london %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    {% if data.osi_nlc %}
+        <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">OSI</dt>
+        <dd class="govuk-summary-list__value">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">NLC</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ data.osi_nlc }}</code></dd>
+                </div>
+                {% with station=data.osi_nlc|rsp_station_nlc %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">CRS Code</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ station.crs_code }}</code></dd>
+                        </div>
+                        {% if station.latitude and station.longitude %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.latitude }},{{ station.longitude }}">
+                                        <code>{{ station.latitude }}, {{ station.longitude }}</code>
+                                    </a>
+                                </dd>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">{{ data.osi_nlc_name }}</dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </dl>
+        </dd>
+    </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Bidirectional</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.bidirectional %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    {% if data.parent_ticket_reference %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Parent ticket reference</dt>
+            <dd class="govuk-summary-list__value">{{ data.parent_ticket_reference }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Carnet count</dt>
+        <dd class="govuk-summary-list__value">
+            {{ data.carnet_count }}
+        </dd>
+    </div>
     {% if data.reservations %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Reservations</dt>
@@ -437,6 +519,22 @@
                         <dt class="govuk-summary-list__key">Price</dt>
                         <dd class="govuk-summary-list__value">{{ data.purchase_data.price_str }}</dd>
                     </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Discounted</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data.purchase_data.discounted %}
+                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">No</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% if data.purchase_data.restriction %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Restriction</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ data.purchase_data.restriction }}</code></dd>
+                        </div>
+                    {% endif %}
                     {% if data.purchase_data.purchase_reference %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Purchase reference</dt>
@@ -447,6 +545,18 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Days of validity</dt>
                             <dd class="govuk-summary-list__value">{{ data.purchase_data.days_of_validity }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if data.purchase_data.additional_adults %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Additional adults</dt>
+                            <dd class="govuk-summary-list__value">{{ data.purchase_data.additional_adults }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if data.purchase_data.additional_children %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Additional children</dt>
+                            <dd class="govuk-summary-list__value">{{ data.purchase_data.additional_children }}</dd>
                         </div>
                     {% endif %}
                 </dl>
@@ -468,4 +578,30 @@
             </dl>
         </dd>
     </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Sub UTN</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.sub_utn %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Print free use</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.print_free_use %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    {% if data.free_use %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Free use</dt>
+            <dd class="govuk-summary-list__value">{{ data.free_use }}</dd>
+        </div>
+    {% endif %}
 </dl>

@@ -1,5 +1,7 @@
 import dataclasses
 import datetime
+import enum
+
 import bitstring
 import pytz
 import typing
@@ -43,8 +45,12 @@ class BitStream:
 class PurchaseData:
     purchase_date: datetime.datetime
     price: decimal.Decimal
+    discounted: bool
+    restriction: str
     purchase_reference: str
     days_of_validity: int
+    additional_adults: int
+    additional_children: int
 
     def purchase_time(self):
         return TZ.localize(self.purchase_date)
@@ -58,9 +64,41 @@ class Reservation:
     coach: str
     seat: str
 
+class CouponType(enum.Enum):
+    Single = 0
+    Season = 1
+    Outbound = 2
+    Inbound = 3
+
+    def __str__(self):
+        if self == CouponType.Single:
+            return "Single"
+        elif self == CouponType.Season:
+            return "Season"
+        elif self == CouponType.Outbound:
+            return "Return - outbound"
+        elif self == CouponType.Inbound:
+            return "Return - inbound"
+
+class DepartureTime(enum.Enum):
+    NotSet = 0
+    ValidAfter = 1
+    SpecificDeparture = 2
+
+    def __str__(self):
+        if self == DepartureTime.NotSet:
+            return "time not specified"
+        elif self == DepartureTime.ValidAfter:
+            return "valid after"
+        elif self == DepartureTime.SpecificDeparture:
+            return "special departure"
+
 @dataclasses.dataclass
 class TicketData:
     mandatory_manual_check: bool
+    multiple_supplements_apply: bool
+    on_paper: bool
+    static_dynamic_indicator: int
     non_revenue: bool
     spec_version: int
     ticket_reference: str
@@ -73,17 +111,22 @@ class TicketData:
     destination_nlc: str
     selling_nlc: str
     child_ticket: bool
-    coupon_type: int
+    coupon_type: CouponType
     discount_code: int
     route_code: int
     start_date: datetime.datetime
-    depart_time_flag: int
+    depart_time: DepartureTime
     passenger_id: int
-    passenger_name: str
+    parent_ticket_reference: str
     passenger_gender: int
     restriction_code: str
+    via_london: bool
+    osi_nlc: str
     bidirectional: bool
+    carnet_count: int
     limited_duration_code: int
+    sub_utn: bool
+    print_free_use: bool
     purchase_data: typing.Optional[PurchaseData]
     reservations: typing.List[Reservation]
     free_use: str
@@ -105,24 +148,22 @@ class TicketData:
         if len(payload) < 108:
             raise util.RSPException(f"Invalid length for ticket data - expected 108 bytes, got {len(payload)} bytes")
 
-        extended_free_text = d.read_bool(383)
-        full_ticket = d.read_bool(384)
-        contains_free_text = d.read_bool(385)
-
+        has_optional_data = d.read_bool(384)
         num_reservations = d.read_int(386, 390)
 
         offset = 390
         reservations = []
-        free_text = ""
 
-        if full_ticket:
+        if has_optional_data:
             purchase_data = PurchaseData(
                 purchase_date=datetime.datetime.combine(d.read_date(offset, offset+14), d.read_time(offset+14, offset+25)),
                 price=decimal.Decimal(d.read_int(offset+25, offset+46)) / decimal.Decimal(100),
-                # 13 bits - RFU
+                discounted=d.read_bool(offset+46),
+                restriction=d.read_string(offset+47, offset+59),
                 purchase_reference=d.read_string(offset+59, offset+107),
                 days_of_validity=d.read_int(offset+107, offset+116),
-                # 6 bits - RFU
+                additional_adults=d.read_int(offset+116, offset+119),
+                additional_children=d.read_int(offset+119, offset+122),
             )
             offset += 122
         else:
@@ -140,18 +181,15 @@ class TicketData:
             ))
             offset += 45
 
-        if contains_free_text and not extended_free_text:
-            free_text = d.read_string(offset, offset+226)
-            offset += 226
-        elif extended_free_text:
-            free_text = d.read_string(offset, offset+84)
-            offset += 84
+        free_use = d.read_string(offset, offset+172)
 
         return cls(
             mandatory_manual_check=d.read_bool(0),
-            non_revenue=d.read_bool(1),
-            spec_version=d.read_int(2, 4),
-            # 4 bits - RFU
+            multiple_supplements_apply=d.read_bool(1),
+            on_paper=d.read_bool(2),
+            static_dynamic_indicator=d.read_int(3, 5),
+            non_revenue=d.read_bool(5),
+            spec_version=d.read_int(6, 8),
             ticket_reference=d.read_string(8, 62),
             checksum=d.read_string(62, 68),
             barcode_version=d.read_int(68, 72),
@@ -162,22 +200,27 @@ class TicketData:
             destination_nlc=d.read_string(133, 157).lstrip(" 0"),
             selling_nlc=d.read_string(157, 181).lstrip(" 0"),
             child_ticket=d.read_bool(181),
-            coupon_type=d.read_int(182, 184),
+            coupon_type=CouponType(d.read_int(182, 184)),
             discount_code=d.read_int(184, 194),
             route_code=d.read_int(194, 211),
             start_date=datetime.datetime.combine(d.read_date(211, 225), d.read_time(225, 236)),
-            depart_time_flag=d.read_int(236, 238),
+            depart_time=DepartureTime(d.read_int(236, 238)),
             passenger_id=d.read_int(238, 255),
-            passenger_name=d.read_string(255, 327),
+            parent_ticket_reference=d.read_string(255, 327),
             passenger_gender=d.read_int(327, 329),
             restriction_code=d.read_string(329, 347),
-            # 25 bits - RFU
+            via_london=d.read_bool(347),
+            osi_nlc=d.read_string(348, 372),
             bidirectional=d.read_bool(372),
-            # 4 bits - RFU
+            carnet_count=d.read_int(373, 379),
             limited_duration_code=d.read_int(379, 383),
+            sub_utn=d.read_bool(383),
+            # 384 read above
+            print_free_use=d.read_bool(385),
+            # 386-390 read above
             purchase_data=purchase_data,
             reservations=reservations,
-            free_use=free_text,
+            free_use=free_use
         )
 
     def limited_duration_value(self):
@@ -240,6 +283,12 @@ class TicketData:
 
     def selling_nlc_name(self):
         if l := locations.get_station_by_nlc(self.selling_nlc):
+            return l["NLCDESC"]
+
+        return "Unknown location"
+
+    def osi_nlc_name(self):
+        if l := locations.get_station_by_nlc(self.osi_nlc):
             return l["NLCDESC"]
 
         return "Unknown location"
