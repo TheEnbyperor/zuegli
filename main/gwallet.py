@@ -6,10 +6,12 @@ import google.auth.crypt
 import google.auth.jwt
 import urllib.parse
 import pytz
+import decimal
 from django.conf import settings
 from django.templatetags.static import static
 from django.shortcuts import reverse
-from . import models, rsp, templatetags, vdv, ssb
+from . import models, rsp, templatetags, vdv, ssb, uic
+
 
 client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
@@ -88,6 +90,8 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
                         return "generic", settings.GWALLET_CONF["train_pass_class"]
                 elif document_type == "customerCard":
                     return "generic", settings.GWALLET_CONF["bahncard_pass_class"]
+        elif ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
+            return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         return "generic", settings.GWALLET_CONF["train_pass_class"]
     elif isinstance(ticket_instance, models.SSBTicketInstance):
@@ -97,7 +101,9 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
             return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         ticket_data = ticket_instance.as_ticket()
-        if isinstance(ticket_data.data, rsp.RailcardData):
+        if isinstance(ticket_data.data, rsp.TicketData):
+            return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
+        elif isinstance(ticket_data.data, rsp.RailcardData):
             return "generic", settings.GWALLET_CONF["railcard_pass_class"]
 
     return None
@@ -204,6 +210,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         ticket_type = None
         ticket_data = ticket_instance.as_ticket()
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
+        issuing_rics = ticket_data.issuing_rics()
+
+        parsed_layout = None
+        if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(ticket_data.layout)
+            parsed_layout = parser.parse(issuing_rics)
 
         obj["logo"] = {
             "sourceUri": {
@@ -213,7 +226,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 )
             },
         }
-        obj["hexBackgroundColor"] = "#ffffff"
+        if issuing_rics in passes.RICS_BG:
+            obj["hexBackgroundColor"] = passes.RICS_BG[issuing_rics]
+        else:
+            obj["hexBackgroundColor"] = "#ffffff"
         obj["barcode"] = {
             "type": "AZTEC",
             "alternateText": ticket_data.ticket_id(),
@@ -306,8 +322,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
                     if "originName" in obj["ticketLegs"][0] and "destinationName" in obj["ticketLegs"][0]:
                         ticket_type = "transit"
-                        obj[
-                            "classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+                        obj["classId"] = \
+                            f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
                         obj["tripType"] = "ROUND_TRIP" if document["returnIncluded"] else "ONE_WAY"
                         if distributor := ticket_data.distributor():
                             obj["ticketLegs"][0]["transitOperatorName"] = {
@@ -495,8 +511,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 elif document_type == "customerCard":
                     ticket_type = "generic"
                     obj["genericType"] = "GENERIC_LOYALTY_CARD"
-                    obj[
-                        "classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
+                    obj["classId"] = \
+                        f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
                     obj["header"] = {
                         "defaultValue": {
                             "language": "en",
@@ -685,6 +701,51 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 }
                             },
                             "body": name
+                        })
+
+        elif parsed_layout and parsed_layout.trips:
+            has_stations = any(t.departure_station or t.arrival_station for t in parsed_layout.trips)
+            if has_stations:
+                ticket_type = "transit"
+                obj["classId"] = \
+                    f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+                obj["ticketLegs"] = []
+
+                round_trip = len(parsed_layout.trips) == 2 and \
+                             parsed_layout.trips[0].arrival_station == parsed_layout.trips[1].departure_station and \
+                             parsed_layout.trips[0].departure_station == parsed_layout.trips[1].arrival_station
+                obj["tripType"] = "ROUND_TRIP" if round_trip else "ONE_WAY"
+
+                if round_trip:
+                    obj["ticketLegs"].append({
+                        "originName": {
+                            "defaultValue": {
+                                "language": "en",
+                                "value": parsed_layout.trips[0].departure_station
+                            }
+                        },
+                        "destinationName": {
+                            "defaultValue": {
+                                "language": "en",
+                                "value": parsed_layout.trips[0].arrival_station
+                            }
+                        }
+                    })
+                else:
+                    for trip in parsed_layout.trips:
+                        obj["ticketLegs"].append({
+                            "originName": {
+                                "defaultValue": {
+                                    "language": "en",
+                                    "value": trip.departure_station
+                                }
+                            },
+                            "destinationName": {
+                                "defaultValue": {
+                                    "language": "en",
+                                    "value": trip.arrival_station
+                                }
+                            }
                         })
 
         obj["textModulesData"].append({
@@ -1041,6 +1102,97 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         }
 
         ticket_data = ticket_instance.as_ticket()
+
+        if isinstance(ticket_data.data, rsp.TicketData):
+            obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
+
+            validity_start = ticket_data.data.validity_start_time()
+            validity_end = ticket_data.data.validity_end_time()
+
+            obj["ticketNumber"] = f"{ticket_instance.issuer_id}-{ticket_instance.reference}"
+            obj["cardTitle"]["defaultValue"]["value"] = ticket_data.issuer_name()
+            obj["tripType"] = "ROUND_TRIP" if ticket_data.data.bidirectional else "ONE_WAY"
+            obj["concessionCategory"] = "CHILD" if ticket_data.data.child_ticket else "ADULT"
+
+            obj["validTimeInterval"] = {
+                "start": {
+                    "date": validity_start.isoformat()
+                },
+                "end": {
+                    "date": validity_end.isoformat()
+                }
+            }
+
+            obj["ticketLegs"] = [{
+                "ticketSeat": {
+                    "fareClass": "ECONOMY" if ticket_data.data.standard_class else "FIRST",
+                }
+            }]
+            obj["ticketRestrictions"] = {}
+
+            if from_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.origin_nlc):
+                obj["ticketLegs"][0]["originName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": from_station.name
+                    }
+                }
+            else:
+                obj["ticketLegs"][0]["originName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": ticket_data.data.origin_nlc_name()
+                    }
+                }
+
+            if to_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.destination_nlc):
+                obj["ticketLegs"][0]["destinationName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": to_station.name
+                    }
+                }
+            else:
+                obj["ticketLegs"][0]["destinationName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": ticket_data.data.destination_nlc_name()
+                    }
+                }
+
+            if route_data := rsp.ticket_data.get_route_by_id(ticket_data.data.route_code):
+                obj["ticketRestrictions"]["routeRestrictions"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": route_data["cc_desc"]
+                    }
+                }
+
+
+            if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
+                obj["ticketLegs"][0]["fareName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": ticket_type.ticket_type_name
+                    }
+                }
+
+            if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture:
+                obj["ticketLegs"][0]["departureDateTime"] = validity_start.isoformat()
+
+            if ticket_data.data.purchase_data:
+                obj["purchaseDetails"] = {
+                    "purchaseDateTime": ticket_data.data.purchase_data.purchase_time().isoformat(),
+                    "ticketCost": {
+                        "purchasePrice": {
+                            "micros": int(ticket_data.data.purchase_data.price * decimal.Decimal(1000000)),
+                            "currencyCode": "GBP"
+                        }
+                    }
+                }
+
+            return obj, "transit"
+
         if isinstance(ticket_data.data, rsp.RailcardData):
             obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['railcard_pass_class']}"
             obj["genericType"] = "GENERIC_SEASON_PASS"

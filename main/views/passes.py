@@ -310,11 +310,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             add_pkp_img(pkp, RICS_LOGO[issuing_rics], "logo.png")
             have_logo = True
         if issuing_rics in RICS_BG:
-            pass_json["backgroundColor"] = RICS_BG[ticket_data.envelope.issuer_rics]
+            pass_json["backgroundColor"] = RICS_BG[issuing_rics]
         if issuing_rics in RICS_FG:
-            pass_json["foregroundColor"] = RICS_FG[ticket_data.envelope.issuer_rics]
+            pass_json["foregroundColor"] = RICS_FG[issuing_rics]
         if issuing_rics in RICS_FG_SECONDARY:
-            pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.envelope.issuer_rics]
+            pass_json["labelColor"] = RICS_FG_SECONDARY[issuing_rics]
 
         parsed_layout = None
         if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
@@ -2380,7 +2380,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             validity_start = ticket_data.data.validity_start_time()
             validity_end = ticket_data.data.validity_end_time()
 
-            pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+            if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture:
+                pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_fields = {
                 "transitType": "PKTransitTypeTrain",
@@ -2524,7 +2525,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "issued-at-label",
                     "dateStyle": "PKDateStyleFull",
                     "timeStyle": "PKDateStyleFull",
-                    "value": ticket_data.data.purchase_data.purchase_time().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.data.purchase_data.purchase_time().isoformat(),
                 }, {
                     "key": "price",
                     "label": "price-label",
@@ -4581,31 +4582,31 @@ RICS_LOGO = {
 }
 
 RICS_BG = {
-    1084: "rgb(255, 201, 23)",
-    1154: "rgb(0, 160, 220)",
-    1174: "rgb(5, 170, 59)",
-    1184: "rgb(255, 201, 23)",
-    3018: "rgb(175, 22, 52)",
-    3453: "rgb(1, 142, 74)",
-    3497: "rgb(20, 24, 26)",
-    3697: "rgb(15, 23, 62)",
-    5188: "rgb(64, 0, 44)",
-    8999: "rgb(11, 130, 143)",
+    1084: "#ffc917",
+    1154: "#000adc",
+    1174: "#05aa3b",
+    1184: "#ffc917",
+    3018: "#af1634",
+    3453: "#018e4a",
+    3497: "#14181a",
+    3697: "#0f173e",
+    5188: "#40002c",
+    8999: "#0b828e",
 }
 
 RICS_FG = {
     10: "rgb(51, 51, 51)",
     1084: "rgb(7, 7, 33)",
-    1154: "rgb(255, 255, 255)",
-    1174: "rgb(255, 255, 255)",
+    1154: "#ffffff",
+    1174: "#ffffff",
     1184: "rgb(7, 7, 33)",
-    3018: "rgb(255, 255, 255)",
-    3453: "rgb(255, 255, 255)",
-    3497: "rgb(255, 255, 255)",
+    3018: "#ffffff",
+    3453: "#ffffff",
+    3497: "#ffffff",
     3606: "rgb(0, 70, 84)",
-    3697: "rgb(255, 255, 255)",
-    5188: "rgb(255, 255, 255)",
-    8999: "rgb(255, 255, 255)",
+    3697: "#ffffff",
+    5188: "#ffffff",
+    8999: "#ffffff",
 }
 
 RICS_FG_SECONDARY = {
@@ -4613,16 +4614,16 @@ RICS_FG_SECONDARY = {
     60: "rgb(61, 165, 53)",
     83: "rgb(0, 106, 106)",
     1084: "rgb(32, 32, 55)",
-    1154: "rgb(255, 255, 255)",
-    1174: "rgb(255, 255, 255)",
+    1154: "#ffffff",
+    1174: "#ffffff",
     1183: "rgb(0, 106, 106)",
     1184: "rgb(32, 32, 55)",
-    3018: "rgb(255, 255, 255)",
+    3018: "#ffffff",
     3153: "rgb(227, 0, 21)",
     3243: "rgb(120, 180, 30)",
     3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
-    3453: "rgb(255, 255, 255)",
+    3453: "#ffffff",
     3497: "rgb(149, 200, 125)",
     3606: "rgb(247, 147, 48)",
     3697: "rgb(110, 193, 228)",
