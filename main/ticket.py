@@ -1343,8 +1343,9 @@ def create_ticket_obj(
     return created
 
 
-def update_from_subscription_barcode(barcode_data: bytes,
-                                     account: typing.Optional["models.Account"]) -> "models.Ticket":
+def update_from_subscription_barcode(
+        barcode_data: bytes, account: typing.Optional["models.Account"]
+) -> "models.Ticket":
     decoded_ticket = parse_ticket(barcode_data, account=account)
 
     should_update = False
@@ -1370,7 +1371,8 @@ def update_from_subscription_barcode(barcode_data: bytes,
     ticket_obj.save()
 
     if should_update:
-        apn.notify_ticket(ticket_obj)
+        if not created:
+            apn.notify_ticket(ticket_obj)
         gwallet.sync_ticket(ticket_obj)
 
     if created:

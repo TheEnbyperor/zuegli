@@ -2389,7 +2389,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "departure-time-label",
                     "value": validity_start.isoformat(),
                     "dateStyle": "PKDateStyleShort",
-                    "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time_flag == 2 else "PKDateStyleNone",
+                    "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture else "PKDateStyleNone",
                     "ignoresTimeZone": True,
                 }],
                 "primaryFields": [],
@@ -2402,7 +2402,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "backFields": [],
             }
 
-            if ticket_data.data.depart_time_flag != 2 and ticket_data.data.limited_duration_code:
+            if ticket_data.data.depart_time != rsp.data.DepartureTime.SpecificDeparture and ticket_data.data.limited_duration_code:
                 pass_fields["secondaryFields"].append({
                     "key": "validity-start",
                     "label": "validity-start-label",
@@ -2513,13 +2513,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "label": "issuing-organisation-label",
                 "value": ticket_data.issuer_name(),
             })
-
-            if ticket_data.data.passenger_name:
-                pass_fields["secondaryFields"].append({
-                    "key": "passenger-name",
-                    "label": "passenger-label",
-                    "value": ticket_data.data.passenger_name,
-                })
 
             if ticket_data.data.purchase_data:
                 pass_fields["backFields"].extend([{

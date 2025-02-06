@@ -91,7 +91,7 @@ class DepartureTime(enum.Enum):
         elif self == DepartureTime.ValidAfter:
             return "valid after"
         elif self == DepartureTime.SpecificDeparture:
-            return "special departure"
+            return "specific departure"
 
 @dataclasses.dataclass
 class TicketData:

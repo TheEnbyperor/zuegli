@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/apple/v1/passes/<str:pass_type_id>/<str:serial_number>', views.apple_api.pass_document),
 
     path('api/upload', views.api.upload_aztec),
+    path('api/upload_image', views.api.upload_aztec_img),
 
     path('account/', views.account.index, name='account'),
     path('account/db/', views.account.db_account, name='db_account'),

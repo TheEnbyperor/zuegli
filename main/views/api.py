@@ -44,13 +44,13 @@ def upload_aztec(request):
 
 @csrf_exempt
 def upload_aztec_img(request):
-    if request.method != 'POST':
+    if request.method != "POST":
         return HttpResponse(status=405)
 
-    if request.content_type != 'multipart/form-data':
+    if request.content_type != "multipart/form-data":
         return HttpResponse(status=400)
 
-    file = request.FILES["photo"]
+    file = request.FILES["img"]
     if file.size > 16 * 1024 * 1024:
         return HttpResponse(json.dumps({
             "title": "Too large",
