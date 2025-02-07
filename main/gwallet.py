@@ -721,32 +721,33 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "originName": {
                             "defaultValue": {
                                 "language": "en",
-                                "value": parsed_layout.trips[0].departure_station
+                                "value": parsed_layout.trips[0].departure_station or "N/A"
                             }
                         },
                         "destinationName": {
                             "defaultValue": {
                                 "language": "en",
-                                "value": parsed_layout.trips[0].arrival_station
+                                "value": parsed_layout.trips[0].arrival_station or "N/A"
                             }
                         }
                     })
                 else:
                     for trip in parsed_layout.trips:
-                        obj["ticketLegs"].append({
-                            "originName": {
-                                "defaultValue": {
-                                    "language": "en",
-                                    "value": trip.departure_station
+                        if trip.departure_station or trip.arrival_station:
+                            obj["ticketLegs"].append({
+                                "originName": {
+                                    "defaultValue": {
+                                        "language": "en",
+                                        "value": trip.departure_station or "N/A"
+                                    }
+                                },
+                                "destinationName": {
+                                    "defaultValue": {
+                                        "language": "en",
+                                        "value": trip.arrival_station or "N/A"
+                                    }
                                 }
-                            },
-                            "destinationName": {
-                                "defaultValue": {
-                                    "language": "en",
-                                    "value": trip.arrival_station
-                                }
-                            }
-                        })
+                            })
 
         obj["textModulesData"].append({
             "id": "issued-at",
