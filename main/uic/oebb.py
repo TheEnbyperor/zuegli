@@ -15,8 +15,8 @@ class Train:
 
 @dataclasses.dataclass
 class OeBBRecord99:
-    validity_start: datetime.datetime
-    validity_end: datetime.datetime
+    validity_start: typing.Optional[datetime.datetime]
+    validity_end: typing.Optional[datetime.datetime]
     trains: typing.List[Train]
 
     @classmethod
@@ -31,8 +31,17 @@ class OeBBRecord99:
         except (UnicodeDecodeError, json.JSONDecodeError) as e:
             raise OeBBException(f"Invalid OeBB 99 record") from e
 
-        validity_start = data.pop("V")
-        validity_end = data.pop("B")
+        if "V" in data:
+            validity_start = data.pop("V")
+            validity_start = pytz.UTC.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M")).astimezone(tz)
+        else:
+            validity_start = None
+        if "B" in data:
+            validity_end = data.pop("B")
+            validity_end = pytz.UTC.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M")).astimezone(tz)
+        else:
+            validity_end = None
+
         trains = []
 
         if "Z" in data:
@@ -44,9 +53,6 @@ class OeBBRecord99:
                 else:
                     carriage_number = None
                 trains.append(Train(train_number, carriage_number))
-
-        validity_start = pytz.UTC.localize(datetime.datetime.strptime(validity_start, "%y%m%d%H%M")).astimezone(tz)
-        validity_end = pytz.UTC.localize(datetime.datetime.strptime(validity_end, "%y%m%d%H%M")).astimezone(tz)
 
         return cls(
             validity_start=validity_start,
