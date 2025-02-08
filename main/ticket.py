@@ -715,7 +715,7 @@ def parse_ticket_uic_head(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
     if not head_record:
         return None
 
-    if head_record.version != 1:
+    if head_record.version not in (0, 1):
         raise TicketError(
             title="Unsupported header record version",
             message=f"The header record version {head_record.version} is not supported."
@@ -736,7 +736,7 @@ def parse_ticket_uic_layout(ticket_envelope: uic.Envelope) -> typing.Optional[ui
     if not layout_record:
         return None
 
-    if layout_record.version != 1:
+    if layout_record.version not in (0, 1):
         raise TicketError(
             title="Unsupported layout record version",
             message=f"The layout record version {layout_record.version} is not supported."
