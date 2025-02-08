@@ -57,7 +57,6 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
         ticket_data = ticket_instance.as_ticket()
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
         if ticket_data.flex:
-
             ticket_document = next(map(
                 lambda d: d["ticket"][1],
                 filter(
@@ -188,7 +187,12 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
                     event.add("summary", f"{train_number}: {from_station_name} ➡ {to_station_name}")
                 else:
                     event.add("summary", f"{from_station_name} ➡ {to_station_name}")
+                    
             else:
                 return
+        else:
+            return
+    else:
+        return
 
     cal.add_component(event)
