@@ -317,13 +317,12 @@ class Command(BaseCommand):
                 "enableSmartTap": False,
                 "homepageUri": {
                     "uri": settings.EXTERNAL_URL_BASE,
-                    "description": "VDVPKPass"
+                    "description": "VDV PKPass"
                 },
                 "securityAnimation": {
                     "animationType": "foilShimmer"
                 },
                 "multipleDevicesAndHoldersAllowedStatus": "oneUserAllDevices",
-                "reviewStatus": "UNDER_REVIEW",
                 "customCarriageLabel": {
                     "translatedValues": [{
                         "language": "de",
