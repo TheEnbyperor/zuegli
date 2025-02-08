@@ -5,10 +5,19 @@
 
 {% block content %}
     <div class="govuk-width-container">
-        <h1 class="govuk-heading-xl">
-            Ticket #{{ ticket.public_id }}
-            <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
-        </h1>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds-from-desktop">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                    Ticket #{{ ticket.public_id }}
+                    <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
+                </h1>
+            </div>
+            <div class="govuk-grid-column-one-third-from-desktop">
+                <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">
+                    Delete
+                </a>
+            </div>
+        </div>
 
         <p class="govuk-body">Quote the above ticket number when asking for help.</p>
 
@@ -116,15 +125,19 @@
                 Download your pass
             </h1>
             <div class="govuk-panel__body">
-                    <a href="{% url 'ticket_pkpass' ticket.id %}"><img src="{% static 'main/add-to-apple-wallet.svg' %}" alt="Add to Apple Wallet"
-                             class="apple-wallet-button"></a>
-                    {% if gwallet_url %}
-                        <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank"><img src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet"
-                                 class="g-wallet-button"></a>
-                    {% endif %}
+                <a href="{% url 'ticket_pkpass' ticket.id %}"><img src="{% static 'main/add-to-apple-wallet.svg' %}"
+                                                                   alt="Add to Apple Wallet"
+                                                                   class="apple-wallet-button"></a>
+                {% if gwallet_url %}
+                    <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank"><img
+                            src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet"
+                            class="g-wallet-button"></a>
+                {% endif %}
                 {% if ical_url %}
                     <br/>
-                    <a href="{{ ical_url }}" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-4">Add to Calendar</a>
+                    <a href="{{ ical_url }}"
+                       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-4">Add to
+                        Calendar</a>
                 {% endif %}
             </div>
         </div>

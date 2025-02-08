@@ -187,6 +187,22 @@ def view_ticket(request, pk):
     })
 
 
+def delete_ticket(request, pk):
+    ticket_obj = get_object_or_404(models.Ticket, id=pk)
+
+    can_delete = not ticket_obj.account or ticket_obj.account == request.user.account
+
+    if request.method == "POST" and can_delete:
+        if request.POST.get("confirm") == "yes":
+            ticket_obj.delete()
+            return redirect("index")
+
+    return render(request, "main/ticket_delete.html", {
+        "ticket": ticket_obj,
+        "can_delete": can_delete,
+    })
+
+
 def pass_photo_thumbnail(ticket_obj: "models.Ticket", size, padding):
     out = Image.new("RGBA", size, (0, 0, 0, 0))
     images = []

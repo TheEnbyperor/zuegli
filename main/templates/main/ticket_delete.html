@@ -1,0 +1,39 @@
+{% extends "main/base.html" %}
+{% load static tz %}
+
+{% block title %}Delee ticket {{ ticket.public_id }} - Train Tickets to Wallet Passes{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
+            Delete ticket #{{ ticket.public_id }}
+            <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
+        </h1>
+        {% if can_delete %}
+            <p class="govuk-body-lead">
+                Are you sure you want to delete this ticket?
+            </p>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="govuk-button-group">
+                    <a href="{% url 'ticket' ticket.id %}" class="govuk-button govuk-button--secondary"
+                       data-module="govuk-button">
+                        Cancel
+                    </a>
+                    <button type="submit" name="confirm" value="yes" class="govuk-button govuk-button--warning"
+                            data-module="govuk-button">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="govuk-body-lead">
+                You don't have permission to delete this ticket.
+            </p>
+
+            <a href="{% url 'ticket' ticket.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Go back
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
