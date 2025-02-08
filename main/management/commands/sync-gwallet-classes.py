@@ -338,6 +338,7 @@ class Command(BaseCommand):
                         "language": "en-gb",
                         "value": "Train nr."
                     }
-                }
+                },
+                "reviewStatus": "UNDER_REVIEW",
             }
         ).execute()
