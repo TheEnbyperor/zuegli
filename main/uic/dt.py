@@ -56,9 +56,9 @@ class DTRecordTI:
         start_zone = None
         end_zone = None
 
-        if block_data := blocks.pop("001"):
+        if block_data := blocks.pop("001", None):
             product_name = block_data
-        if block_data := blocks.pop("002"):
+        if block_data := blocks.pop("002", None):
             try:
                 validity_start = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M"))
             except ValueError:
@@ -66,7 +66,7 @@ class DTRecordTI:
                     validity_start = datetime.datetime.fromisoformat(block_data)
                 except ValueError as e:
                     raise DTException(f"Invalid validity start date") from e
-        if block_data := blocks.pop("003"):
+        if block_data := blocks.pop("003", None):
             try:
                 validity_end = TZ.localize(datetime.datetime.strptime(block_data, "%Y-%m-%d %H:%M"))
             except ValueError:
@@ -74,11 +74,11 @@ class DTRecordTI:
                     validity_end = datetime.datetime.fromisoformat(block_data)
                 except ValueError as e:
                     raise DTException(f"Invalid validity end date") from e
-        if block_data := blocks.pop("004"):
+        if block_data := blocks.pop("004", None):
             start_stop = block_data
-        if block_data := blocks.pop("005"):
+        if block_data := blocks.pop("005", None):
             start_zone = block_data
-        if end_zone := blocks.pop("006"):
+        if end_zone := blocks.pop("006", None):
             end_zone = block_data
 
         return cls(
@@ -107,9 +107,9 @@ class DTRecordPA:
         passenger_name = None
         customer_id = None
 
-        if block_data := blocks.pop("001"):
+        if block_data := blocks.pop("001", None):
             passenger_name = block_data
-        if block_data := blocks.pop("002"):
+        if block_data := blocks.pop("002", None):
             customer_id = block_data
 
         return cls(
