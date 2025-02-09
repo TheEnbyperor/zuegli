@@ -18,6 +18,24 @@
             <dd class="govuk-summary-list__value">{{ dt.validity_end|date:"F d, Y H:i:s" }}</dd>
         </div>
     {% endif %}
+    {% if dt.start_stop %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Start stop</dt>
+            <dd class="govuk-summary-list__value">{{ dt.start_stop }}</dd>
+        </div>
+    {% endif %}
+    {% if dt.start_zone %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Start zone</dt>
+            <dd class="govuk-summary-list__value">{{ dt.start_zone }}</dd>
+        </div>
+    {% endif %}
+    {% if dt.end_zone %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">End zone</dt>
+            <dd class="govuk-summary-list__value">{{ dt.end_zone }}</dd>
+        </div>
+    {% endif %}
     {% if dt.other_blocks %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Unknown blocks</dt>
