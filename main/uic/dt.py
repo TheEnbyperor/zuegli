@@ -38,6 +38,9 @@ class DTRecordTI:
     product_name: typing.Optional[str]
     validity_start: typing.Optional[datetime.datetime]
     validity_end: typing.Optional[datetime.datetime]
+    start_stop: typing.Optional[str]
+    start_zone: typing.Optional[str]
+    end_zone: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -49,6 +52,9 @@ class DTRecordTI:
         product_name = None
         validity_start = None
         validity_end = None
+        start_stop = None
+        start_zone = None
+        end_zone = None
 
         if block_data := blocks.pop("001"):
             product_name = block_data
@@ -68,11 +74,20 @@ class DTRecordTI:
                     validity_end = datetime.datetime.fromisoformat(block_data)
                 except ValueError as e:
                     raise DTException(f"Invalid validity end date") from e
+        if block_data := blocks.pop("004"):
+            start_stop = block_data
+        if block_data := blocks.pop("005"):
+            start_zone = block_data
+        if end_zone := blocks.pop("006"):
+            end_zone = block_data
 
         return cls(
             product_name=product_name,
             validity_start=validity_start,
             validity_end=validity_end,
+            start_stop=start_stop,
+            start_zone=start_zone,
+            end_zone=end_zone,
             other_blocks=blocks,
         )
 
@@ -80,6 +95,7 @@ class DTRecordTI:
 @dataclasses.dataclass
 class DTRecordPA:
     passenger_name: typing.Optional[str]
+    customer_id: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -89,11 +105,15 @@ class DTRecordPA:
 
         blocks = parse_tlv(data)
         passenger_name = None
+        customer_id = None
 
         if block_data := blocks.pop("001"):
             passenger_name = block_data
+        if block_data := blocks.pop("002"):
+            customer_id = block_data
 
         return cls(
             passenger_name=passenger_name,
+            customer_id=customer_id,
             other_blocks=blocks,
         )
