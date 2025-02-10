@@ -326,6 +326,100 @@
                     </dl>
                 </div>
             </div>
+        {% elif elm.TYPE == "rmv-private-data" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">RMV Private Data</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% with org_name=elm.organization_name_opt %}
+                            {% if org_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Organisation Name</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ org_name }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.organization_id }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Traffic company</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.traffic_company }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Other data</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ elm.other_data_hex }}</code>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        {% elif elm.TYPE == "rmv-product-data" %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">RMV Product Data</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Start tariff point</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.start_tariff_point }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">End tariff point</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.end_tariff_point }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Price</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.price_str }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Price level</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.price_level }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">VAT</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.vat_str }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Name</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ elm.name }}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Date of birth</dt>
+                            <dd class="govuk-summary-list__value">{{ elm.date_of_birth.as_date|date:"F d, Y" }}</dd>
+                        </div>
+                        {% if elm.gender %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Gender</dt>
+                                <dd class="govuk-summary-list__value">{{ elm.gender.name }}</dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
         {% elif elm.TYPE == "unknown" %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">

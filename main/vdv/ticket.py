@@ -119,11 +119,6 @@ class VDVTicket:
         if product_data[0] != 0x85:
             raise util.VDVException("Not a VDV ticket")
 
-        try:
-            product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
-        except Exception as e:
-            raise util.VDVException("Invalid VDV ticket") from e
-
         offset_1 = parser.get_offset()
         common_transaction_data, data = data[offset_1:offset_1 + 17], data[offset_1 + 17:]
 
@@ -145,8 +140,25 @@ class VDVTicket:
             raise util.VDVException("Not a VDV ticket")
 
         version = f"{trailer[3] >> 4}.{trailer[3] & 0x0F}.{trailer[4]:02d}"
-
         product_org_id = int.from_bytes(header[8:10], 'big')
+
+        if version == "1.6.00":
+            product_data = product_data[1]
+            if len(product_data) == 0x44:
+                product_data = [RMVProductData.parse(product_data)]
+            else:
+                product_data = [UnknownElement(len(product_data), product_data)]
+        else:
+            try:
+                product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
+            except Exception as e:
+                raise util.VDVException("Invalid VDV ticket") from e
+
+            product_data = list(map(
+                lambda e: cls.parse_product_data_element(e, context, product_org_id),
+                filter(lambda e: any(d != 0 for d in e[1]), product_data)
+            ))
+
         return cls(
             version=version,
 
@@ -156,12 +168,7 @@ class VDVTicket:
             product_org_id=product_org_id,
             validity_start=util.DateTime.from_bytes(header[10:14]),
             validity_end=util.DateTime.from_bytes(header[14:18]),
-
-            product_data=list(map(
-                lambda e: cls.parse_product_data_element(e, context, product_org_id),
-                filter(lambda e: any(d != 0 for d in e[1]), product_data)
-            )),
-
+            product_data=product_data,
             kvp_org_id=int.from_bytes(common_transaction_data[0:2], 'big'),
             terminal_type=common_transaction_data[2],
             terminal_number=int.from_bytes(common_transaction_data[3:5], 'big'),
@@ -187,6 +194,8 @@ class VDVTicket:
             return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
             return SpacialValidity.parse(elm[1], product_org_id)
+        elif elm[0] == 0xDE and product_org_id == 36:
+            return RMVPrivateData.parse(elm[1])
         elif elm[0] == 0xDE:
             return PrivateData(elm[1])
         elif elm[0] == 0xD6:
@@ -777,6 +786,76 @@ class SEId:
 
     def __str__(self):
         return f"SE ID: {self.value}"
+
+
+@dataclasses.dataclass
+class RMVProductData:
+    TYPE = "rmv-product-data"
+
+    start_tariff_point: int
+    end_tariff_point: int
+    name: str
+    gender: typing.Optional[Gender]
+    date_of_birth: util.Date
+    price: decimal.Decimal
+    price_level: int
+    vat_rate: decimal.Decimal
+
+    @classmethod
+    def parse(cls, data: bytes) -> "RMVProductData":
+        if len(data) != 0x44:
+            raise util.VDVException("Invalid RMV product data length")
+
+        price = decimal.Decimal(int.from_bytes(data[24:27], "big")) / decimal.Decimal(100)
+        vat = decimal.Decimal(int.from_bytes(data[27:29], "big"))
+        name = data[34:59].decode("iso-8859-15")
+        date_of_birth = util.Date(
+            year=util.un_bcd(data[60:62]),
+            month=util.un_bcd(data[62:63]),
+            day=util.un_bcd(data[63:64]),
+        )
+
+        return RMVProductData(
+            start_tariff_point=int.from_bytes(data[1:4], "big"),
+            end_tariff_point=int.from_bytes(data[7:10], "big"),
+            name=name.strip(),
+            gender=Gender(data[59]) if data[59] else None,
+            date_of_birth=date_of_birth,
+            price=price,
+            price_level=data[23],
+            vat_rate=vat,
+        )
+
+    @property
+    def price_str(self):
+        return f"{self.price:.2f} EUR"
+
+    @property
+    def vat_str(self):
+        return f"{self.vat_rate:.2f}%"
+
+
+@dataclasses.dataclass
+class RMVPrivateData:
+    TYPE = "rmv-private-data"
+
+    organization_id: int
+    traffic_company: str
+    other_data: bytes
+
+    @classmethod
+    def parse(cls, data: bytes) -> "RMVPrivateData":
+        return cls(
+            organization_id=int.from_bytes(data[0:2], "big"),
+            traffic_company=data[2:9].decode("iso-8859-15").strip(),
+            other_data=data[9:],
+        )
+
+    def organization_name_opt(self):
+        return map_org_id(self.organization_id, True)
+
+    def other_data_hex(self):
+        return ":".join(f"{self.other_data[i]:02x}" for i in range(len(self.other_data)))
 
 
 @dataclasses.dataclass
