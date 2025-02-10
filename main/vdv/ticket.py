@@ -119,7 +119,10 @@ class VDVTicket:
         if product_data[0] != 0x85:
             raise util.VDVException("Not a VDV ticket")
 
-        product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
+        try:
+            product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
+        except Exception as e:
+            raise util.VDVException("Invalid VDV ticket") from e
 
         offset_1 = parser.get_offset()
         common_transaction_data, data = data[offset_1:offset_1 + 17], data[offset_1 + 17:]
