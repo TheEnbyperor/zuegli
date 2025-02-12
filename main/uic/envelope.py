@@ -80,6 +80,9 @@ class Envelope:
     def can_verify(self):
         return bool(certs.public_key(self.issuer_rics, self.signature_key_id))
 
+    def revoked_key(self):
+        return self.issuer_rics == 5211 and self.signature_key_id == 1
+
     def verify_signature(self):
         if not self.signature or not self.signed_data:
             return False

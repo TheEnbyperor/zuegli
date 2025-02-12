@@ -164,6 +164,26 @@
                 {% endfor %}
                 {% for instance in ticket.uic_instances.all %}
                     {% with ticket_obj=instance.as_ticket %}
+                        {% if ticket_obj.envelope.revoked_key %}
+                            <div class="govuk-width-container">
+                                <div class="govuk-error-summary">
+                                    <div role="alert">
+                                        <h2 class="govuk-error-summary__title">This ticket is invalid</h2>
+                                        <div class="govuk-error-summary__body">
+                                            <div class="govuk-warning-text">
+                                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                                <strong class="govuk-warning-text__text">
+                                                    The key used to sign this ticket has been revoked due to misuse.
+                                                    Travelling on this ticket is likely to result in a penalty fare.
+                                                    <a href="https://www.heise.de/news/Vorsicht-vor-ungueltigen-Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html">More
+                                                        details</a> (in German).
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket_id }}</span>
