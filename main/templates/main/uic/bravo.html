@@ -1,0 +1,52 @@
+{% load tz rics %}
+<h2 class="govuk-heading-m">Bravo data</h2>
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        {% if bravo.valid_from %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid from</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.valid_from|date:"F d, Y H:i:s e" }}</dd>
+            </div>
+        {% endif %}
+        {% if bravo.valid_to %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid until</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.valid_to|date:"F d, Y H:i:s e" }}</dd>
+            </div>
+        {% endif %}
+        {% if bravo.ticket_pnr %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">PNR</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.ticket_pnr }}</dd>
+            </div>
+        {% endif %}
+        {% if bravo.ticket_number %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Ticket number</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.ticket_number }}</dd>
+            </div>
+        {% endif %}
+        {% if bravo.product_id %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.product_id }}</dd>
+            </div>
+        {% endif %}
+        {% if bravo.product_rics %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product owner RICS</dt>
+                <dd class="govuk-summary-list__value">{{ bravo.product_rics }}</dd>
+            </div>
+            {% with org=bravo.product_rics|rics %}
+                {% if org %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Product owner</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include 'main/rics.html' with org=org %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    </dl>
+{% endlocaltime %}
