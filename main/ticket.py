@@ -321,8 +321,9 @@ class UICTicket:
                     or r.id == "3497TI" or r.id == "3497PA"
                     or r.id == "5245TI" or r.id == "5245PA"
                     or r.id == "3565TI" or r.id == "3565PA"
-                    or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
-                    or r.id == "3697OT" or r.id == "000IVU"
+                    or r.id == "3306FI" or r.id == "3306VD"
+                    or r.id == "3606AA" or r.id == "3697OT"
+                    or r.id == "000IVU" or r.id == "CXX___"
             )]
         )
 
@@ -906,7 +907,7 @@ def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional["u
 
 
 def parse_ticket_uic_bravo(ticket_envelope: uic.Envelope) -> typing.Optional["uic.bravo.BravoRecord"]:
-    bravo_record = next(filter(lambda r: r.id == "000IVU" and r.version == 1, ticket_envelope.records), None)
+    bravo_record = next(filter(lambda r: r.id in ("000IVU", "CXX___") and r.version == 1, ticket_envelope.records), None)
     if not bravo_record:
         return None
 
