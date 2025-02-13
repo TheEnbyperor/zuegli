@@ -86,9 +86,11 @@ class DateTime:
     def __str__(self):
         return f"{self.year:04d}-{self.month:02d}-{self.day:02d} {self.hour:02d}:{self.minute:02d}:{self.second:02d}"
 
-    def as_datetime(self):
+    def as_datetime(self, tz: pytz.timezone = None) -> datetime.datetime:
         dt = datetime.datetime(self.year, self.month, self.day, self.hour % 24, self.minute, self.second)
         dt += datetime.timedelta(days=self.hour // 24)
+        if tz:
+            return tz.localize(dt)
         return VDV_TZ.localize(dt)
 
     @classmethod

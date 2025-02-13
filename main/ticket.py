@@ -81,6 +81,7 @@ class UICTicket:
     vor_fi: typing.Optional["uic.vor.VORRecordFI"]
     vor_vd: typing.Optional["uic.vor.VORRecordVD"]
     st01: typing.Optional["uic.st01_parse.ParsedST01"]
+    bravo: typing.Optional["uic.bravo.BravoRecord"]
     other_records: typing.List["uic.envelope.Record"]
 
     @property
@@ -310,6 +311,7 @@ class UICTicket:
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
             vor_fi=parse_ticket_uic_vor_fi(ticket_envelope),
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
+            bravo=parse_ticket_uic_bravo(ticket_envelope),
             st01=st01,
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
@@ -320,7 +322,7 @@ class UICTicket:
                     or r.id == "5245TI" or r.id == "5245PA"
                     or r.id == "3565TI" or r.id == "3565PA"
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3606AA"
-                    or r.id == "3697OT"
+                    or r.id == "3697OT" or r.id == "000IVU"
             )]
         )
 
@@ -747,7 +749,7 @@ def parse_ticket_uic_layout(ticket_envelope: uic.Envelope) -> typing.Optional[ui
     except uic.util.UICException:
         raise TicketError(
             title="Invalid layout record",
-            message="The layout record is invalid - the ticket is likely invalid.",
+            message="The layout record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -762,7 +764,7 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
     except uic.util.UICException:
         raise TicketError(
             title="Invalid flexible data record",
-            message="The flexible record is invalid - the ticket is likely invalid.",
+            message="The flexible record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -783,7 +785,7 @@ def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic
     except uic.dt.DTException:
         raise TicketError(
             title="Invalid TI record",
-            message="The TI record is invalid - the ticket is likely invalid.",
+            message="The TI record is can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -804,7 +806,7 @@ def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic
     except uic.dt.DTException:
         raise TicketError(
             title="Invalid PA record",
-            message="The PA record is invalid - the ticket is likely invalid.",
+            message="The PA record is can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -819,7 +821,7 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic
     except uic.db.DBException:
         raise TicketError(
             title="Invalid DB BL record",
-            message="The DB BL record is invalid - the ticket is likely invalid.",
+            message="The DB BL record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -836,7 +838,7 @@ def parse_ticket_uic_cd_ut(
     except uic.cd.CDException:
         raise TicketError(
             title="Invalid CD UT record",
-            message="The CD UT record is invalid - the ticket is likely invalid.",
+            message="The CD UT record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -853,7 +855,7 @@ def parse_ticket_uic_db_vu(
     except uic.db_vu.DBVUException:
         raise TicketError(
             title="Invalid DB VU Record",
-            message="The DB VU record is invalid - the ticket is likely invalid.",
+            message="The DB VU record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -868,7 +870,7 @@ def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[u
     except uic.oebb.OeBBException:
         raise TicketError(
             title="Invalid OeBB 99 record",
-            message="The OeBB 99 record is invalid - the ticket is likely invalid.",
+            message="The OeBB 99 record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -883,7 +885,7 @@ def parse_ticket_uic_vor_fi(ticket_envelope: uic.Envelope) -> typing.Optional["u
     except uic.vor.VORRecordFI:
         raise TicketError(
             title="Invalid VOR FI record",
-            message="The VOR FI record is invalid - the ticket is likely invalid.",
+            message="The VOR FI record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -898,7 +900,22 @@ def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional["u
     except uic.vor.VORException:
         raise TicketError(
             title="Invalid VOR VD record",
-            message="The VOR VD record is invalid - the ticket is likely invalid.",
+            message="The VOR VD record can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_bravo(ticket_envelope: uic.Envelope) -> typing.Optional["uic.bravo.BravoRecord"]:
+    bravo_record = next(filter(lambda r: r.id == "000IVU" and r.version == 1, ticket_envelope.records), None)
+    if not bravo_record:
+        return None
+
+    try:
+        return uic.bravo.BravoRecord.parse(bravo_record.data)
+    except uic.bravo.BravoException:
+        raise TicketError(
+            title="Invalid Bravo data",
+            message="The Bravo data is can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
