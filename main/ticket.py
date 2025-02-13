@@ -9,7 +9,10 @@ import hashlib
 import enum
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass
+from django.conf import settings
+from . import models, vdv, uic, rsp, templatetags, apn, sncf, elb, ssb, ssb1, email, hzpp, swisspass
+if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+    from . import gwallet
 
 
 class TicketError(Exception):
@@ -1391,7 +1394,8 @@ def update_from_subscription_barcode(
     if should_update:
         if not created:
             apn.notify_ticket(ticket_obj)
-        gwallet.sync_ticket(ticket_obj)
+        if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+            gwallet.sync_ticket(ticket_obj)
 
     if created:
         email.send_new_ticket_email(ticket_obj)

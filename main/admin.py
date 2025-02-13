@@ -4,7 +4,10 @@ from django.urls import path
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
-from . import models, apn, gwallet
+from django.conf import settings
+from . import models, apn
+if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+    from . import gwallet
 
 
 class VDVTicketInstanceInline(admin.StackedInline):
@@ -144,7 +147,8 @@ class TicketAdmin(admin.ModelAdmin):
         ticket.last_updated = timezone.now()
         ticket.save()
         apn.notify_ticket(ticket)
-        gwallet.sync_ticket(ticket)
+        if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+            gwallet.sync_ticket(ticket)
 
         messages.add_message(request, messages.INFO, "Update sent to Apple and Google")
 
