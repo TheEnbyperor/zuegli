@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.admin.utils import unquote
 from django.conf import settings
 from . import models, apn
-if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+if settings.GOOGLE_CREDS:
     from . import gwallet
 
 
@@ -147,7 +147,7 @@ class TicketAdmin(admin.ModelAdmin):
         ticket.last_updated = timezone.now()
         ticket.save()
         apn.notify_ticket(ticket)
-        if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+        if settings.GOOGLE_CREDS:
             gwallet.sync_ticket(ticket)
 
         messages.add_message(request, messages.INFO, "Update sent to Apple and Google")

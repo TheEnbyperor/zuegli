@@ -2,7 +2,7 @@ import niquests
 from django.conf import settings
 from django.utils import timezone
 from . import models
-if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+if settings.GOOGLE_CREDS:
     from . import gwallet
 
 def notify_device(device: "models.AppleDevice"):
@@ -38,5 +38,5 @@ def notify_ticket_if_renewed(ticket: "models.Ticket"):
             ticket.last_updated = now
             ticket.save()
             notify_ticket(ticket)
-            if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+            if settings.GOOGLE_CREDS:
                 gwallet.sync_ticket(ticket)

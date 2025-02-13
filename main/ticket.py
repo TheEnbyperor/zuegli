@@ -11,7 +11,7 @@ import binascii
 from django.utils import timezone
 from django.conf import settings
 from . import models, vdv, uic, rsp, templatetags, apn, sncf, elb, ssb, ssb1, email, hzpp, swisspass
-if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+if settings.GOOGLE_CREDS:
     from . import gwallet
 
 
@@ -1394,7 +1394,7 @@ def update_from_subscription_barcode(
     if should_update:
         if not created:
             apn.notify_ticket(ticket_obj)
-        if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+        if settings.GOOGLE_CREDS:
             gwallet.sync_ticket(ticket_obj)
 
     if created:
