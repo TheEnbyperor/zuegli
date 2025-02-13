@@ -15,7 +15,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib import messages
 from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, rsp, uic, ssb, swisspass, cal
-if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+if settings.GOOGLE_CREDS:
     from main import gwallet
 
 
@@ -108,7 +108,7 @@ def index(request):
                 request.session["ticket_created"] = ticket_created
                 ticket.create_ticket_obj(ticket_obj, ticket_bytes, ticket_data)
                 apn.notify_ticket(ticket_obj)
-                if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+                if settings.GOOGLE_CREDS:
                     gwallet.sync_ticket(ticket_obj)
                 ticket_ids.append(ticket_obj.id)
 
@@ -128,7 +128,7 @@ def index(request):
 def view_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
     gwallet_url = None
-    if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+    if settings.GOOGLE_CREDS:
         gwallet_url = gwallet.create_jwt_link(ticket_obj)
 
     is_saarvv = False
@@ -176,7 +176,7 @@ def view_ticket(request, pk):
                         ticket_obj.photos[pi] = file_name
                         ticket_obj.save()
                         apn.notify_ticket(ticket_obj)
-                        if getattr(settings, "ENABLE_GOOGLE_WALLET", False):
+                        if settings.GOOGLE_CREDS:
                             gwallet.sync_ticket(ticket_obj)
 
     return render(request, "main/ticket.html", {
