@@ -99,6 +99,8 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
 
         if isinstance(ticket_data.data, ssb.IntegratedReservationTicket) or isinstance(ticket_data.data, ssb.NonReservationTicket):
             return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
+        elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
+            return "generic", settings.GWALLET_CONF["train_pass_class"]
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         if isinstance(ticket_data.data, rsp.TicketData):
@@ -976,8 +978,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
     elif isinstance(ticket_instance, models.SSBTicketInstance):
         ticket_data = ticket_instance.as_ticket()
+        ticket_type = None
 
-        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
         obj["logo"] = {
             "sourceUri": {
                 "uri": urllib.parse.urljoin(
@@ -986,7 +988,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 )
             },
         }
-        obj["hexBackgroundColor"] = "#ffffff"
+        if ticket_data.envelope.issuer_rics in passes.RICS_BG:
+            obj["hexBackgroundColor"] = passes.RICS_BG[ticket_data.envelope.issuer_rics]
+        else:
+            obj["hexBackgroundColor"] = "#ffffff"
         obj["barcode"] = {
             "type": "AZTEC",
             "alternateText": ticket_data.data.pnr,
@@ -1004,6 +1009,8 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 })
 
         if isinstance(ticket_data.data, ssb.NonReservationTicket):
+            ticket_type = "transit"
+            obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"
             obj["tripType"] = "ROUND_TRIP" if ticket_data.data.return_included else "ONE_WAY"
             obj["ticketLegs"] = [{
                 "ticketSeat": {}
@@ -1082,7 +1089,92 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 "body": ticket_data.data.issuing_date.strftime("%d.%m.%Y"),
             })
 
-        return obj, "transit"
+        elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
+            ticket_type = "generic"
+            obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
+
+            obj["validTimeInterval"] = {
+                "start": {
+                    "date": f"{ticket_data.data.validity_start.isoformat()}T00:00:00Z",
+                },
+                "end": {
+                    "date":f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
+                }
+            }
+            obj["header"] = {
+                "defaultValue": {
+                    "language": "en",
+                    "value": "Keycard"
+                }
+            }
+
+            if ticket_data.data.station_uic:
+                station = templatetags.rics.get_station(ticket_data.data.station_uic, "uic")
+                obj["textModulesData"].append({
+                    "id": "station",
+                    "localizedHeader": {
+                        "translatedValues": [{
+                            "language": "de",
+                            "value": "Banhof"
+                        }, {
+                            "language": "nl",
+                            "value": "Station"
+                        }, {
+                            "language": "cy",
+                            "value": "Gorsaf"
+                        }],
+                        "defaultValue": {
+                            "language": "en-gb",
+                            "value": "Station"
+                        }
+                    },
+                    "body": station["name"]
+                })
+
+            obj["textModulesData"].append({
+                "id": "card-id",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Kartennummer"
+                    }, {
+                        "language": "de",
+                        "value": "Kaart-ID"
+                    }, {
+                        "language": "cy",
+                        "value": "Rhif cerdyn"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Card ID"
+                    }
+                },
+                "body": str(ticket_data.data.card_id)
+            })
+
+            obj["textModulesData"].append({
+                "id": "issued-at",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Ausgestellt am"
+                    }, {
+                        "language": "nl",
+                        "value": "Uitgegeven om"
+                    }, {
+                        "language": "cy",
+                        "value": "Dyddorwyd am"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Issued at"
+                    }
+                },
+                "body": ticket_data.data.issuing_date.strftime("%d.%m.%Y"),
+            })
+
+        if ticket_type:
+            return obj, ticket_type
 
     elif isinstance(ticket_instance, models.RSPTicketInstance):
         obj["cardTitle"] = {
