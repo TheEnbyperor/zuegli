@@ -4564,6 +4564,7 @@ RICS_LOGO = {
     60: "pass/logo-ir.png",
     80: "pass/logo-db.png",
     83: "pass/logo-trenitalia.png",
+    1073: "pass/logo-hellenic.png",
     1080: "pass/logo-db.png",
     1088: "pass/logo-sncb.png",
     1084: "pass/logo-ns.png",
@@ -4624,6 +4625,7 @@ RICS_BG = {
 RICS_FG = {
     10: "rgb(51, 51, 51)",
     1084: "rgb(7, 7, 33)",
+    1073: "#27509b",
     1154: "#ffffff",
     1174: "#ffffff",
     1184: "rgb(7, 7, 33)",
@@ -4640,6 +4642,7 @@ RICS_FG_SECONDARY = {
     10: "rgb(0, 161, 73)",
     60: "rgb(61, 165, 53)",
     83: "rgb(0, 106, 106)",
+    1073: "#bd0d2e",
     1084: "rgb(32, 32, 55)",
     1154: "#ffffff",
     1174: "#ffffff",
