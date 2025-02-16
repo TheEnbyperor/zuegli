@@ -1,0 +1,35 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Name</dt>
+        <dd class="govuk-summary-list__value">{{ airport.name }}</dd>
+    </div>
+    {% if airport.iata_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">IATA Code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ airport.iata_code }}</code></dd>
+        </div>
+    {% endif %}
+    {% if airport.icao_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ICAO Code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ airport.icao_code }}</code></dd>
+        </div>
+    {% endif %}
+    {% if airport.latitude and airport.longitude %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Location</dt>
+            <dd class="govuk-summary-list__value">
+                <a href="https://maps.apple.com/?q={{ airport.name|urlencode }}&ll={{ airport.latitude }},{{ airport.longitude }}">
+                    <code>{{ airport.latitude }}, {{ airport.longitude }}</code>
+                </a><br/>
+                {% if airport.city or airport.country %}{{ airport.city }}, {{ airport.country }}{% endif %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if airport.tz_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Timezone</dt>
+            <dd class="govuk-summary-list__value"><code>{{ airport.tz_name }}</code></dd>
+        </div>
+    {% endif %}
+</dl>

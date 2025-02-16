@@ -4,6 +4,7 @@
 /uic-data
 /vdv-certs
 /rsp-data
+/iata-data
 /venv
 /db.sqlite3
 /package.json

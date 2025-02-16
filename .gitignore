@@ -6,6 +6,7 @@
 /vdv-certs
 /uic-data
 /rsp-data
+/iata-data
 __pycache__
 .keyHash
 tickeos.py

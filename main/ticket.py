@@ -9,7 +9,7 @@ import hashlib
 import enum
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata
 
 
 class TicketError(Exception):
@@ -518,6 +518,28 @@ class SwissPassTicket:
 
         hd.update(b"swisspass")
         hd.update(self.data.ticket.ticket_data.ticket_id.to_bytes(8, "big"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class IATATicket:
+    raw_ticket: bytes
+    data: iata.Envelope
+
+    @property
+    def ticket_type(self) -> str:
+        return "IATA"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_BORDKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"iata")
+        for leg in self.data.legs:
+            hd.update(leg.pnr.encode("utf-8"))
+            hd.update(leg.sequence.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1159,11 +1181,28 @@ def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     )
 
 
+def parse_ticket_iata(ticket_bytes: bytes, context: vdv.ticket.Context) -> IATATicket:
+    try:
+        data = iata.Envelope.parse(ticket_bytes)
+    except iata.IATAException:
+        raise TicketError(
+            title="This doesn't look like a valid IATA ticket",
+            message="You may have scanned something that is not an IATA ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return IATATicket(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(
         ticket_bytes: bytes, account: typing.Optional["models.Account"]
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
-    SSB1Ticket, HZPPTicket, SwissPassTicket,
+    SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket,
 ]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
@@ -1201,6 +1240,9 @@ def parse_ticket(
     if ticket_bytes[:1] == b"e":
         return parse_ticket_elb(ticket_bytes)
 
+    if ticket_bytes[:1] == b"M":
+        return parse_ticket_iata(ticket_bytes, context)
+
     if ticket_bytes[0] == 0x0a:
         return parse_ticket_swiss_pass(ticket_bytes)
 
@@ -1223,7 +1265,10 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
 def create_ticket_obj(
         ticket_obj: "models.Ticket",
         ticket_bytes: bytes,
-        ticket_data: typing.Union[VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket, SSB1Ticket, HZPPTicket],
+        ticket_data: typing.Union[
+            VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
+            SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket
+        ],
 ) -> bool:
     created = False
     barcode_hash = hashlib.sha256(ticket_bytes).hexdigest()
@@ -1352,6 +1397,14 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, SwissPassTicket):
         _, created = models.SwissPassTicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, IATATicket):
+        _, created = models.IATATicketInstance.objects.update_or_create(
             barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,

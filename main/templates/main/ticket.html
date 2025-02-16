@@ -145,7 +145,7 @@
 
     <div class="govuk-!-margin-7">
         <h2 class="govuk-heading-l">Ticket details</h2>
-        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count %}
+        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count and not ticket.iata_instances.count %}
             <p class="govuk-body">No instances found for this ticket.</p>
         {% else %}
             {% localtime off %}
@@ -291,6 +291,18 @@
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/swisspass_ticket_details.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.iata_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence }}</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/iata_ticket_details.html' with ticket=ticket_obj %}
                             </div>
                         </details>
                     {% endwith %}

@@ -418,6 +418,56 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-nr
 ---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vdv-pkpass-iata-data
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: iata-data
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: iata-data
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
+            - name: iata-data
+              image: theenbyperor/vdv-pkpass-django:(version)
+              imagePullPolicy: IfNotPresent
+              command: ["sh", "-c", "python3 manage.py download-iata-data"]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

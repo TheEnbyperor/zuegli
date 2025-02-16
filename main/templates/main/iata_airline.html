@@ -1,0 +1,30 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Name</dt>
+        <dd class="govuk-summary-list__value">{{ airline.name }}</dd>
+    </div>
+    {% if airline.iata_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">IATA Code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ airline.iata_code }}</code></dd>
+        </div>
+    {% endif %}
+    {% if airline.icao_code %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ICAO Code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ airline.icao_code }}</code></dd>
+        </div>
+    {% endif %}
+    {% if airline.callsign %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Callsign</dt>
+            <dd class="govuk-summary-list__value">{{ airline.callsign }}</dd>
+        </div>
+    {% endif %}
+    {% if airline.country %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Country</dt>
+            <dd class="govuk-summary-list__value">{{ airline.country }}</dd>
+        </div>
+    {% endif %}
+</dl>
