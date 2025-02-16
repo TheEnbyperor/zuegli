@@ -12,11 +12,14 @@ from django.templatetags.static import static
 from django.shortcuts import reverse
 from . import models, rsp, templatetags, vdv, ssb, uic
 
-
-client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
+client = None
+if settings.GOOGLE_CREDS:
+    client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
 
 def sync_ticket(ticket: "models.Ticket"):
+    if not client:
+        return
     object_id = f"{settings.GWALLET_CONF['issuer_id']}.{ticket.pk.replace('=', '')}"
     data, obj_type = make_ticket_obj(ticket, object_id)
     try:
@@ -40,6 +43,8 @@ def sync_ticket(ticket: "models.Ticket"):
 
 
 def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
+    if not client:
+        return None
     object_id = f"{settings.GWALLET_CONF['issuer_id']}.{ticket.pk.replace('=', '')}"
     if d := ticket_class(ticket):
         obj_type, obj_class = d

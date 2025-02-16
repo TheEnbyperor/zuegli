@@ -1,9 +1,7 @@
 from django.core import mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from . import models
-if settings.GOOGLE_CREDS:
-    from . import gwallet
+from . import models, gwallet
 from .views import passes
 
 def send_new_ticket_email(ticket: "models.Ticket"):
@@ -13,11 +11,8 @@ def send_new_ticket_email(ticket: "models.Ticket"):
     context = {
         "user": ticket.account.user,
         "ticket": ticket,
-        "google_wallet_link": None,
+        "google_wallet_link": gwallet.create_jwt_link(ticket),
     }
-
-    if settings.GOOGLE_CREDS:
-        context["google_wallet_link"]: gwallet.create_jwt_link(ticket)
 
     html_message = render_to_string("email/new_ticket.html", context)
     txt_message = render_to_string("email/new_ticket.txt", context)
