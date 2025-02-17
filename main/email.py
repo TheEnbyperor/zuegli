@@ -13,6 +13,7 @@ def send_new_ticket_email(ticket: "models.Ticket"):
         "ticket": ticket,
         "google_wallet_link": gwallet.create_jwt_link(ticket),
     }
+
     html_message = render_to_string("email/new_ticket.html", context)
     txt_message = render_to_string("email/new_ticket.txt", context)
 
