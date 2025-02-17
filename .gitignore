@@ -6,6 +6,7 @@
 /vdv-certs
 /uic-data
 /rsp-data
+/iata-data
 __pycache__
 .keyHash
 tickeos.py
@@ -13,3 +14,5 @@ parsed_licenses.lcs
 media/
 .git_hash
 .DS_Store
+/.devenv
+/.direnv

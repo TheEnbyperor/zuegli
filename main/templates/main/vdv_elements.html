@@ -426,7 +426,9 @@
                     <h2 class="govuk-summary-card__title">Unknown element <code>{{ elm.tag_hex }}</code></h2>
                 </div>
                 <div class="govuk-summary-card__content">
-                    <p class="govuk-body"><code>{{ elm.data_hex }}</code></p>
+                    <p class="govuk-body">
+                        <code style="line-break: anywhere">{{ elm.data_hex }}</code>
+                    </p>
                 </div>
             </div>
         {% endif %}

@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata
 
 
 def make_pass_token():
@@ -57,6 +57,7 @@ class Ticket(models.Model):
     TYPE_KLIMATICKET = "klimaticket"
     TYPE_BAHNCARD = "bahncard"
     TYPE_FAHRKARTE = "fahrkarte"
+    TYPE_BORDKARTE = "bordkarte"
     TYPE_RESERVIERUNG = "reservierung"
     TYPE_INTERRAIL = "interrail"
     TYPE_RAILCARD = "railcard"
@@ -68,6 +69,7 @@ class Ticket(models.Model):
         (TYPE_KLIMATICKET, "Klimaticket"),
         (TYPE_BAHNCARD, "Bahncard"),
         (TYPE_FAHRKARTE, "Fahrkarte"),
+        (TYPE_BORDKARTE, "Bordkarte"),
         (TYPE_RESERVIERUNG, "Reservierung"),
         (TYPE_INTERRAIL, "Interrail"),
         (TYPE_RAILCARD, "Railcard"),
@@ -149,6 +151,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.swisspass_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.iata_instances.first():
             return ticket_instance
 
 
@@ -384,6 +389,24 @@ class SwissPassTicketInstance(models.Model):
         return t.SwissPassTicket(
             raw_ticket=self.barcode_data,
             data=swisspass.SwissPassTicket.parse(bytes(self.barcode_data))
+        )
+
+
+class IATATicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="iata_instances")
+    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "IATA ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def as_ticket(self) -> t.IATATicket:
+        return t.IATATicket(
+            raw_ticket=self.barcode_data,
+            data=iata.Envelope.parse(bytes(self.barcode_data))
         )
 
 

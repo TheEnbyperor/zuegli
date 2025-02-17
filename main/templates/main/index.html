@@ -211,8 +211,12 @@ Pass Contents</code></pre>
                             const dataURL = canvas.toDataURL("image/png");
 
                             Barkoder.setEncodingCharacterSet(Barkoder.constants.EncodingCharacterSet.BINARY);
-                            Barkoder.scanImage(dataURL, function (result) {
-                                submitResult(result);
+                            Barkoder.scanImage(dataURL, function (newResult) {
+                                if (newResult.resultsCount) {
+                                    submitResult(newResult);
+                                } else {
+                                    submitResult(result);
+                                }
                             });
                         } else {
                             submitResult(result);
