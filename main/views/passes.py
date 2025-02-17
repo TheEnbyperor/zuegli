@@ -1636,9 +1636,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         elif ticket_data.oebb_99:
             if ticket_data.oebb_99.validity_end:
-                pass_json["expirationDate"] = \
-                    ticket_data.oebb_99.validity_end.astimezone(pytz.utc)\
-                        .strftime("%Y-%m-%dT%H:%M:%SZ")
+                pass_json["expirationDate"] = ticket_data.oebb_99.validity_end.isoformat()
 
             if parsed_layout and parsed_layout.travel_class:
                 pass_fields["auxiliaryFields"].append({
@@ -1697,12 +1695,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": ticket_data.oebb_99.validity_end.isoformat(),
                         "ignoresTimeZone": True,
                     })
-            else:
+            elif not one_day_ticket:
                 if ticket_data.oebb_99.validity_start:
                     pass_fields["secondaryFields"].append({
                         "key": "validity-start",
                         "label": "validity-start-label",
-                        "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
+                        "dateStyle": "PKDateStyleMedium",
                         "timeStyle": "PKDateStyleNone",
                         "value": ticket_data.oebb_99.validity_start.isoformat(),
                         "ignoresTimeZone": True,
@@ -1711,7 +1709,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["secondaryFields"].append({
                         "key": "validity-end",
                         "label": "validity-end-label",
-                        "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
+                        "dateStyle": "PKDateStyleMedium",
                         "timeStyle": "PKDateStyleNone",
                         "value": ticket_data.oebb_99.validity_end.isoformat(),
                         "changeMessage": "validity-end-change",
@@ -1820,6 +1818,37 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "semantics": {
                         "departureStationName": parsed_layout.trips[0].arrival_station,
                     }
+                })
+
+        elif ticket_data.bravo:
+            if ticket_data.bravo.valid_to:
+                pass_json["expirationDate"] = ticket_data.bravo.valid_to.isoformat()
+
+            if parsed_layout and parsed_layout.travel_class:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "class-code",
+                    "label": "class-code-label",
+                    "value": parsed_layout.travel_class,
+                })
+
+            if ticket_data.bravo.valid_from:
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.bravo.valid_from.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+            if ticket_data.bravo.valid_to:
+                pass_fields["secondaryFields"].append({
+                    "key": "validity-end",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.bravo.valid_to.isoformat(),
+                    "changeMessage": "validity-end-change",
+                    "ignoresTimeZone": True,
                 })
 
         elif ticket_data.dt_ti or ticket_data.dt_pa:
@@ -4217,6 +4246,72 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if issuer_id in SWISSPASS_FG_SECONDARY:
             pass_json["labelColor"] = SWISSPASS_FG_SECONDARY[issuer_id]
 
+    elif isinstance(ticket_instance, models.IATATicketInstance):
+        ticket_data: ticket.IATATicket = ticket_instance.as_ticket()
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": f"{ticket_data.data.pnr} SEQ {ticket_data.data.sequence}",
+        }]
+
+        pass_type = "boardingPass"
+        pass_fields["transitType"] = "PKTransitTypeAir"
+
+        pass_fields["auxiliaryFields"].append({
+            "key": "passenger",
+            "label": "passenger-label",
+            "value": f"{ticket_data.data.header.passenger_surname}, {ticket_data.data.header.passenger_forename}",
+            "semantics": {
+                "passengerName": {
+                    "familyName": ticket_data.data.header.passenger_surname,
+                    "givenName": ticket_data.data.header.passenger_forename,
+                }
+            }
+        })
+
+        if ticket_data.data.legs:
+            leg = ticket_data.data.legs[0]
+
+            pass_fields["headerFields"].append({
+                "key": "flight-number",
+                "label": "flight-number-label",
+                "value": f"{leg.operating_carrier}{leg.flight_number}",
+                "semantics": {
+                    "airlineCode": leg.operating_carrier,
+                    "flightNumber": int(leg.flight_number),
+                }
+            })
+
+            pass_fields["auxiliaryFields"].append({
+                "key": "seat-number",
+                "label": "seat-number-label",
+                "value": leg.seat
+            })
+
+            departure_station = templatetags.iata.get_iata_airport_code(leg.from_code)
+            pass_fields["primaryFields"].append({
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": leg.from_code,
+                "semantics": {
+                    "departureAirportCode": leg.from_code,
+                    "departureAirportName": departure_station["name"] if departure_station else None,
+                }
+            })
+
+            arrival_station = templatetags.iata.get_iata_airport_code(leg.to_code)
+            pass_fields["primaryFields"].append({
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": leg.to_code,
+                "semantics": {
+                    "destinationAirportCode": leg.to_code,
+                    "destinationAirportName": arrival_station["name"] if arrival_station else None,
+                }
+            })
+
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
         "key": "view-link",
@@ -4345,6 +4440,7 @@ PASS_STRINGS = {
 "departure-time-label" = "Departure";
 "arrival-time-label" = "Arrival";
 "train-number-label" = "Train";
+"flight-number-label" = "Flight";
 "coach-number-label" = "Coach";
 "seat-number-label" = "Seat";
 "price-label" = "Price";
@@ -4408,6 +4504,7 @@ PASS_STRINGS = {
 "departure-time-label" = "Ymadawiad";
 "arrival-time-label" = "Cyrrhaeddiad";
 "train-number-label" = "Trên";
+"flight-number-label" = "Awyren";
 "coach-number-label" = "Cerbyd";
 "seat-number-label" = "Sedd";
 "price-label" = "Pris";
@@ -4471,6 +4568,7 @@ PASS_STRINGS = {
 "departure-time-label" = "Abfahrt";
 "arrival-time-label" = "Ankunft";
 "train-number-label" = "Zug nr.";
+"flight-number-label" = "Flug nr.";
 "coach-number-label" = "Waggon";
 "seat-number-label" = "Sitzpl.";
 "price-label" = "Preis";
