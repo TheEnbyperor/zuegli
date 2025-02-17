@@ -4,6 +4,7 @@ from django.urls import path
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
+from django.conf import settings
 from . import models, apn, gwallet
 
 
