@@ -60,14 +60,14 @@ def index(request):
                         except RuntimeError as e:
                             image_form.add_error("ticket", f"Error opening PDF: {e}")
                         else:
-                            for page_index in range(len(pdf)):
-                                for pdf_image in pdf.get_page_images(page_index):
-                                    pdf_image = pdf.extract_image(pdf_image[0])
-                                    try:
-                                        ticket_bytes = aztec.decode(pdf_image["image"])
-                                        tickets.append(ticket_bytes)
-                                    except aztec.AztecError:
-                                        continue
+
+                            for page in pdf:
+                                img_bytes = page.get_pixmap(dpi=300).tobytes()
+                                try:
+                                    ticket_bytes = aztec.decode(img_bytes)
+                                    tickets.append(ticket_bytes)
+                                except aztec.AztecError:
+                                    continue
 
                             if not tickets:
                                 image_form.add_error("ticket", f"Failed to find any Aztec codes in the PDF")
