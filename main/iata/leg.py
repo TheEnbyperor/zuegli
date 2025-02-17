@@ -134,7 +134,7 @@ class Leg:
         except ValueError as e:
             raise util.IATAException("Invalid date") from e
 
-        if unique_conditional:
+        if unique_conditional and unique_conditional.issue_date:
             date = datetime.date(unique_conditional.issue_date.year, 1, 1)
         else:
             date = datetime.date.today().replace(day=1, month=1)
