@@ -13,12 +13,7 @@ from django.shortcuts import reverse
 from . import models, rsp, templatetags, vdv, ssb, uic
 
 
-if settings.GOOGLE_CREDS is None and settings.DEBUG:
-    print("Google creds are not enabled, this may have unexpected consequences")
-else:
-    client = googleapiclient.discovery.build(
-        "walletobjects", "v1", credentials=settings.GOOGLE_CREDS
-    )
+client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
 
 def sync_ticket(ticket: "models.Ticket"):
