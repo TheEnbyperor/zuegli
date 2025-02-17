@@ -121,11 +121,11 @@ class Leg:
     seat: str
     sequence: str
     passenger_status: PassengerStatus
-    conditional: typing.Optional[conditional.LegConditional]
+    leg_conditional: typing.Optional[conditional.LegConditional]
     airline_data: typing.Optional[str]
 
     @classmethod
-    def parse(cls, data: str) -> "Leg":
+    def parse(cls, data: str, unique_conditional: typing.Optional[conditional.UniqueConditional]) -> "Leg":
         if len(data) < 35:
             raise util.IATAException("IATA data too short")
 
@@ -134,8 +134,12 @@ class Leg:
         except ValueError as e:
             raise util.IATAException("Invalid date") from e
 
-        if date_num != 0:
+        if unique_conditional:
+            date = datetime.date(unique_conditional.issue_date.year, 1, 1)
+        else:
             date = datetime.date.today().replace(day=1, month=1)
+
+        if date_num != 0:
             date += datetime.timedelta(days=date_num - 1)
         else:
             date = None
@@ -151,6 +155,6 @@ class Leg:
             seat=data[25:29].lstrip("0"),
             sequence=data[29:34].rstrip().lstrip("0"),
             passenger_status=PassengerStatus(data[34]),
-            conditional=None,
+            leg_conditional=None,
             airline_data=None,
         )

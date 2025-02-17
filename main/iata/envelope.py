@@ -46,8 +46,7 @@ class Envelope:
             security_data = None
 
         for i in range(number_legs):
-            l = leg.Leg.parse(data[:35])
-            print(l)
+            l_data = data[:35]
             data = data[35:]
 
             try:
@@ -56,8 +55,7 @@ class Envelope:
             except ValueError as e:
                 raise util.IATAException("Invalid variable data length") from e
 
-            print(variable_size_len, data)
-
+            variable_data = None
             if variable_size_len:
                 variable_data = data[:variable_size_len]
                 data = data[variable_size_len:]
@@ -65,8 +63,10 @@ class Envelope:
                 if i == 0 and variable_data[0] == ">":
                     unique_conditional, variable_data = conditional.UniqueConditional.parse(variable_data)
 
-                if variable_data:
-                    l.conditional, l.airline_data = conditional.LegConditional.parse(variable_data)
+            l = leg.Leg.parse(l_data, unique_conditional=unique_conditional)
+
+            if variable_data:
+                l.leg_conditional, l.airline_data = conditional.LegConditional.parse(variable_data)
 
             legs.append(l)
 

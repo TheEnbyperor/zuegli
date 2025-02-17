@@ -159,9 +159,13 @@ class UniqueConditional:
             except ValueError as e:
                 raise util.IATAException("Invalid IATA issue date") from e
 
-            decade_start = (datetime.date.today().year // 10) * 10
+            today = datetime.date.today()
+            decade_start = (today.year // 10) * 10
             issue_date = datetime.date(decade_start + issue_year, 1, 1)
             issue_date += datetime.timedelta(days=issue_day - 1)
+
+            if issue_date > today:
+                issue_date = issue_date.replace(year=today.year - 10)
         else:
             issue_date = None
 
@@ -175,14 +179,13 @@ class UniqueConditional:
 
         return cls(
             version=version_number,
-            passenger_type=PassengerType(structured_data[0]),
-            check_in_source=CheckInSource(structured_data[1]),
-            boarding_pass_source=BoardingPassSource(structured_data[2]),
+            passenger_type=PassengerType(structured_data[0] if len(structured_data) > 0 else " "),
+            check_in_source=CheckInSource(structured_data[1] if len(structured_data) > 1 else " "),
+            boarding_pass_source=BoardingPassSource(structured_data[2] if len(structured_data) > 2 else " "),
             issue_date=issue_date,
-            document_type=DocumentType(structured_data[7]),
+            document_type=DocumentType(structured_data[7] if len(structured_data) > 7 else " "),
             issuer=structured_data[8:11].rstrip(),
             baggage_tags=baggage_tags,
-
         ), second_structured_data
 
 

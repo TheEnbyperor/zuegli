@@ -169,24 +169,24 @@
                         <dt class="govuk-summary-list__key">Passenger status</dt>
                         <dd class="govuk-summary-list__value">{{ leg.passenger_status }}</dd>
                     </div>
-                    {% if leg.conditional %}
+                    {% if leg.leg_conditional %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Conditional</dt>
                             <dd class="govuk-summary-list__value">
                                 <dl class="govuk-summary-list">
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Airline numeric code</dt>
-                                        <dd class="govuk-summary-list__value">{{ leg.conditional.airline_numeric_code }}</dd>
+                                        <dd class="govuk-summary-list__value">{{ leg.leg_conditional.airline_numeric_code }}</dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Document serial</dt>
-                                        <dd class="govuk-summary-list__value">{{ leg.conditional.document_serial }}</dd>
+                                        <dd class="govuk-summary-list__value">{{ leg.leg_conditional.document_serial }}</dd>
                                     </div>
-                                    {% if leg.conditional.selectee is not None %}
+                                    {% if leg.leg_conditional.selectee is not None %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Selectee</dt>
                                             <dd class="govuk-summary-list__value">
-                                                {% if leg.conditional.selectee %}
+                                                {% if leg.leg_conditional.selectee %}
                                                     <strong class="govuk-tag govuk-tag--green">Yes</strong>
                                                 {% else %}
                                                     <strong class="govuk-tag govuk-tag--red">No</strong>
@@ -197,59 +197,59 @@
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">International document verification</dt>
                                         <dd class="govuk-summary-list__value">
-                                            {{ leg.conditional.international_document_verification }}
+                                            {{ leg.leg_conditional.international_document_verification }}
                                         </dd>
                                     </div>
-                                    {% if leg.conditional.marketing_carrier %}
+                                    {% if leg.leg_conditional.marketing_carrier %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Marketing carrier</dt>
                                             <dd class="govuk-summary-list__value">
-                                                {% with org=leg.conditional.marketing_carrier|iata_airline %}
+                                                {% with org=leg.leg_conditional.marketing_carrier|iata_airline %}
                                                     {% if org %}
                                                         {% include "main/iata_airline.html" with airline=org %}
                                                     {% else %}
-                                                        Unknown - <code>{{ leg.conditional.marketing_carrier }}</code>
+                                                        Unknown - <code>{{ leg.leg_conditional.marketing_carrier }}</code>
                                                     {% endif %}
                                                 {% endwith %}
                                             </dd>
                                         </div>
                                     {% endif %}
-                                    {% if leg.conditional.frequent_flyer_designator %}
+                                    {% if leg.leg_conditional.frequent_flyer_designator %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Frequent flier designator</dt>
                                             <dd class="govuk-summary-list__value">
-                                                {% with org=leg.conditional.frequent_flyer_designator|iata_airline %}
+                                                {% with org=leg.leg_conditional.frequent_flyer_designator|iata_airline %}
                                                     {% if org %}
                                                         {% include "main/iata_airline.html" with airline=org %}
                                                     {% else %}
                                                         Unknown -
-                                                        <code>{{ leg.conditional.frequent_flyer_designator }}</code>
+                                                        <code>{{ leg.leg_conditional.frequent_flyer_designator }}</code>
                                                     {% endif %}
                                                 {% endwith %}
                                             </dd>
                                         </div>
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Frequent flier number</dt>
-                                            <dd class="govuk-summary-list__value">{{ leg.conditional.frequent_flyer_number }}</dd>
+                                            <dd class="govuk-summary-list__value">{{ leg.leg_conditional.frequent_flyer_number }}</dd>
                                         </div>
                                     {% endif %}
-                                    {% if leg.conditional.industry_discount %}
+                                    {% if leg.leg_conditional.industry_discount %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Industry discount</dt>
-                                            <dd class="govuk-summary-list__value">{{ leg.conditional.industry_discount }}</dd>
+                                            <dd class="govuk-summary-list__value">{{ leg.leg_conditional.industry_discount }}</dd>
                                         </div>
                                     {% endif %}
-                                    {% if leg.conditional.free_baggage_allowance %}
+                                    {% if leg.leg_conditional.free_baggage_allowance %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Free baggage allowance</dt>
-                                            <dd class="govuk-summary-list__value">{{ leg.conditional.free_baggage_allowance }}</dd>
+                                            <dd class="govuk-summary-list__value">{{ leg.leg_conditional.free_baggage_allowance }}</dd>
                                         </div>
                                     {% endif %}
-                                    {% if leg.conditional.fast_track is not None %}
+                                    {% if leg.leg_conditional.fast_track is not None %}
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">Fast-track</dt>
                                             <dd class="govuk-summary-list__value">
-                                                {% if leg.conditional.fast_track %}
+                                                {% if leg.leg_conditional.fast_track %}
                                                     <strong class="govuk-tag govuk-tag--green">Yes</strong>
                                                 {% else %}
                                                     <strong class="govuk-tag govuk-tag--red">No</strong>
