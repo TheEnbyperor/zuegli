@@ -4,17 +4,23 @@
 
 Don't. Q didn't intend it that way.
 
-Maya disagreed.
+## So you've insisted on running it locally anyway
+### The nix/"easy" way
 
-## Getting ready to run it locally
+. Have [nix package manager](https://nixos.org/download/) installed, and [direnv](https://direnv.net/) integrated into your shell.
+. From this directory, run `direnv allow` to automatically configure and load all software dependencies
+. Run the `initialise` script to run migrations and download supplemental data
+. Run `python manage.py runserver` to run the server
 
-### System dependencies
+### The Debian way
+
+#### System dependencies
 
 ```shell
 apt install libldap2-dev libsasl2-dev slapd ldap-utils
 ```
 
-### Python
+#### Python
 
 Using `python3.13`:
 
@@ -25,20 +31,20 @@ apt update
 apt install python3.13 python3.13-pip python3.13-dev
 ```
 
-#### Using venv
+##### Using venv
 
 ```shell
 python3.13 -m venv venv
 source venv/bin/activate
 ```
 
-#### Python dependencies
+##### Python dependencies
 
 ```shell
 pip install -r requirements.txt
 ```
 
-### Compiling Barkoder
+#### Compiling Barkoder
 
 ```shell
 # Dependencies
@@ -57,7 +63,7 @@ cd ../..
 cp ./barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so ./env_vdv_pkpass/lib/python3.13/site-packages/
 ```
 
-### Other changes
+#### Other changes
 
 In `./manage.py:9` set to:
 
@@ -65,7 +71,7 @@ In `./manage.py:9` set to:
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vdv_pkpass.settings_dev")
 ```
 
-### Django
+#### Django
 
 ```shell
 mkdir -p ./uic-data
@@ -76,7 +82,7 @@ python manage.py download-vdv-certs
 python manage.py download-vdv-orgs
 ```
 
-## Running it locally
+#### Web Server
 
 ```shell
 python manage.py runserver
