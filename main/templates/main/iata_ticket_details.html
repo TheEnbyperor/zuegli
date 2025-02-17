@@ -1,0 +1,272 @@
+{% load tz iata %}
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger forename</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.data.header.passenger_forename }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger surname</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.data.header.passenger_surname }}
+            </dd>
+        </div>
+        {% if ticket.data.header.electronic_ticket_indicator %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Electronic ticket indicator</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.data.header.electronic_ticket_indicator }}</code>
+                </dd>
+            </div>
+        {% endif %}
+    </dl>
+    {% if ticket.data.conditional %}
+        <h2 class="govuk-heading-m">Conditional data</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Version</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.data.conditional.version }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Passenger type</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.data.conditional.passenger_type }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Check-in source</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.data.conditional.check_in_source }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Boarding pass source</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.data.conditional.boarding_pass_source }}
+                </dd>
+            </div>
+            {% if ticket.data.conditional.issue_date %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issue date</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.data.conditional.issue_date|date:"d M Y" }}
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Document type</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.data.conditional.document_type }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuer</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with org=ticket.data.conditional.issuer|iata_airline %}
+                        {% if org %}
+                            {% include "main/iata_airline.html" with airline=org %}
+                        {% else %}
+                            Unknown - <code>{{ ticket.data.conditional.issuer }}</code>
+                        {% endif %}
+                    {% endwith %}
+                </dd>
+            </div>
+            {% if ticket.data.conditional.baggage_tags %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Baggage tags</dt>
+                    <dd class="govuk-summary-list__value">
+                        <ul class="govuk-list--bullet">
+                            {% for tag in ticket.data.conditional.baggage_tags %}
+                                <li>{{ tag }}</li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </div>
+            {% endif %}
+        </dl>
+    {% endif %}
+    <h2 class="govuk-heading-m">Legs</h2>
+    {% for leg in ticket.data.legs %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Leg #{{ forloop.counter }}
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">PNR</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ leg.pnr }}</code></dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Origin</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with airport=leg.from_code|iata_airport %}
+                                {% if airport %}
+                                    {% include "main/iata_airport.html" with airport=airport %}
+                                {% else %}
+                                    Unknown - <code>{{ leg.from_code }}</code>
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Destination</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with airport=leg.to_code|iata_airport %}
+                                {% if airport %}
+                                    {% include "main/iata_airport.html" with airport=airport %}
+                                {% else %}
+                                    Unknown - <code>{{ leg.to_code }}</code>
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Carrier</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with org=leg.operating_carrier|iata_airline %}
+                                {% if org %}
+                                    {% include "main/iata_airline.html" with airline=org %}
+                                {% else %}
+                                    Unknown - <code>{{ leg.operating_carrier }}</code>
+                                {% endif %}
+                            {% endwith %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Flight number</dt>
+                        <dd class="govuk-summary-list__value">{{ leg.flight_number }}</dd>
+                    </div>
+                    {% if leg.date %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Date</dt>
+                            <dd class="govuk-summary-list__value">{{ leg.date|date:"d M" }}</dd>
+                        </div>
+                    {% endif %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Compartment</dt>
+                        <dd class="govuk-summary-list__value">{{ leg.compartment }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Seat</dt>
+                        <dd class="govuk-summary-list__value">{{ leg.seat }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Check-in sequence</dt>
+                        <dd class="govuk-summary-list__value">{{ leg.sequence }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Passenger status</dt>
+                        <dd class="govuk-summary-list__value">{{ leg.passenger_status }}</dd>
+                    </div>
+                    {% if leg.conditional %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Conditional</dt>
+                            <dd class="govuk-summary-list__value">
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Airline numeric code</dt>
+                                        <dd class="govuk-summary-list__value">{{ leg.conditional.airline_numeric_code }}</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Document serial</dt>
+                                        <dd class="govuk-summary-list__value">{{ leg.conditional.document_serial }}</dd>
+                                    </div>
+                                    {% if leg.conditional.selectee is not None %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Selectee</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% if leg.conditional.selectee %}
+                                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                                                {% else %}
+                                                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                                                {% endif %}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">International document verification</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ leg.conditional.international_document_verification }}
+                                        </dd>
+                                    </div>
+                                    {% if leg.conditional.marketing_carrier %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Marketing carrier</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% with org=leg.conditional.marketing_carrier|iata_airline %}
+                                                    {% if org %}
+                                                        {% include "main/iata_airline.html" with airline=org %}
+                                                    {% else %}
+                                                        Unknown - <code>{{ leg.conditional.marketing_carrier }}</code>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                    {% if leg.conditional.frequent_flyer_designator %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Frequent flier designator</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% with org=leg.conditional.frequent_flyer_designator|iata_airline %}
+                                                    {% if org %}
+                                                        {% include "main/iata_airline.html" with airline=org %}
+                                                    {% else %}
+                                                        Unknown -
+                                                        <code>{{ leg.conditional.frequent_flyer_designator }}</code>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </dd>
+                                        </div>
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Frequent flier number</dt>
+                                            <dd class="govuk-summary-list__value">{{ leg.conditional.frequent_flyer_number }}</dd>
+                                        </div>
+                                    {% endif %}
+                                    {% if leg.conditional.industry_discount %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Industry discount</dt>
+                                            <dd class="govuk-summary-list__value">{{ leg.conditional.industry_discount }}</dd>
+                                        </div>
+                                    {% endif %}
+                                    {% if leg.conditional.free_baggage_allowance %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Free baggage allowance</dt>
+                                            <dd class="govuk-summary-list__value">{{ leg.conditional.free_baggage_allowance }}</dd>
+                                        </div>
+                                    {% endif %}
+                                    {% if leg.conditional.fast_track is not None %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Fast-track</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% if leg.conditional.fast_track %}
+                                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                                                {% else %}
+                                                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                                                {% endif %}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                </dl>
+                            </dd>
+                        </div>
+                    {% endif %}
+                    {% if leg.airline_data %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Airline data</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ leg.airline_data }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+    {% endfor %}
+{% endlocaltime %}

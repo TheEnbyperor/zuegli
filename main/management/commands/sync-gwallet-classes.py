@@ -256,15 +256,22 @@ class Command(BaseCommand):
                                 }
                             },
                         }, {
-                            "oneItem": {
-                                "item": {
+                            "twoItems": {
+                                "startItem": {
                                     "firstValue": {
                                         "fields": [{
-                                            "fieldPath": "object.textModulesData['class']",
+                                            "fieldPath": "object.textModulesData['card-id']"
                                         }]
                                     }
                                 },
-                            },
+                                "endItem": {
+                                    "firstValue": {
+                                        "fields": [{
+                                            "fieldPath": "object.textModulesData['class']"
+                                        }]
+                                    }
+                                }
+                            }
                         }],
                     },
                     "detailsTemplateOverride": {
@@ -273,6 +280,14 @@ class Command(BaseCommand):
                                 "firstValue": {
                                     "fields": [{
                                         "fieldPath": "object.textModulesData['product']",
+                                    }]
+                                }
+                            },
+                        }, {
+                            "item": {
+                                "firstValue": {
+                                    "fields": [{
+                                        "fieldPath": "object.textModulesData['station']",
                                     }]
                                 }
                             },

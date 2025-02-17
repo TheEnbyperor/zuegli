@@ -1,0 +1,2 @@
+class IATAException(Exception):
+    pass

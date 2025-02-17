@@ -142,22 +142,18 @@ class VDVTicket:
         version = f"{trailer[3] >> 4}.{trailer[3] & 0x0F}.{trailer[4]:02d}"
         product_org_id = int.from_bytes(header[8:10], 'big')
 
-        if version == "1.6.00":
-            product_data = product_data[1]
+        product_data = product_data[1]
+        try:
+            product_data = ber_tlv.tlv.Tlv.parse(product_data, False, False)
+            product_data = list(map(
+                lambda m: cls.parse_product_data_element(m, context, product_org_id),
+                filter(lambda m: any(d != 0 for d in m[1]), product_data)
+            ))
+        except (ber_tlv.tlv.BadTag, ber_tlv.tlv.BadParameter, ber_tlv.tlv.UnexpectedEnd):
             if len(product_data) == 0x44:
                 product_data = [RMVProductData.parse(product_data)]
             else:
                 product_data = [UnknownElement(len(product_data), product_data)]
-        else:
-            try:
-                product_data = ber_tlv.tlv.Tlv.parse(product_data[1], False, False)
-            except Exception as e:
-                raise util.VDVException("Invalid VDV ticket") from e
-
-            product_data = list(map(
-                lambda e: cls.parse_product_data_element(e, context, product_org_id),
-                filter(lambda e: any(d != 0 for d in e[1]), product_data)
-            ))
 
         return cls(
             version=version,

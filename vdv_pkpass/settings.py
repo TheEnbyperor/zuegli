@@ -169,6 +169,15 @@ STORAGES = {
             )
         }
     },
+    "iata-data": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": "iata-data",
+            "client_config": botocore.config.Config(
+                max_pool_connections=None,
+            )
+        }
+    },
 }
 
 PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")

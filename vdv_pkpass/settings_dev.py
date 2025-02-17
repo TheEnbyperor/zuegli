@@ -240,6 +240,12 @@ STORAGES = {
             "location": BASE_DIR / "rsp-data",
         }
     },
+    "iata-data": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "iata-data",
+        }
+    },
 }
 
 LOGIN_URL = "magiclink:login"

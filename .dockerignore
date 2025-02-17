@@ -4,11 +4,13 @@
 /uic-data
 /vdv-certs
 /rsp-data
+/iata-data
 /venv
 /db.sqlite3
 /package.json
 /yarn.lock
 /.gitignore
 /kube
+/barkoder/build
 tickeos.py
 parsed_licenses.lcs
