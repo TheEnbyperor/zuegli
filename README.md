@@ -52,14 +52,20 @@ cd barkoder/build
 # Build
 cmake .. && make
 
-# Copy to site-packages
+# Copy to site-packages (run in activated virtualenv)
 cd ../..
-cp ./barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so ./env_vdv_pkpass/lib/python3.13/site-packages/
+cp ./barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so "$(python -c 'import site; print(site.getsitepackages()[0])')"
 ```
 
 ### Other changes
 
-In `./manage.py:9` set to:
+Set an environment environment variable to use development settings:
+
+```sh
+export DJANGO_SETTINGS_MODULE="vdv_pkpass.settings_dev"
+```
+
+or change `./manage.py:9` to:
 
 ```py
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vdv_pkpass.settings_dev")
