@@ -7,7 +7,7 @@ class AztecError(Exception):
     pass
 
 
-def decode(img_data: bytes):
+def decode(img_data: bytes, *, scan_speed: str = "slow"):
     try:
         import Barkoder
     except ImportError as e:
@@ -18,7 +18,17 @@ def decode(img_data: bytes):
     config = cfg_response.get_config()
 
     config.encodingCharacterSet = "BINARY"
-    config.decodingSpeed = Barkoder.DecodingSpeed.Slow
+
+    match scan_speed.lower():
+        case "slow":
+            config.decodingSpeed = Barkoder.DecodingSpeed.Slow
+        case "normal":
+            config.decodingSpeed = Barkoder.DecodingSpeed.Normal
+        case "fast":
+            config.decodingSpeed = Barkoder.DecodingSpeed.Fast
+        case _:
+            config.decodingSpeed = Barkoder.DecodingSpeed.Slow
+
     assert config.set_enabled_decoders([
         Barkoder.DecoderType.Aztec,
         Barkoder.DecoderType.AztecCompact,
