@@ -182,18 +182,10 @@
                                         <dt class="govuk-summary-list__key">Document serial</dt>
                                         <dd class="govuk-summary-list__value">{{ leg.leg_conditional.document_serial }}</dd>
                                     </div>
-                                    {% if leg.leg_conditional.selectee is not None %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Selectee</dt>
-                                            <dd class="govuk-summary-list__value">
-                                                {% if leg.leg_conditional.selectee %}
-                                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                                                {% else %}
-                                                    <strong class="govuk-tag govuk-tag--red">No</strong>
-                                                {% endif %}
-                                            </dd>
-                                        </div>
-                                    {% endif %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Selectee</dt>
+                                        <dd class="govuk-summary-list__value">{{ leg.leg_conditional.selectee }}</dd>
+                                    </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">International document verification</dt>
                                         <dd class="govuk-summary-list__value">

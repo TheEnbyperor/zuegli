@@ -123,6 +123,22 @@ class InternationalDocumentVerification(enum.Enum):
         elif self == InternationalDocumentVerification.Unknown:
             return "Unknown"
 
+class Selectee(enum.Enum):
+    NotSelectee = "0"
+    SSSS = "1"
+    TSAPre = "3"
+    Unknown = " "
+
+    def __str__(self):
+        if self == Selectee.NotSelectee:
+            return "Not selectee"
+        elif self == Selectee.SSSS:
+            return "Secondary Security Screening Selection (SSSS)"
+        elif self == Selectee.TSAPre:
+            return "TSA PreCheck"
+        elif self == Selectee.Unknown:
+            return "Unknown"
+
 
 @dataclasses.dataclass
 class UniqueConditional:
@@ -193,7 +209,7 @@ class UniqueConditional:
 class LegConditional:
     airline_numeric_code: int
     document_serial: str
-    selectee: typing.Optional[bool]
+    selectee: Selectee
     international_document_verification: InternationalDocumentVerification
     marketing_carrier: str
     frequent_flyer_designator: str
@@ -225,15 +241,6 @@ class LegConditional:
         else:
             airline_numeric_code = 0
 
-        if data[13] == "1":
-            selectee = True
-        elif data[13] == "0":
-            selectee = False
-        elif data[13] == " ":
-            selectee = None
-        else:
-            raise util.IATAException("Invalid selectee value")
-
         if structured_size >= 42:
             if data[41] == "Y":
                 fast_track = True
@@ -249,7 +256,7 @@ class LegConditional:
         return cls(
             airline_numeric_code=airline_numeric_code,
             document_serial=data[3:13],
-            selectee=selectee,
+            selectee=Selectee(data[13]),
             international_document_verification=InternationalDocumentVerification(data[14]),
             marketing_carrier=data[15:18].rstrip(),
             frequent_flyer_designator=data[18:21].rstrip(),
