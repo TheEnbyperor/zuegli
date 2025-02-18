@@ -193,13 +193,33 @@ class UniqueConditional:
                 baggage_tags.append(tag)
             offset += 13
 
+        try:
+            passenger_type = PassengerType(structured_data[0] if len(structured_data) > 0 else " ")
+        except ValueError:
+            passenger_type = PassengerType.Unknown
+
+        try:
+            check_in_source = CheckInSource(structured_data[1] if len(structured_data) > 1 else " ")
+        except ValueError:
+            check_in_source = CheckInSource.Unknown
+
+        try:
+            boarding_pass_source = BoardingPassSource(structured_data[2] if len(structured_data) > 2 else " ")
+        except ValueError:
+            boarding_pass_source = BoardingPassSource.Unknown
+
+        try:
+            document_type = DocumentType(structured_data[7] if len(structured_data) > 7 else " ")
+        except ValueError:
+            document_type = DocumentType.Unknown
+
         return cls(
             version=version_number,
-            passenger_type=PassengerType(structured_data[0] if len(structured_data) > 0 else " "),
-            check_in_source=CheckInSource(structured_data[1] if len(structured_data) > 1 else " "),
-            boarding_pass_source=BoardingPassSource(structured_data[2] if len(structured_data) > 2 else " "),
+            passenger_type=passenger_type,
+            check_in_source=check_in_source,
+            boarding_pass_source=boarding_pass_source,
             issue_date=issue_date,
-            document_type=DocumentType(structured_data[7] if len(structured_data) > 7 else " "),
+            document_type=document_type,
             issuer=structured_data[8:11].rstrip(),
             baggage_tags=baggage_tags,
         ), second_structured_data
