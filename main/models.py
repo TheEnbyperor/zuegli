@@ -221,8 +221,12 @@ class UICTicketInstance(models.Model):
             email=self.ticket.account.user.email if self.ticket.account else None,
         )
 
-        ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
-        return t.UICTicket.from_envelope(bytes(self.barcode_data), ticket_envelope, context)
+        if self.decoded_data.get("envelope"):
+            ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
+            return t.UICTicket.from_envelope(bytes(self.barcode_data), ticket_envelope, context)
+        elif self.decoded_data.get("dosipas_envelope"):
+            ticket_envelope = dacite.from_dict(data_class=uic.DOSIPASEnvelope, data=self.decoded_data["dosipas_envelope"], config=config)
+            return t.UICTicket.from_dosipas(bytes(self.barcode_data), ticket_envelope, context)
 
 
 class RSPTicketInstance(models.Model):

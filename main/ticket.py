@@ -68,21 +68,23 @@ class VDVTicket:
 @dataclasses.dataclass
 class UICTicket:
     raw_bytes: bytes
-    envelope: "uic.Envelope"
-    head: "uic.HeadV1"
-    layout: typing.Optional["uic.LayoutV1"]
-    flex: typing.Optional["uic.Flex"]
-    dt_ti: typing.Optional["uic.dt.DTRecordTI"]
-    dt_pa: typing.Optional["uic.dt.DTRecordPA"]
-    db_bl: typing.Optional["uic.db.DBRecordBL"]
-    cd_ut: typing.Optional["uic.cd.CDRecordUT"]
-    oebb_99: typing.Optional["uic.oebb.OeBBRecord99"]
-    db_vu: typing.Optional["uic.db_vu.DBRecordVU"]
-    vor_fi: typing.Optional["uic.vor.VORRecordFI"]
-    vor_vd: typing.Optional["uic.vor.VORRecordVD"]
-    st01: typing.Optional["uic.st01_parse.ParsedST01"]
-    bravo: typing.Optional["uic.bravo.BravoRecord"]
-    other_records: typing.List["uic.envelope.Record"]
+    envelope: typing.Optional["uic.Envelope"] = None
+    head: typing.Optional["uic.HeadV1"] = None
+    dosipas_envelope: typing.Optional["uic.DOSIPASEnvelope"] = None
+    layout: typing.Optional["uic.LayoutV1"] = None
+    flex: typing.Optional["uic.Flex"] = None
+    dt_ti: typing.Optional["uic.dt.DTRecordTI"] = None
+    dt_pa: typing.Optional["uic.dt.DTRecordPA"] = None
+    db_bl: typing.Optional["uic.db.DBRecordBL"] = None
+    cd_ut: typing.Optional["uic.cd.CDRecordUT"] = None
+    oebb_99: typing.Optional["uic.oebb.OeBBRecord99"] = None
+    db_vu: typing.Optional["uic.db_vu.DBRecordVU"] = None
+    vor_fi: typing.Optional["uic.vor.VORRecordFI"] = None
+    vor_vd: typing.Optional["uic.vor.VORRecordVD"] = None
+    st01: typing.Optional["uic.st01_parse.ParsedST01"] = None
+    bravo: typing.Optional["uic.bravo.BravoRecord"] = None
+    other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
+    other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
 
     @property
     def ticket_type(self) -> str:
@@ -327,6 +329,20 @@ class UICTicket:
             )]
         )
 
+
+    @classmethod
+    def from_dosipas(
+            cls, ticket_bytes: bytes, dosipas: uic.DOSIPASEnvelope,
+            _context: "vdv.ticket.Context"
+    ) -> "UICTicket":
+        return cls(
+            raw_bytes=ticket_bytes,
+            dosipas_envelope=dosipas,
+            flex=parse_ticket_uic_flex_dosipas(dosipas),
+            other_dosipas_records=[r for r in dosipas.records if not (
+                r.format.startswith("FCB")
+            )],
+        )
 
 @dataclasses.dataclass
 class RSPTicket:
@@ -792,6 +808,22 @@ def parse_ticket_uic_flex(ticket_envelope: uic.Envelope) -> typing.Optional[uic.
         )
 
 
+def parse_ticket_uic_flex_dosipas(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[uic.Flex]:
+    flex_record = next(filter(lambda r: r.format.startswith("FCB"), ticket_envelope.records), None)
+    if not flex_record:
+        return None
+
+    try:
+        version = int(flex_record.format[3:])
+        return uic.Flex.parse(version, flex_record.data)
+    except (ValueError, uic.util.UICException):
+        raise TicketError(
+            title="Invalid flexible data record",
+            message="The flexible record can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
 def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
     ti_record = next(filter(
         lambda r: (
@@ -1246,6 +1278,9 @@ def parse_ticket(
     if ticket_bytes[0] == 0x0a:
         return parse_ticket_swiss_pass(ticket_bytes)
 
+    if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
+        return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
+
     return parse_ticket_vdv(ticket_bytes, context)
 
 
@@ -1257,6 +1292,10 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
             return v.isoformat()
         elif isinstance(v, enum.Enum):
             return v.value
+        elif isinstance(v, dict):
+            return {k: encode_value(i) for k, i in v.items()}
+        elif isinstance(v, list):
+            return [encode_value(i) for i in v]
         else:
             return v
     return {k: encode_value(v) for k, v in elements}
@@ -1299,8 +1338,10 @@ def create_ticket_obj(
                 if e.id != "0080VU":
                     data.extend(e.data)
             barcode_hash = hashlib.sha256(data).hexdigest()
-        else:
+        elif ticket_data.envelope:
             barcode_hash = hashlib.sha256(ticket_data.envelope.signed_data).hexdigest()
+        else:
+            barcode_hash = hashlib.sha256(ticket_data.raw_bytes).hexdigest()
 
         validity_start = None
         validity_end = None
@@ -1327,7 +1368,8 @@ def create_ticket_obj(
                 "validity_start": validity_start,
                 "validity_end": validity_end,
                 "decoded_data": {
-                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
+                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json) if ticket_data.envelope else None,
+                    "dosipas_envelope": dataclasses.asdict(ticket_data.dosipas_envelope, dict_factory=to_dict_json) if ticket_data.dosipas_envelope else None,
                 }
             }
         )

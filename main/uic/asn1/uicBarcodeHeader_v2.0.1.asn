@@ -1,0 +1,144 @@
+-- Author: ClemensGantert
+-- Created: Thu Jun 04 17:19:28 CEST 2020
+ASN-Module-Header DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- imports and exports
+-- EXPORTS ALL;
+
+
+-- ##############################################################################################
+-- #
+-- #   UIC barcode header - version 2.0.0
+-- #
+-- ##############################################################################################
+
+
+-- ##############################################################################################
+-- #
+-- #  Naming and encoding conventions
+-- #
+-- # -	A bar code which is only static (printed on a paper), and for which the security is in the system,
+-- #      does not need any of these elements.
+-- # -	A bar code which is only static, and includes its own security, needs:
+-- #  	  level1Signature
+-- #      level1KeyAlg if the associated key does not include the complete certificate in keys.xml but only the public key
+-- #	  (but level1SigningAlg is not necessary as it is in keys.xml)
+-- # -	A dynamic bar code including static and dynamic signatures needs:
+-- #	The same elements as a static bar code above,
+-- #	level2SigningAlg, level2keyAlg, level2PublicKey, and level2Signature.
+-- #
+-- #  ISO Country codes are used to code countries.
+-- #    As Kosovo does not have an official ISO Country Code the following codes are used:
+-- #          926 for Kosovo as numeric ISO Country Code
+-- #          XK  for Kosovo as alphanumeric 2-character ISO Country Code
+-- #
+-- #  RICS codes must be used to encode companies (issuer, product owner, ...) where available
+-- #    other codes are possible based on bilateral agreements
+-- #    the format is kept more flexible to cover upcoming extensions of the RICS code by ERA
+-- #
+-- # Changes to Version 1:
+-- #
+-- #   - endOfValidity added in Level1Data
+-- #   - extension option added on all structures
+-- #
+-- #########################################################################################
+
+
+-- ############################################################################################
+
+
+-- type assignments
+
+    -- #########################################################################################
+    -- the basic entry point of the data structure
+    -- ##########################################################################################
+    UicBarcodeHeader 	::= SEQUENCE 	{
+    	-- barcode format type
+    	format		            IA5String,
+    	                        -- "U2" = UIC ticket
+
+
+    	level2SignedData 	    Level2DataType,
+
+    	-- signature is calculated on the PER unaligned encoding of level2 signature data
+    	level2Signature         OCTET STRING OPTIONAL
+   }
+
+   Level2DataType	::= SEQUENCE {
+
+       	  level1Data	         Level1DataType,
+
+       	  -- signature is calculated on the PER unaligned encoding of level1 signature data
+       	  level1Signature        OCTET STRING OPTIONAL,
+
+       	  level2Data             DataType OPTIONAL
+
+   }
+
+
+   Level1DataType	::= SEQUENCE {
+
+    	-- provider of the level1 signature  (RICS code)
+    	securityProviderNum INTEGER (1..32000) OPTIONAL,
+    	securityProviderIA5 IA5String          OPTIONAL,
+
+    	keyId		        INTEGER(0..99999)  OPTIONAL,
+
+    	dataSequence 	    SEQUENCE OF DataType,
+
+
+      	-- object identifier of the key algorithms
+      	--   e.g.
+      	--    ECC P-256     1.2.840.10045.3.1.7
+      	level1KeyAlg        OBJECT IDENTIFIER OPTIONAL,
+      	level2KeyAlg        OBJECT IDENTIFIER OPTIONAL,
+
+      	-- object identifier of the signing algorithm
+      	--   e.g.
+      	--    DSA SHA224  2.16.840.1.101.3.4.3.1
+      	--    DSA SHA256  2.16.840.1.101.3.4.3.2
+      	--    ECDSA-256   1.2.840.10045.4.3.2
+      	-- algorithm used for signing
+      	level1SigningAlg   OBJECT IDENTIFIER OPTIONAL,
+      	level2SigningAlg   OBJECT IDENTIFIER OPTIONAL,
+        level2PublicKey    OCTET STRING     OPTIONAL,
+
+        -- end of the validity of the bar code, after this date and time the bar code needs to be regenerated
+        -- by the provider of the ticket
+        -- if end of validity is provided year day and time must be provided.
+        -- year, day, time are in UTC
+        -- the provider of the bar code should ensure that the endOfValidity given here does not exceed
+        --     the validity of the key pair used on level 2.
+   		endOfValidityYear 		INTEGER (2016..2269) OPTIONAL,
+   		-- number of the day in the year (1.1. = 1)
+   		endOfValidityDay		INTEGER (1..366) OPTIONAL,
+   		-- The number of the minutes of the day
+   		endOfValidityTime		INTEGER (0..1439) OPTIONAL,
+
+   		-- validity duration in seconds of the bar code shown with reference to the time stamp  dynamicContentTimeStamp
+   		--          in the dynamic data included in the level2Data
+   		validityDuration        INTEGER (1..3600) OPTIONAL
+   }
+
+   DataType ::= SEQUENCE {
+
+        -- The value of 'dataFormat' describes how 'data' is encoded:
+        -- "FCBn" means that 'data' is the Canonical Unaligned PER encoding
+        --    of an ASN.1 element of type UicRailTicketData in major version n.
+        -- "FDCn" means that 'data' is the Canonical Unaligned PER encoding
+        --    of an ASN.1 element of type UicDynamicContentData in major version n.
+        -- "+" + [2-letters ISO 3166 country code] + [addon, chosen by the standardization body of that country]
+        --    means that 'data' is a content defined by the national standardization body,
+        --    identified as 'addon' by this body.
+        -- "_" + [4-digit RICS] + [addon, chosen by this company] means that 'data' is a proprietary
+        --    content of the company identified by the RICS code, identified as 'addon' by this company.
+        -- "*" + [addon] means that 'data' is a content specific to this barcode,
+        --    with no further information on who defined it, identified as 'addon' by its issuer.
+        -- Others values are reserved for future UIC use and shall not be used.
+
+       	dataFormat	    IA5String,
+    	data	    	OCTET STRING
+   }
+
+
+END
