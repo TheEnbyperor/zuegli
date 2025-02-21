@@ -1,0 +1,119 @@
+-- Author: ClemensGantert
+-- Created: Thu Jun 04 17:19:28 CEST 2020
+ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- imports and exports
+-- EXPORTS ALL;
+
+
+-- ##############################################################################################
+-- #
+-- #   UIC barcode header - version 1.0.0
+-- #
+-- ##############################################################################################
+
+
+-- ##############################################################################################
+-- #
+-- #  Naming and encoding conventions
+-- #
+-- #  Elements included as String and as Numeric values:
+-- #    Some elements are included in different formats to reduce the data size.
+-- #    These elements must be included only once.
+-- #    These elements are named with the same name and appendix
+-- #                     Num  (numeric values)
+-- #	                 IA5  (String values according to ASN IA5String (7Bit))
+-- #
+-- #  RICS codes must be used to encode companies (issuer, product owner, ...) where available
+-- #    other codes are possible based on bilateral agreements
+-- #    the format is kept more flexible to cover upcoming extensions of the RICS code by ERA
+-- #
+-- #
+-- # -	A bar code which is only static (printed on a paper), and for which the security is in the system, doesn�t need any of these elements.
+-- # -	A bar code which is only static, and includes its own security, needs:
+-- #  	  level1Signature
+-- #      level1KeyAlg if the associated key does not include the complete certificate in keys.xml but only the public key
+-- #	  (but level1SigningAlg is not necessary as it is in keys.xml)
+-- # -	A dynamic bar code including static and dynamic signatures needs:
+-- #	The same elements as a static bar code above,
+-- #	level2SigningAlg, level2keyAlg, level2PublicKey, and level2Signature.
+-- #
+-- #########################################################################################
+
+
+-- ############################################################################################
+
+
+-- type assignments
+
+    -- #########################################################################################
+    -- the basic entry point of the data structure
+    -- ##########################################################################################
+    UicBarcodeHeader 	::= SEQUENCE 	{
+    	-- barcode format type
+    	format		            IA5String,
+    	                        -- "U1" = UIC ticket
+
+
+    	level2SignedData 	    Level2DataType,
+
+    	-- signature is calculated on the PER unaligned encoding of level2 signature data
+    	level2Signature         OCTET STRING OPTIONAL
+
+
+   }
+
+   Level2DataType	::= SEQUENCE {
+
+       	  level1Data	         Level1DataType,
+
+       	  -- signature is calculated on the PER unaligned encoding of level1 signature data
+       	  level1Signature        OCTET STRING OPTIONAL,
+
+       	  level2Data             DataType OPTIONAL
+
+   }
+
+
+   Level1DataType	::= SEQUENCE {
+
+    	-- provider of the level1 signature  (RICS code)
+    	securityProviderNum INTEGER (1..32000) OPTIONAL,
+    	securityProviderIA5 IA5String          OPTIONAL,
+
+    	keyId		        INTEGER(0..99999)  OPTIONAL,
+
+    	dataSequence 	    SEQUENCE OF DataType,
+
+
+      	-- object identifier of the key algorithms
+      	--   e.g.
+      	--    ECC P-256     1.2.840.10045.3.1.7
+      	level1KeyAlg        OBJECT IDENTIFIER OPTIONAL,
+      	level2KeyAlg        OBJECT IDENTIFIER OPTIONAL,
+
+      	-- object identifier of the signing algorithm
+      	--   e.g.
+      	--    DSA SHA224  2.16.840.1.101.3.4.3.1
+      	--    DSA SHA256  2.16.840.1.101.3.4.3.2
+      	--    ECDSA-256   1.2.840.10045.4.3.2
+      	-- algorithm used for signing
+      	level1SigningAlg   OBJECT IDENTIFIER OPTIONAL,
+      	level2SigningAlg   OBJECT IDENTIFIER OPTIONAL,
+
+        level2PublicKey OCTET STRING OPTIONAL
+
+   }
+
+   DataType ::= SEQUENCE {
+    	-- Content of data format:
+    	-- FCBn (FCB1 = FCB version 1, FCB2 = FCB version 2)
+    	-- FDCn dynamic content
+    	-- or proprietary:
+    	--  _RICS company code + addon
+       	dataFormat	    IA5String,
+    	data	    	OCTET STRING
+   }
+
+
+END

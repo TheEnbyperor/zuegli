@@ -3,4 +3,5 @@ from .envelope import Envelope
 from .head import HeadV1
 from .layout import LayoutV1
 from .flex import Flex
+from .dosipas import DOSIPASEnvelope
 from . import rics, stations, dt, db, cd, oebb, db_vu, countries, nuts, rct2_parse, parse_via, vor, st01_parse, bravo
