@@ -4632,6 +4632,7 @@ PASS_STRINGS = {
 "departure-time-label" = "Vertrek";
 "arrival-time-label" = "Aankomst";
 "train-number-label" = "Trein";
+"flight-number-label" = "Vlucht";
 "coach-number-label" = "Rijtuig";
 "seat-number-label" = "Stoel";
 "price-label" = "Prijs";
@@ -4654,6 +4655,9 @@ PASS_STRINGS = {
 "travel-inc-toc-label" = "Reis moet vervoer bevatten uitgevoerd door";
 "travel-excl-toc-label" = "Reis mag geen vervoer bevatten uitgevoerd door";
 "route-label" = "Route";
+"group-ticket-label" = "Groepsticket";
+"group-leader-label" = "Groepsleider";
+"article-number-label" = "Artikelnummer";
 """
 }
 
