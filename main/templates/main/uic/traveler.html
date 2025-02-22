@@ -24,6 +24,12 @@
             <dd class="govuk-summary-list__value">{{ traveler.title }}</dd>
         </div>
     {% endif %}
+    {% if traveler.gender %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Gender</dt>
+            <dd class="govuk-summary-list__value"><code>{{ traveler.gender }}</code></dd>
+        </div>
+    {% endif %}
     {% if traveler.idCard %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">ID Card Number</dt>
@@ -34,6 +40,12 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Passport Number</dt>
             <dd class="govuk-summary-list__value"><code>{{ traveler.passportId }}</code></dd>
+        </div>
+    {% endif %}
+    {% if traveler.countryOfPassport %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passport country</dt>
+            <dd class="govuk-summary-list__value">{{ traveler.countryOfPassport|iso3166 }}</dd>
         </div>
     {% endif %}
     {% with dob=traveler|rics_traveler_dob %}

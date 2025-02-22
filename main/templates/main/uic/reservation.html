@@ -150,6 +150,38 @@
             </dd>
         </div>
     {% endif %}
+    {% if res.berth %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Berths</dt>
+            <dd class="govuk-summary-list__value">
+                {% for berth in res.berth %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Berth #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ berth.berthType }}</code></dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Number of berths</dt>
+                                    <dd class="govuk-summary-list__value">{{ berth.numberOfBerths }}</dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Gender</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ berth.gender }}</code></dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
     {% if res.carrierNum %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Carriers</dt>
