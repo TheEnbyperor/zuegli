@@ -1,5 +1,6 @@
-{% load rics %}
+{% load rics tz %}
 
+{% localtime off %}
 <h2 class="govuk-heading-m">Security</h2>
 {% if ticket.envelope %}
     <dl class="govuk-summary-list">
@@ -88,11 +89,77 @@
                 <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 }}</dd>
             </div>
         {% endif %}
-
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Signature key ID</dt>
             <dd class="govuk-summary-list__value"><code>{{ ticket.dosipas_envelope.level_2_data.level1Data.keyId }}</code></dd>
         </div>
+        {% if ticket.dosipas_envelope.expiry %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Expiry</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.expiry|date:"F d, Y H:i e" }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.dosipas_envelope.can_verify %}
+            {% with cert=ticket.dosipas_envelope.signing_cert %}
+                {% if cert %}
+                    {% include "main/uic/cert.html" with cert=cert %}
+                {% endif %}
+            {% endwith %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if ticket.dosipas_envelope.verify_level_1_signature %}
+                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                    {% else %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                Signature verification failed, this is likely a forged ticket
+                            </strong>
+                        </div>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Level 2 signature algorithm</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if ticket.dosipas_envelope.verify_level_2_signature %}
+                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                    {% else %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                Signature verification failed, this is likely a forged ticket
+                            </strong>
+                        </div>
+                    {% endif %}
+                </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signing key</dt>
+                <dd class="govuk-summary-list__value">
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            Unknown signing key, can't verify ticket
+                        </strong>
+                    </div>
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 {% endif %}
 
@@ -120,7 +187,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Issuing time</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.head.issuing_time.as_datetime|date:"F d, Y H:i" }}</dd>
+            <dd class="govuk-summary-list__value">{{ ticket.head.issuing_time.as_datetime|date:"F d, Y H:i e" }}</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Flags</dt>
@@ -222,6 +289,10 @@
     {% include "main/uic/bravo.html" with bravo=ticket.bravo %}
 {% endif %}
 
+{% if ticket.dosipas_dcd %}
+    {% include "main/uic/dcd.html" with dcd=ticket.dosipas_dcd %}
+{% endif %}
+
 {% for record in ticket.other_records %}
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
@@ -244,3 +315,4 @@
         </div>
     </div>
 {% endfor %}
+{% endlocaltime %}
