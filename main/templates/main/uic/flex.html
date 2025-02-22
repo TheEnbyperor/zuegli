@@ -95,6 +95,36 @@
             <dt class="govuk-summary-list__key">Issuer PNR</dt>
             <dd class="govuk-summary-list__value"><code>{{ flex.data.issuingDetail.issuerPNR }}</code></dd>
         </div>
+        {% if flex.data.issuingDetail.issuedOnLine %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issued on line</dt>
+                <dd class="govuk-summary-list__value">{{ flex.data.issuingDetail.issuedOnLine }}</dd>
+            </div>
+        {% endif %}
+        {% if flex.data.issuingDetail.issuedOnTrainIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issued on train</dt>
+                <dd class="govuk-summary-list__value">{{ flex.data.issuingDetail.issuedOnTrainIA5 }}</dd>
+            </div>
+        {% endif %}
+        {% if flex.data.issuingDetail.issuedOnTrainNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issued on train</dt>
+                <dd class="govuk-summary-list__value">{{ flex.data.issuingDetail.issuedOnTrainNum }}</dd>
+            </div>
+        {% endif %}
+        {% if flex.data.issuingDetail.pointOfSale %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Sale position</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with pos=flex.data.issuingDetail.pointOfSale|uic_geo %}
+                        <a href="https://maps.apple.com/?ll={{ pos.latitude }},{{ pos.longitude }}">
+                            <code>{{ pos.latitude }}, {{ pos.longitude }}</code>
+                        </a>
+                    {% endwith %}
+                </dd>
+            </div>
+        {% endif %}
         {% if flex.data.controlDetail %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Control data</dt>
@@ -176,7 +206,7 @@
                                         <div class="govuk-summary-card">
                                             <div class="govuk-summary-card__title-wrapper">
                                                 <h2 class="govuk-summary-card__title">
-                                                    Ticket #{{ forloop.counter }}
+                                                    Linked ticket #{{ forloop.counter }}
                                                 </h2>
                                             </div>
                                             <div class="govuk-summary-card__content">

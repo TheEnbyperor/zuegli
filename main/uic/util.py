@@ -1,5 +1,7 @@
 import dataclasses
 import datetime
+import decimal
+
 import pytz
 
 class UICException(Exception):
@@ -38,3 +40,10 @@ class Timestamp:
             hour=hour,
             minute=minute
         )
+
+
+@dataclasses.dataclass
+class Coordinate:
+    coordinate_system: str
+    longitude: decimal.Decimal
+    latitude: decimal.Decimal

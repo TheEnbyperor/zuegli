@@ -28,6 +28,18 @@
                 </dd>
             </div>
         {% endif %}
+        {% if dcd.data.dynamicContentGeoCoordinate %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Generation position</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with pos=dcd.data.dynamicContentGeoCoordinate|uic_geo %}
+                        <a href="https://maps.apple.com/?ll={{ pos.latitude }},{{ pos.longitude }}">
+                            <code>{{ pos.latitude }}, {{ pos.longitude }}</code>
+                        </a>
+                    {% endwith %}
+                </dd>
+            </div>
+        {% endif %}
         {% if dcd.data.dynamicContentExtension %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Extension</dt>

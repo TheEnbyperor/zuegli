@@ -245,3 +245,35 @@ def oid(value):
         return "DSA"
     else:
         return str(value)
+
+
+@register.filter(name="uic_geo")
+def uic_geo(value: dict):
+    long = decimal.Decimal(value["longitude"])
+    lat = decimal.Decimal(value["latitude"])
+
+    if value["geoUnit"] == "deciDegree":
+        pass
+    elif value["geoUnit"] == "centiDegree":
+        long /= 100
+        lat /= 100
+    elif value["geoUnit"] == "milliDegree":
+        long /= 1_000
+        lat /= 1_000
+    elif value["geoUnit"] == "tenthmilliDegree":
+        long /= 10_000
+        lat /= 10_000
+    elif value["geoUnit"] == "microDegree":
+        long /= 1_000_000
+        lat /= 1_000_000
+
+    if value["hemisphereLongitude"] == "south":
+        long = -long
+    if value["hemisphereLatitude"] == "west":
+        lat = -lat
+
+    return uic.util.Coordinate(
+        coordinate_system=value["coordinateSystem"],
+        longitude=long,
+        latitude=lat
+    )
