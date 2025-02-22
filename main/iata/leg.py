@@ -42,35 +42,35 @@ class Compartment(enum.Enum):
         elif self == Compartment.Business:
             return "Business class - full fare"
         elif self == Compartment.DiscountedBusinessD:
-            return "Business class - discounted (D)"
+            return "Business class - discounted"
         elif self == Compartment.DiscountedBusinessI:
-            return "Business class - discounted (I)"
+            return "Business class - discounted"
         elif self == Compartment.DiscountedBusinessZ:
-            return "Business class - discounted (Z)"
+            return "Business class - discounted"
         elif self == Compartment.PremiumEconomy:
             return "Economy class - premium"
         elif self == Compartment.Economy:
             return "Economy class - full fare"
         elif self == Compartment.DiscountedEconomyB:
-            return "Economy class - discounted (B)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyH:
-            return "Economy class - discounted (H)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyK:
-            return "Economy class - discounted (K)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyL:
-            return "Economy class - discounted (L)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyM:
-            return "Economy class - discounted (M)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyN:
-            return "Economy class - discounted (N)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyQ:
-            return "Economy class - discounted (Q)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyT:
-            return "Economy class - discounted (T)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyV:
-            return "Economy class - discounted (V)"
+            return "Economy class - discounted"
         elif self == Compartment.DiscountedEconomyX:
-            return "Economy class - discounted (X)"
+            return "Economy class - discounted"
         elif self == Compartment.Unknown:
             return "Unknown"
 

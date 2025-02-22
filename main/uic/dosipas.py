@@ -22,7 +22,7 @@ class DOSIPASEnvelope:
     version: int
     level_2_data: typing.Dict
     level_1_signed_data: bytes = b""
-    level_1_signature: bytes = b""
+    level_1_signature: typing.Optional[bytes] = None
     level_2_signed_data: bytes = b""
     level_2_signature: bytes = b""
     level_2_public_key: bytes = b""
@@ -110,7 +110,7 @@ class DOSIPASEnvelope:
                     version=2,
                     level_2_data=data["level2SignedData"],
                     level_2_signed_data=ASN1_SPEC_V2.encode("Level2DataType", data["level2SignedData"]),
-                    level_2_signature=data["level2Signature"],
+                    level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V2.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
                     level_1_signature=data["level2SignedData"]["level1Signature"],
                     level_2_public_key=data["level2SignedData"]["level1Data"]["level2PublicKey"],
@@ -125,7 +125,7 @@ class DOSIPASEnvelope:
                     version=1,
                     level_2_data=data["level2SignedData"],
                     level_2_signed_data=ASN1_SPEC_V1.encode("Level2DataType", data["level2SignedData"]),
-                    level_2_signature=data["level2Signature"],
+                    level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V1.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
                     level_1_signature=data["level2SignedData"]["level1Signature"],
                     level_2_public_key=data["level2SignedData"]["level1Data"]["level2PublicKey"],

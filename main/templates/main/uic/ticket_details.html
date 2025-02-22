@@ -132,27 +132,29 @@
                     {% endif %}
                 </dd>
             </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Level 2 signature algorithm</dt>
-                <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg }}</code>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
-                <dd class="govuk-summary-list__value">
-                    {% if ticket.dosipas_envelope.verify_level_2_signature %}
-                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                    {% else %}
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                Signature verification failed, this is likely a forged ticket
-                            </strong>
-                        </div>
-                    {% endif %}
-                </dd>
-            </div>
+            {% if ticket.dosipas_envelope.level_2_signature %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level 2 signature algorithm</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg }}</code>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if ticket.dosipas_envelope.verify_level_2_signature %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, this is likely a forged ticket
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% endif %}
         {% else %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Signing key</dt>
