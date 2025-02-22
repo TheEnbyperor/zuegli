@@ -826,8 +826,8 @@ def parse_ticket_uic_flex_dosipas(ticket_envelope: uic.DOSIPASEnvelope) -> typin
         )
 
 
-def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[uic.Flex]:
-    if not ticket_envelope.level_2_record.format.startswith("FDC"):
+def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[uic.dosipas.DCD]:
+    if not ticket_envelope.level_2_record or not ticket_envelope.level_2_record.format.startswith("FDC"):
         return None
 
     try:
