@@ -71,7 +71,7 @@ class DOSIPASEnvelope:
             return False
 
     def verify_level_2_signature(self):
-        if not self.level_2_signature or not self.level_2_signed_data or not self.level_2_data["level1Data"].get("level2SigningAlg"):
+        if not self.level_2_signature or not self.level_2_signed_data or "level2SigningAlg" not in self.level_2_data["level1Data"]:
             return False
 
         pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
@@ -112,7 +112,7 @@ class DOSIPASEnvelope:
                     level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V2.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
                     level_1_signature=data["level2SignedData"]["level1Signature"],
-                    level_2_public_key=data["level2SignedData"]["level1Data"]["level2PublicKey"],
+                    level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
         except asn1tools.DecodeError:
             pass
@@ -127,7 +127,7 @@ class DOSIPASEnvelope:
                     level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V1.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
                     level_1_signature=data["level2SignedData"]["level1Signature"],
-                    level_2_public_key=data["level2SignedData"]["level1Data"]["level2PublicKey"],
+                    level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
         except asn1tools.DecodeError:
             pass
