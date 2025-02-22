@@ -1047,21 +1047,40 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                     if validity_start:
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleNone",
+                            "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
                         pass_fields["backFields"].append({
                             "key": "validity-start-back",
                             "label": "validity-start-label",
                             "dateStyle": "PKDateStyleFull",
                             "timeStyle": "PKDateStyleNone",
                             "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
                         })
                     if validity_end:
                         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-end",
+                            "label": "validity-end-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleNone",
+                            "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True,
+                            "changeMessage": "validity-end-change"
+                        })
                         pass_fields["backFields"].append({
                             "key": "validity-end-back",
                             "label": "validity-end-label",
                             "dateStyle": "PKDateStyleFull",
                             "timeStyle": "PKDateStyleNone",
                             "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
                         })
 
                 elif pass_document:
