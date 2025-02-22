@@ -222,3 +222,26 @@ def uic_price(value: int, issuing_detail: dict):
     value = decimal.Decimal(value) / decimal.Decimal(fraction)
 
     return f"{value:.02f} {currency_code}"
+
+
+@register.filter(name="dosipas_timestamp")
+def dosipas_timestamp(value: dict):
+    this_year = datetime.datetime.now().year
+    out = datetime.datetime(this_year, 1, 1)
+    out += datetime.timedelta(days=value["day"] - 1)
+    out += datetime.timedelta(seconds=value["time"])
+    return pytz.utc.localize(out)
+
+
+@register.filter(name="oid")
+def oid(value):
+    if value == "1.2.840.10045.4.3.2":
+        return "ECDSA with SHA256"
+    elif value == "2.16.840.1.101.3.4.3.1":
+        return "DSA with SHA224"
+    elif value == "2.16.840.1.101.3.4.3.2":
+        return "DSA with SHA256"
+    elif value == "1.2.840.10040.4.1":
+        return "DSA"
+    else:
+        return str(value)

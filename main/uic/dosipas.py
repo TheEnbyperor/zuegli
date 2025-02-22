@@ -71,11 +71,10 @@ class DOSIPASEnvelope:
             return False
 
     def verify_level_2_signature(self):
-        if not self.level_2_signature or not self.level_2_signed_data:
+        if not self.level_2_signature or not self.level_2_signed_data or not self.level_2_data["level1Data"].get("level2SigningAlg"):
             return False
 
         pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
-
 
         if self.level_2_data["level1Data"]["level2SigningAlg"] == "2.16.840.1.101.3.4.3.1":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):

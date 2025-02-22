@@ -1,142 +1,159 @@
 {% load rics tz %}
 
 {% localtime off %}
-<h2 class="govuk-heading-m">Security</h2>
-{% if ticket.envelope %}
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Barcode version</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.version }}</code></dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Signing RICS</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.issuer_rics }}</code></dd>
-        </div>
-        {% with org=ticket.envelope.issuer %}
-            {% if org %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Signer</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% include 'main/rics.html' with org=org %}
-                    </dd>
-                </div>
-            {% endif %}
-        {% endwith %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Signature key ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.signature_key_id }}</code></dd>
-        </div>
-        {% if ticket.envelope.can_verify %}
-            {% with cert=ticket.envelope.signing_cert %}
-                {% if cert %}
-                    {% include "main/uic/cert.html" with cert=cert %}
-                {% endif %}
-            {% endwith %}
+    <h2 class="govuk-heading-m">Security</h2>
+    {% if ticket.envelope %}
+        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signature verification</dt>
-                <dd class="govuk-summary-list__value">
-                    {% if ticket.envelope.verify_signature %}
-                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                    {% else %}
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                Signature verification failed, this is likely a forged ticket
-                            </strong>
-                        </div>
-                    {% endif %}
-                </dd>
+                <dt class="govuk-summary-list__key">Barcode version</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.version }}</code></dd>
             </div>
-        {% else %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signing key</dt>
-                <dd class="govuk-summary-list__value">
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            Unknown signing key, can't verify ticket
-                        </strong>
-                    </div>
-                </dd>
+                <dt class="govuk-summary-list__key">Signing RICS</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.issuer_rics }}</code></dd>
             </div>
-        {% endif %}
-    </dl>
-{% elif ticket.dosipas_envelope %}
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Barcode version</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.version }}</dd>
-        </div>
-        {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Security provider RICS</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum }}</code></dd>
-            </div>
-            {% with org=ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum|rics %}
+            {% with org=ticket.envelope.issuer %}
                 {% if org %}
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Security provider</dt>
+                        <dt class="govuk-summary-list__key">Signer</dt>
                         <dd class="govuk-summary-list__value">
                             {% include 'main/rics.html' with org=org %}
                         </dd>
                     </div>
                 {% endif %}
             {% endwith %}
-        {% endif %}
-        {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Security provider</dt>
-                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 }}</dd>
+                <dt class="govuk-summary-list__key">Signature key ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.signature_key_id }}</code></dd>
             </div>
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Signature key ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.dosipas_envelope.level_2_data.level1Data.keyId }}</code></dd>
-        </div>
-        {% if ticket.dosipas_envelope.expiry %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Expiry</dt>
-                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.expiry|date:"F d, Y H:i e" }}</dd>
-            </div>
-        {% endif %}
-        {% if ticket.dosipas_envelope.level_2_data.level1Data.validityDuration %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Validity duration</dt>
-                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.validityDuration }} seconds</dd>
-            </div>
-        {% endif %}
-        {% if ticket.dosipas_envelope.can_verify %}
-            {% with cert=ticket.dosipas_envelope.signing_cert %}
-                {% if cert %}
-                    {% include "main/uic/cert.html" with cert=cert %}
-                {% endif %}
-            {% endwith %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
-                <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg }}</code>
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
-                <dd class="govuk-summary-list__value">
-                    {% if ticket.dosipas_envelope.verify_level_1_signature %}
-                        <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                    {% else %}
+            {% if ticket.envelope.can_verify %}
+                {% with cert=ticket.envelope.signing_cert %}
+                    {% if cert %}
+                        {% include "main/uic/cert.html" with cert=cert %}
+                    {% endif %}
+                {% endwith %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signature verification</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if ticket.envelope.verify_signature %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, this is likely a forged ticket
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signing key</dt>
+                    <dd class="govuk-summary-list__value">
                         <div class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                             <strong class="govuk-warning-text__text">
-                                Signature verification failed, this is likely a forged ticket
+                                Unknown signing key, can't verify ticket
                             </strong>
                         </div>
+                    </dd>
+                </div>
+            {% endif %}
+        </dl>
+    {% elif ticket.dosipas_envelope %}
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Barcode version</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.version }}</dd>
+            </div>
+            {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Security provider RICS</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum }}</code></dd>
+                </div>
+                {% with org=ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum|rics %}
+                    {% if org %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Security provider</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% include 'main/rics.html' with org=org %}
+                            </dd>
+                        </div>
                     {% endif %}
+                {% endwith %}
+            {% endif %}
+            {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Security provider</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 }}</dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Signature key ID</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.keyId }}</code></dd>
+            </div>
+            {% if ticket.dosipas_envelope.expiry %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Expiry</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.expiry|date:"F d, Y H:i e" }}</dd>
+                </div>
+            {% endif %}
+            {% if ticket.dosipas_envelope.level_2_data.level1Data.validityDuration %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Validity duration</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.validityDuration }}
+                        seconds
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg|oid }}
                 </dd>
             </div>
+            {% if ticket.dosipas_envelope.can_verify %}
+                {% with cert=ticket.dosipas_envelope.signing_cert %}
+                    {% if cert %}
+                        {% include "main/uic/cert.html" with cert=cert %}
+                    {% endif %}
+                {% endwith %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if ticket.dosipas_envelope.verify_level_1_signature %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, this is likely a forged ticket
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signing key</dt>
+                    <dd class="govuk-summary-list__value">
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                Unknown signing key, can't verify ticket
+                            </strong>
+                        </div>
+                    </dd>
+                </div>
+            {% endif %}
             {% if ticket.dosipas_envelope.level_2_signature %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Level 2 signature algorithm</dt>
                     <dd class="govuk-summary-list__value">
-                        <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg }}</code>
+                        {{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg|oid }}
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -154,173 +171,172 @@
                         {% endif %}
                     </dd>
                 </div>
-            {% endif %}
-        {% else %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Signing key</dt>
-                <dd class="govuk-summary-list__value">
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            Unknown signing key, can't verify ticket
-                        </strong>
-                    </div>
-                </dd>
-            </div>
-        {% endif %}
-    </dl>
-{% endif %}
-
-
-{% if ticket.head %}
-    <h2 class="govuk-heading-m">Header</h2>
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Distributing RICS</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.head.distributing_rics }}</code></dd>
-        </div>
-        {% with org=ticket.head.distributor %}
-            {% if org %}
+            {% elif ticket.dosipas.level_2_public_key %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Distributor</dt>
+                    <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
                     <dd class="govuk-summary-list__value">
-                        {% include 'main/rics.html' with org=org %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                Level 2 signature missing, this ticket has likely been tampered with
+                            </strong>
+                        </div>
                     </dd>
                 </div>
             {% endif %}
-        {% endwith %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Ticket ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.head.ticket_id }}</code></dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Issuing time</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.head.issuing_time.as_datetime|date:"F d, Y H:i e" }}</dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Flags</dt>
-            <dd class="govuk-summary-list__value">
-                <table class="govuk-table">
-                    <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">International ticket</td>
-                        <td class="govuk-table__cell">
-                            {% if ticket.head.flags.international_ticket %}
-                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                            {% else %}
-                                <strong class="govuk-tag govuk-tag--red">No</strong>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Edited by agent</td>
-                        <td class="govuk-table__cell">
-                            {% if ticket.head.flags.edited_by_agent %}
-                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                            {% else %}
-                                <strong class="govuk-tag govuk-tag--red">No</strong>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell" style="border-bottom: none">Specimen</td>
-                        <td class="govuk-table__cell" style="border-bottom: none">
-                            {% if ticket.head.flags.specimen %}
-                                <strong class="govuk-tag govuk-tag--green">Yes</strong>
-                            {% else %}
-                                <strong class="govuk-tag govuk-tag--red">No</strong>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Language</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.head.language|upper }}</code></dd>
-        </div>
-        {% if ticket.head.second_language %}
+        </dl>
+    {% endif %}
+
+
+    {% if ticket.head %}
+        <h2 class="govuk-heading-m">Header</h2>
+        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Second language</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.head.second_language|upper }}</code></dd>
+                <dt class="govuk-summary-list__key">Distributing RICS</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.head.distributing_rics }}</code></dd>
             </div>
-        {% endif %}
-    </dl>
-{% endif %}
+            {% with org=ticket.head.distributor %}
+                {% if org %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Distributor</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include 'main/rics.html' with org=org %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Ticket ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.head.ticket_id }}</code></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuing time</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.head.issuing_time.as_datetime|date:"F d, Y H:i e" }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Flags</dt>
+                <dd class="govuk-summary-list__value">
+                    <table class="govuk-table">
+                        <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">International ticket</td>
+                            <td class="govuk-table__cell">
+                                {% if ticket.head.flags.international_ticket %}
+                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                                {% else %}
+                                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Edited by agent</td>
+                            <td class="govuk-table__cell">
+                                {% if ticket.head.flags.edited_by_agent %}
+                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                                {% else %}
+                                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" style="border-bottom: none">Specimen</td>
+                            <td class="govuk-table__cell" style="border-bottom: none">
+                                {% if ticket.head.flags.specimen %}
+                                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                                {% else %}
+                                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Language</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.head.language|upper }}</code></dd>
+            </div>
+            {% if ticket.head.second_language %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Second language</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ ticket.head.second_language|upper }}</code></dd>
+                </div>
+            {% endif %}
+        </dl>
+    {% endif %}
 
-{% if ticket.layout %}
-    {% include 'main/uic/paper.html' with layout=ticket.layout %}
-{% endif %}
+    {% if ticket.dosipas_dcd %}
+        {% include "main/uic/dcd.html" with dcd=ticket.dosipas_dcd %}
+    {% endif %}
 
-{% if ticket.flex %}
-    {% include "main/uic/flex.html" with flex=ticket.flex %}
-{% endif %}
+    {% if ticket.layout %}
+        {% include 'main/uic/paper.html' with layout=ticket.layout %}
+    {% endif %}
 
-{% if ticket.dt_ti %}
-    {% include "main/uic/dt_ti.html" with dt=ticket.dt_ti %}
-{% endif %}
+    {% if ticket.flex %}
+        {% include "main/uic/flex.html" with flex=ticket.flex %}
+    {% endif %}
 
-{% if ticket.dt_pa %}
-    {% include "main/uic/dt_pa.html" with dt=ticket.dt_pa %}
-{% endif %}
+    {% if ticket.dt_ti %}
+        {% include "main/uic/dt_ti.html" with dt=ticket.dt_ti %}
+    {% endif %}
 
-{% if ticket.db_bl %}
-    {% include "main/uic/db.html" with db=ticket.db_bl %}
-{% endif %}
+    {% if ticket.dt_pa %}
+        {% include "main/uic/dt_pa.html" with dt=ticket.dt_pa %}
+    {% endif %}
 
-{% if ticket.cd_ut %}
-    {% include "main/uic/cd.html" with cd=ticket.cd_ut %}
-{% endif %}
+    {% if ticket.db_bl %}
+        {% include "main/uic/db.html" with db=ticket.db_bl %}
+    {% endif %}
 
-{% if ticket.oebb_99 %}
-    {% include "main/uic/oebb.html" with oebb=ticket.oebb_99 %}
-{% endif %}
+    {% if ticket.cd_ut %}
+        {% include "main/uic/cd.html" with cd=ticket.cd_ut %}
+    {% endif %}
 
-{% if ticket.db_vu %}
-    {% include "main/uic/db_vu.html" with db_vu=ticket.db_vu %}
-{% endif %}
+    {% if ticket.oebb_99 %}
+        {% include "main/uic/oebb.html" with oebb=ticket.oebb_99 %}
+    {% endif %}
 
-{% if ticket.vor_fi %}
-    {% include "main/uic/vor_fi.html" with vor=ticket.vor_fi %}
-{% endif %}
+    {% if ticket.db_vu %}
+        {% include "main/uic/db_vu.html" with db_vu=ticket.db_vu %}
+    {% endif %}
 
-{% if ticket.vor_vd %}
-    {% include "main/uic/vor_vd.html" with vor=ticket.vor_vd %}
-{% endif %}
+    {% if ticket.vor_fi %}
+        {% include "main/uic/vor_fi.html" with vor=ticket.vor_fi %}
+    {% endif %}
 
-{% if ticket.st01 %}
-    {% include "main/uic/st01.html" with st01=ticket.st01 %}
-{% endif %}
+    {% if ticket.vor_vd %}
+        {% include "main/uic/vor_vd.html" with vor=ticket.vor_vd %}
+    {% endif %}
 
-{% if ticket.bravo %}
-    {% include "main/uic/bravo.html" with bravo=ticket.bravo %}
-{% endif %}
+    {% if ticket.st01 %}
+        {% include "main/uic/st01.html" with st01=ticket.st01 %}
+    {% endif %}
 
-{% if ticket.dosipas_dcd %}
-    {% include "main/uic/dcd.html" with dcd=ticket.dosipas_dcd %}
-{% endif %}
+    {% if ticket.bravo %}
+        {% include "main/uic/bravo.html" with bravo=ticket.bravo %}
+    {% endif %}
 
-{% for record in ticket.other_records %}
-    <div class="govuk-summary-card">
-        <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title">Unknown record <code>{{ record.id }}</code> - version
-                <code>{{ record.version }}</code></h2>
+    {% for record in ticket.other_records %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Unknown record <code>{{ record.id }}</code> - version
+                    <code>{{ record.version }}</code></h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <code style="line-break: anywhere">{{ record.data_hex }}</code>
+            </div>
         </div>
-        <div class="govuk-summary-card__content">
-            <code style="line-break: anywhere">{{ record.data_hex }}</code>
-        </div>
-    </div>
-{% endfor %}
+    {% endfor %}
 
-{% for record in ticket.other_dosipas_records %}
-    <div class="govuk-summary-card">
-        <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title">Unknown record <code>{{ record.format }}</code></h2>
+    {% for record in ticket.other_dosipas_records %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Unknown record <code>{{ record.format }}</code></h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <code style="line-break: anywhere">{{ record.data_hex }}</code>
+            </div>
         </div>
-        <div class="govuk-summary-card__content">
-            <code style="line-break: anywhere">{{ record.data_hex }}</code>
-        </div>
-    </div>
-{% endfor %}
+    {% endfor %}
 {% endlocaltime %}

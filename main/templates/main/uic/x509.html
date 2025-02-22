@@ -1,3 +1,4 @@
+{% load rics %}
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
@@ -28,12 +29,15 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Public key algorithm</dt>
-                <dd class="govuk-summary-list__value"><code>{{ cert.public_key_algorithm_oid.dotted_string }}</code>
+                <dd class="govuk-summary-list__value">
+                    {{ cert.public_key_algorithm_oid.dotted_string|oid }}
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Signature algorithm</dt>
-                <dd class="govuk-summary-list__value"><code>{{ cert.signature_algorithm_oid.dotted_string }}</code></dd>
+                <dd class="govuk-summary-list__value">
+                    {{ cert.signature_algorithm_oid.dotted_string|oid }}
+                </dd>
             </div>
             {% if cert.extensions %}
                 <div class="govuk-summary-list__row">

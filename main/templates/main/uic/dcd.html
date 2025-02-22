@@ -12,6 +12,43 @@
                 {% endif %}
             </dd>
         </div>
+        {% if dcd.data.dynamicContentMobileAppId %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Mobile app ID</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ dcd.data.dynamicContentMobileAppId }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        {% if dcd.data.dynamicContentTimeStamp %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Generation time</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ dcd.data.dynamicContentTimeStamp|dosipas_timestamp|date:"F d, H:i:s e" }}
+                </dd>
+            </div>
+        {% endif %}
+        {% if dcd.data.dynamicContentExtension %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extension</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ dcd.data.dynamicContentExtension.extensionId }}</code>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Data</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ dcd.data.dynamicContentExtension.extensionData|rics_unicode }}</code>
+                            </dd>
+                        </div>
+                    </dl>
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 {% endlocaltime %}
 
