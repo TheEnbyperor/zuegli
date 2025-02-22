@@ -200,7 +200,6 @@ def db_add_ticket(request):
             if r.status_code == 404:
                 messages.error(request, "Ticket not found")
             elif not r.ok:
-                print(r.text, r.status_code)
                 messages.error(request, "Failed to fetch ticket")
             else:
                 data = r.json()

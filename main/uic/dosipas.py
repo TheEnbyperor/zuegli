@@ -156,8 +156,6 @@ class DOSIPASEnvelope:
                 expiry += datetime.timedelta(minutes=time)
                 out.expiry = pytz.utc.localize(expiry)
 
-            print(out)
-
             return out
 
         return None
