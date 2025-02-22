@@ -553,7 +553,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 lambda l: l[1],
                                 filter(lambda l: l[0] == "trainLink", ticket_document["validRegion"])
                             ))
-                            if train_links:
+                            if train_links and not reservation_document:
                                 departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
                                 train_number = ", ".join(
                                     list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
@@ -922,6 +922,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         pass_fields["secondaryFields"] = []
 
                         one_day_ticket = departure_time.date() == arrival_time.date()
+                        pass_fields[f] = list(filter(
+                            lambda e: e["key"] not in ("validity-start", "validity-end"),
+                            pass_fields[f]
+                        ))
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
                             "label": "departure-time-label",
