@@ -296,6 +296,14 @@
             </div>
         {% endif %}
     {% endif %}
-    {% include "main/uic/extension.html" with obj=card %}
+    {% if ticket.infoText %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extra info</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.infoText }}
+            </dd>
+        </div>
+    {% endif %}
+    {% include "main/uic/extension.html" with obj=ticket %}
 </dl>
 {% endlocaltime %}
