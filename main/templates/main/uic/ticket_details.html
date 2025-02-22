@@ -99,6 +99,12 @@
                 <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.expiry|date:"F d, Y H:i e" }}</dd>
             </div>
         {% endif %}
+        {% if ticket.dosipas_envelope.level_2_data.level1Data.validityDuration %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Validity duration</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.validityDuration }} seconds</dd>
+            </div>
+        {% endif %}
         {% if ticket.dosipas_envelope.can_verify %}
             {% with cert=ticket.dosipas_envelope.signing_cert %}
                 {% if cert %}
