@@ -1,0 +1,151 @@
+-- ##########################################################################################
+-- #
+-- # FCB Dynamic Content - Version 1.0.1 (2021-05-12)
+-- #
+-- # This file is available on the UIC FCB User Group GitHub:
+-- #             https://github.com/UnionInternationalCheminsdeFer/UIC-barcode
+-- #
+-- # Please check this link to see if a more recent version of this file is available.
+-- #
+-- # The type UicDynamicContentData defined below is at least intended to generate a data
+-- # that, once valued and encoded as PER unaligned [UPER],
+-- # is to be stored in UicBarcodeHeader.level2SignedData.level2Data.data,
+-- # and identified as "FDC1" in UicBarcodeHeader.level2SignedData.level2Data.dataFormat.
+-- #
+-- #  ISO Country codes are used to code countries.
+-- #    As Kosovo does not have an official ISO Country Code the following codes are used:
+-- #          926 for Kosovo as numeric ISO Country Code
+-- #          XK  for Kosovo as alphanumeric 2-character ISO Country Code
+-- #
+-- #  RICS codes must be used to encode companies (issuer, product owner, ...) where available
+-- #    other codes are possible based on bilateral agreements
+-- #    the format is kept more flexible to cover upcoming extensions of the RICS code by ERA
+-- #
+-- ##########################################################################################
+-- Creator: ASN.1 Editor (http://asneditor.sourceforge.net)
+-- Author: ClemensGantert
+-- Created: Mon Jun 28 14:14:28 CEST 2021
+ASN-Module-DynamicContentData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- imports and exports
+-- EXPORTS ALL;
+
+   UicDynamicContentData ::= SEQUENCE {
+
+     -- Identification of the mobile application that generated the barcode
+     --   and filled in the data of its dynamic part.
+     --
+     -- The possible values are defined by the security provider
+     --   (the security provider being UicBarcodeHeader.level2SignedData.level1Data.securityProviderNum/IA5)
+     dynamicContentMobileAppId IA5String OPTIONAL,
+
+     -- Moment of generation of the dynamic content, expressed in UTC
+     dynamicContentTimeStamp TimeStampData OPTIONAL,
+
+     -- Coordinates of the place where the dynamic content has been generated
+     --   (same GeoCoordinateType type as in UicRailTicketData)
+     dynamicContentGeoCoordinate GeoCoordinateType OPTIONAL,
+
+     -- ##########################################################################################
+     -- #
+     -- # List of predefined values that can be used for the extensionId data element used in
+     -- #   UicDynamicContentData.dynamicContentResponseToChallenge.
+     -- #
+     -- ##########################################################################################
+     -- ..........................................................................................
+     -- extensionId value    | extensionData content
+     -- .....................+....................................................................
+     -- "="                  | Exactly the data received from the control device
+     -- .....................+....................................................................
+     -- "UTF"                | UTF-8 encoded text provided by the train staff to the traveler
+     -- .....................+....................................................................
+     -- "PHC"                | Hash value of a phone identifier that is available in the ticket
+     --                      | control data provided in an annotation according to UIC IRS 90918-4
+     --                      | (e.g. via ETCD).
+     -- .....................+....................................................................
+     -- "EPC"                | Hash value of an electronic passport that is available in the
+     --                      | ticketcontrol data provided in an annotation according to
+     --                      | UIC IRS 90918-4 (e.g. via ETCD).
+     --                      | The control app can read the passport at the time of control.
+     -- .....................+....................................................................
+     -- "+" + country + addon| Specific data. See the possible values for extensionId and the
+     -- "_" + RICS + addon   | corresponding extensionData content in the comments above the
+     -- "*" + addon          | definition of ExtensionData (below).
+     -- ..........................................................................................
+
+
+     dynamicContentResponseToChallenge SEQUENCE OF ExtensionData OPTIONAL,
+
+     -- Proprietary data defined bilaterally (same ExtensionData type as in UicRailTicketData).
+     dynamicContentExtension ExtensionData OPTIONAL,
+
+     ...
+   }
+
+   -- ##########################################################################################
+   -- # Generic type for timestamp, with a precision to the second.
+   -- #
+   -- # Day is the number of the day in the year (1 = January 1st, 2 = January 2nd...)
+   -- #
+   -- # Time is the number of seconds of the day (from 0 = 0:00:00 to 86399 = 23:59:59)
+   -- ##########################################################################################
+   TimeStampData ::= SEQUENCE {
+     day   INTEGER (1..366),
+     time  INTEGER (0..86399)
+   }
+
+   -- ##########################################################################################
+   -- # Generic type for geo coordinates.
+   -- ##########################################################################################
+   GeoCoordinateType ::= SEQUENCE {
+     geoUnit             GeoUnitType             DEFAULT milliDegree,
+     coordinateSystem    GeoCoordinateSystemType DEFAULT wgs84,
+     hemisphereLongitude HemisphereLongitudeType DEFAULT north,       -- separate hemisphere flag reduces the data size
+     hemisphereLatitude  HemisphereLatitudeType  DEFAULT east,        -- separate hemisphere flag reduces the data size
+     longitude           INTEGER,
+     latitude            INTEGER,
+     accuracy            GeoUnitType             OPTIONAL
+   }
+
+  GeoCoordinateSystemType ::= ENUMERATED {
+     wgs84 (0), -- WGS 84 standard system
+     grs80 (1)  -- (outdated) GRS 80 coordinate system
+   }
+
+   GeoUnitType ::= ENUMERATED {
+     microDegree      (0), -- approx. 11 cm on earth surface
+     tenthmilliDegree (1), -- 1 / 10000 degree is approx. 11 meter on earth surface
+     milliDegree      (2), -- approx 110 meter on earth surface
+     centiDegree      (3),
+     deciDegree       (4)
+   }
+
+   HemisphereLongitudeType ::= ENUMERATED {
+     north (0),
+     south (1)
+   }
+
+   HemisphereLatitudeType ::= ENUMERATED {
+     east (0),
+     west (1)
+   }
+
+
+   -- ###########################################################################################
+   -- # Generic extension element (same definition as in UicRailTicketData).
+   -- #
+   -- # The value of 'extensionId' describes how 'extensionData' is encoded:
+   -- # "+" + [2-letters ISO 3166 country code] + [addon, chosen by the standardization body of that country]
+   -- #    means that 'extensionData' is a content defined by this national standardization body,
+   -- #    identified as 'addon' by this body.
+   -- # "_" + [4-digit RICS] + [addon, chosen by this company] means that 'extensionData' is a proprietary
+   -- #    content of the company identified by the RICS code, identified as 'addon' by this company.
+   -- # "*" + [addon] means that 'extensionData' is a content specific to this barcode,
+   -- #    identified as 'addon', with no further information on who defined it.
+   -- # Others values are reserved for future UIC use and shall not be used.
+   -- ###########################################################################################
+   ExtensionData	::= SEQUENCE 	{
+	   extensionId   IA5String,
+	   extensionData OCTET STRING
+   }
+END

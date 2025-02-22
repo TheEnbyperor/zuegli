@@ -42,7 +42,7 @@ class VDVTicket:
         ):
             return models.Ticket.TYPE_DEUTCHLANDTICKET
         else:
-            return models.Ticket.TYPE_UNKNOWN
+            return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
@@ -73,6 +73,7 @@ class UICTicket:
     dosipas_envelope: typing.Optional["uic.DOSIPASEnvelope"] = None
     layout: typing.Optional["uic.LayoutV1"] = None
     flex: typing.Optional["uic.Flex"] = None
+    dosipas_dcd: typing.Optional["uic.dosipas.DCD"] = None
     dt_ti: typing.Optional["uic.dt.DTRecordTI"] = None
     dt_pa: typing.Optional["uic.dt.DTRecordPA"] = None
     db_bl: typing.Optional["uic.db.DBRecordBL"] = None
@@ -339,8 +340,9 @@ class UICTicket:
             raw_bytes=ticket_bytes,
             dosipas_envelope=dosipas,
             flex=parse_ticket_uic_flex_dosipas(dosipas),
-            other_dosipas_records=[r for r in dosipas.records if not (
-                r.format.startswith("FCB")
+            dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
+            other_dosipas_records=[r for r in dosipas.records + [dosipas.level_2_record] if not (
+                r.format.startswith("FCB") or r.format.startswith("FDC")
             )],
         )
 
@@ -820,6 +822,21 @@ def parse_ticket_uic_flex_dosipas(ticket_envelope: uic.DOSIPASEnvelope) -> typin
         raise TicketError(
             title="Invalid flexible data record",
             message="The flexible record can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[uic.Flex]:
+    if not ticket_envelope.level_2_record.format.startswith("FDC"):
+        return None
+
+    try:
+        version = int(ticket_envelope.level_2_record.format[3:])
+        return uic.dosipas.DCD.parse(version, ticket_envelope.level_2_record.data)
+    except (ValueError, uic.util.UICException):
+        raise TicketError(
+            title="Invalid dynamic data record",
+            message="The dynamic record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
