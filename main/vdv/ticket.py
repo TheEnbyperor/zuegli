@@ -4,6 +4,10 @@ import enum
 import typing
 import ber_tlv.tlv
 import re
+import phonenumbers
+import phonenumbers.geocoder
+import phonenumbers.carrier
+
 from . import util, org_id, product_id, codes, motics
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
@@ -475,13 +479,24 @@ class IdentificationMedium:
 
     id_type: int
     id_number: str
+    phone_number: typing.Optional[phonenumbers.phonenumber.PhoneNumber] = None
 
     @classmethod
     def parse(cls, data: bytes) -> "IdentificationMedium":
-        return cls(
+        out = cls(
             id_type=data[0],
             id_number=data[1:].decode("iso-8859-15", "replace"),
         )
+
+        if out.id_type == 84:
+            try:
+                n = phonenumbers.parse(out.id_number, "DE")
+                if phonenumbers.is_valid_number(n):
+                    out.phone_number = n
+            except phonenumbers.phonenumberutil.NumberParseException:
+                pass
+
+        return out
 
     def type_name_opt(self):
         if self.id_type == 69:
@@ -499,6 +514,28 @@ class IdentificationMedium:
         else:
             return None
 
+    def international_phone_number(self):
+        if self.phone_number is None:
+            return None
+
+        return phonenumbers.format_number(self.phone_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+
+    def phone_number_description(self):
+        if self.phone_number is None:
+            return None
+
+        int_n = self.international_phone_number()
+        carrier = phonenumbers.carrier.name_for_valid_number(self.phone_number, "en")
+        region = phonenumbers.geocoder.description_for_valid_number(self.phone_number, "en")
+
+        if carrier and region:
+            return f"{int_n} ({carrier}, {region})"
+        elif carrier:
+            return f"{int_n} ({carrier})"
+        elif region:
+            return f"{int_n} ({region})"
+        else:
+            return int_n
 
 class Gender(enum.Enum):
     Male = 1

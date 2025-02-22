@@ -33,3 +33,4 @@ base45
 protobuf
 mypy-protobuf
 icalendar
+phonenumbers

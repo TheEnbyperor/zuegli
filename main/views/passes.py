@@ -2295,11 +2295,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         pass_json["expirationDate"] = validity_end.isoformat()
         pass_fields = {
-            "headerFields": [{
-                "key": "product",
-                "label": "product-label",
-                "value": ticket_data.ticket.product_name()
-            }],
+            "headerFields": [],
             "primaryFields": [],
             "secondaryFields": [],
             "auxiliaryFields": [{
@@ -2396,7 +2392,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": elm.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
             elif isinstance(elm, vdv.ticket.SpacialValidity):
-                if elm.organization_id == 6100:  # Verhkersverbund Berlin Brandenburg
+                if elm.organization_id == 6100:  # Verkehrsverbund Berlin Brandenburg
                     if elm.area == 1200 or 1200 in elm.validity_ids:
                         add_pkp_img(pkp, "pass/berlin-ab.png", "thumbnail.png")
                     elif elm.area == 1202 or 1202 in elm.validity_ids:
@@ -2409,9 +2405,31 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "label": "valid-region-label",
                             "value": validity,
                         })
+            elif isinstance(elm, vdv.ticket.IdentificationMedium):
+                if elm.id_type == 84:
+                    pass_fields["secondaryFields"].append({
+                        "key": "telephone-number",
+                        "label": "telephone-number-label",
+                        "value": elm.international_phone_number() if elm.phone_number else elm.id_number
+                    })
 
-        org_id = ticket_data.ticket.product_org_id if ticket_data.ticket.product_org_id not in (3000, 5000) \
-            else ticket_data.ticket.ticket_org_id
+        if pass_fields["primaryFields"]:
+            pass_fields["headerFields"].append({
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.ticket.product_name()
+            })
+        else:
+            pass_fields["primaryFields"].append({
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.ticket.product_name()
+            })
+
+        org_id = (
+            ticket_data.ticket.ticket_org_id if ticket_data.ticket.ticket_org_id in VDV_ORG_ID_LOGO
+            else ticket_data.ticket.product_org_id
+        ) if ticket_data.ticket.product_org_id not in (3000, 5000) else ticket_data.ticket.ticket_org_id
         if org_id in VDV_ORG_ID_LOGO:
             add_pkp_img(pkp, VDV_ORG_ID_LOGO[org_id], "logo.png")
             have_logo = True
@@ -4466,6 +4484,7 @@ PASS_STRINGS = {
 "group-ticket-label" = "Group ticket";
 "group-leader-label" = "Group leader";
 "article-number-label" = "Article number";
+"telephone-number-label" = "Telephone";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -4530,6 +4549,7 @@ PASS_STRINGS = {
 "group-ticket-label" = "Tocyn grwp";
 "group-leader-label" = "Prifdeithiwr";
 "article-number-label" = "Rhif articl";
+"telephone-number-label" = "Rhif ffôn";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -4594,6 +4614,7 @@ PASS_STRINGS = {
 "group-ticket-label" = "Gruppenkarte";
 "group-leader-label" = "Hauptfahrgast";
 "article-number-label" = "Artikel-nr.";
+"telephone-number-label" = "Telefonnr.";
 """,
     "nl": """
 "product-label" = "Product";

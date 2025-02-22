@@ -1,39 +1,41 @@
 <dl class="govuk-summary-list govuk-summary-list--no-border">
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Responsible organisation ID</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.responsible_org_id }}</code></dd>
-    </div>
     {% with org_name=ref.responsible_org_name_opt %}
         {% if org_name %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Responsible organisation Name</dt>
+                <dt class="govuk-summary-list__key">Responsible organisation</dt>
                 <dd class="govuk-summary-list__value">
-                    {{ org_name }}
+                    {{ org_name }} (<code>{{ ref.responsible_org_id }}</code>)
                 </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Responsible organisation ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ref.responsible_org_id }}</code></dd>
             </div>
         {% endif %}
     {% endwith %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Owner organisation ID</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ref.owner_org_id }}</code></dd>
-    </div>
     {% with org_name=ref.owner_org_name_opt %}
         {% if org_name %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Owner organisation Name</dt>
+                <dt class="govuk-summary-list__key">Owner organisation</dt>
                 <dd class="govuk-summary-list__value">
-                    {{ org_name }}
+                    {{ org_name }} (<code>{{ ref.owner_org_id }}</code>)
                 </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Owner organisation ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ref.owner_org_id }}</code></dd>
             </div>
         {% endif %}
     {% endwith %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">SAM Valid From</dt>
-        <dd class="govuk-summary-list__value">{{ ref.sam_valid_from }}</dd>
+        <dd class="govuk-summary-list__value">{{ ref.sam_valid_from|date:"F d, Y" }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">SAM Expiry</dt>
-        <dd class="govuk-summary-list__value">{{ ref.sam_expiry }}</dd>
+        <dd class="govuk-summary-list__value">{{ ref.sam_expiry|date:"F Y" }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">SAM ID</dt>
