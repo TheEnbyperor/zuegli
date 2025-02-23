@@ -141,6 +141,14 @@ def view_ticket(request, pk):
     has_saarvv = ticket_obj.account and ticket_obj.account.is_saarvv_authenticated()
     has_db_abo = (ticket_obj.account and ticket_obj.account.is_db_authenticated()) or ticket_obj.db_subscription
 
+    parsed_layout = None
+    if isinstance(active_instance, models.UICTicketInstance):
+        ticket_data: ticket.UICTicket = active_instance.as_ticket()
+        if ticket_data.layout and ticket_data.layout.standard in ("RCT2", "RTC2"):
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(ticket_data.layout)
+            parsed_layout = parser.parse(active_instance.distributor_rics)
+
     photo_upload_forms = {}
     if rsp_obj := ticket_obj.rsp_instances.first():
         td = rsp_obj.as_ticket()  # type: ticket.RSPTicket
@@ -184,6 +192,7 @@ def view_ticket(request, pk):
         "has_saarvv": has_saarvv,
         "is_db_abo": is_db_abo,
         "has_db_abo": has_db_abo,
+        "parsed_layout": parsed_layout,
     })
 
 
