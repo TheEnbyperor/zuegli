@@ -40,14 +40,17 @@ def check_pass_auth(f):
         if pass_type_id != settings.PKPASS_CONF["pass_type"]:
             return HttpResponse(status=404)
 
-        ticket_obj, ticket_part = get_ticket(serial_number)
-        if not ticket_obj:
+        if d := get_ticket(serial_number):
+            ticket_obj, ticket_part = d
+            if not ticket_obj:
+                return HttpResponse(status=404)
+
+            if ticket_obj.pkpass_authentication_token != auth_token:
+                return HttpResponse(status=401)
+
+            return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
+        else:
             return HttpResponse(status=404)
-
-        if ticket_obj.pkpass_authentication_token != auth_token:
-            return HttpResponse(status=401)
-
-        return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
 
     return wrapper
 
@@ -55,10 +58,13 @@ def check_pass_auth(f):
 def ticket_updated_date(_request, pass_type_id, serial_number):
     if pass_type_id != settings.PKPASS_CONF["pass_type"]:
         return
-    ticket_obj, _ = get_ticket(serial_number)
-    if not ticket_obj:
-        return
-    return ticket_obj.last_updated
+    if d := get_ticket(serial_number):
+        ticket_obj, _ = d
+        if not ticket_obj:
+            return
+        return ticket_obj.last_updated
+    else:
+        return HttpResponse(status=404)
 
 
 @csrf_exempt
