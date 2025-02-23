@@ -168,7 +168,7 @@ def nuts_region_name(value):
 
 @register.filter(name="via_as_graphviz")
 def via_as_graphviz(value):
-    if value.lower().startswith("via:"):
+    if value.lower().startswith("via:") or value.lower().startswith("via "):
         via = uic.parse_via.parse_via(value)
         return uuid.uuid4(), via.to_graph()
 
