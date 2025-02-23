@@ -6,12 +6,14 @@ import google.auth.crypt
 import google.auth.jwt
 import urllib.parse
 import pytz
+import logging
 import decimal
 from django.conf import settings
 from django.templatetags.static import static
 from django.shortcuts import reverse
 from . import models, rsp, templatetags, vdv, ssb, uic
 
+logger = logging.getLogger(__name__)
 client = None
 if settings.GOOGLE_CREDS:
     client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
@@ -31,15 +33,21 @@ def sync_ticket(ticket: "models.Ticket"):
         if e.status_code != 404:
             raise e
         else:
-            if obj_type == "generic":
-                client.genericobject().insert(body=data).execute()
-            elif obj_type == "transit":
-                client.transitobject().insert(body=data).execute()
+            try:
+                if obj_type == "generic":
+                    client.genericobject().insert(body=data).execute()
+                elif obj_type == "transit":
+                    client.transitobject().insert(body=data).execute()
+            except googleapiclient.errors.HttpError as e:
+                logger.error(f"Failed to create Google pass object: {e}")
     else:
-        if obj_type == "generic":
-            client.genericobject().update(resourceId=object_id, body=data).execute()
-        elif obj_type == "transit":
-            client.transitobject().update(resourceId=object_id, body=data).execute()
+        try:
+            if obj_type == "generic":
+                client.genericobject().update(resourceId=object_id, body=data).execute()
+            elif obj_type == "transit":
+                client.transitobject().update(resourceId=object_id, body=data).execute()
+        except googleapiclient.errors.HttpError as e:
+            logger.error(f"Failed to update Google pass object: {e}")
 
 
 def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
