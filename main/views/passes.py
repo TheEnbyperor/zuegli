@@ -190,7 +190,9 @@ def view_ticket(request, pk):
 def delete_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
 
-    can_delete = not ticket_obj.account or ticket_obj.account == request.user.account
+    can_delete = not ticket_obj.account or (
+            request.user.is_authenticated and ticket_obj.account == request.user.account
+    )
 
     if request.method == "POST" and can_delete:
         if request.POST.get("confirm") == "yes":
