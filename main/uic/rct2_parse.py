@@ -120,12 +120,9 @@ class RCT2Parser:
         valid_region =        self.read_area(top=8,  left=0,  width=20, height=1)
         price_data =          self.read_area(top=13, left=52, width=20, height=2)
         train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1)
         conditions_data =     self.read_area(top=12, left=0,  width=50, height=3)
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
-
-        valid_region = None
-        if train_data[0:3] == "VIA":
-            valid_region = train_data
 
         try:
             operator_rics = int(operator_rics, 10)
