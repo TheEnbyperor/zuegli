@@ -24,8 +24,8 @@ class DOSIPASEnvelope:
     level_1_signed_data: bytes = b""
     level_1_signature: typing.Optional[bytes] = None
     level_2_signed_data: bytes = b""
-    level_2_signature: bytes = b""
-    level_2_public_key: bytes = b""
+    level_2_signature: typing.Optional[bytes] = None
+    level_2_public_key: typing.Optional[bytes] = None
     level_2_record: typing.Optional["Record"] = None
     records: typing.List["Record"] = dataclasses.field(default_factory=list)
     expiry: typing.Optional[datetime.datetime] = None
@@ -37,6 +37,9 @@ class DOSIPASEnvelope:
         )
 
     def can_verify(self):
+        if "level1SigningAlg" not in self.level_2_data["level1Data"]:
+            return False
+
         return bool(certs.public_key(
             self.level_2_data["level1Data"]["securityProviderNum"],
             self.level_2_data["level1Data"]["keyId"]
@@ -53,11 +56,13 @@ class DOSIPASEnvelope:
         if not pk:
             return False
 
-        if self.level_2_data["level1Data"]["level1SigningAlg"] == "2.16.840.1.101.3.4.3.1":
+        sig_alg = self.level_2_data["level1Data"].get("level1SigningAlg")
+
+        if sig_alg == "2.16.840.1.101.3.4.3.1":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
             hasher = cryptography.hazmat.primitives.hashes.SHA224()
-        elif self.level_2_data["level1Data"]["level1SigningAlg"] == "2.16.840.1.101.3.4.3.2":
+        elif sig_alg == "2.16.840.1.101.3.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
             hasher = cryptography.hazmat.primitives.hashes.SHA256()
@@ -75,16 +80,17 @@ class DOSIPASEnvelope:
             return False
 
         pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+        sig_alg = self.level_2_data["level1Data"].get("level2SigningAlg")
 
-        if self.level_2_data["level1Data"]["level2SigningAlg"] == "2.16.840.1.101.3.4.3.1":
+        if sig_alg == "2.16.840.1.101.3.4.3.1":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
             hasher = cryptography.hazmat.primitives.hashes.SHA224()
-        elif self.level_2_data["level1Data"]["level2SigningAlg"] == "2.16.840.1.101.3.4.3.2":
+        elif sig_alg == "2.16.840.1.101.3.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
             hasher = cryptography.hazmat.primitives.hashes.SHA256()
-        elif self.level_2_data["level1Data"]["level2SigningAlg"] == "1.2.840.10045.4.3.2":
+        elif sig_alg == "1.2.840.10045.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
                 return False
             hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(

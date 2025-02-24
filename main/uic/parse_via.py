@@ -268,7 +268,7 @@ class FlexStation:
     code_table: str
     code: int
     name: str
-    carrier: int
+    carrier: typing.Optional[int]
 
 class FlexVia:
     carriers: typing.Set[FlexCarrier]
@@ -297,7 +297,7 @@ class FlexVia:
                 code_table=via.get("stationCodeTable"),
                 code=via.get("stationNum"),
                 name=via.get("stationIA5"),
-                carrier=hash(current_carrier),
+                carrier=hash(current_carrier) if current_carrier else None,
             )
             self.stations.add(station)
             d = [hash(station)]
@@ -323,6 +323,19 @@ class FlexVia:
                 else:
                     self.edges[o] = [d]
 
+    def _add_station(self, station: FlexStation):
+        label = None
+        if station.code and station.code_table == "stationUIC":
+            if s := stations.get_station_by_uic(station.code):
+                label = s["name"]
+        if not label:
+            if station.name:
+                label = station.name
+            else:
+                label = str(station.code)
+
+        self.out.append(f"station_{hex(abs(hash(station)))} [label=\"{label}\", shape=\"box\", style=\"rounded\"]")
+
     def to_graph(self):
         self.out = []
         self.out.append("digraph {")
@@ -343,19 +356,13 @@ class FlexVia:
 
             for station in self.stations:
                 if station.carrier == ch:
-                    label = None
-                    if station.code and station.code_table == "stationUIC":
-                        if s := stations.get_station_by_uic(station.code):
-                            label = s["name"]
-                    if not label:
-                        if station.name:
-                            label = station.name
-                        else:
-                            label = str(station.code)
-
-                    self.out.append(f"station_{hex(abs(hash(station)))} [label=\"{label}\", shape=\"box\", style=\"rounded\"]")
+                    self._add_station(station)
 
             self.out.append("}")
+
+        for station in self.stations:
+            if station.carrier is None:
+                self._add_station(station)
 
         self.out.append("end [label=\"End\"]")
 
