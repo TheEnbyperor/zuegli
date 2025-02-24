@@ -204,7 +204,8 @@
         src="https://s.as207960.net/js/script.js"></script>
 <script>
     function initMapKit() {
-        if (typeof mapKitLoaded != "undefined") {
+        const loadedEvent = new Event("mapKitLoaded");
+        if (typeof mapKitRequired != "undefined") {
             mapkit.init({
                 authorizationCallback: function (done) {
                     done("{% mapkit_token %}");
@@ -213,7 +214,7 @@
             mapkit.addEventListener("configuration-change", function (event) {
                 switch (event.status) {
                     case "Initialized":
-                        mapKitLoaded()
+                        document.dispatchEvent(loadedEvent);
                         break;
                 }
             });
