@@ -18,8 +18,11 @@
     <meta property="og:description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
     <meta name="fediverse:creator" content="@q@glauca.space"/>
 </head>
-<body class="govuk-template__body ">
-<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+<body class="govuk-template__body">
+<script>
+    document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    let mapKitRequired = false;
+</script>
 {% block body_start %}
 {% endblock body_start %}
 <header class="govuk-header govuk-header--full-width-border" data-module="govuk-header">
@@ -205,7 +208,7 @@
 <script>
     function initMapKit() {
         const loadedEvent = new Event("mapKitLoaded");
-        if (typeof mapKitRequired != "undefined") {
+        if (mapKitRequired) {
             mapkit.init({
                 authorizationCallback: function (done) {
                     done("{% mapkit_token %}");

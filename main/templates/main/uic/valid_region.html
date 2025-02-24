@@ -265,7 +265,7 @@
                         {% mapkit_id as id %}
                         <div id="{{ id }}" style="height: 400px"></div>
                         <script>
-                            const mapKitRequired = true;
+                            mapKitRequired = true;
                             document.addEventListener("mapKitLoaded", function () {
                                 let points = {{ region.1|uic_points_js }};
                                 points = points.map(function (point) {
