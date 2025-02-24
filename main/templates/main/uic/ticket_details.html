@@ -116,40 +116,40 @@
                         {{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg|oid }}
                     </dd>
                 </div>
-            {% endif %}
-            {% if ticket.dosipas_envelope.can_verify %}
-                {% with cert=ticket.dosipas_envelope.signing_cert %}
-                    {% if cert %}
-                        {% include "main/uic/cert.html" with cert=cert %}
-                    {% endif %}
-                {% endwith %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if ticket.dosipas_envelope.verify_level_1_signature %}
-                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                        {% else %}
+                {% if ticket.dosipas_envelope.can_verify %}
+                    {% with cert=ticket.dosipas_envelope.signing_cert %}
+                        {% if cert %}
+                            {% include "main/uic/cert.html" with cert=cert %}
+                        {% endif %}
+                    {% endwith %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.dosipas_envelope.verify_level_1_signature %}
+                                <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                            {% else %}
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        Signature verification failed, this is likely a forged ticket
+                                    </strong>
+                                </div>
+                            {% endif %}
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Signing key</dt>
+                        <dd class="govuk-summary-list__value">
                             <div class="govuk-warning-text">
                                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                                 <strong class="govuk-warning-text__text">
-                                    Signature verification failed, this is likely a forged ticket
+                                    Unknown signing key, can't verify ticket
                                 </strong>
                             </div>
-                        {% endif %}
-                    </dd>
-                </div>
-            {% else %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Signing key</dt>
-                    <dd class="govuk-summary-list__value">
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                Unknown signing key, can't verify ticket
-                            </strong>
-                        </div>
-                    </dd>
-                </div>
+                        </dd>
+                    </div>
+                {% endif %}
             {% endif %}
             {% if ticket.dosipas_envelope.level_2_signature %}
                 <div class="govuk-summary-list__row">
