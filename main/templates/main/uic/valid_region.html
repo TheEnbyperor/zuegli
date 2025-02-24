@@ -265,7 +265,8 @@
                         {% mapkit_id as id %}
                         <div id="{{ id }}" style="height: 400px"></div>
                         <script>
-                            function mapKitLoaded() {
+                            const mapKitRequired = true;
+                            document.addEventListener("mapKitLoaded", function () {
                                 let points = {{ region.1|uic_points_js }};
                                 points = points.map(function (point) {
                                     return new mapkit.Coordinate(point[0], point[1]);
@@ -310,7 +311,7 @@
                                     showsMapTypeControl: true,
                                     showScale: true
                                 });
-                            }
+                            });
                         </script>
                     </div>
                 </div>
