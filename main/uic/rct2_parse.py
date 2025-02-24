@@ -130,8 +130,8 @@ class RCT2Parser:
             operator_rics = 0
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)
 
-        if operator_rics == 1088:
-            # SNCB uses square brackets in the via-string where chevrons should be used
+        if operator_rics in (1088, 1184):
+            # benerail (NSI and NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">")
 
         return ParsedRCT2(
