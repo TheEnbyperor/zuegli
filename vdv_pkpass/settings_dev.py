@@ -152,6 +152,9 @@ CRISPY_TEMPLATE_PACK = "gds"
 PKPASS_CERTIFICATE_LOCATION = BASE_DIR / "priv" / "pass.crt"
 PKPASS_KEY_LOCATION = BASE_DIR / "priv" / "pass.key"
 
+MAPKIT_KEY_LOCATION = BASE_DIR / "priv" / "mapkit.p8"
+MAPKIT_KEY_ID = "MY5M7WRR28"
+
 try:
     with open(BASE_DIR / "priv" / "nr.json") as f:
         d = json.load(f)
@@ -185,6 +188,12 @@ try:
         PKPASS_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
 except FileNotFoundError:
     PKPASS_KEY = None
+
+try:
+    with open(MAPKIT_KEY_LOCATION, "rb") as f:
+        MAPKIT_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
+except FileNotFoundError:
+    MAPKIT_KEY = None
 
 try:
     GOOGLE_CREDS = google.oauth2.service_account.Credentials.from_service_account_file(

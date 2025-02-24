@@ -36,6 +36,12 @@
             <dd class="govuk-summary-list__value"><code>{{ traveler.idCard }}</code></dd>
         </div>
     {% endif %}
+    {% if traveler.countryOfPassport %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ID card country</dt>
+            <dd class="govuk-summary-list__value">{{ traveler.countryOfIdCard|iso3166 }}</dd>
+        </div>
+    {% endif %}
     {% if traveler.passportId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Passport number</dt>
@@ -72,6 +78,16 @@
         <dt class="govuk-summary-list__key">Ticket holder</dt>
         <dd class="govuk-summary-list__value">
             {% if traveler.ticketHolder %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reduced mobility</dt>
+        <dd class="govuk-summary-list__value">
+            {% if traveler.passengerWithReducedMobility %}
                 <strong class="govuk-tag govuk-tag--green">Yes</strong>
             {% else %}
                 <strong class="govuk-tag govuk-tag--red">No</strong>

@@ -1,229 +1,57 @@
 {% load tz rics %}
 {% localtime off %}
-<dl class="govuk-summary-list">
-    {% if ticket.referenceNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Reference number</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.referenceNum }}</code>
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.referenceIA5 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Reference</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.referenceIA5 }}</code>
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.productIdNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Product ID number</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.productIdNum }}</code>
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.productIdIA5 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Product ID</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.productIdIA5 }}</dd>
-        </div>
-    {% endif %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Return included</dt>
-        <dd class="govuk-summary-list__value">
-            {% if ticket.returnIncluded %}
-                <strong class="govuk-tag govuk-tag--green">Yes</strong>
-            {% else %}
-                <strong class="govuk-tag govuk-tag--red">No</strong>
-            {% endif %}
-        </dd>
-    </div>
-    {% if ticket.fromStationNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">From station number</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.fromStationNum }}</code>
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.fromStationNameUTF8 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">From station name</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.fromStationNameUTF8 }}</dd>
-        </div>
-    {% endif %}
-    {% with station=ticket.fromStationNum|get_station:ticket %}
-        {% if station %}
+    <dl class="govuk-summary-list">
+        {% if ticket.referenceNum %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">From station</dt>
-                <dd class="govuk-summary-list__value">
-                    {% include "main/uic/station.html" with station=station %}
+                <dt class="govuk-summary-list__key">Reference number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.referenceNum }}</code>
                 </dd>
             </div>
         {% endif %}
-    {% endwith %}
-    {% if ticket.toStationNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">To station number</dt>
-            <dd class="govuk-summary-list__value"><code>{{ ticket.toStationNum }}</code>
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.toStationNameUTF8 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">To station name</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.toStationNameUTF8 }}</dd>
-        </div>
-    {% endif %}
-    {% with station=ticket.toStationNum|get_station:ticket %}
-        {% if station %}
+        {% if ticket.referenceIA5 %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">To station</dt>
-                <dd class="govuk-summary-list__value">
-                    {% include "main/uic/station.html" with station=station %}
+                <dt class="govuk-summary-list__key">Reference</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.referenceIA5 }}</code>
                 </dd>
             </div>
         {% endif %}
-    {% endwith %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Valid from</dt>
-        <dd class="govuk-summary-list__value">
-            {{ ticket|rics_valid_from:flex.issuing_time|date:"F d, Y H:i:s e" }}
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Valid until</dt>
-        <dd class="govuk-summary-list__value">
-            {{ ticket|rics_valid_until:flex.issuing_time|date:"F d, Y H:i:s e" }}
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Travel class</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ticket.classCode }}</code></dd>
-    </div>
-    {% if ticket.carrierNum %}
+        {% if ticket.productIdNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.productIdNum }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.productIdIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.productIdIA5 }}</dd>
+            </div>
+        {% endif %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dt class="govuk-summary-list__key">Return included</dt>
             <dd class="govuk-summary-list__value">
-                <ul class="govuk-list--bullet">
-                    {% for carrier in ticket.carrierNum %}
-                        {% with org=carrier|rics %}
-                            {% if org %}
-                                <li>{% include 'main/rics.html' with org=org %}</li>
-                            {% else %}
-                                <li><code>{{ carrier }}</code></li>
-                            {% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
+                {% if ticket.returnIncluded %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
             </dd>
         </div>
-    {% endif %}
-    {% if ticket.validRegion %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Valid region</dt>
-            <dd class="govuk-summary-list__value">
-                {% include "main/uic/valid_region.html" with valid_region=ticket.validRegion %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.validRegionDesc %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Valid region description</dt>
-            <dd class="govuk-summary-list__value">
-                {{ ticket.validRegionDesc }}
-                {% with graph=ticket.validRegionDesc|via_as_graphviz %}
-                    {% if graph %}
-                        <div id="{{ graph.0 }}" class="route-graph"></div>
-                        <script>
-                            window.addEventListener('load', function () {
-                                const graph = `{{ graph.1|safe }}`;
-                                Viz.instance().then(function (viz) {
-                                    const svg = viz.renderSVGElement(graph, {
-                                        graphAttributes: {
-                                            fontname: "GDS Transport",
-                                            fontsize: 12,
-                                        },
-                                        nodeAttributes: {
-                                            fontname: "GDS Transport",
-                                            fontsize: 12,
-                                        }
-                                    });
-                                    document.getElementById('{{ graph.0 }}').appendChild(svg);
-                                });
-                            });
-                        </script>
-                    {% endif %}
-                {% endwith %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.price %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Price</dt>
-            <dd class="govuk-summary-list__value">
-                {{ ticket.price|uic_price:flex.data.issuingDetail }}
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.tariffs %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Tariffs</dt>
-            <dd class="govuk-summary-list__value">
-                {% for tariff in ticket.tariffs %}
-                    <div class="govuk-summary-card">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h2 class="govuk-summary-card__title">
-                                Tariff #{{ forloop.counter }}
-                            </h2>
-                        </div>
-                        <div class="govuk-summary-card__content">
-                            {% include "main/uic/tariff.html" with tariff=tariff %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.includedAddOns %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Add-ons</dt>
-            <dd class="govuk-summary-list__value">
-                {% for addon in ticket.includedAddOns %}
-                    <div class="govuk-summary-card">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h2 class="govuk-summary-card__title">
-                                Addon #{{ forloop.counter }}
-                            </h2>
-                        </div>
-                        <div class="govuk-summary-card__content">
-                            {% include "main/uic/addon.html" with addon=addon %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if ticket.returnDescription %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                <h3 class="govuk-heading-m govuk-!-margin-0">Return</h3>
-            </dt>
-            <dd class="govuk-summary-list__value"></dd>
-        </div>
-        {% if ticket.returnDescription.fromStationNum %}
+        {% if ticket.fromStationNum %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">From station number</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.fromStationNum }}</code>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.fromStationNum }}</code>
                 </dd>
             </div>
         {% endif %}
-        {% if ticket.returnDescription.fromStationNameUTF8 %}
+        {% if ticket.fromStationNameUTF8 %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">From station name</dt>
-                <dd class="govuk-summary-list__value">{{ ticket.returnDescription.fromStationNameUTF8 }}</dd>
+                <dd class="govuk-summary-list__value">{{ ticket.fromStationNameUTF8 }}</dd>
             </div>
         {% endif %}
-        {% with station=ticket.returnDescription.fromStationNum|get_station:ticket %}
+        {% with station=ticket.fromStationNum|get_station:ticket %}
             {% if station %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">From station</dt>
@@ -233,20 +61,20 @@
                 </div>
             {% endif %}
         {% endwith %}
-        {% if ticket.returnDescription.toStationNum %}
+        {% if ticket.toStationNum %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">To station number</dt>
-                <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.toStationNum }}</code>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.toStationNum }}</code>
                 </dd>
             </div>
         {% endif %}
-        {% if ticket.returnDescription.toStationNameUTF8 %}
+        {% if ticket.toStationNameUTF8 %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">To station name</dt>
-                <dd class="govuk-summary-list__value">{{ ticket.returnDescription.toStationNameUTF8 }}</dd>
+                <dd class="govuk-summary-list__value">{{ ticket.toStationNameUTF8 }}</dd>
             </div>
         {% endif %}
-        {% with station=ticket.returnDescription.toStationNum|get_station:ticket %}
+        {% with station=ticket.toStationNum|get_station:ticket %}
             {% if station %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">To station</dt>
@@ -256,20 +84,54 @@
                 </div>
             {% endif %}
         {% endwith %}
-        {% if ticket.returnDescription.validReturnRegion %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket|rics_valid_from:flex.issuing_time|date:"F d, Y H:i:s e" }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid until</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket|rics_valid_until:flex.issuing_time|date:"F d, Y H:i:s e" }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Travel class</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.classCode }}</code></dd>
+        </div>
+        {% if ticket.carrierNum %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Valid region</dt>
+                <dt class="govuk-summary-list__key">Carriers</dt>
                 <dd class="govuk-summary-list__value">
-                    {% include "main/uic/valid_region.html" with valid_region=ticket.returnDescription.validReturnRegion %}
+                    <ul class="govuk-list--bullet">
+                        {% for carrier in ticket.carrierNum %}
+                            {% with org=carrier|rics %}
+                                {% if org %}
+                                    <li>{% include 'main/rics.html' with org=org %}</li>
+                                {% else %}
+                                    <li><code>{{ carrier }}</code></li>
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                    </ul>
                 </dd>
             </div>
         {% endif %}
-        {% if ticket.returnDescription.validReturnRegionDesc %}
+        {% if ticket.validRegion %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid region</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/valid_region.html" with valid_region=ticket.validRegion %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.validRegionDesc %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Valid region description</dt>
                 <dd class="govuk-summary-list__value">
-                    {{ ticket.returnDescription.validReturnRegionDesc }}
-                    {% with graph=ticket.returnDescription.validReturnRegionDesc|via_as_graphviz %}
+                    {{ ticket.validRegionDesc }}
+                    {% with graph=ticket.validRegionDesc|via_as_graphviz %}
                         {% if graph %}
                             <div id="{{ graph.0 }}" class="route-graph"></div>
                             <script>
@@ -295,15 +157,153 @@
                 </dd>
             </div>
         {% endif %}
-    {% endif %}
-    {% if ticket.infoText %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Extra info</dt>
-            <dd class="govuk-summary-list__value">
-                {{ ticket.infoText }}
-            </dd>
-        </div>
-    {% endif %}
-    {% include "main/uic/extension.html" with obj=ticket %}
-</dl>
+        {% if ticket.price %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Price</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.price|uic_price:flex.data.issuingDetail }}
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.infoText %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extra info</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.infoText }}
+                </dd>
+            </div>
+        {% endif %}
+        {% include "main/uic/extension.html" with obj=ticket %}
+        {% if ticket.tariffs %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key"></dt>
+                <dd class="govuk-summary-list__value">
+                    {% for tariff in ticket.tariffs %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">
+                                    Tariff #{{ forloop.counter }}
+                                </h2>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {% include "main/uic/tariff.html" with tariff=tariff %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.includedAddOns %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key"></dt>
+                <dd class="govuk-summary-list__value">
+                    {% for addon in ticket.includedAddOns %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">
+                                    Add-on #{{ forloop.counter }}
+                                </h2>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {% include "main/uic/addon.html" with addon=addon %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.returnDescription %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    <h3 class="govuk-heading-m govuk-!-margin-0">Return</h3>
+                </dt>
+                <dd class="govuk-summary-list__value"></dd>
+            </div>
+            {% if ticket.returnDescription.fromStationNum %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">From station number</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.fromStationNum }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if ticket.returnDescription.fromStationNameUTF8 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">From station name</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.returnDescription.fromStationNameUTF8 }}</dd>
+                </div>
+            {% endif %}
+            {% with station=ticket.returnDescription.fromStationNum|get_station:ticket %}
+                {% if station %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">From station</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/uic/station.html" with station=station %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% if ticket.returnDescription.toStationNum %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">To station number</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ ticket.returnDescription.toStationNum }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if ticket.returnDescription.toStationNameUTF8 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">To station name</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.returnDescription.toStationNameUTF8 }}</dd>
+                </div>
+            {% endif %}
+            {% with station=ticket.returnDescription.toStationNum|get_station:ticket %}
+                {% if station %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">To station</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/uic/station.html" with station=station %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% if ticket.returnDescription.validReturnRegion %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Valid region</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/valid_region.html" with valid_region=ticket.returnDescription.validReturnRegion %}
+                    </dd>
+                </div>
+            {% endif %}
+            {% if ticket.returnDescription.validReturnRegionDesc %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Valid region description</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.returnDescription.validReturnRegionDesc }}
+                        {% with graph=ticket.returnDescription.validReturnRegionDesc|via_as_graphviz %}
+                            {% if graph %}
+                                <div id="{{ graph.0 }}" class="route-graph"></div>
+                                <script>
+                                    window.addEventListener('load', function () {
+                                        const graph = `{{ graph.1|safe }}`;
+                                        Viz.instance().then(function (viz) {
+                                            const svg = viz.renderSVGElement(graph, {
+                                                graphAttributes: {
+                                                    fontname: "GDS Transport",
+                                                    fontsize: 12,
+                                                },
+                                                nodeAttributes: {
+                                                    fontname: "GDS Transport",
+                                                    fontsize: 12,
+                                                }
+                                            });
+                                            document.getElementById('{{ graph.0 }}').appendChild(svg);
+                                        });
+                                    });
+                                </script>
+                            {% endif %}
+                        {% endwith %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endif %}
+    </dl>
 {% endlocaltime %}

@@ -150,9 +150,58 @@
             </dd>
         </div>
     {% endif %}
+    {% if res.carrierNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list--bullet">
+                    {% for carrier in res.carrierNum %}
+                        {% with org=carrier|rics %}
+                            {% if org %}
+                                <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.price %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Price</dt>
+            <dd class="govuk-summary-list__value">
+                {{ res.price|uic_price:flex.data.issuingDetail }}
+            </dd>
+        </div>
+    {% endif %}
+    {% if res.infoText %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extra info</dt>
+            <dd class="govuk-summary-list__value">{{ res.infoText }}</dd>
+        </div>
+    {% endif %}
+    {% include "main/uic/extension.html" with obj=res %}
+    {% if res.tariff %}
+        <div class="govuk-summary-list__row">
+            {% for tariff in res.tariff %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Tariff #{{ forloop.counter }}
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% include "main/uic/tariff.html" with tariff=tariff %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     {% if res.berth %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Berths</dt>
+            <dt class="govuk-summary-list__key"></dt>
             <dd class="govuk-summary-list__value">
                 {% for berth in res.berth %}
                     <div class="govuk-summary-card">
@@ -182,56 +231,4 @@
             </dd>
         </div>
     {% endif %}
-    {% if res.carrierNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Carriers</dt>
-            <dd class="govuk-summary-list__value">
-                <ul class="govuk-list--bullet">
-                    {% for carrier in res.carrierNum %}
-                        {% with org=carrier|rics %}
-                            {% if org %}
-                                <li>{% include 'main/rics.html' with org=org %}</li>
-                            {% else %}
-                                <li><code>{{ carrier }}</code></li>
-                            {% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
-            </dd>
-        </div>
-    {% endif %}
-    {% if res.price %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Price</dt>
-            <dd class="govuk-summary-list__value">
-                {{ res.price|uic_price:flex.data.issuingDetail }}
-            </dd>
-        </div>
-    {% endif %}
-    {% if res.tariff %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Tariffs</dt>
-            <dd class="govuk-summary-list__value">
-                {% for tariff in res.tariff %}
-                    <div class="govuk-summary-card">
-                        <div class="govuk-summary-card__title-wrapper">
-                            <h2 class="govuk-summary-card__title">
-                                Tariff #{{ forloop.counter }}
-                            </h2>
-                        </div>
-                        <div class="govuk-summary-card__content">
-                            {% include "main/uic/tariff.html" with tariff=tariff %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if res.infoText %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Extra info</dt>
-            <dd class="govuk-summary-list__value">{{ res.infoText }}</dd>
-        </div>
-    {% endif %}
-    {% include "main/uic/extension.html" with obj=res %}
 </dl>

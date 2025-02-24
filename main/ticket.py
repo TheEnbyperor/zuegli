@@ -826,7 +826,7 @@ def parse_ticket_uic_flex_dosipas(ticket_envelope: uic.DOSIPASEnvelope) -> typin
         )
 
 
-def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[uic.dosipas.DCD]:
+def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.dosipas.DCD"]:
     if not ticket_envelope.level_2_record or not ticket_envelope.level_2_record.format.startswith("FDC"):
         return None
 
@@ -841,7 +841,7 @@ def parse_ticket_uic_dosipas_dcd(ticket_envelope: uic.DOSIPASEnvelope) -> typing
         )
 
 
-def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
+def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional["uic.dt.DTRecordTI"]:
     ti_record = next(filter(
         lambda r: (
                           r.id == "5197TI" or r.id == "5008TI" or r.id == "3497TI" or r.id == "5245TI" or
@@ -862,7 +862,7 @@ def parse_ticket_uic_dt_ti(ticket_envelope: uic.Envelope) -> typing.Optional[uic
         )
 
 
-def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic.dt.DTRecordTI]:
+def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional["uic.dt.DTRecordTI"]:
     pa_record = next(filter(
         lambda r: (
                           r.id == "5197PA" or r.id == "5008PA" or r.id == "3497PA" or r.id == "5245PA" or
@@ -883,7 +883,7 @@ def parse_ticket_uic_dt_pa(ticket_envelope: uic.Envelope) -> typing.Optional[uic
         )
 
 
-def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic.db.DBRecordBL]:
+def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional["uic.db.DBRecordBL"]:
     bl_record = next(filter(lambda r: r.id == "0080BL", ticket_envelope.records), None)
     if not bl_record:
         return None
@@ -900,7 +900,7 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional[uic
 
 def parse_ticket_uic_cd_ut(
         ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
-) -> typing.Optional[uic.cd.CDRecordUT]:
+) -> typing.Optional["uic.cd.CDRecordUT"]:
     ut_record = next(filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
     if not ut_record:
         return None
@@ -932,7 +932,7 @@ def parse_ticket_uic_db_vu(
         )
 
 
-def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional[uic.oebb.OeBBRecord99]:
+def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional["uic.oebb.OeBBRecord99"]:
     oebb_record = next(filter(lambda r: r.id == "118199" and r.version == 1, ticket_envelope.records), None)
     if not oebb_record:
         return None
@@ -1230,7 +1230,7 @@ def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     )
 
 
-def parse_ticket_iata(ticket_bytes: bytes, context: vdv.ticket.Context) -> IATATicket:
+def parse_ticket_iata(ticket_bytes: bytes, context: "vdv.ticket.Context") -> IATATicket:
     try:
         data = iata.Envelope.parse(ticket_bytes)
     except iata.IATAException:

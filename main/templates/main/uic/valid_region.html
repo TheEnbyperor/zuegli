@@ -1,152 +1,331 @@
-{% load tz rics %}
+{% load tz rics mapkit %}
 {% localtime off %}
-<dl class="govuk-summary-list">
-    {% for region in valid_region %}
-        {% if region.0 == "trainLink" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">
-                        Train {% if region.1.trainIA5 %}{{ region.1.trainIA5 }}{% elif region.1.trainNum %}{{ region.1.trainNum }}{% endif %}
-                    </h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        {% if region.1.fromStationNum %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">From station number</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ region.1.fromStationNum }}</code>
-                                </dd>
-                            </div>
-                        {% endif %}
-                        {% if region.1.fromStationNameUTF8 %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">From station name</dt>
-                                <dd class="govuk-summary-list__value">{{ region.1.fromStationNameUTF8 }}</dd>
-                            </div>
-                        {% endif %}
-                        {% with station=region.1.fromStationNum|get_station:ticket %}
-                            {% if station %}
+    <dl class="govuk-summary-list">
+        {% for region in valid_region %}
+            {% if region.0 == "trainLink" %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Train {% if region.1.trainIA5 %}{{ region.1.trainIA5 }}{% elif region.1.trainNum %}
+                            {{ region.1.trainNum }}{% endif %}
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            {% if region.1.fromStationNum %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">From station</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {% include "main/uic/station.html" with station=station %}
+                                    <dt class="govuk-summary-list__key">From station number</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ region.1.fromStationNum }}</code>
                                     </dd>
                                 </div>
                             {% endif %}
-                        {% endwith %}
-                        {% if region.1.toStationNum %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">To station number</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ region.1.toStationNum }}</code>
-                                </dd>
-                            </div>
-                        {% endif %}
-                        {% if region.1.toStationNameUTF8 %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">To station name</dt>
-                                <dd class="govuk-summary-list__value">{{ region.1.toStationNameUTF8 }}</dd>
-                            </div>
-                        {% endif %}
-                        {% with station=region.1.toStationNum|get_station:ticket %}
-                            {% if station %}
+                            {% if region.1.fromStationNameUTF8 %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">To station</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {% include "main/uic/station.html" with station=station %}
+                                    <dt class="govuk-summary-list__key">From station name</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.fromStationNameUTF8 }}</dd>
+                                </div>
+                            {% endif %}
+                            {% with station=region.1.fromStationNum|get_station:ticket %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">From station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if region.1.toStationNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">To station number</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ region.1.toStationNum }}</code>
                                     </dd>
                                 </div>
                             {% endif %}
-                        {% endwith %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Departure time</dt>
-                            <dd class="govuk-summary-list__value">
-                                {{ region.1|rics_departure_time:flex.issuing_time|date:"F d, Y H:i:s e" }}
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-        {% elif region.0 == "zones" %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">
-                        Zone
-                    </h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        {% if region.1.carrierNum %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Carrier RICS</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ region.1.carrierNum }}</code>
-                                </dd>
-                            </div>
-                        {% endif %}
-                        {% if region.1.carrierIA5 %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Carrier ID</dt>
-                                <dd class="govuk-summary-list__value">{{ region.1.carrierIA5 }}</dd>
-                            </div>
-                        {% endif %}
-                        {% with org=region.1.carrierNum|rics %}
-                            {% if org %}
+                            {% if region.1.toStationNameUTF8 %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Carrier</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {% include 'main/rics.html' with org=org %}
-                                    </dd>
+                                    <dt class="govuk-summary-list__key">To station name</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.toStationNameUTF8 }}</dd>
                                 </div>
                             {% endif %}
-                        {% endwith %}
-                        {% with org=region.1.carrierIA5|vdv_org_id %}
-                            {% if org %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Carrier</dt>
-                                    <dd class="govuk-summary-list__value">{{ org }}</dd>
-                                </div>
-                            {% endif %}
-                        {% endwith %}
-                        {% if region.1.nutsCode %}
+                            {% with station=region.1.toStationNum|get_station:ticket %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">To station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">NUTS Region</dt>
-                                <dd class="govuk-summary-list__value">{{ region.1.nutsCode|nuts_region_name }}</dd>
-                            </div>
-                        {% endif %}
-                        {% if region.1.zoneId %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Zone IDs</dt>
+                                <dt class="govuk-summary-list__key">Departure time</dt>
                                 <dd class="govuk-summary-list__value">
-                                    <ul class="govuk-list govuk-list--bullet">
-                                        {% for zone in region.1|validity_zone_names %}
-                                            <li>{{ zone }}</li>
-                                        {% endfor %}
-                                    </ul>
+                                    {{ region.1|rics_departure_time:flex.issuing_time|date:"F d, Y H:i:s e" }}
                                 </dd>
                             </div>
-                        {% endif %}
-                        {% if region.1.binaryZoneId %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Binary zone ID</dt>
-                                <dd class="govuk-summary-list__value">
-                                    {{ region.1.binaryZoneId|as_hex }}
-                                </dd>
-                            </div>
-                        {% endif %}
-                    </dl>
+                        </dl>
+                    </div>
                 </div>
-            </div>
-        {% else %}
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">
-                        Unknown region - <code>{{ region.0 }}</code>
-                    </h2>
+            {% elif region.0 == "zones" %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Zone
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            {% if region.1.carrierNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carrier RICS</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ region.1.carrierNum }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.carrierIA5 %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carrier ID</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.carrierIA5 }}</dd>
+                                </div>
+                            {% endif %}
+                            {% with org=region.1.carrierNum|rics %}
+                                {% if org %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Carrier</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include 'main/rics.html' with org=org %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% with org=region.1.carrierIA5|vdv_org_id %}
+                                {% if org %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Carrier</dt>
+                                        <dd class="govuk-summary-list__value">{{ org }}</dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if region.1.nutsCode %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">NUTS Region</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.nutsCode|nuts_region_name }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.zoneId %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Zone IDs</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <ul class="govuk-list govuk-list--bullet">
+                                            {% for zone in region.1|validity_zone_names %}
+                                                <li>{{ zone }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.binaryZoneId %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Binary zone ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ region.1.binaryZoneId|as_hex }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    </div>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <pre>{{ region.1|pprint }}</pre>
+            {% elif region.0 == "viaStations" %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Via stations
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% with graph=region.1|flex_via_as_graphviz %}
+                            <div id="{{ graph.0 }}" class="route-graph"></div>
+                            <script>
+                                window.addEventListener('load', function () {
+                                    const graph = `{{ graph.1|safe }}`;
+                                    Viz.instance().then(function (viz) {
+                                        const svg = viz.renderSVGElement(graph, {
+                                            graphAttributes: {
+                                                fontname: "GDS Transport",
+                                                fontsize: 12,
+                                            },
+                                            nodeAttributes: {
+                                                fontname: "GDS Transport",
+                                                fontsize: 12,
+                                            }
+                                        });
+                                        document.getElementById('{{ graph.0 }}').appendChild(svg);
+                                    });
+                                });
+                            </script>
+                        {% endwith %}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-</dl>
+            {% elif region.0 == "lines" %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Lines
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            {% if region.1.carrierIA5 %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Carrier ID</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.carrierIA5 }}</dd>
+                                </div>
+                            {% endif %}
+                            {% with org=region.1.carrierNum|rics %}
+                                {% if org %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Carrier</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include 'main/rics.html' with org=org %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if region.1.lineId %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Line IDs</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <ul class="govuk-list govuk-list--bullet">
+                                            {% for id in region.1.lineId %}
+                                                <li><code>{{ id }}</code></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.entryStationNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Entry station number</dt>
+                                    <dd class="govuk-summary-list__value"><code>{{ region.1.entryStationNum }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.entryStationNameUTF8 %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Entry station name</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.entryStationNameUTF8 }}</dd>
+                                </div>
+                            {% endif %}
+                            {% with station=region.1.entryStationNum|get_station:ticket %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Entry station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if region.1.terminatingStationNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Terminating station number</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ region.1.terminatingStationNum }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if region.1.terminatingStationNameUTF8 %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Terminating station name</dt>
+                                    <dd class="govuk-summary-list__value">{{ region.1.terminatingStationNameUTF8 }}</dd>
+                                </div>
+                            {% endif %}
+                            {% with station=region.1.terminatingStationNum|get_station:ticket %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Terminating station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        </dl>
+                    </div>
+                </div>
+            {% elif region.0 == "polygone" %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Polygon
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% mapkit_id as id %}
+                        <div id="{{ id }}" style="height: 400px"></div>
+                        <script>
+                            function mapKitLoaded() {
+                                let points = {{ region.1|uic_points_js }};
+                                points = points.map(function (point) {
+                                    return new mapkit.Coordinate(point[0], point[1]);
+                                });
+                                const style = new mapkit.Style({
+                                    strokeColor: "#EC0016",
+                                    strokeOpacity: .5,
+                                    fillOpacity: .3,
+                                    lineWidth: 3,
+                                    lineJoin: "round",
+                                });
+                                let overlay = new mapkit.PolygonOverlay(points, { style: style });
+
+                                const center = [0, 0]
+                                points.forEach(function (point) {
+                                    center[0] += point.latitude;
+                                    center[1] += point.longitude;
+                                });
+                                const center_p = new mapkit.Coordinate(
+                                    center[0] / points.length,
+                                    center[1] / points.length
+                                );
+                                const span_lat = Math.max.apply(null, points.map(function (point) {
+                                    return point.latitude
+                                })) - Math.min.apply(null, points.map(function (point) {
+                                    return point.latitude
+                                }));
+                                const span_long = Math.max.apply(null, points.map(function (point) {
+                                    return point.longitude
+                                })) - Math.min.apply(null, points.map(function (point) {
+                                    return point.longitude
+                                }));
+
+                                new mapkit.Map("{{ id }}", {
+                                    region: new mapkit.CoordinateRegion(
+                                        center_p,
+                                        new mapkit.CoordinateSpan(span_lat * 1.2, span_long * 1.2)
+                                    ),
+                                    overlays: [overlay],
+                                    tintColor: "#EC0016",
+                                    colorScheme: mapkit.Map.ColorSchemes.Light,
+                                    showsMapTypeControl: true,
+                                    showScale: true
+                                });
+                            }
+                        </script>
+                    </div>
+                </div>
+            {% else %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Unknown region - <code>{{ region.0 }}</code>
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <pre>{{ region.1|pprint }}</pre>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </dl>
 {% endlocaltime %}
