@@ -24,6 +24,9 @@ spec:
             - name: certs
               secret:
                 secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -37,6 +40,8 @@ spec:
                   name: google-creds
                 - mountPath: "/certs"
                   name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -79,6 +84,9 @@ spec:
             - name: certs
               secret:
                 secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -92,6 +100,8 @@ spec:
                   name: google-creds
                 - mountPath: "/certs"
                   name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -134,6 +144,9 @@ spec:
             - name: certs
               secret:
                 secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -147,6 +160,8 @@ spec:
                   name: google-creds
                 - mountPath: "/certs"
                   name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -189,6 +204,9 @@ spec:
             - name: certs
               secret:
                 secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -202,6 +220,8 @@ spec:
                   name: google-creds
                 - mountPath: "/certs"
                   name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -241,6 +261,12 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -252,6 +278,10 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -291,6 +321,12 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -341,6 +377,12 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -352,6 +394,10 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -391,6 +437,12 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -402,6 +454,10 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass
@@ -441,6 +497,12 @@ spec:
         spec:
           restartPolicy: OnFailure
           volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
             - name: google-creds
               secret:
                 secretName: vdv-pkpass-google-creds
@@ -452,6 +514,10 @@ spec:
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
               envFrom:
                 - configMapRef:
                     name: vdv-pkpass

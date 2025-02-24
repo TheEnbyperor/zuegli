@@ -1,4 +1,4 @@
-{% load static %}
+{% load static mapkit %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <head>
@@ -14,9 +14,9 @@
 
     <meta name="description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
     <meta property="og:title" content="Train Tickets to Wallet Passes">
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="website"/>
     <meta property="og:description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
-    <meta name="fediverse:creator" content="@q@glauca.space" />
+    <meta name="fediverse:creator" content="@q@glauca.space"/>
 </head>
 <body class="govuk-template__body ">
 <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
@@ -88,7 +88,8 @@
                             </li>
                             {% if user.is_authenticated and user.account.is_db_authenticated %}
                                 <li class="govuk-service-navigation__item{% if url_name == 'db_account' %} govuk-service-navigation__item--active{% endif %}">
-                                    <a class="govuk-service-navigation__link" href="{% url 'db_account' %}" aria-current="true">
+                                    <a class="govuk-service-navigation__link" href="{% url 'db_account' %}"
+                                       aria-current="true">
                                         DB Account
                                     </a>
                                 </li>
@@ -159,27 +160,30 @@
                     respective members.
                 </div>
                 <div class="govuk-footer__meta-custom">
-                    <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK Design System</a>
+                    <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK
+                        Design System</a>
                     used under license.
                 </div>
                 <div class="govuk-footer__meta-custom">
                     {% if git_hash %}
-                        Running version <a href="https://github.com/theenbyperor/vdv-pkpass" class="govuk-footer__link" target="_blank">{{ git_hash }}</a>.
+                        Running version<a href="https://github.com/theenbyperor/vdv-pkpass" class="govuk-footer__link"
+                                          target="_blank">{{ git_hash }}</a>.
                     {% else %}
                         Development build.
                     {% endif %}
                 </div>
                 <span class="govuk-footer__licence-description">
-                    Licensed under the <a href="https://eupl.eu" class="govuk-footer__link" target="_blank">EUPL v1.2</a>.
+                    Licensed under the <a href="https://eupl.eu" class="govuk-footer__link"
+                                          target="_blank">EUPL v1.2</a>.
                 </span>
             </div>
             <div class="govuk-footer__meta-item">
                 <a
-                  class="govuk-footer__link govuk-footer__copyright-logo"
-                  href="https://magicalcodewit.ch">
-                  &copy; Q Misell, {% now "Y" %}
+                        class="govuk-footer__link govuk-footer__copyright-logo"
+                        href="https://magicalcodewit.ch">
+                    &copy; Q Misell, {% now "Y" %}
                 </a>
-              </div>
+            </div>
         </div>
     </div>
     </div>
@@ -192,6 +196,29 @@
 </script>
 <script src="{% static "barkoder/barkoder-umd.js" %}"></script>
 <script src="{% static "main/viz-standalone.js" %}"></script>
-<script defer data-api="https://s.as207960.net/api/event" data-domain="vdv-pkpass.magicalcodewit.ch" src="https://s.as207960.net/js/script.js"></script>
+<script src="https://cdn.apple-mapkit.com/mk/5.x.x/mapkit.core.js"
+        crossorigin async
+        data-callback="initMapKit"
+        data-libraries="services,full-map"></script>
+<script defer data-api="https://s.as207960.net/api/event" data-domain="vdv-pkpass.magicalcodewit.ch"
+        src="https://s.as207960.net/js/script.js"></script>
+<script>
+    function initMapKit() {
+        if (typeof mapKitLoaded != "undefined") {
+            mapkit.init({
+                authorizationCallback: function (done) {
+                    done("{% mapkit_token %}");
+                },
+            });
+            mapkit.addEventListener("configuration-change", function (event) {
+                switch (event.status) {
+                    case "Initialized":
+                        mapKitLoaded()
+                        break;
+                }
+            });
+        }
+    }
+</script>
 </body>
 </html>

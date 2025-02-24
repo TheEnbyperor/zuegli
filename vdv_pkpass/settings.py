@@ -184,6 +184,9 @@ PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")
 PKPASS_KEY_LOCATION = os.getenv("PKPASS_KEY_LOCATION")
 GOOGLE_CREDS_LOCATION = os.getenv("GOOGLE_CREDS_LOCATION")
 
+MAPKIT_KEY_LOCATION = os.getenv("MAPKIT_KEY_LOCATION")
+MAPKIT_KEY_ID = os.getenv("MAPKIT_KEY_ID")
+
 NR_USERNAME = os.getenv("NR_USERNAME")
 NR_PASSWORD = os.getenv("NR_PASSWORD")
 
@@ -204,6 +207,12 @@ try:
         PKPASS_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
 except FileNotFoundError:
     PKPASS_KEY = None
+
+try:
+    with open(MAPKIT_KEY_LOCATION, "rb") as f:
+        MAPKIT_KEY = cryptography.hazmat.primitives.serialization.load_pem_private_key(f.read(), None)
+except FileNotFoundError:
+    MAPKIT_KEY = None
 
 try:
     GOOGLE_CREDS = google.oauth2.service_account.Credentials.from_service_account_file(

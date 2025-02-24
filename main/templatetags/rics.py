@@ -173,6 +173,12 @@ def via_as_graphviz(value):
         return uuid.uuid4(), via.to_graph()
 
 
+@register.filter(name="flex_via_as_graphviz")
+def flex_via_as_graphviz(value):
+    via = uic.parse_via.FlexVia.parse(value)
+    return uuid.uuid4(), via.to_graph()
+
+
 @register.filter(name="vdv_org_id")
 def vdv_org_id(value):
     if value.startswith("VDV"):
@@ -277,3 +283,39 @@ def uic_geo(value: dict):
         longitude=long,
         latitude=lat
     )
+
+@register.filter(name="uic_points_js")
+def uic_points_js(value: dict):
+    start_long = decimal.Decimal(value["firstEdge"]["longitude"])
+    start_lat = decimal.Decimal(value["firstEdge"]["latitude"])
+
+    if value["firstEdge"]["geoUnit"] == "deciDegree":
+        divider = 1
+    elif value["firstEdge"]["geoUnit"] == "centiDegree":
+        divider = 100
+    elif value["firstEdge"]["geoUnit"] == "milliDegree":
+        divider = 1_000
+    elif value["firstEdge"]["geoUnit"] == "tenthmilliDegree":
+        divider = 10_000
+    elif value["firstEdge"]["geoUnit"] == "microDegree":
+        divider = 1_000_000
+    else:
+        return
+
+    if value["firstEdge"]["hemisphereLongitude"] == "south":
+        start_long = -start_long
+    if value["firstEdge"]["hemisphereLatitude"] == "west":
+        start_lat = -start_lat
+
+    edges = [(start_long / divider, start_lat / divider)]
+    for e in value["edges"]:
+        edges.append((
+            (start_long - decimal.Decimal(e["longitude"])) / divider,
+            (start_lat - decimal.Decimal(e["latitude"])) / divider,
+        ))
+
+    out = "["
+    for e in edges:
+        out += f"[{e[1]},{e[0]}],"
+    out += "]"
+    return out

@@ -3,7 +3,8 @@ import typing
 import uuid
 import json
 import pathlib
-from . import rics
+import dataclasses
+from . import rics, stations
 
 DB_ABBR = None
 ROOT_DIR = pathlib.Path(__file__).parent
@@ -256,3 +257,123 @@ def parse_via(via: str) -> Route:
         route.append(Carrier(carrier_num, points))
 
     return route
+
+@dataclasses.dataclass(frozen=True)
+class FlexCarrier:
+    rics: typing.FrozenSet[int]
+    name: typing.FrozenSet[str]
+
+@dataclasses.dataclass(frozen=True)
+class FlexStation:
+    code_table: str
+    code: int
+    name: str
+    carrier: int
+
+class FlexVia:
+    carriers: typing.Set[FlexCarrier]
+    stations: typing.Set[FlexStation]
+    edges: typing.Dict[int, typing.List[int]]
+
+    def __init__(self):
+        self.carriers = set()
+        self.stations = set()
+        self.edges = {}
+
+    @classmethod
+    def parse(cls, via: dict) -> "FlexVia":
+        out = cls()
+        d = out.parse_(via, [1])
+        out.add_edges(d, [2])
+        return out
+
+    def parse_(self, via: dict, origin: typing.List[int], current_carrier: typing.Optional["FlexCarrier"] = None):
+        if "carrierNum" in via or "carrierIA5" in via:
+            current_carrier = FlexCarrier(frozenset(via.get("carrierNum", [])), frozenset(via.get("carrierIA5", [])))
+            self.carriers.add(current_carrier)
+
+        if "stationNum" in via or "stationIA5" in via:
+            station = FlexStation(
+                code_table=via.get("stationCodeTable"),
+                code=via.get("stationNum"),
+                name=via.get("stationIA5"),
+                carrier=hash(current_carrier),
+            )
+            self.stations.add(station)
+            d = [hash(station)]
+            self.add_edges(origin, d)
+            return d
+        elif "route" in via:
+            for v in via["route"]:
+                origin = self.parse_(v, origin, current_carrier)
+            return origin
+        elif "alternativeRoutes" in via:
+            d = []
+            for a in via["alternativeRoutes"]:
+                d.extend(self.parse_(a, origin, current_carrier))
+            return d
+        else:
+            return []
+
+    def add_edges(self, origin: typing.List[int], destination: typing.List[int]):
+        for d in destination:
+            for o in origin:
+                if o in self.edges:
+                    self.edges[o].append(d)
+                else:
+                    self.edges[o] = [d]
+
+    def to_graph(self):
+        self.out = []
+        self.out.append("digraph {")
+        self.out.append("rankdir=\"LR\";")
+        self.out.append("start [label=\"Start\"]")
+
+        for carrier in self.carriers:
+            ch = hash(carrier)
+            self.out.append(f"subgraph cluster_{hex(abs(ch))} {{")
+            carrier_names = []
+            for n in carrier.rics:
+                if c := rics.get_rics(n):
+                    carrier_names.append(c["full_name"])
+                else:
+                    carrier_names.append(n)
+            carrier_names = ", ".join(carrier_names)
+            self.out.append(f"label=\"{carrier_names}\"")
+
+            for station in self.stations:
+                if station.carrier == ch:
+                    label = None
+                    if station.code and station.code_table == "stationUIC":
+                        if s := stations.get_station_by_uic(station.code):
+                            label = s["name"]
+                    if not label:
+                        if station.name:
+                            label = station.name
+                        else:
+                            label = str(station.code)
+
+                    self.out.append(f"station_{hex(abs(hash(station)))} [label=\"{label}\", shape=\"box\", style=\"rounded\"]")
+
+            self.out.append("}")
+
+        self.out.append("end [label=\"End\"]")
+
+        for o, ds in self.edges.items():
+            if o == 1:
+                o_name = "start"
+            elif o == 2:
+                o_name = "end"
+            else:
+                o_name = f"station_{hex(abs(o))}"
+            for d in ds:
+                if d == 1:
+                    d_name = "start"
+                elif d == 2:
+                    d_name = "end"
+                else:
+                    d_name = f"station_{hex(abs(d))}"
+                self.out.append(f"{o_name} -> {d_name}")
+
+        self.out.append("}")
+        return "\n".join(self.out)

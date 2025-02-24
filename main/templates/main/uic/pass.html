@@ -1,112 +1,116 @@
 {% load tz rics %}
 {% localtime off %}
-<dl class="govuk-summary-list">
-    {% if pass.referenceNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Reference</dt>
-            <dd class="govuk-summary-list__value"><code>{{ pass.referenceNum }}</code></dd>
-        </div>
-    {% endif %}
-    {% if pass.referenceIA5 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Reference</dt>
-            <dd class="govuk-summary-list__value"><code>{{ pass.referenceIA5 }}</code></dd>
-        </div>
-    {% endif %}
-    {% if pass.productIdIA5 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Product ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ pass.productIdIA5 }}</code></dd>
-        </div>
-    {% endif %}
-    {% if pass.productOwnerNum %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Product Owner</dt>
-            <dd class="govuk-summary-list__value">
-                {% with org=pass.productOwnerNum|rics %}
-                    {% if org %}
-                        {% include 'main/rics.html' with org=org %}
+    <dl class="govuk-summary-list">
+        {% if pass.referenceNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference</dt>
+                <dd class="govuk-summary-list__value"><code>{{ pass.referenceNum }}</code></dd>
+            </div>
+        {% endif %}
+        {% if pass.referenceIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference</dt>
+                <dd class="govuk-summary-list__value"><code>{{ pass.referenceIA5 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if pass.productIdIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ pass.productIdIA5 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if pass.productOwnerNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product Owner</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with org=pass.productOwnerNum|rics %}
+                        {% if org %}
+                            {% include 'main/rics.html' with org=org %}
+                        {% else %}
+                            <code>{{ pass.productOwnerNum }}</code>
+                        {% endif %}
+                    {% endwith %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if pass.passType %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Pass type</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if flex.issuing_rics == 9901 %}
+                        {% if pass.passType == 1 %}
+                            Eurail Global Pass
+                        {% elif pass.passType == 2 %}
+                            Interrail Global Pass
+                        {% elif pass.passType == 3 %}
+                            Interrail One Country Pass
+                        {% elif pass.passType == 4 %}
+                            Eurail One Country Pass
+                        {% elif pass.passType == 5 %}
+                            Eurail/Interrail Global Pass Emergency ticket
+                        {% else %}
+                            <code>{{ pass.passType }}</code>
+                        {% endif %}
                     {% else %}
-                        <code>{{ pass.productOwnerNum }}</code>
+                        <code>{{ pass.passType }}</code>
                     {% endif %}
-                {% endwith %}
-            </dd>
-        </div>
-    {% endif %}
-    {% if pass.passType %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if pass.passDescription %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Description</dt>
+                <dd class="govuk-summary-list__value">{{ pass.passDescription }}</dd>
+            </div>
+        {% endif %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Pass type</dt>
+            <dt class="govuk-summary-list__key">Valid from</dt>
             <dd class="govuk-summary-list__value">
-                {% if pass.passType == 1 %}
-                    Eurail Global Pass
-                {% elif pass.passType == 2 %}
-                    Interrail Global Pass
-                {% elif pass.passType == 3 %}
-                    Interrail One Country Pass
-                {% elif pass.passType == 4 %}
-                    Eurail One Country Pass
-                {% elif pass.passType == 5 %}
-                    Eurail/Interrail Global Pass Emergency ticket
-                {% else %}
-                    <code>{{ pass.passType }}</code>
-                {% endif %}
+                {{ pass|rics_valid_from:flex.issuing_time|utc|date:"F d, Y H:i:s e" }}
             </dd>
         </div>
-    {% endif %}
-    {% if pass.passDescription %}
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Description</dt>
-            <dd class="govuk-summary-list__value">{{ pass.passDescription }}</dd>
-        </div>
-    {% endif %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Valid from</dt>
-        <dd class="govuk-summary-list__value">
-            {{ pass|rics_valid_from:flex.issuing_time|utc|date:"F d, Y H:i:s e" }}
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Valid until</dt>
-        <dd class="govuk-summary-list__value">
-            {{ pass|rics_valid_until:flex.issuing_time|utc|date:"F d, Y H:i:s e" }}
-        </dd>
-    </div>
-    {% if pass.classCode %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Travel class</dt>
-            <dd class="govuk-summary-list__value"><code>{{ pass.classCode }}</code></dd>
-        </div>
-    {% endif %}
-    {% if pass.countries %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Countries</dt>
+            <dt class="govuk-summary-list__key">Valid until</dt>
             <dd class="govuk-summary-list__value">
-                <ul class="govuk-list">
-                    {% for country in pass.countries %}
-                        <li>{{ country|uic_country }}</li>
-                    {% endfor %}
-                </ul>
+                {{ pass|rics_valid_until:flex.issuing_time|utc|date:"F d, Y H:i:s e" }}
             </dd>
         </div>
-    {% endif %}
-    {% if pass.includedCarrierIA5 %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Included carriers</dt>
-            <dd class="govuk-summary-list__value">
-                <ul class="govuk-list">
-                    {% for carrier in pass.includedCarrierIA5 %}
-                        {% with org=carrier|rics %}
-                            {% if org %}
-                                <li>{% include 'main/rics.html' with org=org %}</li>
-                            {% else %}
-                                <li><code>{{ carrier }}</code></li>
-                            {% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
-            </dd>
-        </div>
-    {% endif %}
-    {% include "main/uic/extension.html" with obj=pass %}
-</dl>
+        {% if pass.classCode %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Travel class</dt>
+                <dd class="govuk-summary-list__value"><code>{{ pass.classCode }}</code></dd>
+            </div>
+        {% endif %}
+        {% if pass.countries %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Countries</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list">
+                        {% for country in pass.countries %}
+                            <li>{{ country|uic_country }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if pass.includedCarrierIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Included carriers</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list">
+                        {% for carrier in pass.includedCarrierIA5 %}
+                            {% with org=carrier|rics %}
+                                {% if org %}
+                                    <li>{% include 'main/rics.html' with org=org %}</li>
+                                {% else %}
+                                    <li><code>{{ carrier }}</code></li>
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% include "main/uic/extension.html" with obj=pass %}
+    </dl>
 {% endlocaltime %}
