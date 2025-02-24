@@ -273,96 +273,96 @@
         <h2 class="govuk-heading-m">Details parsed from paper ticket</h2>
         <dl class="govuk-summary-list">
             {% if parsed_layout.operator_rics %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Operator RICS</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.operator_rics }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Operator RICS</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.operator_rics }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.trips %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Trips</dt>
-                <dd class="govuk-summary-list__value">
-                    {% for trip in parsed_layout.trips %}
-                        <div class="govuk-summary-card">
-                            <div class="govuk-summary-card__title-wrapper">
-                                <h2 class="govuk-summary-card__title">
-                                    Trip #{{ forloop.counter }}
-                                </h2>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Trips</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% for trip in parsed_layout.trips %}
+                            <div class="govuk-summary-card">
+                                <div class="govuk-summary-card__title-wrapper">
+                                    <h2 class="govuk-summary-card__title">
+                                        Trip #{{ forloop.counter }}
+                                    </h2>
+                                </div>
+                                <div class="govuk-summary-card__content">
+                                    {% include "main/uic/trip_part.html" with trip=trip %}
+                                </div>
                             </div>
-                            <div class="govuk-summary-card__content">
-                                {% include "main/uic/trip_part.html" with trip=trip %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </dd>
-            </div>
+                        {% endfor %}
+                    </dd>
+                </div>
             {% endif %}
             {% if parsed_layout.document_type %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Document type</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.document_type }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Document type</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.document_type }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.traveller %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Traveller</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.traveller }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Traveller</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.traveller }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.price_data %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Price</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.price_data }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Price</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.price_data }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.train_data %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Train data</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.train_data }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Train data</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.train_data }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.conditions %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Conditions</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.conditions }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Conditions</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.conditions }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.extra %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Extra data</dt>
-                <dd class="govuk-summary-list__value"><code>{{ parsed_layout.extra }}</code></dd>
-            </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Extra data</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ parsed_layout.extra }}</code></dd>
+                </div>
             {% endif %}
             {% if parsed_layout.valid_region %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Valid region</dt>
-                <dd class="govuk-summary-list__value">
-                    {{ parsed_layout.valid_region }}
-                    {% with graph=parsed_layout.valid_region|via_as_graphviz %}
-                        {% if graph %}
-                            <div id="{{ graph.0 }}" class="route-graph"></div>
-                            <script>
-                                window.addEventListener('load', function () {
-                                    const graph = `{{ graph.1|safe }}`;
-                                    Viz.instance().then(function (viz) {
-                                        const svg = viz.renderSVGElement(graph, {
-                                            graphAttributes: {
-                                                fontname: "GDS Transport",
-                                                fontsize: 12,
-                                            },
-                                            nodeAttributes: {
-                                                fontname: "GDS Transport",
-                                                fontsize: 12,
-                                            }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Valid region</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ parsed_layout.valid_region }}
+                        {% with graph=parsed_layout.valid_region|via_as_graphviz %}
+                            {% if graph %}
+                                <div id="{{ graph.0 }}" class="route-graph"></div>
+                                <script>
+                                    window.addEventListener('load', function () {
+                                        const graph = `{{ graph.1|safe }}`;
+                                        Viz.instance().then(function (viz) {
+                                            const svg = viz.renderSVGElement(graph, {
+                                                graphAttributes: {
+                                                    fontname: "GDS Transport",
+                                                    fontsize: 12,
+                                                },
+                                                nodeAttributes: {
+                                                    fontname: "GDS Transport",
+                                                    fontsize: 12,
+                                                }
+                                            });
+                                            document.getElementById('{{ graph.0 }}').appendChild(svg);
                                         });
-                                        document.getElementById('{{ graph.0 }}').appendChild(svg);
                                     });
-                                });
-                            </script>
-                        {% endif %}
-                    {% endwith %}
-                </dd>
-            </div>
+                                </script>
+                            {% endif %}
+                        {% endwith %}
+                    </dd>
+                </div>
             {% endif %}
         </dl>
     {% endif %}
