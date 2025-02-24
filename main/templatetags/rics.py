@@ -108,7 +108,11 @@ def rics_valid_until(value, issuing_time: typing.Optional[datetime.datetime]=Non
         valid_from = valid_from.replace(
             year=valid_from.year + value["validUntilYear"],
         )
-    valid_from += datetime.timedelta(days=value["validUntilDay"], minutes=value.get("validUntilTime", 0), seconds=59)
+    valid_from += datetime.timedelta(days=value["validUntilDay"])
+    if "validUntilTime" in value:
+        valid_from += datetime.timedelta(days=value["validUntilTime"], seconds=59)
+    else:
+        valid_from = valid_from.replace(hour=23, minute=59, second=59)
     if "validUntilUTCOffset" in value:
         tz = datetime.timezone(-datetime.timedelta(minutes=15 * value["validUntilUTCOffset"]))
         valid_from = valid_from.replace(tzinfo=tz)
