@@ -336,12 +336,16 @@ class UICTicket:
             cls, ticket_bytes: bytes, dosipas: uic.DOSIPASEnvelope,
             _context: "vdv.ticket.Context"
     ) -> "UICTicket":
+        records = dosipas.records
+        if dosipas.level_2_record:
+            records += [dosipas.level_2_record]
+
         return cls(
             raw_bytes=ticket_bytes,
             dosipas_envelope=dosipas,
             flex=parse_ticket_uic_flex_dosipas(dosipas),
             dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
-            other_dosipas_records=[r for r in dosipas.records + [dosipas.level_2_record] if not (
+            other_dosipas_records=[r for r in records if not (
                 r.format.startswith("FCB") or r.format.startswith("FDC")
             )],
         )
