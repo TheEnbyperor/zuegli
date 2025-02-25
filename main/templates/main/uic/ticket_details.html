@@ -111,19 +111,20 @@
             {% endif %}
             {% if ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg %}
                 <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level 1 key algorithm</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.dosipas_envelope.level_2_data.level1Data.level1KeyAlg|oid }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
                     <dd class="govuk-summary-list__value">
                         {{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg|oid }}
                     </dd>
                 </div>
                 {% if ticket.dosipas_envelope.can_verify %}
-                    {% with cert=ticket.dosipas_envelope.signing_cert %}
-                        {% if cert %}
-                            {% include "main/uic/cert.html" with cert=cert %}
-                        {% endif %}
-                    {% endwith %}
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Signature verification - level 1</dt>
+                        <dt class="govuk-summary-list__key">Level 1 signature verification</dt>
                         <dd class="govuk-summary-list__value">
                             {% if ticket.dosipas_envelope.verify_level_1_signature %}
                                 <strong class="govuk-tag govuk-tag--green">Valid</strong>
@@ -137,9 +138,14 @@
                             {% endif %}
                         </dd>
                     </div>
+                    {% with cert=ticket.dosipas_envelope.signing_cert %}
+                        {% if cert %}
+                            {% include "main/uic/cert.html" with cert=cert %}
+                        {% endif %}
+                    {% endwith %}
                 {% else %}
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Signing key</dt>
+                        <dt class="govuk-summary-list__key">Level 1 signing key</dt>
                         <dd class="govuk-summary-list__value">
                             <div class="govuk-warning-text">
                                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -153,13 +159,19 @@
             {% endif %}
             {% if ticket.dosipas_envelope.level_2_signature %}
                 <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level 2 key algorithm</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.dosipas_envelope.level_2_data.level1Data.level2KeyAlg|oid }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Level 2 signature algorithm</dt>
                     <dd class="govuk-summary-list__value">
                         {{ ticket.dosipas_envelope.level_2_data.level1Data.level2SigningAlg|oid }}
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
+                    <dt class="govuk-summary-list__key">Level 2 signature verification</dt>
                     <dd class="govuk-summary-list__value">
                         {% if ticket.dosipas_envelope.verify_level_2_signature %}
                             <strong class="govuk-tag govuk-tag--green">Valid</strong>
@@ -175,7 +187,7 @@
                 </div>
             {% elif ticket.dosipas.level_2_public_key %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Signature verification - level 2</dt>
+                    <dt class="govuk-summary-list__key">Level 2 signature verification</dt>
                     <dd class="govuk-summary-list__value">
                         <div class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>

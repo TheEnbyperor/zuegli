@@ -110,7 +110,8 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
     elif isinstance(ticket_instance, models.SSBTicketInstance):
         ticket_data = ticket_instance.as_ticket()
 
-        if isinstance(ticket_data.data, ssb.IntegratedReservationTicket) or isinstance(ticket_data.data, ssb.NonReservationTicket):
+        if isinstance(ticket_data.data, ssb.IntegratedReservationTicket) or \
+                isinstance(ticket_data.data, ssb.NonReservationTicket):
             return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
         elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
             return "generic", settings.GWALLET_CONF["train_pass_class"]
@@ -202,7 +203,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         "cardTitle": {
             "defaultValue": {
                 "language": "de",
-                "value": "BahnCard"
+                "value": ""
+            }
+        },
+        "header": {
+            "defaultValue": {
+                "language": "en",
+                "value": ""
             }
         }
     }
@@ -439,10 +446,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             })
 
                     if "validRegion" in document and document["validRegion"][0][0] == "trainLink":
-                        train_links = list(map(lambda l: l[1], filter(lambda l: l[0] == "trainLink", document["validRegion"])))
+                        train_links = list(
+                            map(lambda l: l[1], filter(lambda l: l[0] == "trainLink", document["validRegion"])))
                         departure_time = templatetags.rics.rics_departure_time(train_links[0], issued_at)
-                        train_number = ", ".join(list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
-                        departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        train_number = ", ".join(
+                            list(dict.fromkeys([l.get("trainIA5") or str(l.get("trainNum")) for l in train_links])))
+                        departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime(
+                            "%Y-%m-%dT%H:%M:%SZ")
                         obj["ticketLegs"][0]["departureDateTime"] = departure_time_str
                         obj["ticketLegs"][0]["carriage"] = train_number
 
@@ -1111,7 +1121,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     "date": f"{ticket_data.data.validity_start.isoformat()}T00:00:00Z",
                 },
                 "end": {
-                    "date":f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
+                    "date": f"{ticket_data.data.validity_end.isoformat()}T00:00:00Z",
                 }
             }
             obj["header"] = {
@@ -1273,7 +1283,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "value": route_data["cc_desc"]
                     }
                 }
-
 
             if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
                 obj["ticketLegs"][0]["fareName"] = {

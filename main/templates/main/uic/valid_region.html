@@ -133,6 +133,14 @@
                                     </dd>
                                 </div>
                             {% endif %}
+                            {% if region.1.city %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">City</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ region.1.city }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
                         </dl>
                     </div>
                 </div>

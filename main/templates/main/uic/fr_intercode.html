@@ -1,0 +1,73 @@
+{% load rics %}
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">Intercode (France)</dt>
+    <dd class="govuk-summary-list__value">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Version</dt>
+                <dd class="govuk-summary-list__value">v{{ obj.data.intercodeVersion }}.{{ obj.data.intercodeInstantiation }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Network ID</dt>
+                <dd class="govuk-summary-list__value">{{ obj.data.networkId|as_hex }}</dd>
+            </div>
+            {% if obj.data.productRetailer %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product retailer</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            {% if obj.data.productRetailer.retailChannel %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retail channel</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ obj.data.productRetailer.retailChannel }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if obj.data.productRetailer.retailGeneratorId is not None %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retail generator ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ obj.data.productRetailer.retailGeneratorId }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if obj.data.productRetailer.retailServerId is not None %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retail server ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ obj.data.productRetailer.retailServerId }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if obj.data.productRetailer.retailerId is not None %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retailer ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ obj.data.productRetailer.retailerId }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if obj.data.productRetailer.retailPointId is not None %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retail point ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ obj.data.productRetailer.retailPointId }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% if obj.data.productRetailer.retailTraceability is not None %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Retail traceability</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ obj.data.productRetailer.retailTraceability }}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    </dd>
+                </div>
+            {% endif %}
+        </dl>
+    </dd>
+</div>

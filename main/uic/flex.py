@@ -4,7 +4,7 @@ import pathlib
 import datetime
 import asn1tools
 import pytz
-from . import util
+from . import util, fr_intercode
 
 ROOT = pathlib.Path(__file__).parent
 ASN1_SPEC_V1_3 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v1.3.4.asn"], codec="uper")
@@ -15,22 +15,23 @@ ASN1_SPEC_V3 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v3.0.
 class Flex:
     version: int
     data: typing.Dict[str, typing.Any]
+    intercode: typing.Optional[fr_intercode.FRIntercode] = None
 
     @classmethod
     def parse(cls, version: int, data: bytes) -> "Flex":
         try:
             if version in (1, 13):
-                return cls(
+                out = cls(
                     version=version,
                     data=ASN1_SPEC_V1_3.decode("UicRailTicketData", data)
                 )
             elif version == 2:
-                return cls(
+                out = cls(
                     version=version,
                     data=ASN1_SPEC_V2.decode("UicRailTicketData", data)
                 )
             elif version == 3:
-                return cls(
+                out = cls(
                     version=version,
                     data=ASN1_SPEC_V3.decode("UicRailTicketData", data)
                 )
@@ -38,6 +39,13 @@ class Flex:
                 raise util.UICException("Unsupported UIC rail ticket flexible data version")
         except asn1tools.DecodeError as e:
             raise util.UICException("Failed to decode UIC rail ticket flexible data") from e
+
+        if out.data["issuingDetail"].get("extension"):
+            if out.data["issuingDetail"]["extension"]["extensionId"].startswith("+FRII"):
+                version = int(out.data["issuingDetail"]["extension"]["extensionId"][5:])
+                out.intercode = fr_intercode.FRIntercode.parse(version, out.data["issuingDetail"]["extension"]["extensionData"])
+
+        return out
 
     def issuing_rics(self) -> int:
         rics = self.data["issuingDetail"].get("issuerNum", 0)

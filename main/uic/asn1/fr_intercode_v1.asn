@@ -1,0 +1,32 @@
+FR-INTERCODE DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    FRIntercode ::= SEQUENCE {
+        intercodeVersion INTEGER (0..7),
+        intercodeInstantiation INTEGER (0..7),
+        networkId OCTET STRING (SIZE(3)),
+        productRetailer ProductRetailerData OPTIONAL,
+        ...
+    }
+
+    ProductRetailerData ::= SEQUENCE {
+        retailChannel RetailChannelData OPTIONAL,
+        retailGeneratorId INTEGER (0..255) OPTIONAL,
+        retailServerId INTEGER (0..255) OPTIONAL,
+        retailerId INTEGER (0..4095) OPTIONAL,
+        retailPointId INTEGER OPTIONAL,
+        ...,
+        retailTraceability IA5String OPTIONAL
+    }
+
+    RetailChannelData ::= ENUMERATED {
+        smsTicket (0),
+        mobileApplication (1),
+        webSite (2),
+        ticketOffice (3),
+        depositoryTerminal (4),
+        onBoardTerminal (5),
+        ticketVendingMachine (6),
+        ...
+    }
+
+END

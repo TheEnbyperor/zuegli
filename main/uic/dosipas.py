@@ -61,11 +61,20 @@ class DOSIPASEnvelope:
         if sig_alg == "2.16.840.1.101.3.4.3.1":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
+
             hasher = cryptography.hazmat.primitives.hashes.SHA224()
         elif sig_alg == "2.16.840.1.101.3.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
+
             hasher = cryptography.hazmat.primitives.hashes.SHA256()
+        elif sig_alg == "1.2.840.10045.4.3.2":
+            if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
+                return False
+
+            hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
+                cryptography.hazmat.primitives.hashes.SHA256()
+            )
         else:
             return False
 
@@ -79,24 +88,49 @@ class DOSIPASEnvelope:
         if not self.level_2_signature or not self.level_2_signed_data or "level2SigningAlg" not in self.level_2_data["level1Data"]:
             return False
 
-        try:
-            pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
-        except ValueError:
-            return False
-
         sig_alg = self.level_2_data["level1Data"].get("level2SigningAlg")
 
         if sig_alg == "2.16.840.1.101.3.4.3.1":
+            try:
+                pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+            except ValueError:
+                return False
+
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
+
             hasher = cryptography.hazmat.primitives.hashes.SHA224()
         elif sig_alg == "2.16.840.1.101.3.4.3.2":
+            try:
+                pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+            except ValueError:
+                return False
+
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
+
             hasher = cryptography.hazmat.primitives.hashes.SHA256()
         elif sig_alg == "1.2.840.10045.4.3.2":
+            try:
+                pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+            except ValueError:
+                pk_oid = self.level_2_data["level1Data"].get("level2KeyAlg")
+                if pk_oid == "1.2.840.10045.3.1.7":
+                    curve = cryptography.hazmat.primitives.asymmetric.ec.SECP256R1()
+                else:
+                    return False
+
+                try:
+                    pk = cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey.from_encoded_point(
+                        curve,
+                        self.level_2_public_key
+                    )
+                except ValueError:
+                    return False
+
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
                 return False
+
             hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
                 cryptography.hazmat.primitives.hashes.SHA256()
             )

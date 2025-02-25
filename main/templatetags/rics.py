@@ -253,6 +253,10 @@ def oid(value):
         return "DSA with SHA256"
     elif value == "1.2.840.10040.4.1":
         return "DSA"
+    elif value == "1.2.840.10045.2.1":
+        return "Elliptic Curve"
+    elif value == "1.2.840.10045.3.1.7":
+        return "EC secp256r1"
     else:
         return str(value)
 

@@ -259,7 +259,8 @@ class UICTicket:
             if r := self.flex.issuing_rics():
                 return r
 
-        return self.envelope.issuer_rics
+        if self.envelope:
+            return self.envelope.issuer_rics
 
     def distributor(self):
         return uic.rics.get_rics(self.issuing_rics())

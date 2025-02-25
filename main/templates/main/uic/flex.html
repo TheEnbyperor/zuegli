@@ -355,13 +355,57 @@
                                 {% else %}
                                     <pre>{{ doc.ticket.1|pprint }}</pre>
                                 {% endif %}
+
+                                <h2 class="govuk-heading-m">Token</h2>
+                                {% if doc.token %}
+                                    <dl class="govuk-summary-list">
+                                        {% if doc.token.tokenProviderNum %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Provider RICS</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ doc.token.tokenProviderNum }}</code>
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                        {% if doc.token.tokenProviderIA5 %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Provider ID</dt>
+                                                <dd class="govuk-summary-list__value">{{ doc.token.tokenProviderIA5 }}</dd>
+                                            </div>
+                                        {% endif %}
+                                        {% with org=doc.token.tokenProviderNum|rics %}
+                                            {% if org %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Provider</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {% include 'main/rics.html' with org=org %}
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% if doc.token.tokenSpecification %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Specification</dt>
+                                                <dd class="govuk-summary-list__value">{{ doc.token.tokenSpecification }}</dd>
+                                            </div>
+                                        {% endif %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Data</dt>
+                                            <dd class="govuk-summary-list__value">{{ doc.token.token|rics_unicode }}</dd>
+                                        </div>
+                                    </dl>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
                 </dd>
             </div>
         {% endif %}
-        {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
+        {% if flex.intercode %}
+            {% include "main/uic/fr_intercode.html" with obj=flex.intercode %}
+        {% else %}
+            {% include "main/uic/extension.html" with obj=flex.data.issuingDetail %}
+        {% endif %}
     </dl>
 {% endlocaltime %}
 

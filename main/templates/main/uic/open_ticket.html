@@ -28,6 +28,30 @@
                 <dd class="govuk-summary-list__value">{{ ticket.productIdIA5 }}</dd>
             </div>
         {% endif %}
+        {% if ticket.productOwnerNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product owner RICS</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.productOwnerNum }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.productOwnerIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product owner ID</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.productOwnerIA5 }}</dd>
+            </div>
+        {% endif %}
+        {% with org=ticket.productOwnerNum|rics %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product owner</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include 'main/rics.html' with org=org %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Return included</dt>
             <dd class="govuk-summary-list__value">
@@ -113,6 +137,18 @@
                                     <li><code>{{ carrier }}</code></li>
                                 {% endif %}
                             {% endwith %}
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.includedTransportType %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Included transport type</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list--bullet">
+                        {% for tt in ticket.includedTransportType %}
+                            <li><code>{{ tt }}</code></li>
                         {% endfor %}
                     </ul>
                 </dd>
