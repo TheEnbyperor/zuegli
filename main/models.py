@@ -214,7 +214,11 @@ class UICTicketInstance(models.Model):
         return f"{self.distributor_rics} - {self.barcode_hash}"
 
     def as_ticket(self) -> t.UICTicket:
-        config = dacite.Config(type_hooks={bytes: base64.b64decode})
+        config = dacite.Config(type_hooks={
+            bytes: base64.b64decode,
+            datetime.datetime: datetime.datetime.fromisoformat,
+            datetime.date: datetime.date.fromisoformat,
+        })
         context = vdv.ticket.Context(
             account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
             account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
