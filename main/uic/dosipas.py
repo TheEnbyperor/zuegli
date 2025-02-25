@@ -79,7 +79,11 @@ class DOSIPASEnvelope:
         if not self.level_2_signature or not self.level_2_signed_data or "level2SigningAlg" not in self.level_2_data["level1Data"]:
             return False
 
-        pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+        try:
+            pk = cryptography.hazmat.primitives.serialization.load_der_public_key(self.level_2_public_key)
+        except ValueError:
+            return False
+
         sig_alg = self.level_2_data["level1Data"].get("level2SigningAlg")
 
         if sig_alg == "2.16.840.1.101.3.4.3.1":
