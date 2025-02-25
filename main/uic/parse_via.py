@@ -107,7 +107,7 @@ class Route:
             carrier_names = []
             for n in carrier.carrier_nums:
                 if c := rics.get_rics(n):
-                    carrier_names.append(c["full_name"])
+                    carrier_names.append(c["full_name"].replace("/", "\\n"))
                 else:
                     carrier_names.append(n)
             carrier_names = ", ".join(carrier_names)
