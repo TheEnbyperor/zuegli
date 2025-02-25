@@ -28,6 +28,7 @@ class ParsedRCT2:
     train_data: str
     conditions: str
     extra: str
+    valid_region: str
 
 
 class RCT2Parser:
@@ -118,13 +119,19 @@ class RCT2Parser:
         traveller_data =      self.read_area(top=0,  left=52, width=20, height=3)
         price_data =          self.read_area(top=13, left=52, width=20, height=2)
         train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1)
         conditions_data =     self.read_area(top=12, left=0,  width=50, height=3)
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
+
         try:
             operator_rics = int(operator_rics, 10)
         except ValueError:
             operator_rics = 0
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)
+
+        if operator_rics in (1088, 1184):
+            # benerail (NSI and NMBS International) uses square brackets in the via-string where chevrons should be used
+            valid_region = valid_region.replace("[", "<").replace("]", ">")
 
         return ParsedRCT2(
             operator_rics=operator_rics,
@@ -136,4 +143,5 @@ class RCT2Parser:
             train_data=train_data,
             conditions=conditions_data,
             extra=extra_data,
+            valid_region = valid_region,
         )

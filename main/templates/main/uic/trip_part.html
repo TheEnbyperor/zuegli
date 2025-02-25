@@ -1,0 +1,50 @@
+<dl class="govuk-summary-list">
+    {% if trip.departure %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Departure</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.departure }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.departure_date %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Departure date</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.departure_date }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.departure_time %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Departure time</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.departure_time }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.arrival %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Arrival</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.arrival }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.arrival_date %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Arrival date</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.arrival_date }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.arrival_time %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Arrival time</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.arrival_time }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.departure_station %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Departure station</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.departure_station }}</code></dd>
+        </div>
+    {% endif %}
+    {% if trip.arrival_station %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Arrival station</dt>
+            <dd class="govuk-summary-list__value"><code>{{ trip.arrival_station }}</code></dd>
+        </div>
+    {% endif %}
+</dl>
