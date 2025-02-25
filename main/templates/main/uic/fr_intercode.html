@@ -18,7 +18,7 @@
                         <dl class="govuk-summary-list">
                             {% if obj.data.productRetailer.retailChannel %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retail channel</dt>
+                                    <dt class="govuk-summary-list__key">Channel</dt>
                                     <dd class="govuk-summary-list__value">
                                         <code>{{ obj.data.productRetailer.retailChannel }}</code>
                                     </dd>
@@ -26,7 +26,7 @@
                             {% endif %}
                             {% if obj.data.productRetailer.retailGeneratorId is not None %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retail generator ID</dt>
+                                    <dt class="govuk-summary-list__key">Generator ID</dt>
                                     <dd class="govuk-summary-list__value">
                                         {{ obj.data.productRetailer.retailGeneratorId }}
                                     </dd>
@@ -34,7 +34,7 @@
                             {% endif %}
                             {% if obj.data.productRetailer.retailServerId is not None %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retail server ID</dt>
+                                    <dt class="govuk-summary-list__key">Server ID</dt>
                                     <dd class="govuk-summary-list__value">
                                         {{ obj.data.productRetailer.retailServerId }}
                                     </dd>
@@ -50,7 +50,7 @@
                             {% endif %}
                             {% if obj.data.productRetailer.retailPointId is not None %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retail point ID</dt>
+                                    <dt class="govuk-summary-list__key">Sale point ID</dt>
                                     <dd class="govuk-summary-list__value">
                                         {{ obj.data.productRetailer.retailPointId }}
                                     </dd>
@@ -58,7 +58,7 @@
                             {% endif %}
                             {% if obj.data.productRetailer.retailTraceability is not None %}
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retail traceability</dt>
+                                    <dt class="govuk-summary-list__key">Trace ID</dt>
                                     <dd class="govuk-summary-list__value">
                                         {{ obj.data.productRetailer.retailTraceability }}
                                     </dd>
