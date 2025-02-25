@@ -3306,6 +3306,24 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": ticket_data.data.extra_text,
                 })
 
+            if ticket_data.data.sncb_data:
+                pass_fields["backFields"].append({
+                    "key": "product-code",
+                    "label": "product-label",
+                    "value": ticket_data.data.sncb_data.product_code
+                })
+                pass_fields["auxiliaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
+                    "semantics": {
+                        "passengerName": {
+                            "familyName": ticket_data.data.sncb_data.surname,
+                            "givenName": ticket_data.data.sncb_data.forename,
+                        }
+                    }
+                })
+
         elif isinstance(ticket_data.data, ssb.NonReservationTicket):
             pass_type = "boardingPass"
             pass_fields["transitType"] = "PKTransitTypeTrain"
@@ -3440,6 +3458,24 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "extra-date",
                     "label": "other-data-label",
                     "value": ticket_data.data.extra_text,
+                })
+
+            if ticket_data.data.sncb_data:
+                pass_fields["backFields"].append({
+                    "key": "product-code",
+                    "label": "product-label",
+                    "value": ticket_data.data.sncb_data.product_code
+                })
+                pass_fields["auxiliaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
+                    "semantics": {
+                        "passengerName": {
+                            "familyName": ticket_data.data.sncb_data.surname,
+                            "givenName": ticket_data.data.sncb_data.forename,
+                        }
+                    }
                 })
 
         elif isinstance(ticket_data.data, ssb.GroupTicket):

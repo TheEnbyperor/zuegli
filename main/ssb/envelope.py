@@ -21,13 +21,13 @@ class Envelope:
         return rics.get_rics(self.issuer_rics)
 
     def signing_cert(self):
-        return certs.signing_cert(self.issuer_rics, self.signature_key_id)
+        return certs.signing_cert(self.issuer_rics, str(self.signature_key_id))
 
     def can_verify(self):
-        return bool(certs.public_key(self.issuer_rics, self.signature_key_id))
+        return bool(certs.public_key(self.issuer_rics, str(self.signature_key_id)))
 
     def verify_signature(self):
-        pk = certs.public_key(self.issuer_rics, self.signature_key_id)
+        pk = certs.public_key(self.issuer_rics, str(self.signature_key_id))
         if not pk:
             return False
 

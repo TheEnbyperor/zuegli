@@ -2,7 +2,8 @@ import dataclasses
 import datetime
 import typing
 from django.utils import timezone
-from . import util
+from . import util, sncb
+from .. import vdv
 
 @dataclasses.dataclass
 class IntegratedReservationTicket:
@@ -23,13 +24,14 @@ class IntegratedReservationTicket:
     overbooked: bool
     information_message: int
     extra_text: str
+    sncb_data: typing.Optional[sncb.SNCBData]
 
     @staticmethod
     def type():
         return "IRT"
 
     @classmethod
-    def parse(cls, data: util.BitStream, issuer_rics: int):
+    def parse(cls, data: util.BitStream, issuer_rics: int, context: vdv.ticket.Context) -> "IntegratedReservationTicket":
         year = data.read_int(105, 109)
         issuing_day = data.read_int(109, 118)
 
@@ -71,6 +73,14 @@ class IntegratedReservationTicket:
                     departure_station = util.Station(id=data.read_string(125, 153), type="name")
                     arrival_station = util.Station(id=data.read_string(153, 181), type="name")
 
+        extra_text = data.read_string(274, 436)
+        if issuer_rics == 1088:
+            sncb_data = sncb.SNCBData.parse(extra_text)
+            if sncb_data:
+                extra_text = ""
+        else:
+            sncb_data = None
+
         return cls(
             specimen=data.read_bool(14),
             num_adults=data.read_int(0, 7),
@@ -88,5 +98,6 @@ class IntegratedReservationTicket:
             seat_number=data.read_string(241, 259),
             overbooked=data.read_bool(259),
             information_message=data.read_int(260, 274),
-            extra_text=data.read_string(274, 436),
+            extra_text=extra_text,
+            sncb_data=sncb_data,
         )

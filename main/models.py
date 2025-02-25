@@ -334,11 +334,16 @@ class SSBTicketInstance(models.Model):
 
     def as_ticket(self) -> t.SSBTicket:
         envelope = ssb.Envelope.parse(bytes(self.ssb_data or self.barcode_data))
+        context = vdv.ticket.Context(
+            account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
+            account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
+            email=self.ticket.account.user.email if self.ticket.account else None,
+        )
 
         if envelope.ticket_type == 1:
-            data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics)
+            data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics, context)
         elif envelope.ticket_type == 2:
-            data = ssb.NonReservationTicket.parse(envelope.data, envelope.issuer_rics)
+            data = ssb.NonReservationTicket.parse(envelope.data, envelope.issuer_rics, context)
         elif envelope.ticket_type == 3:
             data = ssb.GroupTicket.parse(envelope.data, envelope.issuer_rics)
         elif envelope.ticket_type == 4:

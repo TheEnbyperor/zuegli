@@ -271,6 +271,35 @@
                 <dd class="govuk-summary-list__value">{{ ticket.data.extra_text }}</dd>
             </div>
         {% endif %}
+        {% if ticket.data.sncb_data %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">SNCB Data</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Product code</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.data.sncb_data.product_code }}</code>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Forename</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.sncb_data.forename }}
+                                {% if ticket.data.sncb_data.original_forename %}({{ ticket.data.sncb_data.original_forename }}){% endif %}
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Surname</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.sncb_data.surname }}
+                                {% if ticket.data.sncb_data.original_surname %}({{ ticket.data.sncb_data.original_surname }}){% endif %}
+                            </dd>
+                        </div>
+                    </dl>
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 {% elif ticket.data.type == "GRT" %}
     <h2 class="govuk-heading-m">Group ticket</h2>

@@ -1148,7 +1148,7 @@ def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
     )
 
 
-def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
+def parse_ticket_ssb(ticket_bytes: bytes, context: vdv.ticket.Context) -> SSBTicket:
     try:
         envelope = ssb.Envelope.parse(ticket_bytes)
     except ssb.SSBException:
@@ -1160,9 +1160,9 @@ def parse_ticket_ssb(ticket_bytes: bytes) -> SSBTicket:
         )
 
     if envelope.ticket_type == 1:
-        data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics)
+        data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics, context)
     elif envelope.ticket_type == 2:
-        data = ssb.NonReservationTicket.parse(envelope.data, envelope.issuer_rics)
+        data = ssb.NonReservationTicket.parse(envelope.data, envelope.issuer_rics, context)
     elif envelope.ticket_type == 3:
         data = ssb.GroupTicket.parse(envelope.data, envelope.issuer_rics)
     elif envelope.ticket_type == 4:
@@ -1263,12 +1263,12 @@ def parse_ticket(
         email=account.user.email if account else None,
     )
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
-        return parse_ticket_ssb(ticket_bytes)
+        return parse_ticket_ssb(ticket_bytes, context)
 
     try:
         d = base64.b64decode(ticket_bytes, validate=True)
         if (d[0] & 0xF0) >> 4 in (2, 3):
-            return parse_ticket_ssb(d)
+            return parse_ticket_ssb(d, context)
     except binascii.Error:
         pass
 
