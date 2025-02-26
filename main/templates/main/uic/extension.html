@@ -1,18 +1,55 @@
 {% load rics %}
 {% if obj.extension %}
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Extension</dt>
-        <dd class="govuk-summary-list__value">
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">ID</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ obj.extension.extensionId }}</code></dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Data</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ obj.extension.extensionData|rics_unicode }}</code></dd>
-                </div>
-            </dl>
-        </dd>
-    </div>
+    {% if obj.extension.extensionId == "_1187ST1" %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">SNCF Data</dt>
+            <dd class="govuk-summary-list__value">
+                {% with data=obj.extension.extensionData|sncf_ext_parse %}
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Version</dt>
+                            <dd class="govuk-summary-list__value">v{{ data.version }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Retail equipment type</dt>
+                            <dd class="govuk-summary-list__value">{{ data.data.retailEquipmentType }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contract code</dt>
+                            <dd class="govuk-summary-list__value">{{ data.data.contractCode }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contract tariff</dt>
+                            <dd class="govuk-summary-list__value">{{ data.data.contractTariff }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contract type</dt>
+                            <dd class="govuk-summary-list__value">{{ data.data.contractType }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contract validation type</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ data.data.contractTypeRegardingValidation }}</code></dd>
+                        </div>
+                    </dl>
+                {% endwith %}
+            </dd>
+        </div>
+    {% else %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extension</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">ID</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ obj.extension.extensionId }}</code></dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Data</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ obj.extension.extensionData|rics_unicode }}</code></dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
 {% endif %}

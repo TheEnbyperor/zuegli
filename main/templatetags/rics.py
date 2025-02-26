@@ -327,3 +327,8 @@ def uic_points_js(value: dict):
         out += f"[{e[1]},{e[0]}],"
     out += "]"
     return out
+
+
+@register.filter(name="sncf_ext_parse")
+def sncf_ext_parse(value: bytes):
+    return uic.sncf.SNCFTransport.parse(1, value)
