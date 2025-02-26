@@ -148,7 +148,7 @@
                 <dd class="govuk-summary-list__value">
                     <ul class="govuk-list--bullet">
                         {% for tt in ticket.includedTransportType %}
-                            <li><code>{{ tt }}</code></li>
+                            <li>{{ tt|en1545_transport_type }}</li>
                         {% endfor %}
                     </ul>
                 </dd>
