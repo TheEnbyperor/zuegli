@@ -110,7 +110,8 @@ def rics_valid_until(value, issuing_time: typing.Optional[datetime.datetime]=Non
         )
     valid_from += datetime.timedelta(days=value["validUntilDay"])
     if "validUntilTime" in value:
-        valid_from += datetime.timedelta(minutes=value["validUntilTime"], seconds=59)
+        valid_from = valid_from.replace(hour=0, minute=0, second=59)
+        valid_from += datetime.timedelta(minutes=value["validUntilTime"])
     else:
         valid_from = valid_from.replace(hour=23, minute=59, second=59)
     if "validUntilUTCOffset" in value:
@@ -332,3 +333,51 @@ def uic_points_js(value: dict):
 @register.filter(name="sncf_ext_parse")
 def sncf_ext_parse(value: bytes):
     return uic.sncf.SNCFTransport.parse(1, value)
+
+
+@register.filter(name="en1545_transport_type")
+def en1545_transport_type(value: int):
+    if value == 1:
+        return "Urban bus"
+    elif value == 2:
+        return "Interurban bus"
+    elif value == 3:
+        return "Metro"
+    elif value == 4:
+        return "Tram"
+    elif value == 5:
+        return "S-Bahn"
+    elif value == 6:
+        return "Ferry"
+    elif value == 7:
+        return "Toll-road"
+    elif value == 8:
+        return "Parking"
+    elif value == 9:
+        return "Taxi"
+    elif value == 10:
+        return "High Speed Train"
+    elif value == 11:
+        return "Rural bus"
+    elif value == 12:
+        return "Regional Express"
+    elif value == 13:
+        return "Para-transit"
+    elif value == 14:
+        return "Self driving vehicle"
+    elif value == 15:
+        return "Coach"
+    elif value == 16:
+        return "Locomotive"
+    elif value == 17:
+        return "Powered motor vehicle"
+    elif value == 18:
+        return "Trailer"
+    elif value == 19:
+        return "Regioahn"
+    elif value == 20:
+        return "InterCity"
+    elif value == 21:
+        return "Furnicular"
+    else:
+        return f"Unknown - {value}"
