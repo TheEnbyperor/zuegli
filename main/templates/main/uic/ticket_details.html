@@ -156,6 +156,18 @@
                         </dd>
                     </div>
                 {% endif %}
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Level 1 signing key</dt>
+                    <dd class="govuk-summary-list__value">
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                Ticket is not signed
+                            </strong>
+                        </div>
+                    </dd>
+                </div>
             {% endif %}
             {% if ticket.dosipas_envelope.level_2_signature %}
                 <div class="govuk-summary-list__row">

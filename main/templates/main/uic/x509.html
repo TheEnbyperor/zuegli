@@ -1,4 +1,5 @@
-{% load rics %}
+{% load rics tz %}
+{% localtime off %}
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
@@ -13,11 +14,11 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Valid from</dt>
-                <dd class="govuk-summary-list__value">{{ cert.not_valid_before_utc|date:"F d, Y H:i:s" }} UTC</dd>
+                <dd class="govuk-summary-list__value">{{ cert.not_valid_before_utc|date:"F d, Y H:i:s e" }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Valid until</dt>
-                <dd class="govuk-summary-list__value">{{ cert.not_valid_after_utc|date:"F d, Y H:i:s" }} UTC</dd>
+                <dd class="govuk-summary-list__value">{{ cert.not_valid_after_utc|date:"F d, Y H:i:s e" }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Issuer</dt>
@@ -57,3 +58,4 @@
         </dl>
     </div>
 </div>
+{% endlocaltime %}
