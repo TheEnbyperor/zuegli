@@ -185,18 +185,21 @@
     {% include "main/uic/extension.html" with obj=res %}
     {% if res.tariff %}
         <div class="govuk-summary-list__row">
-            {% for tariff in res.tariff %}
-                <div class="govuk-summary-card">
-                    <div class="govuk-summary-card__title-wrapper">
-                        <h2 class="govuk-summary-card__title">
-                            Tariff #{{ forloop.counter }}
-                        </h2>
+            <dt class="govuk-summary-list__key"></dt>
+            <dd class="govuk-summary-list__value">
+                {% for tariff in res.tariff %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Tariff #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% include "main/uic/tariff.html" with tariff=tariff %}
+                        </div>
                     </div>
-                    <div class="govuk-summary-card__content">
-                        {% include "main/uic/tariff.html" with tariff=tariff %}
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </dd>
         </div>
     {% endif %}
     {% if res.berth %}
