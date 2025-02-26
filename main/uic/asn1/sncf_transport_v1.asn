@@ -1,0 +1,23 @@
+SNCF-TRANSPORT-DATA DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    SncfTransportData ::= SEQUENCE {
+        retailEquipmentType INTEGER (0..99),
+        contractCode IA5String (SIZE(2)),
+        contractTariff INTEGER (0..65535) DEFAULT 0,
+        contractType INTEGER (0..65535) DEFAULT 0,
+        contractTypeRegardingValidation ContractTypeRegardingValidationData DEFAULT unspecified,
+        ...
+    }
+
+    ContractTypeRegardingValidationData ::= ENUMERATED {
+        unspecified (0),
+        ticketAllowingTransport (1),
+        ticketNotAllowingTransport (2),
+        rightAllowingTranport (3),
+        rightNotAllowingTransport (4),
+        reservationAllowingTransport (5),
+        reservationNotAllowingTransport (6),
+        ...
+    }
+
+END
