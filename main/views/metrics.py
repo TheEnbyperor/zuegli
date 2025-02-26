@@ -73,4 +73,7 @@ def metrics(request):
     swisspass_count = models.SwissPassTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="swisspass"}} {swisspass_count}')
 
+    swisspass_count = models.IATATicketInstance.objects.all().count()
+    out.append(f'ticket_instance_count{{type="iata"}} {swisspass_count}')
+
     return HttpResponse("\n".join(out), content_type="text/plain;charset=UTF-8")
