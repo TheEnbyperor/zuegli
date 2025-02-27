@@ -172,6 +172,7 @@ class AccessLogEntry(models.Model):
     remote_ip = models.GenericIPAddressField()
     headers = models.JSONField(default=dict)
     account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs")
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class VDVTicketInstance(models.Model):
