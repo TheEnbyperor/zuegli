@@ -73,6 +73,7 @@ class AppleRegistrationInline(admin.StackedInline):
     readonly_fields = [
         "device",
         "ticket",
+        "ticket_part"
     ]
 
 
@@ -121,6 +122,7 @@ class TicketAdmin(admin.ModelAdmin):
         "id",
         "pkpass_authentication_token",
         "last_updated",
+        "created",
     ]
     inlines = [
         VDVTicketInstanceInline,
