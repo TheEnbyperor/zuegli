@@ -159,7 +159,7 @@ def pass_document(request, ticket_obj, ticket_part):
         headers=dict(request.headers),
         account=request.user.account if request.user.is_authenticated else None,
     )
-    
+
     return views.passes.make_pkpass(ticket_obj, ticket_part)
 
 
