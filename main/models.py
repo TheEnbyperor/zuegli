@@ -81,6 +81,7 @@ class Ticket(models.Model):
     ticket_type = models.CharField(max_length=255, choices=TICKET_TYPES, verbose_name="Ticket type", default=TYPE_UNKNOWN)
     pkpass_authentication_token = models.CharField(max_length=255, verbose_name="PKPass authentication token", default=make_pass_token)
     last_updated = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
     db_subscription = models.ForeignKey(
         "DBSubscription", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="DB Subscription"
@@ -155,6 +156,22 @@ class Ticket(models.Model):
 
         if ticket_instance := self.iata_instances.first():
             return ticket_instance
+
+
+class AccessLogEntry(models.Model):
+    ACTION_UPLOAD = "upload"
+    ACTION_DOWNLOAD_PKPASS = "download-pkpass"
+
+    ACTIONS = (
+        (ACTION_UPLOAD, "Upload ticket barcode"),
+        (ACTION_DOWNLOAD_PKPASS, "Download PKPass"),
+    )
+
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="access_logs")
+    action = models.CharField(choices=ACTIONS, max_length=255)
+    remote_ip = models.GenericIPAddressField()
+    headers = models.JSONField(default=dict)
+    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs")
 
 
 class VDVTicketInstance(models.Model):

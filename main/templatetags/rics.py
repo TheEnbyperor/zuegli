@@ -258,6 +258,18 @@ def oid(value):
         return "Elliptic Curve"
     elif value == "1.2.840.10045.3.1.7":
         return "EC secp256r1"
+    elif value == "1.2.840.10040.4.3":
+        return "DSA with SHA1"
+    elif value == "2.5.29.19":
+        return "Basic constraints"
+    elif value == "2.5.29.15":
+        return "Key usage"
+    elif value == "2.5.29.37":
+        return "Extended key usage"
+    elif value == "2.5.29.14":
+        return "Subject key identifier"
+    elif value == "2.5.29.35":
+        return "Authority key identifier"
     else:
         return str(value)
 

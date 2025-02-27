@@ -17,6 +17,15 @@ from django.contrib import messages
 from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, uic, ssb, swisspass, cal
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 def robots(request):
     with storages["staticfiles"].open("main/robots.txt") as f:
         return HttpResponse(f.read(), content_type="text/plain")
@@ -108,6 +117,14 @@ def index(request):
                 apn.notify_ticket(ticket_obj)
                 gwallet.sync_ticket(ticket_obj)
                 ticket_ids.append(ticket_obj.id)
+
+                models.AccessLogEntry.objects.create(
+                    ticket=ticket_obj,
+                    action=models.AccessLogEntry.ACTION_UPLOAD,
+                    remote_ip=get_client_ip(request),
+                    headers=dict(request.headers),
+                    account=request.user.account if request.user.is_authenticated else None,
+                )
 
         if ticket_ids:
             if len(ticket_ids) > 1:
@@ -265,6 +282,15 @@ def add_pkp_img(pkp, img_name: str, pass_path: str):
 
 def ticket_pkpass(request, pk):
     ticket_obj: models.Ticket = get_object_or_404(models.Ticket, id=pk)
+
+    models.AccessLogEntry.objects.create(
+        ticket=ticket_obj,
+        action=models.AccessLogEntry.ACTION_DOWNLOAD_PKPASS,
+        remote_ip=get_client_ip(request),
+        headers=dict(request.headers),
+        account=request.user.account if request.user.is_authenticated else None,
+    )
+
     return make_pkpass(ticket_obj)
 
 

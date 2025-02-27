@@ -151,7 +151,15 @@ def registration(request, device_id, ticket_obj, ticket_part):
 @csrf_exempt
 @condition(last_modified_func=ticket_updated_date)
 @check_pass_auth
-def pass_document(_, ticket_obj, ticket_part):
+def pass_document(request, ticket_obj, ticket_part):
+    models.AccessLogEntry.objects.create(
+        ticket=ticket_obj,
+        action=models.AccessLogEntry.ACTION_DOWNLOAD_PKPASS,
+        remote_ip=views.passes.get_client_ip(request),
+        headers=dict(request.headers),
+        account=request.user.account if request.user.is_authenticated else None,
+    )
+    
     return views.passes.make_pkpass(ticket_obj, ticket_part)
 
 

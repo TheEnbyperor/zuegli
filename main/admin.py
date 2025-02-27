@@ -76,6 +76,17 @@ class AppleRegistrationInline(admin.StackedInline):
     ]
 
 
+class AccessLogInline(admin.StackedInline):
+    extra = 0
+    model = models.AccessLogEntry
+    readonly_fields = [
+        "ticket",
+        "action",
+        "remote_ip",
+        "headers",
+    ]
+
+
 class TicketAccountInline(admin.StackedInline):
     extra = 0
     model = models.Ticket
@@ -123,12 +134,14 @@ class TicketAdmin(admin.ModelAdmin):
         SwissPassTicketInstanceInline,
         IATATicketInstanceInline,
         AppleRegistrationInline,
+        AccessLogInline,
     ]
     view_on_site = True
     list_display = [
         "id",
         "ticket_type",
-        "last_updated"
+        "last_updated",
+        "created",
     ]
     date_hierarchy = "last_updated"
     list_filter = [

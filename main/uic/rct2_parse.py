@@ -115,7 +115,7 @@ class RCT2Parser:
 
         travel_class =        self.read_area(top=6,  left=65, width=8,  height=1)
 
-        document_data =       self.read_area(top=0,  left=18, width=34, height=3)
+        document_data =       self.read_area(top=0,  left=12, width=34, height=3)
         traveller_data =      self.read_area(top=0,  left=52, width=20, height=3)
         price_data =          self.read_area(top=13, left=52, width=20, height=2)
         train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
