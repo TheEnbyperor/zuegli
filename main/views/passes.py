@@ -118,11 +118,14 @@ def index(request):
                 gwallet.sync_ticket(ticket_obj)
                 ticket_ids.append(ticket_obj.id)
 
+                headers = dict(request.headers)
+                headers.pop("Cookie", None)
+                headers.pop("Authorization", None)
                 models.AccessLogEntry.objects.create(
                     ticket=ticket_obj,
                     action=models.AccessLogEntry.ACTION_UPLOAD,
                     remote_ip=get_client_ip(request),
-                    headers=dict(request.headers),
+                    headers=headers,
                     account=request.user.account if request.user.is_authenticated else None,
                 )
 
@@ -283,11 +286,14 @@ def add_pkp_img(pkp, img_name: str, pass_path: str):
 def ticket_pkpass(request, pk):
     ticket_obj: models.Ticket = get_object_or_404(models.Ticket, id=pk)
 
+    headers = dict(request.headers)
+    headers.pop("Cookie", None)
+    headers.pop("Authorization", None)
     models.AccessLogEntry.objects.create(
         ticket=ticket_obj,
         action=models.AccessLogEntry.ACTION_DOWNLOAD_PKPASS,
         remote_ip=get_client_ip(request),
-        headers=dict(request.headers),
+        headers=headers,
         account=request.user.account if request.user.is_authenticated else None,
     )
 
@@ -4986,4 +4992,6 @@ BC_STRIP_IMG = {
     "BahnCard 50 (1. Klasse)": "bahncard/BAHNCARD501KLASSE.png",
     "BahnCard 50 (2. Klasse)": "bahncard/BAHNCARD502KLASSE.png",
     "Jugend BahnCard 25": "bahncard/JUGENDBAHNCARD25BAHN.png",
+    "Senioren BahnCard 25 (1. Klasse)": "bahncard/BAHNCARD251KLASSE.png",
+    "Senioren BahnCard 25 (2. Klasse)": "bahncard/BAHNCARD252KLASSE.png",
 }

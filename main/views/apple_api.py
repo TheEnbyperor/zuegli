@@ -152,11 +152,14 @@ def registration(request, device_id, ticket_obj, ticket_part):
 @condition(last_modified_func=ticket_updated_date)
 @check_pass_auth
 def pass_document(request, ticket_obj, ticket_part):
+    headers = dict(request.headers)
+    headers.pop("Cookie", None)
+    headers.pop("Authorization", None)
     models.AccessLogEntry.objects.create(
         ticket=ticket_obj,
         action=models.AccessLogEntry.ACTION_DOWNLOAD_PKPASS,
         remote_ip=views.passes.get_client_ip(request),
-        headers=dict(request.headers),
+        headers=headers,
         account=request.user.account if request.user.is_authenticated else None,
     )
 
