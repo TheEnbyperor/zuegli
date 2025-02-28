@@ -3341,22 +3341,29 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_data.data.sncb_data:
+                if ticket_data.data.sncb_data.product_name:
+                    pass_fields["headerFields"].append({
+                        "key": "product-name",
+                        "label": "product-label",
+                        "value": ticket_data.data.sncb_data.product_name
+                    })
                 pass_fields["backFields"].append({
                     "key": "product-code",
                     "label": "product-label",
                     "value": ticket_data.data.sncb_data.product_code
                 })
-                pass_fields["auxiliaryFields"].append({
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
-                    "semantics": {
-                        "passengerName": {
-                            "familyName": ticket_data.data.sncb_data.surname,
-                            "givenName": ticket_data.data.sncb_data.forename,
+                if ticket_data.data.sncb_data.forename:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": ticket_data.data.sncb_data.surname,
+                                "givenName": ticket_data.data.sncb_data.forename,
+                            }
                         }
-                    }
-                })
+                    })
 
         elif isinstance(ticket_data.data, ssb.NonReservationTicket):
             pass_type = "boardingPass"
@@ -3495,22 +3502,29 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_data.data.sncb_data:
+                if ticket_data.data.sncb_data.product_name:
+                    pass_fields["headerFields"].append({
+                        "key": "product-name",
+                        "label": "product-label",
+                        "value": ticket_data.data.sncb_data.product_name
+                    })
                 pass_fields["backFields"].append({
                     "key": "product-code",
                     "label": "product-label",
                     "value": ticket_data.data.sncb_data.product_code
                 })
-                pass_fields["auxiliaryFields"].append({
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
-                    "semantics": {
-                        "passengerName": {
-                            "familyName": ticket_data.data.sncb_data.surname,
-                            "givenName": ticket_data.data.sncb_data.forename,
+                if ticket_data.data.sncb_data.forename:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": f"{ticket_data.data.sncb_data.forename} {ticket_data.data.sncb_data.surname}",
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": ticket_data.data.sncb_data.surname,
+                                "givenName": ticket_data.data.sncb_data.forename,
+                            }
                         }
-                    }
-                })
+                    })
 
         elif isinstance(ticket_data.data, ssb.GroupTicket):
             pass_type = "boardingPass"
