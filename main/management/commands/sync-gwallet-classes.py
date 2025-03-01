@@ -107,7 +107,7 @@ class Command(BaseCommand):
                 "securityAnimation": {
                     "animationType": "foilShimmer"
                 },
-                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_USERS"
+                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_HOLDERS"
             }
         ).execute()
         generic_class.update(
@@ -196,7 +196,7 @@ class Command(BaseCommand):
                 "securityAnimation": {
                     "animationType": "foilShimmer"
                 },
-                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_USERS"
+                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_HOLDERS"
             }
         ).execute()
         generic_class.update(
@@ -314,7 +314,7 @@ class Command(BaseCommand):
                 "securityAnimation": {
                     "animationType": "foilShimmer"
                 },
-                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_USERS"
+                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_HOLDERS",
             }
         ).execute()
         transit_class.update(
@@ -337,7 +337,7 @@ class Command(BaseCommand):
                 "securityAnimation": {
                     "animationType": "foilShimmer"
                 },
-                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_USERS",
+                "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_HOLDERS",
                 "customCarriageLabel": {
                     "translatedValues": [{
                         "language": "de",
