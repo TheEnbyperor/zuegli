@@ -18,7 +18,7 @@ class FRIntercode:
             if version == 1:
                 return cls(
                     version=version,
-                    data=ASN1_SPEC_V1.decode("FRIntercode", data)
+                    data=ASN1_SPEC_V1.decode("IntercodeIssuingData", data)
                 )
             else:
                 raise util.UICException("Unsupported French Intercode data version")

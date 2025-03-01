@@ -37,7 +37,7 @@ class DOSIPASEnvelope:
         )
 
     def can_verify(self):
-        if "level1SigningAlg" not in self.level_2_data["level1Data"]:
+        if not self.level_1_signature:
             return False
 
         return bool(certs.public_key(
@@ -76,7 +76,14 @@ class DOSIPASEnvelope:
                 cryptography.hazmat.primitives.hashes.SHA256()
             )
         else:
-            return False
+            if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
+                hasher = cryptography.hazmat.primitives.hashes.SHA224()
+            elif isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
+                hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
+                    cryptography.hazmat.primitives.hashes.SHA256()
+                )
+            else:
+                return False
 
         try:
             pk.verify(self.level_1_signature, self.level_1_signed_data, hasher)

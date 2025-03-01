@@ -16,3 +16,4 @@ media/
 .DS_Store
 /.devenv
 /.direnv
+/dtvg-certs
