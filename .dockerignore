@@ -12,5 +12,6 @@
 /.gitignore
 /kube
 /barkoder/build
+/dtvg-certs
 tickeos.py
 parsed_licenses.lcs

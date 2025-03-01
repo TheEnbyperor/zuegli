@@ -1,32 +1,98 @@
-FR-INTERCODE DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+-- #############################################################################################################
+-- #
+-- # Intercode Issuing Extension - Version 1.1.0 (2022-0X-XX) À FINALISER À L'ACHÈVEMENT DE LA NORME
+-- #
+-- # Le type IntercodeIssuingData défini ci-dessous est spécifié par la partie 6 de la norme
+-- #   française Intercode (NF P99-405-6).
+-- #
+-- # Il est destiné à générer une donnée qui, une fois valorisée et encodée en Canonical Unaligned PER (CUPER),
+-- #   est vouée à être mémorisée dans UicRailTicketData.issuingDetail.extension.extensionData,
+-- #   tout en étant identifiée dans UicRailTicketData.issuingDetail.extension.extensionId
+-- #   au moyen de la valeur "_" + RICS + "II1" (où RICS est le code RICS de l'émetteur du code-barres).
+-- #
+-- # Le "1" final de "II1" correspond au numéro de version majeure de cette spécification.
+-- #   Toutes les versions 1.x.y de cette spécification sont identifiées par ce "1" dans "II1",
+-- #   car elles sont compatibles entre elles.
+-- #
+-- #############################################################################################################
 
-    FRIntercode ::= SEQUENCE {
-        intercodeVersion INTEGER (0..7),
-        intercodeInstantiation INTEGER (0..7),
-        networkId OCTET STRING (SIZE(3)),
-        productRetailer ProductRetailerData OPTIONAL,
-        ...
-    }
+ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-    ProductRetailerData ::= SEQUENCE {
-        retailChannel RetailChannelData OPTIONAL,
-        retailGeneratorId INTEGER (0..255) OPTIONAL,
-        retailServerId INTEGER (0..255) OPTIONAL,
-        retailerId INTEGER (0..4095) OPTIONAL,
-        retailPointId INTEGER OPTIONAL,
-        ...,
-        retailTraceability IA5String OPTIONAL
-    }
+IntercodeIssuingData ::= SEQUENCE {
 
-    RetailChannelData ::= ENUMERATED {
-        smsTicket (0),
-        mobileApplication (1),
-        webSite (2),
-        ticketOffice (3),
-        depositoryTerminal (4),
-        onBoardTerminal (5),
-        ticketVendingMachine (6),
-        ...
-    }
+  -- Version de la présente norme (Intercode, NF P99-405-1) mise en oeuvre
+  intercodeVersion       INTEGER (0..7),
+
+  -- Version de l'instanciation locale mise en oeuvre dans le bassin networkId
+  intercodeInstanciation INTEGER (0..7),
+
+  -- Code réseau identifiant le bassin d’interopérabilité dans lequel le contrat est défini
+  networkId              OCTET STRING (SIZE (3)),
+
+  -- Acteurs et équipements intervenant dans la vente, l'émission et la distribution du contrat
+  productRetailer        ProductRetailerData OPTIONAL,
+
+  ...
+}
+
+-- #############################################################################################################
+-- Informations sur la vente, l’émission et la distribution du contrat
+-- #############################################################################################################
+ProductRetailerData ::= SEQUENCE {
+
+  -- Type de canal par lequel le voyageur a sollicité le contrat (= a fait sa demande de contrat)
+  -- Cette information permet une traçabilité du parcours du client
+  retailChannel      RetailChannelData OPTIONAL,
+
+  -- Identifiant de la plateforme de génération de contrats
+  --   0.. 31 : valeurs réservées à des plateformes nationales (voir Annexe C de NF P99-405-6)
+  --  32..127 : valeurs locales définies par l’architecte de l’interopérabilité
+  -- 128..255 : valeurs réservees à un usage futur
+  -- En l'absence de cette donnée, la plateforme de génération est supposée être celle
+  --   du serveur de vente à distance identifié par la donnée retailServerId ci-dessous
+  retailGeneratorId  INTEGER (0..255)  OPTIONAL,
+
+  -- Identifiant du serveur de vente à distance de titres auquel se connecte l'interface de vente,
+  --   que celui-ci soit une application mobile dédiée, un navigateur Internet, un automate, etc.
+  --   0.. 31 : valeurs réservées à des serveurs nationaux (voir Annexe C de NF P99-405-6)
+  --  32..127 : valeurs locales définies par l’architecte de l’interopérabilité
+  -- 128..255 : valeurs réservees à un usage futur
+  -- En l'absence de cette donnée, le serveur de vente à distance est supposé être celui
+  --   du distributeur identifié par la donnée retailerId ci-dessous
+  retailServerId     INTEGER (0..255)  OPTIONAL,
+
+  -- Identifiant du distributeur du code-barres (c’est-à-dire de l’entité ayant distribué le code-barres)
+  --    0..1023 : valeurs réservées à des distributeurs nationaux (voir Annexe C de NF P99-405-6)
+  -- 1024..4095 : valeurs locales définies par l’architecte de l’interopérabilité
+  retailerId         INTEGER (0..4095) OPTIONAL,
+
+  -- Identifiant du point de distribution (final) du code-barres
+  --   (exemple : identifiant de l’application mobile, identifiant de l’automate de distribution)
+  -- Le codage est défini par le distributeur identifié par retailerId
+  retailPointId      INTEGER           OPTIONAL,
+
+  ...,
+
+  -- Information de traçabilité liée à la génération du code-barres ou du contrat qu'il intègre.
+  -- Le codage est défini par la plateforme identifiée par retailGeneratorId,
+  --   ou en son absence par le serveur identifié par retailServerId,
+  --   ou en son absence par le distributeur identifié par retailerId.
+  retailTraceability IA5String         OPTIONAL
+}
+
+-- #############################################################################################################
+-- Définition des divers canaux par lesquels un voyageur peut solliciter un contrat.
+-- Les valeurs ci-dessous sont susceptibles d’être enrichies lors d’une republication de la norme.
+-- #############################################################################################################
+RetailChannelData ::= ENUMERATED {
+  smsTicket            (0), -- Envoi d’un SMS à un numéro spécifique
+  mobileApplication    (1), -- Application sur téléphone mobile
+  webSite              (2), -- Portail Internet
+  ticketOffice         (3), -- Agence ou guichet
+  depositaryTerminal   (4), -- Dépositaire (ex : buraliste, presse, café...)
+  onBoardTerminal      (5), -- Vente à bord (ex : au moyen du terminal point de vente du conducteur)
+  ticketVendingMachine (6), -- Automate de vente
+  ...
+}
 
 END

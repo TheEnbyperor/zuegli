@@ -1,23 +1,59 @@
-SNCF-TRANSPORT-DATA DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+-- ###########################################################################################
+-- #
+-- # SNCF Transport Extension - Version 1.0.1 (2023-11-03)
+-- #
+-- # Type complémentaire spécifique à SNCF, destiné à l’extension des structures contenant
+-- #   un document transport (OpenTicketData, ReservationData, PassData, etc.)
+-- #
+-- # Il est destiné à générer une donnée qui,
+-- #   une fois valorisée et encodée en Canonical Unaligned PER (CUPER),
+-- #   est mémorisée dans l’élément .extension.extensionData du document transport,
+-- #   tout en étant identifiée dans l’élément associé .extension.extensionId
+-- #   au moyen de la valeur "_1187ST1" (où 1187 est le code RICS de SNCF).
+-- #
+-- # Le "1" final de "ST1" correspond au numéro de version majeure de cette spécification.
+-- #   Toutes les versions 1.x.y de cette spécification sont identifiées par ce "1" dans "ST1",
+-- #   car elles sont compatibles entre elles.
+-- #
+-- ###########################################################################################
 
-    SncfTransportData ::= SEQUENCE {
-        retailEquipmentType INTEGER (0..99),
-        contractCode IA5String (SIZE(2)),
-        contractTariff INTEGER (0..65535) DEFAULT 0,
-        contractType INTEGER (0..65535) DEFAULT 0,
-        contractTypeRegardingValidation ContractTypeRegardingValidationData DEFAULT unspecified,
-        ...
-    }
+ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-    ContractTypeRegardingValidationData ::= ENUMERATED {
-        unspecified (0),
-        ticketAllowingTransport (1),
-        ticketNotAllowingTransport (2),
-        rightAllowingTranport (3),
-        rightNotAllowingTransport (4),
-        reservationAllowingTransport (5),
-        reservationNotAllowingTransport (6),
-        ...
-    }
+SncfTransportData ::= SEQUENCE {
+
+  -- Canal de distribution du contrat
+  retailEquipmentType  INTEGER   (0..99),
+
+  -- Typologie ("Code titre") du contrat
+  contractCode         IA5String (SIZE(2)),
+
+  -- Identifiant du code produit du contrat dans le modèle de données
+  contractTariff       INTEGER   (0..65535) DEFAULT 0,
+
+  -- Type de contrat
+  -- La valeur par défaut (0) signifie "non défini"
+  contractType INTEGER (0..65535) DEFAULT 0,
+
+  -- Type de contrat au vu de la validation
+  contractTypeRegardingValidation ContractTypeRegardingValidationData DEFAULT unspecified,
+
+  ...
+}
+
+-- ###########################################################################################
+-- Définition des divers types de contrats en rapport à la validation
+-- Note : la coquille dans le libellé 'rightAllowingTranport' sera corrigée lorsque le passage
+--        à une nouvelle version majeure du présent fichier de définition sera nécessaire
+-- ###########################################################################################
+ContractTypeRegardingValidationData ::= ENUMERATED {
+  unspecified                     (0),
+  ticketAllowingTransport         (1), -- Titre autorisant le transport
+  ticketNotAllowingTransport      (2), -- Titre n'autorisant pas le transport
+  rightAllowingTranport           (3), -- Droit autorisant le transport
+  rightNotAllowingTransport       (4), -- Droit n'autorisant pas le transport
+  reservationAllowingTransport    (5), -- Réservation autorisant le transport
+  reservationNotAllowingTransport (6), -- Réservation n'autorisant pas le transport
+  ...
+}
 
 END

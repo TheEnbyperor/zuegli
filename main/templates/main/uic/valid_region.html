@@ -141,6 +141,42 @@
                                     </dd>
                                 </div>
                             {% endif %}
+                            {% if region.1.entryStationNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Entry station number</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ region.1.entryStationNum }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% with station=region.1.entryStationNum|get_station:region.1 %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Entry station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if region.1.terminatingStationNum %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Terminating station number</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ region.1.terminatingStationNum }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                            {% with station=region.1.terminatingStationNum|get_station:region.1 %}
+                                {% if station %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Terminating station</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% include "main/uic/station.html" with station=station %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                         </dl>
                     </div>
                 </div>

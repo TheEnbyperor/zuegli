@@ -109,19 +109,37 @@
                     </dd>
                 </div>
             {% endif %}
-            {% if ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Level 1 key algorithm</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ ticket.dosipas_envelope.level_2_data.level1Data.level1KeyAlg|oid }}
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg|oid }}
-                    </dd>
-                </div>
+            {% if ticket.dosipas_envelope.level_2_data.level1Signature %}
+                {% if ticket.dosipas_envelope.level_2_data.level1Data.level1KeAlg %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Level 1 key algorithm</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.dosipas_envelope.level_2_data.level1Data.level1KeyAlg|oid }}
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Level 1 key algorithm</dt>
+                        <dd class="govuk-summary-list__value">
+                            Unspecified - likely DSA1024
+                        </dd>
+                    </div>
+                {% endif %}
+                {% if ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg|oid }}
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Level 1 signature algorithm</dt>
+                        <dd class="govuk-summary-list__value">
+                            Unspecified - likely DSA with SHA224
+                        </dd>
+                    </div>
+                {% endif %}
                 {% if ticket.dosipas_envelope.can_verify %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Level 1 signature verification</dt>

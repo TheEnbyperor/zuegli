@@ -13,6 +13,13 @@
                 <dd class="govuk-summary-list__value"><code>{{ pass.referenceIA5 }}</code></dd>
             </div>
         {% endif %}
+        {% if pass.productIdNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ pass.productIdNum }}</code>
+                </dd>
+            </div>
+        {% endif %}
         {% if pass.productIdIA5 %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Product ID</dt>
@@ -93,6 +100,24 @@
                 </dd>
             </div>
         {% endif %}
+        {% if pass.includedCarrierNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Included carriers</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list">
+                        {% for carrier in pass.includedCarrierNum %}
+                            {% with org=carrier|rics %}
+                                {% if org %}
+                                    <li>{% include 'main/rics.html' with org=org %}</li>
+                                {% else %}
+                                    <li><code>{{ carrier }}</code></li>
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
         {% if pass.includedCarrierIA5 %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Included carriers</dt>
@@ -111,6 +136,49 @@
                 </dd>
             </div>
         {% endif %}
+        {% if pass.validRegion %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid region</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/valid_region.html" with valid_region=pass.validRegion %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if pass.price %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Price</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ pass.price|uic_price:flex.data.issuingDetail }}
+                </dd>
+            </div>
+        {% endif %}
+        {% if pass.infoText %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extra info</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ pass.infoText }}
+                </dd>
+            </div>
+        {% endif %}
         {% include "main/uic/extension.html" with obj=pass %}
+        {% if pass.tariffs %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key"></dt>
+                <dd class="govuk-summary-list__value">
+                    {% for tariff in pass.tariffs %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">
+                                    Tariff #{{ forloop.counter }}
+                                </h2>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                {% include "main/uic/tariff.html" with tariff=tariff %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 {% endlocaltime %}
