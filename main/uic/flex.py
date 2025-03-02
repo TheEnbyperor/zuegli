@@ -41,9 +41,13 @@ class Flex:
             raise util.UICException("Failed to decode UIC rail ticket flexible data") from e
 
         if out.data["issuingDetail"].get("extension"):
-            if out.data["issuingDetail"]["extension"]["extensionId"].startswith("+FRII"):
-                version = int(out.data["issuingDetail"]["extension"]["extensionId"][5:])
-                out.intercode = fr_intercode.FRIntercode.parse(version, out.data["issuingDetail"]["extension"]["extensionData"])
+            extensionId = out.data["issuingDetail"]["extension"]["extensionId"]
+            intercode_headers = [ "+FRII", "_1187II" ]
+            for header in intercode_headers:
+                if extensionId.startswith(header):
+                    version = int(extensionId[len(header):])
+                    out.intercode = fr_intercode.FRIntercode.parse(version, out.data["issuingDetail"]["extension"]["extensionData"])
+                    break
 
         return out
 
