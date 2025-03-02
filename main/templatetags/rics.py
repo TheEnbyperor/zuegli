@@ -14,6 +14,10 @@ register = template.Library()
 def as_hex(value: bytes):
     return ":".join(f"{b:02x}" for b in value)
 
+@register.filter(name="to_date")
+def to_date(value):
+    return datetime.datetime.fromisoformat(value)
+
 @register.filter(name="rics")
 def get_rics_code(value):
     if not value:
