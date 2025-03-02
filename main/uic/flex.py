@@ -42,8 +42,7 @@ class Flex:
 
         if out.data["issuingDetail"].get("extension"):
             extensionId = out.data["issuingDetail"]["extension"]["extensionId"]
-            intercode_headers = [ "+FRII", "_1187II" ]
-            for header in intercode_headers:
+            for header in ("+FRII", "_1187II"):
                 if extensionId.startswith(header):
                     version = int(extensionId[len(header):])
                     out.intercode = fr_intercode.FRIntercode.parse(version, out.data["issuingDetail"]["extension"]["extensionData"])
