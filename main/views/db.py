@@ -25,24 +25,42 @@ def get_db_token(account: "models.Account"):
     if account.db_token and account.db_token_expires_at and \
             account.db_token_expires_at > now + datetime.timedelta(minutes=5):
         return account.db_token
-    elif account.db_refresh_token and account.db_refresh_token_expires_at and account.db_refresh_token_expires_at > now:
-        r = niquests.post(DB_TOKEN_URL, data={
-            "grant_type": "refresh_token",
-            "client_id": DB_CLIENT_ID,
-            "refresh_token": account.db_refresh_token,
-        }, headers={
-            "User-Agent": "VDV PKPass q@magicalcodewit.ch"
-        })
-        if not r.ok:
-            return None
+    elif account.db_refresh_token:
+        if account.db_refresh_token_expires_at and account.db_refresh_token_expires_at > now:
+            r = niquests.post(DB_TOKEN_URL, data={
+                "grant_type": "refresh_token",
+                "client_id": DB_CLIENT_ID,
+                "refresh_token": account.db_refresh_token,
+            }, headers={
+                "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+            })
+            if not r.ok:
+                try:
+                    error = r.json()
+                    if error.get("error") == "invalid_grant":
+                        account.db_token = None
+                        account.db_token_expires_at = None
+                        account.db_refresh_token = None
+                        account.db_refresh_token_expires_at = None
+                        account.save()
+                except niquests.exceptions.JSONDecodeError:
+                    pass
 
-        data = r.json()
-        account.db_token = data["access_token"]
-        account.db_token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
-        account.db_refresh_token = data["refresh_token"]
-        account.db_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
-        account.save()
-        return account.db_token
+                return None
+
+            data = r.json()
+            account.db_token = data["access_token"]
+            account.db_token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
+            account.db_refresh_token = data["refresh_token"]
+            account.db_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
+            account.save()
+            return account.db_token
+        else:
+            account.db_token = None
+            account.db_token_expires_at = None
+            account.db_refresh_token = None
+            account.db_refresh_token_expires_at = None
+            account.save()
     else:
         return None
 
