@@ -36,5 +36,6 @@ urlpatterns = [
 
     path('metrics', views.metrics.metrics, name='metrics'),
 
-    path('robots.txt', views.passes.robots, name='robots'),
+    path('robots.txt', views.util.robots, name='robots'),
+    path('.well-known/apple-app-site-association', views.util.apple_app_site_association, name='apple-app-site-association'),
 ]

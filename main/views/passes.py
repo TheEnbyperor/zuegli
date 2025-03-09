@@ -26,11 +26,6 @@ def get_client_ip(request):
     return ip
 
 
-def robots(request):
-    with storages["staticfiles"].open("main/robots.txt") as f:
-        return HttpResponse(f.read(), content_type="text/plain")
-
-
 def index(request):
     ticket_bytes = None
     tickets = []
