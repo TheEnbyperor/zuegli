@@ -34,3 +34,5 @@ protobuf
 mypy-protobuf
 icalendar
 phonenumbers
+channels
+daphne

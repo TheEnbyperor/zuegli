@@ -525,9 +525,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                     "value": f"class-code-{ticket_document['classCode']}-label",
                                 })
 
+                        has_product_name = False
                         if len(ticket_document.get("tariffs", [])) >= 1:
                             tariff = ticket_document["tariffs"][0]
                             if "tariffDesc" in tariff:
+                                has_product_name = True
                                 pass_fields["headerFields"].append({
                                     "key": "product",
                                     "label": "product-label",
@@ -556,11 +558,33 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                         if "productIdIA5" in ticket_document:
+                            if not has_product_name:
+                                pass_fields["headerFields"].append({
+                                    "key": "product",
+                                    "label": "product-label",
+                                    "value": ticket_document["productIdIA5"],
+                                })
+                                has_product_name = True
+
                             pass_fields["backFields"].append({
                                 "key": "product-id",
                                 "label": "product-id-label",
                                 "value": ticket_document["productIdIA5"],
                             })
+
+                        if "infoText" in ticket_document:
+                            if not has_product_name:
+                                pass_fields["headerFields"].append({
+                                    "key": "info-text",
+                                    "value": ticket_document["infoText"],
+                                })
+
+                            pass_fields["backFields"].append({
+                                "key": "info-text",
+                                "label": "info-label",
+                                "value": ticket_document["infoText"],
+                            })
+
 
                         f = "secondaryFields" if pass_type == "boardingPass" else "auxiliaryFields"
                         pass_fields[f].append({
@@ -4538,6 +4562,7 @@ PASS_STRINGS = {
 "product-label" = "Product";
 "ticket-id-label" = "Ticket ID";
 "card-id-label" = "Card ID";
+"info-label" = "Info";
 "more-info-label" = "More info";
 "product-organisation-label" = "Product Organisation";
 "issuing-organisation-label" = "Issuing Organisation";
@@ -4603,6 +4628,7 @@ PASS_STRINGS = {
 "product-label" = "Cynnyrch";
 "ticket-id-label" = "Rhif Tocyn";
 "card-id-label" = "Rhif Cerdyn";
+"info-label" = "Gwybodaeth";
 "more-info-label" = "Gwybodaeth ychwanegol";
 "product-organisation-label" = "Cynnyrchgwni";
 "issuing-organisation-label" = "Cwni dyddori";
@@ -4668,6 +4694,7 @@ PASS_STRINGS = {
 "product-label" = "Produkt";
 "ticket-id-label" = "Ticket-ID";
 "card-id-label" = "Kartennummer";
+"info-label" = "Info";
 "more-info-label" = "Mehr Infos";
 "product-organisation-label" = "Produktorganisation";
 "issuing-organisation-label" = "Ausstellende Organisation";
@@ -4733,6 +4760,7 @@ PASS_STRINGS = {
 "product-label" = "Product";
 "ticket-id-label" = "Ticket-ID";
 "card-id-label" = "Kaart-ID";
+"info-label" = "Info";
 "more-info-label" = "Meer info";
 "product-organisation-label" = "Productorganisatie";
 "issuing-organisation-label" = "Uitgevende Organisatie";
