@@ -26,12 +26,12 @@ message TripData {
   string arrival_station = 3;
   uint32 travel_class = 4;
   reserved 5;
-  string route = 6;
+  repeated string route = 6;
   reserved 7;
   Time valid_from = 8;
   Time valid_until = 9;
   uint32 article_number = 12;
-  ZoneInformation zone_info = 13;
+  repeated ZoneInformation zone_info = 13;
   string tariff = 15;
   reserved 17;
   reserved 19;

@@ -86,9 +86,13 @@
                     </div>
                     {% if ticket.data.ticket.ticket_data.trip_data.route %}
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Route</dt>
+                            <dt class="govuk-summary-list__key">Routes</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ ticket.data.ticket.ticket_data.trip_data.route }}
+                                <ul class="govuk-list govuk-list--bullet">
+                                    {% for r in ticket.data.ticket.ticket_data.trip_data.route %}
+                                        <li>{{ r }}</li>
+                                    {% endfor %}
+                                </ul>
                             </dd>
                         </div>
                     {% endif %}
@@ -110,24 +114,46 @@
                             {{ ticket.data.ticket.ticket_data.trip_data.article_number }}
                         </dd>
                     </div>
-                    {% if ticket.data.ticket.ticket_data.trip_data|proto_has_field:"zone_info" %}
+                    {% if ticket.data.ticket.ticket_data.trip_data.zone_info %}
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Zone info</dt>
+                            <dt class="govuk-summary-list__key">Zones</dt>
                             <dd class="govuk-summary-list__value">
-                                <dl class="govuk-summary-list">
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">ID</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ ticket.data.ticket.ticket_data.trip_data.zone_info.zone_id }}
-                                        </dd>
+                                {% for zone in ticket.data.ticket.ticket_data.trip_data.zone_info %}
+                                    <div class="govuk-summary-card">
+                                        <div class="govuk-summary-card__title-wrapper">
+                                            <h2 class="govuk-summary-card__title">Zone #{{ forloop.counter }}</h2>
+                                        </div>
+                                        <div class="govuk-summary-card__content">
+                                            <dl class="govuk-summary-list">
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">ID</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ zone.zone_id }}
+                                                    </dd>
+                                                </div>
+                                                {% with org=zone.zone_org|swisspass_org_id %}
+                                                    {% if org %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Organisation</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ org.short_name }} - {{ org.name }}
+                                                                (<code>{{ zone.zone_org }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ zone.zone_org }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </dl>
+                                        </div>
                                     </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Organisation</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ ticket.data.ticket.ticket_data.trip_data.zone_info.zone_org }}
-                                        </dd>
-                                    </div>
-                                </dl>
+                                {% endfor %}
+
                             </dd>
                         </div>
                     {% endif %}
@@ -203,18 +229,20 @@
                             {{ ticket.data.issuing_time|date:"F d, Y H:i:s e" }}
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Organisation ID</dt>
-                        <dd class="govuk-summary-list__value">
-                            <code>{{ ticket.data.ticket.ticket_data.ticket_issue.issuing_org }}</code>
-                        </dd>
-                    </div>
                     {% with org=ticket.data.ticket.ticket_data.ticket_issue.issuing_org|swisspass_org_id %}
                         {% if org %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Organisation</dt>
                                 <dd class="govuk-summary-list__value">
                                     {{ org.short_name }} - {{ org.name }}
+                                    (<code>{{ ticket.data.ticket.ticket_data.ticket_issue.issuing_org }}</code>)
+                                </dd>
+                            </div>
+                        {% else %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ ticket.data.ticket.ticket_data.ticket_issue.issuing_org }}</code>
                                 </dd>
                             </div>
                         {% endif %}

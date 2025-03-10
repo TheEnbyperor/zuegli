@@ -97,17 +97,18 @@ class TripData(google.protobuf.message.Message):
     departure_station: builtins.str
     arrival_station: builtins.str
     travel_class: builtins.int
-    route: builtins.str
     article_number: builtins.int
     tariff: builtins.str
     @property
     def ticket_type(self) -> global___TicketType: ...
     @property
+    def route(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
+    @property
     def valid_from(self) -> global___Time: ...
     @property
     def valid_until(self) -> global___Time: ...
     @property
-    def zone_info(self) -> global___ZoneInformation: ...
+    def zone_info(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ZoneInformation]: ...
     def __init__(
         self,
         *,
@@ -115,14 +116,14 @@ class TripData(google.protobuf.message.Message):
         departure_station: builtins.str = ...,
         arrival_station: builtins.str = ...,
         travel_class: builtins.int = ...,
-        route: builtins.str = ...,
+        route: collections.abc.Iterable[builtins.str] | None = ...,
         valid_from: global___Time | None = ...,
         valid_until: global___Time | None = ...,
         article_number: builtins.int = ...,
-        zone_info: global___ZoneInformation | None = ...,
+        zone_info: collections.abc.Iterable[global___ZoneInformation] | None = ...,
         tariff: builtins.str = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["ticket_type", b"ticket_type", "valid_from", b"valid_from", "valid_until", b"valid_until", "zone_info", b"zone_info"]) -> builtins.bool: ...
+    def HasField(self, field_name: typing.Literal["ticket_type", b"ticket_type", "valid_from", b"valid_from", "valid_until", b"valid_until"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing.Literal["arrival_station", b"arrival_station", "article_number", b"article_number", "departure_station", b"departure_station", "route", b"route", "tariff", b"tariff", "ticket_type", b"ticket_type", "travel_class", b"travel_class", "valid_from", b"valid_from", "valid_until", b"valid_until", "zone_info", b"zone_info"]) -> None: ...
 
 global___TripData = TripData
