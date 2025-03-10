@@ -39,6 +39,7 @@ BARKODER_LICENSE = "0MHXR8cuvoJT62F-vUCcqMQR74K0988ixUjSf_DnucZlrv_DJTneGfAh1avJ
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -48,7 +49,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_forms_gds",
     "magiclink",
-    "main"
+    "main",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -86,7 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "vdv_pkpass.wsgi.application"
-
+ASGI_APPLICATION = "vdv_pkpass.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

@@ -31,6 +31,7 @@ if ip := os.getenv("POD_IP"):
     ALLOWED_HOSTS.append(f"[{ip}]")
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_forms_gds",
     "magiclink",
-    "main"
+    "main",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -79,6 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "vdv_pkpass.wsgi.application"
+ASGI_APPLICATION = "vdv_pkpass.asgi.application"
 
 DATABASES = {
     'default': {
