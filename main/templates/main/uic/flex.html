@@ -47,7 +47,8 @@
                     </div>
                 {% endif %}
             {% endwith %}
-        {% elif flex.data.issuingDetail.issuerName %}
+        {% endif %}
+        {% if flex.data.issuingDetail.issuerName %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Issuer</dt>
                 <dd class="govuk-summary-list__value">{{ flex.data.issuingDetail.issuerName }}</dd>
