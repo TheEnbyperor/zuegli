@@ -29,7 +29,7 @@ class OeBBRecord99:
         try:
             data = json.loads(data.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as e:
-            raise OeBBException(f"Invalid OeBB 99 record") from e
+            raise OeBBException(f"Invalid ÖBB 99 record") from e
 
         if "V" in data:
             validity_start = data.pop("V")

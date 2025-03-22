@@ -938,7 +938,7 @@ def parse_ticket_uic_db_vu(
 
 
 def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional["uic.oebb.OeBBRecord99"]:
-    oebb_record = next(filter(lambda r: r.id == "118199" and r.version == 1, ticket_envelope.records), None)
+    oebb_record = next(filter(lambda r: (r.id == "118199" or r.id == "3602AA") and r.version == 1, ticket_envelope.records), None)
     if not oebb_record:
         return None
 
@@ -946,8 +946,8 @@ def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional["
         return uic.oebb.OeBBRecord99.parse(oebb_record.data, oebb_record.version)
     except uic.oebb.OeBBException:
         raise TicketError(
-            title="Invalid OeBB 99 record",
-            message="The OeBB 99 record can't be parsed - the ticket is likely invalid.",
+            title="Invalid ÖBB 99 record",
+            message="The ÖBB 99 record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
