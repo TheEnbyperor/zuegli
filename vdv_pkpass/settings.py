@@ -193,6 +193,9 @@ MAPKIT_KEY_ID = os.getenv("MAPKIT_KEY_ID")
 NR_USERNAME = os.getenv("NR_USERNAME")
 NR_PASSWORD = os.getenv("NR_PASSWORD")
 
+DB_CLIENT_ID = os.getenv("DB_CLIENT_ID")
+DB_API_KEY = os.getenv("DB_API_KEY")
+
 SNCB_API_KEY = os.getenv("SNCB_API_KEY")
 
 try:

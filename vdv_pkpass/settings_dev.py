@@ -167,6 +167,15 @@ except FileNotFoundError:
     NR_PASSWORD = None
 
 try:
+    with open(BASE_DIR / "priv" / "db.json") as f:
+        d = json.load(f)
+        DB_CLIENT_ID = d["client_id"]
+        DB_API_KEY = d["api_key"]
+except FileNotFoundError:
+    DB_CLIENT_ID = None
+    DB_API_KEY = None
+
+try:
     with open(BASE_DIR / "priv" / "sncb.json") as f:
         d = json.load(f)
         SNCB_API_KEY = d["api_key"]
