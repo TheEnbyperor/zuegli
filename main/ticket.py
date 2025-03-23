@@ -328,6 +328,7 @@ class UICTicket:
                     or r.id == "3306FI" or r.id == "3306VD"
                     or r.id == "3606AA" or r.id == "3697OT"
                     or r.id == "000IVU" or r.id == "CXX___"
+                    or r.id == "3602AA"
             )]
         )
 
