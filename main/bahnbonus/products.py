@@ -36,7 +36,7 @@ PRODUCTS = {
     ),
     LOUNGE_STANDARD: Product(
         name="Lounge",
-        strip_image="bahnbonus/bg-normal.png",
-        strip_colour="#ffffff",
+        strip_image="bahnbonus/bg-gold.png",
+        strip_colour="#000000",
     ),
 }
