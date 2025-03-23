@@ -74,7 +74,7 @@ def get_bahnbonus_token(account: "models.Account"):
             account.bahnbonus_refresh_token = data["refresh_token"]
             account.bahnbonus_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
             account.save()
-            return account.db_token
+            return account.bahnbonus_token
     else:
         return None
 
