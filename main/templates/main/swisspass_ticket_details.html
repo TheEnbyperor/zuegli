@@ -316,25 +316,31 @@
                 </dd>
             </div>
         {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Payment</dt>
-            <dd class="govuk-summary-list__value">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Method</dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ ticket.data.payment_method_name }}
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Price</dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ ticket.data.ticket.ticket_data.payment.price }}
-                            {{ ticket.data.ticket.ticket_data.payment.currency }}
-                        </dd>
-                    </div>
-                </dl>
-            </dd>
-        </div>
+        {% if ticket.data.payment_method_name or ticket.data.ticket.ticket_data.payment.currency %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Payment</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        {% if ticket.data.payment_method_name %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Method</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ ticket.data.payment_method_name }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if ticket.data.ticket.ticket_data.payment.currency %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Price</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ ticket.data.ticket.ticket_data.payment.price }}
+                                    {{ ticket.data.ticket.ticket_data.payment.currency }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+                </dd>
+            </div>
+        {% endif %}
     </dl>
 {% endlocaltime %}
