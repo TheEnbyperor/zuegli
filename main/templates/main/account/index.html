@@ -40,6 +40,20 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">BahnBonus Account</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_bahnbonus_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary"
+                               href="{% url 'bahnbonus_login' %}">Reauthenticate</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'bahnbonus_logout' %}">Unlink</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'bahnbonus_login' %}">Login with DB</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">DB</dt>
                 <dd class="govuk-summary-list__value">
                     <a class="govuk-button" href="{% url 'db_add_ticket' %}">Add ticket</a>

@@ -583,7 +583,7 @@ class BahnBonusCode:
         return "BahnBonus"
 
     def type(self) -> str:
-        return models.Ticket.TYPE_BAHNCARD
+        return models.Ticket.TYPE_BAHNBONUS
 
     def pk(self) -> str:
         hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)

@@ -67,6 +67,12 @@ class IATATicketInstanceInline(admin.StackedInline):
     readonly_fields = ("barcode_hash",)
 
 
+class BahnBonusInstanceInline(admin.StackedInline):
+    extra = 0
+    model = models.BahnBonusInstance
+    readonly_fields = ("barcode_hash",)
+
+
 class AppleRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AppleRegistration
@@ -135,6 +141,7 @@ class TicketAdmin(admin.ModelAdmin):
         HZPPTicketInstanceInline,
         SwissPassTicketInstanceInline,
         IATATicketInstanceInline,
+        BahnBonusInstanceInline,
         AppleRegistrationInline,
         AccessLogInline,
     ]
@@ -196,6 +203,10 @@ class AccountAdmin(admin.ModelAdmin):
         "db_token_expires_at",
         "db_refresh_token",
         "db_refresh_token_expires_at",
+        "bahnbonus_token",
+        "bahnbonus_token_expires_at",
+        "bahnbonus_refresh_token",
+        "bahnbonus_refresh_token_expires_at",
         "saarvv_token",
         "saarvv_device_id",
         "calendar_token",

@@ -11,6 +11,9 @@ cat > ~/.local/bin/db-hook <<EOF
 if [[ "\$1" == "dbnav:"* ]]; then
   url=\$(echo -n \$1 | base64)
   xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/db_login/callback?url=\$url"
+else if [[ "\$1" == "bahnbonus:"* ]]; then
+  url=\$(echo -n \$1 | base64)
+  xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/bahnbonus_login/callback?url=\$url"
 else
   xdg-open "\$1"
 fi
@@ -23,9 +26,10 @@ Type=Application
 Name=VDV PKPass DB Navigator Hook
 Exec=/bin/sh -c "$HOME/.local/bin/db-hook %u"
 StartupNotify=false
-MimeType=x-scheme-handler/dbnav;
+MimeType=x-scheme-handler/dbnav;x-scheme-handler/bahnbonus
 EOF
 
 xdg-mime default dbnav.desktop x-scheme-handler/dbnav
+xdg-mime default dbnav.desktop x-scheme-handler/bahnbonus
 
 echo "Install complete ✨"

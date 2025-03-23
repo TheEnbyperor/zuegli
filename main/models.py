@@ -20,11 +20,15 @@ def make_pass_token():
 
 class Account(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    db_token = models.TextField(null=True, blank=True, verbose_name="Deutsche Bahn Bearer token")
-    db_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Deutsche Bahn Bearer token expiration")
+    db_token = models.TextField(null=True, blank=True, verbose_name="Deutsche Bahn bearer token")
+    db_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Deutsche Bahn bearer token expiration")
     db_refresh_token = models.TextField(null=True, blank=True, verbose_name="Deutsche Bahn refresh token")
     db_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Deutsche Bahn refresh token expiration")
     db_account_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Deutsche Bahn Account ID")
+    bahnbonus_token = models.TextField(null=True, blank=True, verbose_name="BahnBonus bearer token")
+    bahnbonus_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus bearer token expiration")
+    bahnbonus_refresh_token = models.TextField(null=True, blank=True, verbose_name="BahnBonus refresh token")
+    bahnbonus_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus refresh token expiration")
     saarvv_token = models.TextField(null=True, blank=True, verbose_name="SaarVV Token")
     saarvv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="SaarVV Device ID")
     calendar_token = models.CharField(max_length=255, verbose_name="iCal token", default=make_pass_token)
@@ -37,6 +41,15 @@ class Account(models.Model):
         if self.db_token and self.db_token_expires_at and self.db_token_expires_at > now:
             return True
         elif self.db_refresh_token and self.db_refresh_token_expires_at and self.db_refresh_token_expires_at > now:
+            return True
+        else:
+            return False
+
+    def is_bahnbonus_authenticated(self) -> bool:
+        now = timezone.now()
+        if self.bahnbonus_token and self.bahnbonus_token_expires_at and self.bahnbonus_token_expires_at > now:
+            return True
+        elif self.bahnbonus_refresh_token and self.bahnbonus_refresh_token_expires_at and self.bahnbonus_refresh_token_expires_at > now:
             return True
         else:
             return False
@@ -62,6 +75,7 @@ class Ticket(models.Model):
     TYPE_INTERRAIL = "interrail"
     TYPE_RAILCARD = "railcard"
     TYPE_KEYCARD = "keycard"
+    TYPE_BAHNBONUS = "bahnbonus"
     TYPE_UNKNOWN = "unknown"
 
     TICKET_TYPES = (
@@ -74,6 +88,7 @@ class Ticket(models.Model):
         (TYPE_INTERRAIL, "Interrail"),
         (TYPE_RAILCARD, "Railcard"),
         (TYPE_KEYCARD, "Keycard"),
+        (TYPE_BAHNBONUS, "BahnBonus"),
         (TYPE_UNKNOWN, "Unknown"),
     )
 

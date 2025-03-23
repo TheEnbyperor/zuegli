@@ -17,8 +17,11 @@ DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
 DB_AUTH_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/auth"
 DB_TOKEN_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/token"
 DB_CERTS_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/certs"
+
 DB_CLIENT_ID = "kf_mobile"
 DB_REDIRECT_URI = "dbnav://dbnavigator.bahn.de/auth"
+BAHNBONUS_CLIENT_ID = "fe_bb_app"
+BAHNBONUS_REDIRECT_URI = "bahnbonus://authentication/redirect"
 
 def get_db_token(account: "models.Account"):
     now = timezone.now()
@@ -64,9 +67,58 @@ def get_db_token(account: "models.Account"):
     else:
         return None
 
+def get_bahnbonus_token(account: "models.Account"):
+    now = timezone.now()
+    if account.bahnbonus_token and account.bahnbonus_token_expires_at and \
+            account.bahnbonus_token_expires_at > now + datetime.timedelta(minutes=5):
+        return account.bahnbonus_token
+    elif account.bahnbonus_refresh_token:
+        if account.bahnbonus_refresh_token_expires_at and account.bahnbonus_refresh_token_expires_at > now:
+            r = niquests.post(DB_TOKEN_URL, data={
+                "grant_type": "refresh_token",
+                "client_id": BAHNBONUS_CLIENT_ID,
+                "refresh_token": account.bahnbonus_refresh_token,
+            }, headers={
+                "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+            })
+            if not r.ok:
+                try:
+                    error = r.json()
+                    if error.get("error") == "invalid_grant":
+                        account.bahnbonus_token = None
+                        account.bahnbonus_token_expires_at = None
+                        account.bahnbonus_refresh_token = None
+                        account.bahnbonus_refresh_token_expires_at = None
+                        account.save()
+                except niquests.exceptions.JSONDecodeError:
+                    pass
+
+                return None
+
+            data = r.json()
+            account.bahnbonus_token = data["access_token"]
+            account.bahnbonus_token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
+            account.bahnbonus_refresh_token = data["refresh_token"]
+            account.bahnbonus_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
+            account.save()
+            return account.db_token
+        else:
+            account.bahnbonus_token = None
+            account.bahnbonus_token_expires_at = None
+            account.bahnbonus_refresh_token = None
+            account.bahnbonus_refresh_token_expires_at = None
+            account.save()
+    else:
+        return None
+
 @login_required
 def db_login(request):
     return render(request, "main/account/db_login.html", {})
+
+
+@login_required
+def bahnbonus_login(request):
+    return render(request, "main/account/bahnbonus_login.html", {})
 
 
 @login_required
@@ -75,6 +127,17 @@ def db_logout(request):
     request.user.account.db_token_expires_at = None
     request.user.account.db_refresh_token = None
     request.user.account.db_refresh_token_expires_at = None
+    request.user.account.save()
+    messages.add_message(request, messages.SUCCESS, "Successfully logged out")
+    return redirect("account")
+
+
+@login_required
+def bahnbonus_logout(request):
+    request.user.account.bahnbonus_token = None
+    request.user.account.bahnbonus_token_expires_at = None
+    request.user.account.bahnbonus_refresh_token = None
+    request.user.account.bahnbonus_refresh_token_expires_at = None
     request.user.account.save()
     messages.add_message(request, messages.SUCCESS, "Successfully logged out")
     return redirect("account")
@@ -102,11 +165,32 @@ def db_login_start(request):
 
 
 @login_required
+def bahnbonus_login_start(request):
+    code_verifier = secrets.token_hex(32)
+    session_state = secrets.token_hex(32)
+    request.session["bahnbonus_code_verifier"] = code_verifier
+    request.session["bahnbonus_session_state"] = session_state
+    code_challenge = base64.urlsafe_b64encode(
+        hashlib.sha256(code_verifier.encode()).digest()
+    ).decode().replace("=", "")
+    params = urllib.parse.urlencode({
+        "client_id": BAHNBONUS_CLIENT_ID,
+        "redirect_uri": BAHNBONUS_REDIRECT_URI,
+        "response_type": "code",
+        "code_challenge_method": "S256",
+        "code_challenge": code_challenge,
+        "state": session_state,
+        "scope": "offline_access",
+    })
+    return redirect(f"{DB_AUTH_URL}?{params}")
+
+
+@login_required
 def db_login_callback(request):
     if "url" not in request.GET or \
             "db_code_verifier" not in request.session or \
             "db_session_state" not in request.session:
-        return db_login_start(request)
+        return redirect('db_login')
 
     try:
         url = base64.urlsafe_b64decode(request.GET["url"]).decode("utf-8")
@@ -186,12 +270,85 @@ def db_login_callback(request):
         messages.error(request, "Invalid login response")
         return redirect('db_login')
 
-
     request.user.account.db_token = auth_token
     request.user.account.db_token_expires_at = auth_token_expires_at
     request.user.account.db_refresh_token = refresh_token
     request.user.account.db_refresh_token_expires_at = refresh_token_expires_at
     request.user.account.db_account_id = auth_data.get("kundenkontoid")
+    request.user.account.save()
+
+    return redirect('account')
+
+
+@login_required
+def bahnbonus_login_callback(request):
+    if "url" not in request.GET or \
+            "bahnbonus_code_verifier" not in request.session or \
+            "bahnbonus_session_state" not in request.session:
+        return redirect('bahnbonus_login')
+
+    try:
+        url = base64.urlsafe_b64decode(request.GET["url"]).decode("utf-8")
+    except (binascii.Error, UnicodeDecodeError):
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    response_url = urllib.parse.urlparse(url)
+
+    if response_url.scheme != "bahnbonus":
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    if response_url.netloc != "authentication":
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    if response_url.path != "/redirect":
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    response_params = urllib.parse.parse_qs(response_url.query)
+
+    if "error" in response_params:
+        messages.error(request, f"Login error - {response_params.get('error_description', '')}")
+        return redirect('bahnbonus_login')
+
+    code = response_params.get("code", [""])[0]
+    db_session_state = response_params.get("session_state", [""])[0]
+    code_verifier = request.session.pop("bahnbonus_code_verifier")
+    session_state = request.session.pop("bahnbonus_session_state")
+
+    if response_params.get("state", [""])[0] != session_state:
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    r = niquests.post(DB_TOKEN_URL, data={
+        "grant_type": "authorization_code",
+        "client_id": BAHNBONUS_CLIENT_ID,
+        "redirect_uri": BAHNBONUS_REDIRECT_URI,
+        "code": code,
+        "code_verifier": code_verifier,
+    }, headers={
+        "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+    })
+    data = r.json()
+    if not r.ok:
+        messages.error(request, f"Login failed - {data.get('error_description', '')}")
+        return redirect('bahnbonus_login')
+
+    if data.get("session_state") != db_session_state:
+        messages.error(request, "Invalid login response")
+        return redirect('bahnbonus_login')
+
+    auth_token = data.get("access_token", None)
+    auth_token_expires_at = timezone.now() + datetime.timedelta(seconds=data.get("expires_in", 0))
+    refresh_token = data.get("refresh_token", None)
+    refresh_token_expires_at = timezone.now() + datetime.timedelta(seconds=data.get("refresh_expires_in", 0))
+
+    request.user.account.bahnbonus_token = auth_token
+    request.user.account.bahnbonus_token_expires_at = auth_token_expires_at
+    request.user.account.bahnbonus_refresh_token = refresh_token
+    request.user.account.bahnbonus_refresh_token_expires_at = refresh_token_expires_at
     request.user.account.save()
 
     return redirect('account')
