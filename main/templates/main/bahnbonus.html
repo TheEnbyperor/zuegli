@@ -1,0 +1,48 @@
+{% load tz %}
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">ID</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ ticket.data.product_id }}</code></dd>
+                    </div>
+                    {% with product=ticket.data.product %}
+                        {% if product %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Name</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ product.name }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </dl>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Barcode ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.barcode_id }}</dd>
+        </div>
+        {% if ticket.data.valid_from %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid from</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y" }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.valid_until %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid until</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.valid_until|date:"F d, Y" }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.issuer %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Issuer ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ticket.data.issuer }}</code></dd>
+            </div>
+        {% endif %}
+    </dl>
+{% endlocaltime %}

@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus
 
 
 def make_pass_token():
@@ -155,6 +155,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.iata_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.bahnbonus_instances.first():
             return ticket_instance
 
 
@@ -438,6 +441,24 @@ class IATATicketInstance(models.Model):
         return t.IATATicket(
             raw_ticket=self.barcode_data,
             data=iata.Envelope.parse(bytes(self.barcode_data))
+        )
+
+
+class BahnBonusInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="bahnbonus_instances")
+    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "BahnBonus code"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def as_ticket(self) -> t.BahnBonusCode:
+        return t.BahnBonusCode(
+            raw_ticket=self.barcode_data,
+            data=bahnbonus.BahnBonusCode.parse(bytes(self.barcode_data))
         )
 
 
