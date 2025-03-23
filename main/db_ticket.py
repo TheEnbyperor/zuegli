@@ -7,7 +7,7 @@ import bs4
 import secrets
 import urllib3.util
 
-from . import models, aztec, ticket, apn, views
+from . import models, aztec, ticket, views
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -39,7 +39,6 @@ def update_from_img_elm(barcode_elm, account):
     try:
         ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
         ticket_obj.save()
-        apn.notify_ticket_if_renewed(ticket_obj)
         return ticket_obj
     except ticket.TicketError as e:
         logger.error("Error decoding barcode ticket: %s", e)
@@ -52,7 +51,7 @@ def update_all():
     session.mount("https://", adapter)
 
     for account in models.Account.objects.all():
-        if not account.is_db_authenticated:
+        if not account.is_db_authenticated():
             continue
 
         db_token = views.db.get_db_token(account)
