@@ -7,7 +7,7 @@ import bs4
 import secrets
 import urllib3.util
 
-from . import models, views, db_ticket
+from . import models, views, db_ticket, bahnbonus, ticket
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -28,6 +28,22 @@ def update_all():
         db_token = views.db.get_db_token(account)
         if not db_token:
             continue
+
+        r = niquests.get(
+            f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account.db_account_id}/bbStatus", headers={
+                "Authorization": f"Bearer {db_token}",
+                "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
+                "X-Correlation-ID": secrets.token_hex(16),
+                "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+            })
+        if not r.ok:
+            logger.error(f"Failed to get BahnBonus information for account {account} - {r.text}")
+        else:
+            bb_status = r.json()
+
+            barcode_data = f"{bahnbonus.products.BAHNBONUS};{bb_status['loyaltyNumber']}".encode("utf-8")
+            ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
+            ticket_obj.save()
 
         try:
             r = niquests.get(f"https://app.vendo.noncd.db.de/mob/emobilebahncards", headers={
