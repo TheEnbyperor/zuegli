@@ -9,7 +9,7 @@ import hashlib
 import enum
 import binascii
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus
 
 
 class TicketError(Exception):
@@ -570,6 +570,26 @@ class IATATicket:
         for leg in self.data.legs:
             hd.update(leg.pnr.encode("utf-8"))
             hd.update(leg.sequence.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class BahnBonusCode:
+    raw_ticket: bytes
+    data: bahnbonus.BahnBonusCode
+
+    @property
+    def ticket_type(self) -> str:
+        return "BahnBonus"
+
+    def type(self) -> str:
+        return models.Ticket.TYPE_BAHNCARD
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"bahnbonus")
+        hd.update(self.data.barcode_id.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1259,11 +1279,28 @@ def parse_ticket_iata(ticket_bytes: bytes, context: "vdv.ticket.Context") -> IAT
     )
 
 
+def parse_bahn_bonus(ticket_bytes: bytes) -> BahnBonusCode:
+    try:
+        data = bahnbonus.BahnBonusCode.parse(ticket_bytes)
+    except bahnbonus.BahnBonusException:
+        raise TicketError(
+            title="This doesn't look like a valid BahnBonus code",
+            message="You may have scanned something that is not an BahnBonus code, "
+                    "the code is corrupted, or there is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return BahnBonusCode(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(
         ticket_bytes: bytes, account: typing.Optional["models.Account"]
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
-    SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket,
+    SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
 ]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
@@ -1282,6 +1319,9 @@ def parse_ticket(
 
     if len(ticket_bytes) == 107 and (ticket_bytes[0] & 0xF0) >> 4 in (1, 2):
         return parse_ticket_ssb1(ticket_bytes)
+
+    if bahnbonus.is_bahnbonus_code(ticket_bytes):
+        return parse_bahn_bonus(ticket_bytes)
 
     if ticket_bytes[:4] == b"i0CV":
         return parse_ticket_sncf(ticket_bytes)
@@ -1476,6 +1516,14 @@ def create_ticket_obj(
         )
     elif isinstance(ticket_data, IATATicket):
         _, created = models.IATATicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, BahnBonusCode):
+        _, created = models.BahnBonusInstance.objects.update_or_create(
             barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,

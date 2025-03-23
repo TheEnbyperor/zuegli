@@ -14,7 +14,7 @@ from django.core.files.storage import storages
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib import messages
-from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, uic, ssb, swisspass, cal
+from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, uic, ssb, swisspass, cal, bahnbonus
 
 
 def get_client_ip(request):
@@ -4392,7 +4392,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["foregroundColor"] = SWISSPASS_FG[issuer_id]
         if issuer_id in SWISSPASS_FG_SECONDARY:
             pass_json["labelColor"] = SWISSPASS_FG_SECONDARY[issuer_id]
-
     elif isinstance(ticket_instance, models.IATATicketInstance):
         ticket_data: ticket.IATATicket = ticket_instance.as_ticket()
 
@@ -4457,6 +4456,72 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "destinationAirportCode": leg.to_code,
                     "destinationAirportName": arrival_station["name"] if arrival_station else None,
                 }
+            })
+    elif isinstance(ticket_instance, models.BahnBonusInstance):
+        ticket_data: ticket.BahnBonusCode = ticket_instance.as_ticket()
+
+        if ticket_data.data.valid_from:
+            validity_start = datetime.datetime.combine(ticket_data.data.valid_from, datetime.time.min)
+        else:
+            validity_start = None
+        if ticket_data.data.valid_until:
+            validity_end = datetime.datetime.combine(ticket_data.data.valid_until, datetime.time.max)
+        else:
+            validity_end = None
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+        }]
+        pass_json["backgroundColor"] = "#3c414b"
+        pass_json["foregroundColor"] = "#ffffff"
+        pass_json["labelColor"] = "#ffffff"
+
+        add_pkp_img(pkp, "pass/logo-db.png", "logo.png")
+        have_logo = True
+
+        product = ticket_data.data.product()
+        if product:
+            pass_fields["primaryFields"].append({
+                "key": "product",
+                "value": product.name
+            })
+
+            if product.strip_image:
+                add_pkp_img(pkp, product.strip_image, "strip.png")
+
+            if product.strip_colour:
+                pass_json["stripColor"] = product.strip_colour
+
+        if ticket_data.data.product_id == bahnbonus.products.BAHNBONUS:
+            pass_type = "storeCard"
+
+            pass_fields["auxiliaryFields"].append({
+                "key": "card-id",
+                "label": "card-id-label",
+                "value": ticket_data.data.barcode_id
+            })
+        else:
+            pass_type = "coupon"
+
+        if validity_start:
+            pass_fields["secondaryFields"].append({
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            })
+
+        if validity_end:
+            pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_fields["secondaryFields"].append({
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleNone",
+                "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
 
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
