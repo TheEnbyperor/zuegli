@@ -13,6 +13,7 @@
 /kube
 /barkoder/build
 /dtvg-certs
+/ai
 tickeos.py
 parsed_licenses.lcs
 .DS_Store
