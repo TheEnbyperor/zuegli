@@ -1113,24 +1113,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "label": "class-code-label",
                             "value": f"class-code-{customer_card_document['classCode']}-label",
                         })
-
-                    if validity_start:
-                        pass_fields["auxiliaryFields"].append({
-                            "key": "validity-start",
-                            "label": "validity-start-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleNone",
-                            "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
-                        pass_fields["backFields"].append({
-                            "key": "validity-start-back",
-                            "label": "validity-start-label",
-                            "dateStyle": "PKDateStyleFull",
-                            "timeStyle": "PKDateStyleNone",
-                            "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
+                        
                     if validity_end:
                         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
                         pass_fields["auxiliaryFields"].append({
@@ -1148,6 +1131,24 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "dateStyle": "PKDateStyleFull",
                             "timeStyle": "PKDateStyleNone",
                             "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+
+                    if validity_start:
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleNone",
+                            "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                        pass_fields["backFields"].append({
+                            "key": "validity-start-back",
+                            "label": "validity-start-label",
+                            "dateStyle": "PKDateStyleFull",
+                            "timeStyle": "PKDateStyleNone",
+                            "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
                             "ignoresTimeZone": True
                         })
 
@@ -4860,6 +4861,7 @@ RICS_LOGO = {
     3497: "pass/logo-rvv.png",
     3509: "pass/logo-ret.png",
     3591: "pass/logo-akn.png",
+    3602: "pass/logo-vvv.png",
     3606: "pass/logo-qbuzz.png",
     3697: "pass/logo-cendis.png",
     3703: "pass/logo-grand-est.png",
@@ -4883,6 +4885,7 @@ RICS_BG = {
     3018: "#af1634",
     3453: "#018e4a",
     3497: "#14181a",
+    3602: "#004d66",
     3697: "#0f173e",
     3703: "#191998",
     5188: "#40002c",
@@ -4900,6 +4903,7 @@ RICS_FG = {
     3018: "#ffffff",
     3453: "#ffffff",
     3497: "#ffffff",
+    3602: "#ffffff",
     3606: "rgb(0, 70, 84)",
     3697: "#ffffff",
     3703: "#ffffff",
@@ -4926,6 +4930,7 @@ RICS_FG_SECONDARY = {
     3306: "rgb(128, 204, 40)",
     3453: "#ffffff",
     3497: "rgb(149, 200, 125)",
+    3602: "#69AB98",
     3606: "rgb(247, 147, 48)",
     3697: "rgb(110, 193, 228)",
     3703: "#ffc94f",
