@@ -317,9 +317,11 @@
         {% include 'main/uic/paper.html' with layout=ticket.layout %}
     {% endif %}
 
-    {% if parsed_layout %}
-        {% include 'main/uic/parsed_layout.html' %}
-    {% endif %}
+    {% with parsed_layout=ticket.parsed_layout %}
+        {% if parsed_layout %}
+            {% include 'main/uic/parsed_layout.html' with parsed_layout=parsed_layout %}
+        {% endif %}
+    {% endwith %}
 
     {% if ticket.flex %}
         {% include "main/uic/flex.html" with flex=ticket.flex %}

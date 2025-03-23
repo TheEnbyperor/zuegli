@@ -289,6 +289,12 @@ class UICTicket:
         else:
             return False
 
+    def parsed_layout(self) -> typing.Optional[uic.rct2_parse.ParsedRCT2]:
+        if self.layout and self.layout.standard in ("RCT2", "RTC2"):
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(self.layout)
+            return parser.parse(self.issuing_rics())
+
     @classmethod
     def from_envelope(
             cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
