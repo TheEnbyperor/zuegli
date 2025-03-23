@@ -12,7 +12,7 @@ from . import models, views, db_ticket, bahnbonus, ticket
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
     total=10,
-    status_forcelist=[403, 429, 500, 502, 503, 504],
+    status_forcelist=[429, 500, 502, 503, 504],
 )
 
 
