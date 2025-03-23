@@ -38,16 +38,6 @@ def get_db_token(account: "models.Account"):
                 "User-Agent": "VDV PKPass q@magicalcodewit.ch"
             })
             if not r.ok:
-                try:
-                    error = r.json()
-                    if error.get("error") == "invalid_grant":
-                        account.db_token = None
-                        account.db_token_expires_at = None
-                        account.db_refresh_token = None
-                        account.db_refresh_token_expires_at = None
-                        account.save()
-                except niquests.exceptions.JSONDecodeError:
-                    pass
 
                 return None
 
@@ -58,12 +48,6 @@ def get_db_token(account: "models.Account"):
             account.db_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
             account.save()
             return account.db_token
-        else:
-            account.db_token = None
-            account.db_token_expires_at = None
-            account.db_refresh_token = None
-            account.db_refresh_token_expires_at = None
-            account.save()
     else:
         return None
 
@@ -82,17 +66,6 @@ def get_bahnbonus_token(account: "models.Account"):
                 "User-Agent": "VDV PKPass q@magicalcodewit.ch"
             })
             if not r.ok:
-                try:
-                    error = r.json()
-                    if error.get("error") == "invalid_grant":
-                        account.bahnbonus_token = None
-                        account.bahnbonus_token_expires_at = None
-                        account.bahnbonus_refresh_token = None
-                        account.bahnbonus_refresh_token_expires_at = None
-                        account.save()
-                except niquests.exceptions.JSONDecodeError:
-                    pass
-
                 return None
 
             data = r.json()
@@ -102,12 +75,6 @@ def get_bahnbonus_token(account: "models.Account"):
             account.bahnbonus_refresh_token_expires_at = now + datetime.timedelta(seconds=data["refresh_expires_in"])
             account.save()
             return account.db_token
-        else:
-            account.bahnbonus_token = None
-            account.bahnbonus_token_expires_at = None
-            account.bahnbonus_refresh_token = None
-            account.bahnbonus_refresh_token_expires_at = None
-            account.save()
     else:
         return None
 
