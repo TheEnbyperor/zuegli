@@ -27,7 +27,7 @@ def update_all():
             continue
 
         try:
-            r = session.post("https://apis.deutschebahn.com/db/apis/bahnbonus/benefits-service/v1/digital-vouchers", headers={
+            r = session.get("https://apis.deutschebahn.com/db/apis/bahnbonus/benefits-service/v1/digital-vouchers", headers={
                 "Authorization": f"Bearer {bb_token}",
                 "DB-Client-ID": "b4ceb052260d1df18955c9769f2f6ee1",
                 "DB-Client-Secret": "af42968e4445cf550ad06f8b114f0cda",
