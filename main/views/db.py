@@ -26,7 +26,7 @@ BAHNBONUS_REDIRECT_URI = "bahnbonus://authentication/redirect"
 def get_db_token(account: "models.Account"):
     now = timezone.now()
     if account.db_token and account.db_token_expires_at and \
-            account.db_token_expires_at > now + datetime.timedelta(minutes=5):
+            account.db_token_expires_at > now:
         return account.db_token
     elif account.db_refresh_token:
         if account.db_refresh_token_expires_at and account.db_refresh_token_expires_at > now:
@@ -54,7 +54,7 @@ def get_db_token(account: "models.Account"):
 def get_bahnbonus_token(account: "models.Account"):
     now = timezone.now()
     if account.bahnbonus_token and account.bahnbonus_token_expires_at and \
-            account.bahnbonus_token_expires_at > now + datetime.timedelta(minutes=5):
+            account.bahnbonus_token_expires_at > now:
         return account.bahnbonus_token
     elif account.bahnbonus_refresh_token:
         if account.bahnbonus_refresh_token_expires_at and account.bahnbonus_refresh_token_expires_at > now:
@@ -126,7 +126,7 @@ def db_login_start(request):
         "code_challenge_method": "S256",
         "code_challenge": code_challenge,
         "state": session_state,
-        "scope": "offline_access,openid,self-impersonation",
+        "scope": "offline_access",
     })
     return redirect(f"{DB_AUTH_URL}?{params}")
 
@@ -147,7 +147,7 @@ def bahnbonus_login_start(request):
         "code_challenge_method": "S256",
         "code_challenge": code_challenge,
         "state": session_state,
-        "scope": "offline_access",
+        "scope": "offline_access,openid,self-impersonation",
     })
     return redirect(f"{DB_AUTH_URL}?{params}")
 
