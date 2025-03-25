@@ -1,6 +1,5 @@
 import niquests
 import typing
-import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -65,7 +64,7 @@ def saarvv_account(request):
         return redirect("saarvv_login")
 
     r = niquests.post(f"https://saarvv.tickeos.de/index.php/mobileService/customer/fields", json={}, hooks={
-        "pre_request": [lambda req: saarvv.sign_request(req, request.user.account.saarvv_device_id)],
+        "pre_request": [lambda req: eos.sign_request(req, request.user.account.saarvv_device_id, "saarvv")],
     }, headers={
         "Authorization": request.user.account.saarvv_token
     })

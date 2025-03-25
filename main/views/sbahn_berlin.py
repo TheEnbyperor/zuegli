@@ -1,6 +1,5 @@
 import niquests
 import typing
-import datetime
 import bs4
 import urllib.parse
 from django.contrib import messages
@@ -62,7 +61,7 @@ def sbahn_berlin_login(request):
                 request.user.account.sbahn_berlin_device_id = device_id
                 request.user.account.save()
                 sbahn_berlin.update_sbahn_berlin_tickets(request.user.account)
-                return redirect("saarvv_account")
+                return redirect("sbahn_berlin_account")
     else:
         form = forms.EOSLoginForm()
 

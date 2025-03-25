@@ -76,7 +76,7 @@ def metrics(request):
     iata_count = models.IATATicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="iata"}} {iata_count}')
 
-    bahnbonus_count = models.BahnbonusTicketInstance.objects.all().count()
+    bahnbonus_count = models.BahnBonusInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="banhbonus"}} {bahnbonus_count}')
 
     return HttpResponse("\n".join(out), content_type="text/plain;charset=UTF-8")
