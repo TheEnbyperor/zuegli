@@ -31,6 +31,8 @@ class Account(models.Model):
     bahnbonus_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus refresh token expiration")
     saarvv_token = models.TextField(null=True, blank=True, verbose_name="SaarVV Token")
     saarvv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="SaarVV Device ID")
+    sbahn_berlin_token = models.TextField(null=True, blank=True, verbose_name="S-Bahn Berlin Token")
+    sbahn_berlin_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="S-Bahn Berlin Device ID")
     calendar_token = models.CharField(max_length=255, verbose_name="iCal token", default=make_pass_token)
 
     def __str__(self):
@@ -56,6 +58,9 @@ class Account(models.Model):
 
     def is_saarvv_authenticated(self) -> bool:
         return bool(self.saarvv_token)
+
+    def is_sbahn_berlin_authenticated(self) -> bool:
+        return bool(self.sbahn_berlin_token)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -104,6 +109,9 @@ class Ticket(models.Model):
     saarvv_account = models.ForeignKey(
         "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="saarvv_tickets"
     )
+    sbahn_berlin_account = models.ForeignKey(
+        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="sbahn_berlin_tickets"
+    )
     photos = models.JSONField(default=dict)
 
     def __str__(self):
@@ -114,7 +122,6 @@ class Ticket(models.Model):
 
     def public_id(self):
         return self.pk.upper()[0:8]
-
 
     def active_instance(self):
         now = timezone.now()
