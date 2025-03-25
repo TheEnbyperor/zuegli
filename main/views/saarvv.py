@@ -4,18 +4,18 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import forms, saarvv
+from .. import forms, eos, saarvv
 
 
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
-    device_id = saarvv.get_device_id()
+    device_id = eos.get_device_id()
     r = niquests.post(f"https://saarvv.tickeos.de/index.php/mobileService/login", json={
         "credentials": {
             "password": password,
             "username": username,
         }
     }, hooks={
-        "pre_request": [lambda req: saarvv.sign_request(req, device_id)],
+        "pre_request": [lambda req: eos.sign_request(req, device_id, "saarvv")],
     })
     if not r.ok:
         return None
@@ -30,7 +30,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
 @login_required
 def saarvv_login(request):
     if request.method == "POST":
-        form = forms.SaarVVLoginForm(request.POST)
+        form = forms.EOSLoginForm(request.POST)
         if form.is_valid():
             token = login(form.cleaned_data["username"], form.cleaned_data["password"])
             if not token:
@@ -44,7 +44,7 @@ def saarvv_login(request):
                 saarvv.update_saarvv_tickets(request.user.account)
                 return redirect("saarvv_account")
     else:
-        form = forms.SaarVVLoginForm()
+        form = forms.EOSLoginForm()
 
     return render(request, "main/account/saarvv_login.html", {
         "form": form,
@@ -59,16 +59,6 @@ def saarvv_logout(request):
     messages.add_message(request, messages.SUCCESS, "Successfully logged out")
     return redirect("account")
 
-
-def map_customer_field(f):
-    if f["content"]["type"] == "choice":
-        return next(filter(lambda c: c["key"] == f["content"]["default"], f["content"]["choices"]))["value"]
-    elif f["content"]["type"] == "text":
-        return f["content"].get("default")
-    elif f["content"]["type"] == "date":
-        return datetime.date.fromisoformat(f["content"]["default"])
-
-
 @login_required
 def saarvv_account(request):
     if not request.user.account.saarvv_token:
@@ -82,7 +72,7 @@ def saarvv_account(request):
     r.raise_for_status()
     data = r.json()
 
-    fields = {f["name"]: map_customer_field(f) for b in data["layout_blocks"] for f in b["fields"]}
+    fields = {f["name"]: eos.map_customer_field(f) for b in data["layout_blocks"] for f in b["fields"]}
 
     return render(request, "main/account/saarvv.html", {
         "fields": fields,

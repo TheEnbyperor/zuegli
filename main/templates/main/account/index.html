@@ -60,6 +60,19 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">S-Bahn Berlin Account</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_sbahn_berlin_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'sbahn_berlin_login' %}">Reauthenticate</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'sbahn_berlin_logout' %}">Unlink</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'sbahn_berlin_login' %}">Login with S-Bahn Berlin</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">SaarVV Account</dt>
                 <dd class="govuk-summary-list__value">
                     {% if user.account.is_saarvv_authenticated %}

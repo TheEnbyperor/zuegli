@@ -209,6 +209,8 @@ class AccountAdmin(admin.ModelAdmin):
         "bahnbonus_refresh_token_expires_at",
         "saarvv_token",
         "saarvv_device_id",
+        "sbahn_berlin_token",
+        "sbahn_berlin_device_id",
         "calendar_token",
     ]
     inlines = [

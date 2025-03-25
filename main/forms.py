@@ -18,7 +18,7 @@ class TicketUploadForm(forms.Form):
         self.helper.add_input(Submit("submit", "Upload"))
 
 
-class SaarVVLoginForm(forms.Form):
+class EOSLoginForm(forms.Form):
     username = forms.CharField(label="Email/Username", required=True)
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
 

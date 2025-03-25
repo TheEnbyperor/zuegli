@@ -1,0 +1,16 @@
+{% extends "main/base.html" %}
+{% load static crispy_forms_tags %}
+
+{% block title %}S-Bahn Berlin Login - Train Tickets to Wallet Passes{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-xl">Login with S-Bahn Berlin</h1>
+        <p class="govuk-body-lead">
+            This service requires you to have a password on your S-Bahn Berlin account.
+            If you don't have one, e.g. because you signed in through your University's SSO,
+            please set up a password <a href="https://sso.uptrade.de/realms/sbb/account/account-security/signing-in" class="govuk-link">here</a>.
+        </p>
+        {% crispy form %}
+    </div>
+{% endblock %}

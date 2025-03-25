@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/upload_image', views.api.upload_aztec_img),
 
     path('account/', views.account.index, name='account'),
+
     path('account/db/', views.account.db_account, name='db_account'),
     path('account/db/add_ticket/', views.db.db_add_ticket, name='db_add_ticket'),
     path('account/db_abo/', views.db_abo.view_db_abo, name='db_abo'),
@@ -27,13 +28,20 @@ urlpatterns = [
     path('account/db_login/login', views.db.db_login_start, name='db_login_start'),
     path('account/db_login/logout', views.db.db_logout, name='db_logout'),
     path('account/db_login/callback', views.db.db_login_callback, name='db_login_callback'),
+
     path('account/bahnbonus_login/', views.db.bahnbonus_login, name='bahnbonus_login'),
     path('account/bahnbonus_login/login', views.db.bahnbonus_login_start, name='bahnbonus_login_start'),
     path('account/bahnbonus_login/logout', views.db.bahnbonus_logout, name='bahnbonus_logout'),
     path('account/bahnbonus_login/callback', views.db.bahnbonus_login_callback, name='bahnbonus_login_callback'),
+
     path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
     path('account/saarvv_login/logout/', views.saarvv.saarvv_logout, name='saarvv_logout'),
     path('account/saarvv/', views.saarvv.saarvv_account, name='saarvv_account'),
+
+    path('account/sbahn_berlin_login/', views.sbahn_berlin.sbahn_berlin_login, name='sbahn_berlin_login'),
+    path('account/sbahn_berlin_login/logout/', views.sbahn_berlin.sbahn_berlin_logout, name='sbahn_berlin_logout'),
+    path('account/sbahn_berlin/', views.sbahn_berlin.sbahn_berlin_account, name='sbahn_berlin_account'),
+
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
     path('calendar/<str:account_token>.ics', views.ical.account_calendar, name='account_calendar'),

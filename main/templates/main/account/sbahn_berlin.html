@@ -1,0 +1,59 @@
+{% extends "main/base.html" %}
+{% load static crispy_forms_tags rics %}
+
+{% block title %}S-Bahn Berlin Account - Train Tickets to Wallet Passes{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-xl">S-Bahn Berlin Account</h1>
+        <dl class="govuk-summary-list">
+            {% if fields.salutation %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Salutation</dt>
+                    <dd class="govuk-summary-list__value">{{ fields.salutation }}</dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Forename</dt>
+                <dd class="govuk-summary-list__value">{{ fields.first_name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Surname</dt>
+                <dd class="govuk-summary-list__value">{{ fields.last_name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Birthday</dt>
+                <dd class="govuk-summary-list__value">{{ fields.birthday|date:"F d, Y" }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Address</dt>
+                <dd class="govuk-summary-list__value">
+                    <p class="govuk-body">
+                        {% if fields.street or fields.street_number %}
+                            {% if fields.street %}{{ fields.street }}{% endif %}
+                            {% if fields.street_number %}{{ fields.street_number }}{% endif %}<br/>
+                        {% endif %}
+                        {% if fields.postal_code or fields.city %}
+                            {% if fields.postal_code %}{{ fields.postal_code }}{% endif %} {% if fields.city %}{{ fields.city }}{% endif %}<br/>
+                        {% endif %}
+                        {% if fields.country %}{{ fields.country }}{% endif %}
+                    </p>
+                </dd>
+            </div>
+        </dl>
+        <h2 class="govuk-heading-l">Tickets</h2>
+        {% if tickets.count %}
+            <ul class="govuk-list govuk-list--spaced">
+                {% for ticket in tickets.all %}
+                    <li>
+                        <a href="{% url 'ticket' ticket.pk %}" class="govuk-link">
+                            #{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="govuk-body">No tickets</p>
+        {% endif %}
+    </div>
+{% endblock %}
