@@ -63,15 +63,7 @@ def saarvv_account(request):
     if not request.user.account.saarvv_token:
         return redirect("saarvv_login")
 
-    r = niquests.post(f"https://saarvv.tickeos.de/index.php/mobileService/customer/fields", json={}, hooks={
-        "pre_request": [lambda req: eos.sign_request(req, request.user.account.saarvv_device_id, "saarvv")],
-    }, headers={
-        "Authorization": request.user.account.saarvv_token
-    })
-    r.raise_for_status()
-    data = r.json()
-
-    fields = {f["name"]: eos.map_customer_field(f) for b in data["layout_blocks"] for f in b["fields"]}
+    fields = eos.get_customer_account(request.user.account, "saarvv", "https://saarvv.tickeos.de", "saarvv")
 
     return render(request, "main/account/saarvv.html", {
         "fields": fields,
