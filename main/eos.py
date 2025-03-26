@@ -85,6 +85,21 @@ def map_customer_field(f):
         return datetime.date.fromisoformat(f["content"]["default"])
 
 
+def get_customer_account(account: "models.Account", operator: str, url_base: str, eos_type: str):
+    token = getattr(account, f"{operator}_token")
+    device_id = getattr(account, f"{operator}_device_id")
+
+    r = niquests.post(f"{url_base}/index.php/mobileService/customer/fields", json={}, hooks={
+        "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+    }, headers={
+        "Authorization": token
+    })
+    r.raise_for_status()
+    data = r.json()
+
+    return {f["name"]: map_customer_field(f) for b in data["layout_blocks"] for f in b["fields"]}
+
+
 def update_eos_tickets(account: "models.Account", operator: str, url_base: str, eos_type: str):
     if not getattr(account, f"{operator}_token") or not getattr(account, f"{operator}_device_id"):
         return
