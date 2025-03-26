@@ -147,7 +147,7 @@ def bahnbonus_login_start(request):
         "code_challenge_method": "S256",
         "code_challenge": code_challenge,
         "state": session_state,
-        "scope": "offline_access,openid,self-impersonation",
+        "scope": "offline_access openid self-impersonation",
     })
     return redirect(f"{DB_AUTH_URL}?{params}")
 
