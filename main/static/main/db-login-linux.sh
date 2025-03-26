@@ -11,7 +11,7 @@ cat > ~/.local/bin/db-hook <<EOF
 if [[ "\$1" == "dbnav:"* ]]; then
   url=\$(echo -n \$1 | base64)
   xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/db_login/callback?url=\$url"
-else if [[ "\$1" == "bahnbonus:"* ]]; then
+elif [[ "\$1" == "bahnbonus:"* ]]; then
   url=\$(echo -n \$1 | base64)
   xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/bahnbonus_login/callback?url=\$url"
 else
