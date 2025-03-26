@@ -8,5 +8,5 @@ def update_all():
         for t in account.saarvv_tickets.all():
             apn.notify_ticket_if_renewed(t)
 
-def update_saarvv_tickets(account: models.Account):
+def update_saarvv_tickets(account: "models.Account"):
     eos.update_eos_tickets(account, "saarvv", "https://saarvv.tickeos.de", "saarvv")
