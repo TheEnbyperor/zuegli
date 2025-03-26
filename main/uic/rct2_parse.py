@@ -99,28 +99,33 @@ class RCT2Parser:
                 arrival_date =   self.read_area(top=line, left=52, width=5, height=1)
                 arrival_time =   self.read_area(top=line, left=58, width=5, height=1)
 
-            if departure_date not in ("", "*") or departure_time not in ("", "*") or \
-                    arrival_date not in ("", "*") or arrival_time not in ("", "*") or \
-                    departure_station not in ("", "*") or arrival_station not in ("", "*"):
+            departure_date = departure_date.strip("*-> ")
+            departure_time = departure_time.strip("*-> ")
+            departure_station = departure_station.strip("*-> ")
+            arrival_station = arrival_station.strip("*-> ")
+            arrival_date = arrival_date.strip("*-> ")
+            arrival_time = arrival_time.strip("*-> ")
+
+            if departure_date or departure_time or arrival_date or arrival_time or departure_station or arrival_station:
                 trips.append(TripPart(
-                    departure_date=departure_date.strip("*"),
-                    departure_time=departure_time.strip("*"),
-                    departure_station=departure_station.strip("*-> "),
-                    arrival_station=arrival_station.strip("*-> "),
-                    arrival_date=arrival_date.strip("*"),
-                    arrival_time=arrival_time.strip("*"),
+                    departure_date=departure_date,
+                    departure_time=departure_time,
+                    departure_station=departure_station,
+                    arrival_station=arrival_station,
+                    arrival_date=arrival_date,
+                    arrival_time=arrival_time,
                     departure=departure_dt,
                     arrival=arrival_dt,
                 ))
 
-        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1)
+        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*-> ")
 
-        document_data =       self.read_area(top=0,  left=12, width=40, height=3)
-        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3)
-        price_data =          self.read_area(top=13, left=52, width=20, height=2)
-        train_data =          self.read_area(top=8,  left=0,  width=72, height=4)
-        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1)
-        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3)
+        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*-> ")
+        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*-> ")
+        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*-> ")
+        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*-> ")
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*-> ")
+        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*-> ")
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
 
         try:
