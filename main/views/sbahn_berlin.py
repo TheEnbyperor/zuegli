@@ -43,7 +43,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
     })
     auth_data = r.json()
 
-    return auth_data["access_token"], device_id
+    return f"Bearer {auth_data['access_token']}", device_id
 
 
 @login_required

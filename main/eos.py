@@ -3,11 +3,17 @@ import secrets
 import hashlib
 import json
 import datetime
+import logging
 import hmac
+import base64
+import bs4
 import urllib.parse
 from Crypto.Cipher import AES
 from django.core.files.storage import storages
+from . import models, aztec, ticket
 
+
+logger = logging.getLogger(__name__)
 
 EOS_INSTANCES = {}
 
@@ -77,3 +83,78 @@ def map_customer_field(f):
         return f["content"].get("default")
     elif f["content"]["type"] == "date":
         return datetime.date.fromisoformat(f["content"]["default"])
+
+
+def update_eos_tickets(account: "models.Account", operator: str, url_base: str, eos_type: str):
+    if not getattr(account, f"{operator}_token") or not getattr(account, f"{operator}_device_id"):
+        return
+
+    token = getattr(account, f"{operator}_token")
+    device_id = getattr(account, f"{operator}_device_id")
+
+    r = niquests.post(f"{url_base}/index.php/mobileService/sync", json={}, hooks={
+        "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+    }, headers={
+        "Authorization": token
+    })
+    if not r.ok:
+        logger.error(f"Failed to update EOS {device_id}: {r.text}")
+    data = r.json()
+
+    if data["tickets"]:
+        r = niquests.post(f"{url_base}/index.php/mobileService/ticket", json={
+            "details": True,
+            "tickets": data["tickets"],
+            "provide_aztec_content": False,
+            "parameters": False,
+        }, hooks={
+            "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+        }, headers={
+            "Authorization": token
+        })
+        if not r.ok:
+            logger.error(f"Failed to update EOS {device_id}: {r.text}")
+        data = r.json()
+        for t in data["tickets"].values():
+            template = json.loads(t["temdplate"])
+
+            if "aztec_barcode" in template["content"]["images"]:
+                barcode_img = base64.b64decode(template["content"]["images"]["aztec_barcode"])
+            else:
+                barcode_url = None
+                for page in template["content"]["pages"]:
+                    ticket_layout = bs4.BeautifulSoup(page, 'html.parser')
+                    barcode_elm = ticket_layout.find("img", attrs={
+                        "class": "barcode"
+                    }, recursive=True)
+                    if barcode_elm:
+                        barcode_url = barcode_elm.attrs["src"]
+                        break
+
+                if not barcode_url:
+                    logger.error("Failed to find barcode")
+
+                if not barcode_url.startswith("data:"):
+                    logger.error("Barcode image not a data URL")
+                    continue
+                media_type, data = barcode_url[5:].split(";", 1)
+                encoding, data = data.split(",", 1)
+                if not media_type.startswith("image/"):
+                    logger.error("Unsupported media type '%s'", media_type)
+                    continue
+                if encoding != "base64":
+                    logger.error("Unsupported encoding type '%s' in barcode image", encoding)
+                    continue
+                barcode_img = base64.urlsafe_b64decode(data)
+
+            barcode_data = aztec.decode(barcode_img)
+
+            try:
+                ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
+                setattr(ticket_obj, f"{operator}_account", account)
+                ticket_obj.save()
+            except ticket.TicketError as e:
+                logger.error("Error decoding barcode ticket: %s", e)
+                continue
+
+    logger.info(f"Successfully updated EOS {device_id}")
