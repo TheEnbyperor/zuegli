@@ -99,6 +99,8 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
     })
     if not r.ok:
         logger.error(f"Failed to update EOS {device_id}: {r.text}")
+        return
+
     data = r.json()
 
     if data["tickets"]:
@@ -116,7 +118,7 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
             logger.error(f"Failed to update EOS {device_id}: {r.text}")
         data = r.json()
         for t in data["tickets"].values():
-            template = json.loads(t["temdplate"])
+            template = json.loads(t["template"])
 
             if "aztec_barcode" in template["content"]["images"]:
                 barcode_img = base64.b64decode(template["content"]["images"]["aztec_barcode"])
