@@ -104,13 +104,13 @@ class Ticket(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
     db_subscription = models.ForeignKey(
-        "DBSubscription", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="DB Subscription"
+        "DBSubscription", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="DB Subscription", db_index=True
     )
     saarvv_account = models.ForeignKey(
-        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="saarvv_tickets"
+        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="saarvv_tickets", verbose_name="SaarVV Account", db_index=True
     )
     sbahn_berlin_account = models.ForeignKey(
-        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="sbahn_berlin_tickets"
+        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="sbahn_berlin_tickets", verbose_name="S-Bahn Berlin Account", db_index=True
     )
     photos = models.JSONField(default=dict)
 
