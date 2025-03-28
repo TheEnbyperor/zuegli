@@ -8,6 +8,7 @@ import Crypto.Hash.TupleHash128
 import hashlib
 import enum
 import binascii
+import ber_tlv.tlv
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus
 
@@ -1350,7 +1351,15 @@ def parse_ticket(
     if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
         return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
 
-    return parse_ticket_vdv(ticket_bytes, context)
+    try:
+        ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
+        return parse_ticket_vdv(ticket_bytes, context)
+    except Exception as e:
+        raise TicketError(
+            title="This doesn't look like a ticket type we support.",
+            message="If you'd like to see support for this added, please forward your original ticket to us.",
+        )
+
 
 
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
