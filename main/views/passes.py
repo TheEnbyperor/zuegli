@@ -4302,11 +4302,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             })
 
         if ticket_data.data.ticket.ticket_data.HasField("traveler"):
-
-            if name_value:
-                if pass_type == "boardingPass":
-                    name_value = (f"{ticket_data.data.ticket.ticket_data.traveler.forename} "
-                                  f"{ticket_data.data.ticket.ticket_data.traveler.surname}").strip()
+            if pass_type == "boardingPass":
+                name_value = (f"{ticket_data.data.ticket.ticket_data.traveler.forename} "
+                              f"{ticket_data.data.ticket.ticket_data.traveler.surname}").strip()
+                if name_value:
                     pass_fields["auxiliaryFields"].append({
                         "key": "passenger",
                         "label": "passenger-label",
@@ -4318,9 +4317,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             }
                         }
                     })
-                else:
-                    name_value = (f"{ticket_data.data.ticket.ticket_data.traveler.forename}\n"
-                                  f"{ticket_data.data.ticket.ticket_data.traveler.surname}").strip()
+            else:
+                name_value = (f"{ticket_data.data.ticket.ticket_data.traveler.forename}\n"
+                              f"{ticket_data.data.ticket.ticket_data.traveler.surname}").strip()
+                if name_value:
                     pass_fields["primaryFields"].append({
                         "key": "passenger",
                         "label": "passenger-label",
