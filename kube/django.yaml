@@ -91,7 +91,7 @@ spec:
         - name: gunicorn
           image: theenbyperor/vdv-pkpass-django:(version)
           imagePullPolicy: Always
-          command: ["gunicorn", "-w", "4", "-b", "[::]:8000", "--forwarded-allow-ips", "*", "--access-logfile", "-", "--log-level=debug", "--timeout=90", "vdv_pkpass.wsgi:application"]
+          command: ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "-b", "[::]:8000", "--forwarded-allow-ips", "*", "--access-logfile", "-", "--log-level=debug", "--timeout=90", "vdv_pkpass.wsgi:application"]
           volumeMounts: *volumeMounts
           ports:
             - containerPort: 8000

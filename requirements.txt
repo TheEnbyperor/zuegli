@@ -36,3 +36,4 @@ icalendar
 phonenumbers
 channels
 daphne
+uvicorn[standard]
