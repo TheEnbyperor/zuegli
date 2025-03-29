@@ -44,3 +44,22 @@ spec:
                 name: vdv-pkpass-django
                 port:
                   number: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vdv-pkpass-nfc
+  namespace: q-personal
+  annotations:
+    cert-manager.io/cluster-issuer: "gts"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/rewrite-target: "https://vdv-pkpass.magicalcodewit.ch/$1"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - vdv-pkpass-nfc.magicalcodewit.ch
+      secretName: vdv-pkpass-nfc-tls
+  rules:
+    - host: vdv-pkpass.magicalcodewit.ch
+      http: {}
