@@ -5056,21 +5056,25 @@ VDV_ORG_ID_FG_SECONDARY = {
 SWISSPASS_LOGO = {
     11: "pass/logo-sbb.png",
     490: "pass/logo-zvv.png"
+    801: "pass/logo-postbus.png",
 }
 
 SWISSPASS_BG = {
     11: "rgb(246, 246, 246)",
-    490: "rgb(255, 255, 255)"
+    490: "rgb(255, 255, 255)",
+    801: "rgb(255, 204, 0)",
 }
 
 SWISSPASS_FG = {
     11: "rgb(33, 33, 33)",
-    490: "rgb(99, 99, 99)"
+    490: "rgb(99, 99, 99)",
+    801: "rgb(0, 0, 0)",
 }
 
 SWISSPASS_FG_SECONDARY = {
     11: "rgb(255, 0, 0)",
-    490: "rgb(4, 121, 204)"
+    490: "rgb(4, 121, 204)",
+    801: "rgb(255, 0, 0)",
 }
 
 RSP_ORG_LOGO = {
