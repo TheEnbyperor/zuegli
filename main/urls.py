@@ -9,6 +9,7 @@ urlpatterns = [
     path('ticket/<str:pk>/ics/', views.ical.download_ics, name='ticket_ics'),
     path('ticket/<str:pk>/pass_photo_banner.png', views.passes.pass_photo_banner, name='ticket_pass_photo_banner'),
 
+    path('vdv_smartcard/', views.vdv.read_smartcard, name='vdv_read'),
     path('vdv_smartcard/<str:pk>/', views.vdv.view_smartcard, name='vdv_smartcard'),
 
     path('api/apple/v1/log', views.apple_api.log),
