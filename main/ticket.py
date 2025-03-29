@@ -613,7 +613,7 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
         )
 
     try:
-        root_ca = vdv.Certificate.parse(raw_root_ca)
+        root_ca = vdv.Certificate.parse(raw_root_ca.data)
     except vdv.util.VDVException:
         raise TicketError(
             title="Internal error",
@@ -682,7 +682,7 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
         )
 
     try:
-        issuing_ca = vdv.Certificate.parse(raw_issuing_ca)
+        issuing_ca = vdv.Certificate.parse(raw_issuing_ca.data)
     except vdv.util.VDVException:
         raise TicketError(
             title="Invalid issuing certificate",

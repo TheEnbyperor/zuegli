@@ -11,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from . import ticket as t
+from . import vdv_nm
 from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus
 
 
@@ -537,6 +538,8 @@ class DBSubscription(models.Model):
                 if start > now and end < now:
                     return info["huelleInfo"]
 
+        return None
+
 
 class ZHVStop(models.Model):
     dhid = models.CharField(max_length=255, verbose_name="DHID", primary_key=True)
@@ -555,3 +558,38 @@ class ZHVStop(models.Model):
         indexes = [
             models.Index(fields=["dhid_raw_id", "authority"]),
         ]
+
+
+class VDVSmartcard(models.Model):
+    id = models.CharField(max_length=32, primary_key=True, verbose_name="ID")
+    last_updated = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
+    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="vdv_smartcards")
+    atr_identifier = models.BinaryField()
+    atr_historical_bytes = models.BinaryField()
+    atr_application_data = models.BinaryField()
+    fci = models.BinaryField()
+    application_directory = models.BinaryField()
+    ca_cert = models.BinaryField()
+    application_cert = models.BinaryField()
+
+    class Meta:
+        verbose_name = "VDV Smartcard"
+        verbose_name_plural = "VDV Smartcards"
+
+    def __str__(self):
+        return str(self.id)
+
+    def get_absolute_url(self):
+        return reverse("vdv_smartcard", kwargs={"pk": self.id})
+
+    def public_id(self):
+        return self.pk.upper()[0:8]
+
+    def as_card(self) -> vdv_nm.card.Card:
+        return vdv_nm.card.Card(
+            fci=vdv_nm.fci.FCI.parse(self.fci),
+            application_directory=vdv_nm.application_directory.ApplicationDirectory.parse(self.application_directory),
+            ca_cert=vdv.Certificate.parse(self.ca_cert),
+            application_cert=vdv.Certificate.parse(self.application_cert),
+        )

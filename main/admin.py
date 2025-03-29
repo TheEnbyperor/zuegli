@@ -227,3 +227,20 @@ class DBSubscriptionAdmin(admin.ModelAdmin):
     inlines = [
         TicketDBSubscriptionInline
     ]
+
+
+@admin.register(models.VDVSmartcard)
+class VDVSmartcardAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        "id",
+        "created",
+        "last_updated"
+    ]
+    search_fields = ["id"]
+    view_on_site = True
+    list_display = [
+        "id",
+        "last_updated",
+        "created",
+    ]
+    date_hierarchy = "last_updated"

@@ -14,14 +14,16 @@ ROOT = pathlib.Path(__file__).parent
 SHA1 = [1, 3, 14, 3, 2, 26]
 RSA_ENCRYPTION = [1, 2, 840, 113549, 1, 1, 1]
 SHA1_WITH_RSA_SIGNATURE = [1, 2, 840, 113549, 1, 1, 5]
-TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA = [1, 3, 36, 3, 4, 2, 2, 1]
+TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG = [1, 3, 36, 3, 4, 2, 2, 1]
+TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH = [1, 3, 36, 3, 5, 2, 2, 1]
 BRAINPOOL_P256_R1 = [1, 3, 36, 3, 3, 2, 8, 1, 1, 7]
 BRAINPOOL_P384_R1 = [1, 3, 36, 3, 3, 2, 8, 1, 1, 11]
 SECP_256_R1 = [1, 2, 840, 10045, 3, 1, 7]
 KNOWN_OIDS = (
     RSA_ENCRYPTION,
     SHA1_WITH_RSA_SIGNATURE,
-    TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA
+    TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH,
+    TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG,
 )
 
 
@@ -109,6 +111,8 @@ class CAReference:
             return "Root CA - Test Environment 2"
         elif self.discretionary_data == 9:
             return "Sub CA - Test Environment 2"
+        else:
+            return f"Unknown - {self.discretionary_data}"
 
 
 @dataclasses.dataclass
@@ -147,6 +151,38 @@ class CertificateReference:
 
     def owner_org_name_opt(self):
         return ticket.map_org_id(self.owner_org_id, True)
+
+@dataclasses.dataclass
+class NMReference:
+    org_id: int
+    application_instance_number: int
+    valid_from: util.Date
+    rfu: int
+
+    @staticmethod
+    def type():
+        return "nm-cert"
+
+    @classmethod
+    def from_bytes(cls, data: bytes) -> "NMReference":
+        if len(data) != 12:
+            raise ValueError("Invalid user medium certificate reference length")
+
+        if data[2] != 0xFF:
+            raise ValueError("Not a user medium certificate reference")
+
+        return cls(
+            org_id=int.from_bytes(data[0:2], "big"),
+            application_instance_number=int.from_bytes(data[3:7], "big"),
+            valid_from=util.Date.from_bytes(data[7:11]),
+            rfu=data[11]
+        )
+
+    def org_name(self):
+        return ticket.map_org_id(self.org_id)
+
+    def org_name_opt(self):
+        return ticket.map_org_id(self.org_id, True)
 
 
 @dataclasses.dataclass
@@ -190,6 +226,8 @@ class CertificateHolderAuthorization:
             return "Security management of an external organization"
         elif v == 0xF:
             return "Security management of the VDV"
+
+        return None
 
 
 @dataclasses.dataclass
@@ -243,9 +281,9 @@ class Certificate:
     signature_residual: typing.Optional[bytes]
 
     @classmethod
-    def parse(cls, raw_cert: RawCertificate):
+    def parse(cls, raw_cert: bytes) -> "Certificate":
         try:
-            elms = ber_tlv.tlv.Tlv.Parser.parse(raw_cert.data, False, [], False, 0)
+            elms = ber_tlv.tlv.Tlv.Parser.parse(raw_cert, False, [], False, 0)
         except Exception as e:
             raise util.VDVException("Failed to parse certificate") from e
 
@@ -307,7 +345,7 @@ class Certificate:
         self.content = iso9796.decrypt_with_cert(self.signature, self.signature_residual, ca)
 
     def verify_signature(self, ca: "CertificateData"):
-        assert self.content is not None or self.content is not None
+        assert self.content is not None or self.constructed_content is not None
         assert isinstance(ca.public_key, RSAPublicKey)
 
         h = int.from_bytes(self.signature, 'big')
@@ -397,6 +435,8 @@ class ECDSACurve(enum.Enum):
             return cryptography.hazmat.primitives.asymmetric.ec.BrainpoolP256R1()
         elif self.value == ECDSACurve.brainpoolP384r1.value:
             return cryptography.hazmat.primitives.asymmetric.ec.BrainpoolP384R1()
+        else:
+            raise util.VDVException("Invalid ECDSA curve")
 
 
 @dataclasses.dataclass
@@ -498,16 +538,24 @@ class CertificateData:
             if components in KNOWN_OIDS:
                 break
 
-        if components not in (SHA1_WITH_RSA_SIGNATURE, TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA):
-            raise util.VDVException("Unknown public key OID")
+        if components not in (
+            SHA1_WITH_RSA_SIGNATURE,
+            TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH,
+            TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG,
+        ):
+            raise util.VDVException(f"Unknown public key OID: {components}")
 
         chr_data = data.content[9:21]
         is_ca = chr_data[0:4] == b"\x00\x00\x00\x00"
+        is_nm = chr_data[2] == 0xFF
 
         return cls(
             certificate_profile_identifier=data.content[0],
             ca_reference=CAReference.from_bytes(data.content[1:9]),
-            certificate_holder_reference=CAReference.from_bytes(chr_data[4:]) if is_ca else CertificateReference.from_bytes(chr_data),
+            certificate_holder_reference=CAReference.from_bytes(chr_data[4:]) if is_ca else (
+                NMReference.from_bytes(chr_data) if is_nm else
+                CertificateReference.from_bytes(chr_data)
+            ),
             certificate_holder_authorization=CertificateHolderAuthorization(
                 name=data.content[21:27].decode("ascii"),
                 service_indicator=data.content[27]

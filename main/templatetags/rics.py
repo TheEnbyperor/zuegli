@@ -12,7 +12,7 @@ register = template.Library()
 
 @register.filter(name="as_hex")
 def as_hex(value: bytes):
-    return ":".join(f"{b:02x}" for b in value)
+    return ":".join(f"{b:02X}" for b in value)
 
 @register.filter(name="to_date")
 def to_date(value):
@@ -52,6 +52,8 @@ def get_station(value, code_type):
                 if s := uic.stations.get_station_by_db(value):
                     return s
 
+    return None
+
 @register.filter(name="iso3166")
 def get_country(value):
     return iso3166.countries.get(value).name
@@ -77,6 +79,8 @@ def rics_traveler_dob(value):
                 value.get("monthOfBirth", 1),
                 value.get("dayOfBirthInMonth", 1),
             )
+
+    return None
 
 @register.filter(name="rics_unicode")
 def rics_unicode(value):

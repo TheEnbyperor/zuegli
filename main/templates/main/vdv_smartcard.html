@@ -1,0 +1,138 @@
+{% extends "main/base.html" %}
+{% load static tz rics %}
+
+{% block title %}Smartcard {{ smartcard.public_id }} - Train Tickets to Wallet Passes{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds-from-desktop">
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                    Smartcard #{{ smartcard.public_id }}
+                </h1>
+            </div>
+            <div class="govuk-grid-column-one-third-from-desktop">
+                {#                <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">#}
+                {#                    Delete#}
+                {#                </a>#}
+            </div>
+        </div>
+        <p class="govuk-body">Quote the above smartcard number when asking for help.</p>
+    </div>
+
+    <div class="govuk-!-margin-7">
+        <h2 class="govuk-heading-l">Smartcard details</h2>
+        {% with card=smartcard.as_card %}
+            <h3 class="govuk-heading-m">File Control Information</h3>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">AID</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ card.fci.aid|as_hex }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Version</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ card.fci.spec_version }}
+                    </dd>
+                </div>
+                {% with org_name=card.fci.manufacturer_org_name_opt %}
+                    {% if org_name %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Manufacturer organisation</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ org_name }} (<code>{{ card.fci.manufacturer_org_id }}</code>)
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Manufacturer organisation ID</dt>
+                            <dd class="govuk-summary-list__value"><code>{{ card.fci.manufacturer_org_id }}</code></dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Manufacturer version number</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ card.fci.manufacturer_version_number|as_hex }}
+                    </dd>
+                </div>
+            </dl>
+
+            <h2 class="govuk-heading-m">Certificate chain</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Root CA verification</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if card.verify_root_ca %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, something has gone very wrong
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issuing CA verification</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if card.verify_ca_cert %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, this card is likely invalid
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Card certificate verification</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if card.verify_application_cert %}
+                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    Signature verification failed, this card is likely invalid
+                                </strong>
+                            </div>
+                        {% endif %}
+                    </dd>
+                </div>
+            </dl>
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Root CA</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {% include "main/certificate.html" with cert=card.root_ca_data %}
+                </div>
+            </div>
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Issuing CA</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {% include "main/certificate.html" with cert=card.ca_cert_data %}
+                </div>
+            </div>
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">Card Certificate</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    {% include "main/certificate.html" with cert=card.application_cert_data %}
+                </div>
+            </div>
+        {% endwith %}
+    </div>
+
+{% endblock content %}

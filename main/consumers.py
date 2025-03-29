@@ -2,10 +2,16 @@ import typing
 import base64
 import threading
 import queue
+import datetime
+import Crypto.Hash.TupleHash128
 from channels.generic.websocket import JsonWebsocketConsumer
+from . import vdv_nm
+from . import vdv
+from . import models
+
 
 ACCEPTABLE_AIDS = [
-    "D2760001354B414E4D303100"
+    vdv_nm.util.VDV_KA_NM_AID
 ]
 
 class RequestAPDU:
@@ -54,6 +60,10 @@ class ResponseAPDU:
     def __repr__(self):
         return str(self)
 
+    def is_success(self):
+        return self.sw1 == 0x90 and self.sw2 == 0x00
+
+
 class Transaction:
     request: RequestAPDU
     response: typing.Optional[ResponseAPDU] = None
@@ -65,6 +75,9 @@ class Transaction:
 
 class VDVConsumer(JsonWebsocketConsumer):
     current_aid: typing.Optional[str] = None
+    identifier: typing.Optional[bytes] = None
+    historical_bytes: typing.Optional[bytes] = None
+    application_data: typing.Optional[bytes] = None
     transaction_queue: typing.Optional[queue.Queue] = None
     response: typing.Optional[ResponseAPDU] = None
     response_ready: threading.Event
@@ -135,9 +148,21 @@ class VDVConsumer(JsonWebsocketConsumer):
                 return
 
             aid = message.get("aid", None)
+            if not aid:
+                self.error("Invalid message received")
+                return
+            try:
+                aid = bytes.fromhex(aid)
+            except ValueError:
+                self.error("Invalid message received")
+                return
             if aid not in ACCEPTABLE_AIDS:
                 self.error("Unsupported AID")
                 return
+
+            self.identifier = message.get("identifier", None)
+            self.historical_bytes = message.get("historical-bytes", None)
+            self.application_data = message.get("application-data", None)
 
             self.current_aid = message.get("aid", None)
             self.message("Reading card...")
@@ -153,28 +178,78 @@ class VDVConsumer(JsonWebsocketConsumer):
             self.response_ready.set()
 
     def run(self):
-        fci = self.apdu(RequestAPDU(
-            instruction_class=0x00, instruction=0xA4, p1=0x04, p2=0x00,
-            data=bytes.fromhex("D2760001354B414E4D303100"), expected_response_length=256
-        ))
-        print(fci)
+        try:
+            fci_data = self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xA4, p1=0x04, p2=0x00,
+                data=vdv_nm.util.VDV_KA_NM_AID, expected_response_length=256,
+            ))
+            if not fci_data.is_success():
+                self.error("Failed to read File Control Information")
+                return
 
-        application_directory = self.apdu(RequestAPDU(
-            instruction_class=0x00, instruction=0xA4, p1=0x04, p2=0x0C,
-            data=bytes.fromhex("D2760001354B414E4D303100"), expected_response_length=256
-        ))
-        print(application_directory)
+            vdv_nm.fci.FCI.parse(fci_data.data)
 
-        application_pk = self.apdu(RequestAPDU(
-            instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x11,
-            data=b"", expected_response_length=256
-        ))
-        print(application_pk)
+            application_directory_data = self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xA4, p1=0x04, p2=0x0C,
+                data=vdv_nm.util.VDV_KA_NM_AID, expected_response_length=256,
+            ))
+            if not application_directory_data.is_success():
+                self.error("Failed to read Application Directory")
+                return
 
-        ca_pk = self.apdu(RequestAPDU(
-            instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x12,
-            data=b"", expected_response_length=256
-        ))
-        print(ca_pk)
+            application_directory = vdv_nm.application_directory.ApplicationDirectory.parse(application_directory_data.data)
 
-        self.done()
+            hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+            hd.update(b"vdv-ka-nm")
+            hd.update(application_directory.application_data.application_instance_org_id.to_bytes(8, "big"))
+            hd.update(application_directory.application_data.application_instance_number.to_bytes(8, "big"))
+            card_id = base64.b32hexencode(hd.digest()).decode("utf-8")
+
+            application_data = self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
+                data=bytes([0xEE, application_directory.application_data.data_pointer]),
+                expected_response_length=256,
+            ))
+            if not application_data.is_success():
+                self.error("Failed to read Application Data")
+                return
+
+            ca_pk_data = self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x12,
+                data=b"", expected_response_length=65536,
+            ))
+            if not ca_pk_data.is_success():
+                self.error("Failed to read CA Certificate")
+
+            ca_pk = vdv.Certificate.parse(ca_pk_data.data)
+            vdv.CertificateData.parse(ca_pk)
+
+            application_pk_data = self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x11,
+                data=b"", expected_response_length=65536,
+            ))
+            if not application_pk_data.is_success():
+                self.error("Failed to read Application Certificate")
+                return
+
+            application_pk = vdv.Certificate.parse(application_pk_data.data)
+            vdv.CertificateData.parse(application_pk)
+
+            card = models.VDVSmartcard.objects.update_or_create(
+                id=card_id,
+                defaults={
+                    "atr_identifier": self.identifier,
+                    "atr_historical_bytes": self.historical_bytes,
+                    "atr_application_data": self.application_data,
+                    "last_updated": datetime.datetime.now(),
+                    "fci": fci_data.data,
+                    "application_directory": application_directory_data.data,
+                    "ca_cert": ca_pk_data.data,
+                    "application_cert": application_pk_data.data,
+                }
+            )
+            print(card)
+
+            self.done()
+        except (vdv_nm.VDVNMException, vdv.VDVException) as e:
+            self.error(str(e))

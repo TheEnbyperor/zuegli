@@ -9,6 +9,8 @@ urlpatterns = [
     path('ticket/<str:pk>/ics/', views.ical.download_ics, name='ticket_ics'),
     path('ticket/<str:pk>/pass_photo_banner.png', views.passes.pass_photo_banner, name='ticket_pass_photo_banner'),
 
+    path('vdv_smartcard/<str:pk>/', views.vdv.view_smartcard, name='vdv_smartcard'),
+
     path('api/apple/v1/log', views.apple_api.log),
     path('api/apple/v1/devices/<str:device_id>/registrations/<str:pass_type_id>', views.apple_api.pass_status),
     path('api/apple/v1/devices/<str:device_id>/registrations/<str:pass_type_id>/<str:serial_number>', views.apple_api.registration),
@@ -45,6 +47,8 @@ urlpatterns = [
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
     path('calendar/<str:account_token>.ics', views.ical.account_calendar, name='account_calendar'),
+
+    path('nfc', views.nfc.nfc_index, name='nfc_app'),
 
     path('metrics', views.metrics.metrics, name='metrics'),
 
