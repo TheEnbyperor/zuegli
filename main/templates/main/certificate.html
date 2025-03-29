@@ -23,6 +23,8 @@
         <dd class="govuk-summary-list__value">
             {% if cert.certificate_holder_reference.type == "ca" %}
                 {% include "main/ca_reference.html" with ref=cert.certificate_holder_reference %}
+            {% elif cert.certificate_holder_reference.type == "nm-cert" %}
+                {% include "main/nm_reference.html" with ref=cert.certificate_holder_reference %}
             {% else %}
                 {% include "main/cert_reference.html" with ref=cert.certificate_holder_reference %}
             {% endif %}

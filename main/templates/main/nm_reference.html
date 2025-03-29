@@ -1,0 +1,25 @@
+<dl class="govuk-summary-list govuk-summary-list--no-border">
+    {% with org_name=ref.org_name_opt %}
+        {% if org_name %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ org_name }} (<code>{{ ref.org_id }}</code>)
+                </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ ref.org_id }}</code></dd>
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Application instance</dt>
+        <dd class="govuk-summary-list__value">{{ ref.application_instance_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">{{ ref.valid_from|date:"F d, Y" }}</dd>
+    </div>
+</dl>
