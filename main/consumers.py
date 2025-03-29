@@ -160,9 +160,9 @@ class VDVConsumer(JsonWebsocketConsumer):
                 self.error("Unsupported AID")
                 return
 
-            self.identifier = message.get("identifier", None)
-            self.historical_bytes = message.get("historical-bytes", None)
-            self.application_data = message.get("application-data", None)
+            self.identifier = base64.b64decode(message["identifier"])
+            self.historical_bytes = base64.b64decode(message["historical-bytes"])
+            self.application_data = base64.b64decode(message["application-data"])
 
             self.current_aid = message.get("aid", None)
             self.message("Reading card...")
