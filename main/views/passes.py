@@ -5055,7 +5055,7 @@ VDV_ORG_ID_FG_SECONDARY = {
 
 SWISSPASS_LOGO = {
     11: "pass/logo-sbb.png",
-    490: "pass/logo-zvv.png"
+    490: "pass/logo-zvv.png",
     801: "pass/logo-postbus.png",
 }
 
