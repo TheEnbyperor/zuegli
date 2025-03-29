@@ -165,3 +165,14 @@ def decode_oid(data: bytes):
         components.append(component)
 
     return components
+
+def parse_version_number(data: bytes) -> str:
+    major = data[0] >> 4
+    minor = data[0] & 0xF
+    if minor == 1:
+        minor = 10 + (data[1] >> 4)
+        revision = data[1] & 0xF
+    else:
+        revision = un_bcd(data[1:2])
+
+    return f"{major}.{minor}.{revision}"

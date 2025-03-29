@@ -143,7 +143,6 @@ class VDVTicket:
         if trailer[0:3] != b'VDV':
             raise util.VDVException("Not a VDV ticket")
 
-        version = f"{trailer[3] >> 4}.{trailer[3] & 0x0F}.{trailer[4]:02d}"
         product_org_id = int.from_bytes(header[8:10], 'big')
 
         product_data = product_data[1]
@@ -160,7 +159,7 @@ class VDVTicket:
                 product_data = [UnknownElement(len(product_data), product_data)]
 
         return cls(
-            version=version,
+            version=util.parse_version_number(trailer[3:5]),
 
             ticket_id=int.from_bytes(header[0:4], 'big'),
             ticket_org_id=int.from_bytes(header[4:6], 'big'),
