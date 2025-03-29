@@ -5,6 +5,7 @@ import queue
 import datetime
 import Crypto.Hash.TupleHash128
 from channels.generic.websocket import JsonWebsocketConsumer
+from django.conf import settings
 from . import vdv_nm
 from . import vdv
 from . import models
@@ -123,9 +124,10 @@ class VDVConsumer(JsonWebsocketConsumer):
             "message": message
         })
 
-    def done(self):
+    def done(self, return_url: str):
         self.send_json({
             "type": "done",
+            "return-url": return_url
         })
         self.transaction_queue = None
         self.close()
@@ -235,7 +237,7 @@ class VDVConsumer(JsonWebsocketConsumer):
             application_pk = vdv.Certificate.parse(application_pk_data.data)
             vdv.CertificateData.parse(application_pk)
 
-            card = models.VDVSmartcard.objects.update_or_create(
+            card, _ = models.VDVSmartcard.objects.update_or_create(
                 id=card_id,
                 defaults={
                     "atr_identifier": self.identifier,
@@ -248,8 +250,6 @@ class VDVConsumer(JsonWebsocketConsumer):
                     "application_cert": application_pk_data.data,
                 }
             )
-            print(card)
-
-            self.done()
+            self.done(f"{settings.EXTERNAL_URL_BASE}{card.get_absolute_url()}")
         except (vdv_nm.VDVNMException, vdv.VDVException) as e:
             self.error(str(e))

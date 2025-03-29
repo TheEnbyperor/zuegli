@@ -588,8 +588,8 @@ class VDVSmartcard(models.Model):
 
     def as_card(self) -> vdv_nm.card.Card:
         return vdv_nm.card.Card(
-            fci=vdv_nm.fci.FCI.parse(self.fci),
-            application_directory=vdv_nm.application_directory.ApplicationDirectory.parse(self.application_directory),
-            ca_cert=vdv.Certificate.parse(self.ca_cert),
-            application_cert=vdv.Certificate.parse(self.application_cert),
+            fci=vdv_nm.fci.FCI.parse(bytes(self.fci)),
+            application_directory=vdv_nm.application_directory.ApplicationDirectory.parse(bytes(self.application_directory)),
+            ca_cert=vdv.Certificate.parse(bytes(self.ca_cert)),
+            application_cert=vdv.Certificate.parse(bytes(self.application_cert)),
         )
