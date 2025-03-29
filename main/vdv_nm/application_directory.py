@@ -79,6 +79,12 @@ class ApplicationData:
     app_status: int
     app_synchronization_number: int
 
+    def application_instance_org_name(self):
+        return vdv.ticket.map_org_id(self.application_instance_org_id)
+
+    def application_instance_org_name_opt(self):
+        return vdv.ticket.map_org_id(self.application_instance_org_id, True)
+
     @classmethod
     def parse(cls, data) -> "ApplicationData":
         system_specific_data = next(filter(lambda t: t[0] == 0xC0, data), None)

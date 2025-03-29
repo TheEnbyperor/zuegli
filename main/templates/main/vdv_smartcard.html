@@ -60,6 +60,127 @@
                 </div>
             </dl>
 
+            <h3 class="govuk-heading-m">Application Directory</h3>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Application Data</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.application_data.data_pointer }}</code>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Instance number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.application_data.application_instance_number }}</code>
+                                </dd>
+                            </div>
+                            {% with org_name=card.application_directory.application_data.application_instance_org_name_opt %}
+                                {% if org_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Instance organisation</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ org_name }} (<code>{{ card.application_directory.application_data.application_instance_org_id }}</code>)
+                                        </dd>
+                                    </div>
+                                {% else %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Instance organisation ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ card.application_directory.application_data.application_instance_org_id }}</code>
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Version</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.application_data.app_version }}</code>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Valid from</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ card.application_directory.application_data.valid_from.as_datetime|date:"F d, Y" }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Valid until</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ card.application_directory.application_data.valid_to.as_datetime|date:"F d, Y" }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.application_data.app_status }}</code>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Synchronization number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ card.application_directory.application_data.app_synchronization_number }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Application Logbook</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.application_logbook.data_pointer }}</code>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Sequence</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ card.application_directory.application_logbook.sequence_number }}
+                                </dd>
+                            </div>
+                        </dl>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Customer data</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.customer_data.data_pointer }}</code>
+                                </dd>
+                            </div>
+                        </dl>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Last transaction</dt>
+                    <dd class="govuk-summary-list__value">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.last_transaction.data_pointer }}</code>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Transaction type</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.application_directory.last_transaction.transaction_type }}</code>
+                                </dd>
+                            </div>
+                        </dl>
+                    </dd>
+                </div>
+            </dl>
+
             <h2 class="govuk-heading-m">Certificate chain</h2>
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
