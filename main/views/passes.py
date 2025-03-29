@@ -985,6 +985,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         pass_fields["secondaryFields"] = []
 
                         one_day_ticket = departure_time.date() == arrival_time.date()
+                        f = "secondaryFields" if pass_type == "boardingPass" else "auxiliaryFields"
                         pass_fields[f] = list(filter(
                             lambda e: e["key"] not in ("validity-start", "validity-end"),
                             pass_fields[f]
