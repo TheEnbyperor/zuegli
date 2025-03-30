@@ -33,6 +33,102 @@ def product_name(product_org_id: int, product_number: int, opt=False):
                 return None
             return f"{product_org_id}:{product_number}"
 
+def terminal_type_name(terminal_type: int, opt=False):
+    if terminal_type == 0:
+        return "Unbestimmt"
+    elif terminal_type == 1:
+        return "Erfassungsterminal für CICO/BIBO"
+    elif terminal_type == 2:
+        return "Verkaufsautomat (z. B. Berechtigungen)"
+    elif terminal_type == 3:
+        return "Kontrollterminal (mobil, personalbedient)"
+    elif terminal_type == 4:
+        return "Kartenausgabeterminal"
+    elif terminal_type == 5:
+        return "Kartenrückgabeterminal Einstiegskontrollgerät"
+    elif terminal_type == 6:
+        return "Entwerter"
+    elif terminal_type == 7:
+        return "Multifunktionsterminal (kundenbedient)"
+    elif terminal_type == 8:
+        return "Informationsterminal Ladeterminal"
+    elif terminal_type == 9:
+        return "für ÖPV-Werteinheiten"
+    elif terminal_type == 13:
+        return "Terminal beim Massenpersonalisierer"
+    elif terminal_type == 14:
+        return "Servicestelle (personalbedient)"
+    elif terminal_type == 15:
+        return "Fahrerterminal (Verkauf und Kontrolle)"
+    elif terminal_type == 16:
+        return "HandyTicketserver"
+    elif terminal_type == 17:
+        return "eOnline Ticketserver"
+    elif terminal_type == 18:
+        return "Verkaufsautomat mobil (kundenbedient)"
+    elif terminal_type == 19:
+        return "Kontrollterminalmobil (personalbedient)"
+    else:
+        if opt:
+            return None
+        return f"Unknown ({terminal_type})"
+
+def location_name(location_type: int, opt=False):
+    if location_type == 0:
+        return "Bushaltestelle"
+    elif location_type == 1:
+        return "U-Bahn- (Metro-)Station"
+    elif location_type == 2:
+        return "Bahnhof (Eisenbahn)"
+    elif location_type == 3:
+        return "Straßenbahn- (TRAM-) Haltestelle"
+    elif location_type == 11:
+        return "Verkaufsstelle"
+    elif location_type == 16:
+        return "Gebiet (auch für Zone)"
+    elif location_type == 17:
+        return "Korridor"
+    elif location_type == 200:
+        return "Haltestelle allgemein für Haltestellen im Fahrplansinne, unabhängig vom Verkehrsmittel"
+    elif location_type == 201:
+        return "Massenpersonalisierer"
+    elif location_type == 202:
+        return "areaList_ID"
+    elif location_type == 203:
+        return "im Fahrzeug/Zug"
+    elif location_type == 204:
+        return "TouchPoint"
+    elif location_type == 205:
+        return "im Fahrzeug der Linie"
+    elif location_type == 206:
+        return "im Fahrzeug der Zugnummer"
+    elif location_type == 207:
+        return "Teilzone"
+    elif location_type == 208:
+        return "neutrale Zone"
+    elif location_type == 212:
+        return "HAFAS-ID"
+    elif location_type == 213:
+        return "im Fahrzeug an Haltestelle"
+    elif location_type == 214:
+        return "Ereignisort"
+    elif location_type == 215:
+        return "Ticketserver"
+    elif location_type == 251:
+        return "Ortsteil"
+    elif location_type == 252:
+        return "Gemeinde (Gemeindekennziffer)"
+    elif location_type == 253:
+        return "Kreis"
+    elif location_type == 254:
+        return "Land"
+    elif location_type == 255:
+        return "keine Angabe"
+    else:
+        if opt:
+            return None
+        return f"Unknown ({location_type})"
+
 
 @dataclasses.dataclass
 class Context:
@@ -229,44 +325,7 @@ class VDVTicket:
         return map_org_id(self.kvp_org_id, True)
 
     def terminal_type_name(self, opt=False):
-        if self.terminal_type == 0:
-            return "Unbestimmt"
-        elif self.terminal_type == 1:
-            return "Erfassungsterminal für CICO/BIBO"
-        elif self.terminal_type == 2:
-            return "Verkaufsautomat (z. B. Berechtigungen)"
-        elif self.terminal_type == 3:
-            return "Kontrollterminal (mobil, personalbedient)"
-        elif self.terminal_type == 4:
-            return "Kartenausgabeterminal"
-        elif self.terminal_type == 5:
-            return "Kartenrückgabeterminal Einstiegskontrollgerät"
-        elif self.terminal_type == 6:
-            return "Entwerter"
-        elif self.terminal_type == 7:
-            return "Multifunktionsterminal (kundenbedient)"
-        elif self.terminal_type == 8:
-            return "Informationsterminal Ladeterminal"
-        elif self.terminal_type == 9:
-            return "für ÖPV-Werteinheiten"
-        elif self.terminal_type == 13:
-            return "Terminal beim Massenpersonalisierer 13"
-        elif self.terminal_type == 14:
-            return "Servicestelle (personalbedient)"
-        elif self.terminal_type == 15:
-            return "Fahrerterminal (Verkauf und Kontrolle)"
-        elif self.terminal_type == 16:
-            return "HandyTicketserver"
-        elif self.terminal_type == 17:
-            return "eOnline Ticketserver"
-        elif self.terminal_type == 18:
-            return "Verkaufsautomat mobil (kundenbedient)"
-        elif self.terminal_type == 19:
-            return "Kontrollterminalmobil (personalbedient)"
-        else:
-            if opt:
-                return None
-            return f"Unknown ({self.terminal_type})"
+        return terminal_type_name(self.terminal_type, opt)
 
     def terminal_type_name_opt(self):
         return self.terminal_type_name(True)
@@ -278,63 +337,10 @@ class VDVTicket:
         return map_org_id(self.terminal_owner_id, True)
 
     def location_type_name(self, opt=False):
-        if self.location_type == 0:
-            return "Bushaltestelle"
-        elif self.location_type == 1:
-            return "U-Bahn- (Metro-)Station"
-        elif self.location_type == 2:
-            return "Bahnhof (Eisenbahn)"
-        elif self.location_type == 3:
-            return "Straßenbahn- (TRAM-) Haltestelle"
-        elif self.location_type == 11:
-            return "Verkaufsstelle"
-        elif self.location_type == 16:
-            return "Gebiet (auch für Zone)"
-        elif self.location_type == 17:
-            return "Korridor"
-        elif self.location_type == 200:
-            return "Haltestelle allgemein für Haltestellen im Fahrplansinne, unabhängig vom Verkehrsmittel"
-        elif self.location_type == 201:
-            return "Massenpersonalisierer"
-        elif self.location_type == 202:
-            return "areaList_ID"
-        elif self.location_type == 203:
-            return "im Fahrzeug/Zug"
-        elif self.location_type == 204:
-            return "TouchPoint"
-        elif self.location_type == 205:
-            return "im Fahrzeug der Linie"
-        elif self.location_type == 206:
-            return "im Fahrzeug der Zugnummer"
-        elif self.location_type == 207:
-            return "Teilzone"
-        elif self.location_type == 208:
-            return "neutrale Zone"
-        elif self.location_type == 212:
-            return "HAFAS-ID"
-        elif self.location_type == 213:
-            return "im Fahrzeug an Haltestelle"
-        elif self.location_type == 214:
-            return "Ereignisort"
-        elif self.location_type == 215:
-            return "Ticketserver"
-        elif self.location_type == 251:
-            return "Ortsteil"
-        elif self.location_type == 252:
-            return "Gemeinde (Gemeindekennziffer)"
-        elif self.location_type == 253:
-            return "Kreis"
-        elif self.location_type == 254:
-            return "Land"
-        elif self.location_type == 255:
-            return "keine Angabe"
-        else:
-            if opt:
-                return None
-            return f"Unknown ({self.terminal_type})"
+        return location_name(self.location_type, opt)
 
     def location_type_name_opt(self):
-        return self.location_type_name(True)
+        return location_name(self.location_type, True)
 
     def location_org_name(self):
         return map_org_id(self.location_org_id)

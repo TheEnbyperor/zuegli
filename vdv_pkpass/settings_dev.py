@@ -294,6 +294,8 @@ MAGICLINK_AUTH_TIMEOUT = 900
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = "VDV PKPass <noreply@magicalcodewit.ch>"
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://vdv-pkpass.eu.ngrok.io"]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

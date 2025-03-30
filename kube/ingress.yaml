@@ -53,7 +53,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "gts"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/rewrite-target: "https://vdv-pkpass.magicalcodewit.ch/$1"
+    nginx.ingress.kubernetes.io/rewrite-target: "https://vdv-pkpass.magicalcodewit.ch$request_uri"
 spec:
   ingressClassName: nginx
   tls:
@@ -61,5 +61,13 @@ spec:
         - vdv-pkpass-nfc.magicalcodewit.ch
       secretName: vdv-pkpass-nfc-tls
   rules:
-    - host: vdv-pkpass.magicalcodewit.ch
-      http: {}
+    - host: vdv-pkpass-nfc.magicalcodewit.ch
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: "dummy"
+                port:
+                  number: 80

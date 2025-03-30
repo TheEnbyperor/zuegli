@@ -12,7 +12,7 @@ class ApplicationDirectory:
     key_register: "KeyRegister"
     last_transaction: "LastTransaction"
     priorities: "Priorities"
-    authorizations: typing.List
+    authorizations: typing.List["Authorization"]
 
     @classmethod
     def parse(cls, data: bytes) -> "ApplicationDirectory":
@@ -31,7 +31,7 @@ class ApplicationDirectory:
             raise VDVNMException("Missing application data")
         application_data = application_data[1]
 
-        application_logbook = next(filter(lambda t: t[0] == 0xe4, application_directory), None)
+        application_logbook = next(filter(lambda t: t[0] == 0xE4, application_directory), None)
         if not application_logbook:
             raise VDVNMException("Missing application logbook")
         application_logbook = application_logbook[1]
@@ -41,12 +41,12 @@ class ApplicationDirectory:
             raise VDVNMException("Missing customer data")
         customer_data = customer_data[1]
 
-        key_register = next(filter(lambda t: t[0] == 0xec, application_directory), None)
+        key_register = next(filter(lambda t: t[0] == 0xEC, application_directory), None)
         if not key_register:
             raise VDVNMException("Missing key register")
         key_register = key_register[1]
 
-        last_transaction = next(filter(lambda t: t[0] == 0xc3, application_directory), None)
+        last_transaction = next(filter(lambda t: t[0] == 0xC3, application_directory), None)
         if not last_transaction:
             raise VDVNMException("Missing last transaction")
         last_transaction = last_transaction[1]
@@ -56,7 +56,7 @@ class ApplicationDirectory:
             raise VDVNMException("Missing priorities")
         priorities = priorities[1]
 
-        authorizations = list(filter(lambda t: t[0] == 0x83, application_directory))
+        authorizations = [Authorization.parse(d[1]) for d in filter(lambda t: t[0] == 0xE9, application_directory)]
 
         return cls(
             application_data=ApplicationData.parse(application_data),
@@ -179,7 +179,7 @@ class KeyRegister:
     rfu: bytes
 
     @classmethod
-    def parse(cls, data) -> "StoredValueData":
+    def parse(cls, data) -> "KeyRegister":
         system_specific_data = next(filter(lambda t: t[0] == 0xC0, data), None)
         if not system_specific_data:
             raise VDVNMException("Missing system specific data")
@@ -251,4 +251,74 @@ class Priorities:
     def parse(cls, data) -> "Priorities":
         return cls(
             data_pointers=[p for p in data if p != 0],
+        )
+
+@dataclasses.dataclass
+class Authorization:
+    data_pointer: int
+    authorization_id: int
+    authorization_org_id: int
+    product_id: int
+    product_org_id: int
+    product_key_org_id: int
+    valid_from: vdv.util.DateTime
+    valid_to: vdv.util.DateTime
+    status: int
+    synchronization_number: int
+
+    def authorization_org_name(self):
+        return vdv.ticket.map_org_id(self.authorization_org_id)
+
+    def authorization_org_name_opt(self):
+        return vdv.ticket.map_org_id(self.authorization_org_id, True)
+
+    def product_name(self, opt=False):
+        return vdv.ticket.product_name(self.product_org_id, self.product_id, opt=opt)
+
+    def product_name_opt(self):
+        return self.product_name(True)
+
+    def product_org_name(self):
+        return vdv.ticket.map_org_id(self.product_org_id)
+
+    def product_org_name_opt(self):
+        return vdv.ticket.map_org_id(self.product_org_id, True)
+
+    @classmethod
+    def parse(cls, data) -> "Authorization":
+        system_specific_data = next(filter(lambda t: t[0] == 0xC0, data), None)
+        if not system_specific_data:
+            raise VDVNMException("Missing system specific data")
+        system_specific_data = system_specific_data[1]
+
+        if len(system_specific_data) != 1:
+            raise VDVNMException("Invalid system specific data")
+
+        static_data = next(filter(lambda t: t[0] == 0x83, data), None)
+        if not static_data:
+            raise VDVNMException("Missing authorization static data")
+        static_data = static_data[1]
+
+        if len(static_data) != 20:
+            raise VDVNMException("Invalid authorization static data")
+
+        dynamic_data = next(filter(lambda t: t[0] == 0x84, data), None)
+        if not dynamic_data:
+            raise VDVNMException("Missing authorization dynamic data")
+        dynamic_data = dynamic_data[1]
+
+        if len(dynamic_data) != 2:
+            raise VDVNMException("Invalid authorization dynamic data")
+
+        return cls(
+            data_pointer=system_specific_data[0],
+            authorization_id=int.from_bytes(static_data[0:4], "big"),
+            authorization_org_id=int.from_bytes(static_data[4:6], "big"),
+            product_id=int.from_bytes(static_data[6:8], "big"),
+            product_org_id=int.from_bytes(static_data[8:10], "big"),
+            product_key_org_id=int.from_bytes(static_data[10:12], "big"),
+            valid_from=vdv.util.DateTime.from_bytes(static_data[12:16]),
+            valid_to=vdv.util.DateTime.from_bytes(static_data[16:20]),
+            status=dynamic_data[0],
+            synchronization_number=dynamic_data[1],
         )

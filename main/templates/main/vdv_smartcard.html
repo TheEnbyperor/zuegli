@@ -4,256 +4,591 @@
 {% block title %}Smartcard {{ smartcard.public_id }} - Train Tickets to Wallet Passes{% endblock title %}
 
 {% block content %}
-    <div class="govuk-width-container">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds-from-desktop">
-                <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
-                    Smartcard #{{ smartcard.public_id }}
-                </h1>
+    {% localtime off %}
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds-from-desktop">
+                    <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
+                        Smartcard #{{ smartcard.public_id }}
+                    </h1>
+                </div>
+                <div class="govuk-grid-column-one-third-from-desktop">
+                    {#                <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">#}
+                    {#                    Delete#}
+                    {#                </a>#}
+                </div>
             </div>
-            <div class="govuk-grid-column-one-third-from-desktop">
-                {#                <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">#}
-                {#                    Delete#}
-                {#                </a>#}
-            </div>
+            <p class="govuk-body">Quote the above smartcard number when asking for help.</p>
         </div>
-        <p class="govuk-body">Quote the above smartcard number when asking for help.</p>
-    </div>
 
-    <div class="govuk-!-margin-7">
-        <h2 class="govuk-heading-l">Smartcard details</h2>
-        {% with card=smartcard.as_card %}
-            <h3 class="govuk-heading-m">File Control Information</h3>
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">AID</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ card.fci.aid|as_hex }}
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Version</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ card.fci.spec_version }}
-                    </dd>
-                </div>
-                {% with org_name=card.fci.manufacturer_org_name_opt %}
-                    {% if org_name %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Manufacturer organisation</dt>
-                            <dd class="govuk-summary-list__value">
-                                {{ org_name }} (<code>{{ card.fci.manufacturer_org_id }}</code>)
-                            </dd>
-                        </div>
-                    {% else %}
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Manufacturer organisation ID</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ card.fci.manufacturer_org_id }}</code></dd>
-                        </div>
-                    {% endif %}
-                {% endwith %}
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Manufacturer version number</dt>
-                    <dd class="govuk-summary-list__value">
-                        {{ card.fci.manufacturer_version_number|as_hex }}
-                    </dd>
-                </div>
-            </dl>
-
-            <h3 class="govuk-heading-m">Application Directory</h3>
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Application Data</dt>
-                    <dd class="govuk-summary-list__value">
-                        <dl class="govuk-summary-list">
+        <div class="govuk-!-margin-7">
+            <h2 class="govuk-heading-l">Smartcard details</h2>
+            {% with card=smartcard.as_card %}
+                <h3 class="govuk-heading-m">File Control Information</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">AID</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.fci.aid|as_hex }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Version</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.fci.spec_version }}
+                        </dd>
+                    </div>
+                    {% with org_name=card.fci.manufacturer_org_name_opt %}
+                        {% if org_name %}
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                <dt class="govuk-summary-list__key">Manufacturer organisation</dt>
                                 <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.application_data.data_pointer }}</code>
+                                    {{ org_name }} (<code>{{ card.fci.manufacturer_org_id }}</code>)
                                 </dd>
                             </div>
+                        {% else %}
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Instance number</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.application_data.application_instance_number }}</code>
+                                <dt class="govuk-summary-list__key">Manufacturer organisation ID</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ card.fci.manufacturer_org_id }}</code>
                                 </dd>
                             </div>
-                            {% with org_name=card.application_directory.application_data.application_instance_org_name_opt %}
-                                {% if org_name %}
+                        {% endif %}
+                    {% endwith %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Manufacturer version number</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.fci.manufacturer_version_number|as_hex }}
+                        </dd>
+                    </div>
+                </dl>
+
+                <h3 class="govuk-heading-m">Application Directory</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application Data</dt>
+                        <dd class="govuk-summary-list__value">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.application_data.data_pointer }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Instance number</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.application_data.application_instance_number }}</code>
+                                    </dd>
+                                </div>
+                                {% with org_name=card.application_directory.application_data.application_instance_org_name_opt %}
+                                    {% if org_name %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Instance organisation</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ org_name }}
+                                                (<code>{{ card.application_directory.application_data.application_instance_org_id }}</code>)
+                                            </dd>
+                                        </div>
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Instance organisation ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ card.application_directory.application_data.application_instance_org_id }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Version</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.application_data.app_version }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Valid from</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ card.application_directory.application_data.valid_from.as_datetime|date:"F d, Y" }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Valid until</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ card.application_directory.application_data.valid_to.as_datetime|date:"F d, Y" }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Status</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.application_data.app_status }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Synchronization number</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ card.application_directory.application_data.app_synchronization_number }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application Logbook</dt>
+                        <dd class="govuk-summary-list__value">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.application_logbook.data_pointer }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Sequence</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ card.application_directory.application_logbook.sequence_number }}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Customer data</dt>
+                        <dd class="govuk-summary-list__value">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.customer_data.data_pointer }}</code>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Last transaction</dt>
+                        <dd class="govuk-summary-list__value">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.last_transaction.data_pointer }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Transaction type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ card.application_directory.last_transaction.transaction_type }}</code>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Authorizations</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% for auth in card.application_directory.authorizations %}
+                                <div class="govuk-summary-card">
+                                    <div class="govuk-summary-card__title-wrapper">
+                                        <h2 class="govuk-summary-card__title">
+                                            Authorization #{{ forloop.counter }}
+                                        </h2>
+                                    </div>
+                                    <div class="govuk-summary-card__content">
+                                        <dl class="govuk-summary-list">
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.data_pointer }}
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">ID</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.authorization_id }}
+                                                </dd>
+                                            </div>
+                                            {% with org_name=auth.authorization_org_name_opt %}
+                                                {% if org_name %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Organisation</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {{ org_name }}
+                                                            (<code>{{ auth.authorization_org_id }}</code>)
+                                                        </dd>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            <code>{{ auth.authorization_org_id }}</code>
+                                                        </dd>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Product</dt>
+                                                <dd class="govuk-summary-list__value">
+
+                                                    <dl class="govuk-summary-list">
+                                                        {% with product_name=auth.product_name_opt %}
+                                                            {% if product_name %}
+                                                                <div class="govuk-summary-list__row">
+                                                                    <dt class="govuk-summary-list__key">Name</dt>
+                                                                    <dd class="govuk-summary-list__value">
+                                                                        {{ product_name }}
+                                                                        (<code>{{ auth.product_id }}</code>)
+                                                                    </dd>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="govuk-summary-list__row">
+                                                                    <dt class="govuk-summary-list__key">Number</dt>
+                                                                    <dd class="govuk-summary-list__value">
+                                                                        <code>{{ auth.product_id }}</code>
+                                                                    </dd>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                        {% with org_name=auth.product_org_name_opt %}
+                                                            {% if org_name %}
+                                                                <div class="govuk-summary-list__row">
+                                                                    <dt class="govuk-summary-list__key">
+                                                                        Organisation
+                                                                    </dt>
+                                                                    <dd class="govuk-summary-list__value">
+                                                                        {{ org_name }}
+                                                                        (<code>{{ auth.product_org_id }}</code>)
+                                                                    </dd>
+                                                                </div>
+                                                            {% else %}
+                                                                <div class="govuk-summary-list__row">
+                                                                    <dt class="govuk-summary-list__key">
+                                                                        Organisation ID
+                                                                    </dt>
+                                                                    <dd class="govuk-summary-list__value">
+                                                                        <code>{{ auth.product_org_id }}</code>
+                                                                    </dd>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    </dl>
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Valid from</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.valid_from.as_datetime|date:"F d, Y H:i:s e" }}
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Valid until</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.valid_to.as_datetime|date:"F d, Y H:i:s e" }}
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Status</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.status }}
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Synchronization number</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ auth.synchronization_number }}
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </dd>
+                    </div>
+                </dl>
+
+                <h3 class="govuk-heading-m">Application Data</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">PV Key Version</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.application_data.pv_key_version }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">KVP Key Version</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.application_data.kvp_key_version }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Auth Key Version</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.application_data.auth_key_version }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Issuing transaction SAM sequence</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.application_data.issuing_transaction_sam_sequence_number }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Issuing transaction SAM ID</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ card.application_data.issuing_transaction_sam_id }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Info text</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ smartcard.application_info_text }}
+                        </dd>
+                    </div>
+                </dl>
+
+                <h3 class="govuk-heading-m">Customer data</h3>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Info text</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ smartcard.customer_info_text }}
+                        </dd>
+                    </div>
+                </dl>
+
+                <h2 class="govuk-heading-m">Logbook</h2>
+                {% for log in smartcard.logs.all %}
+                    {% with log=log.as_log %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">
+                                    Entry #{{ log.general.sequence_number }}
+                                </h2>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                <dl class="govuk-summary-list">
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Instance organisation</dt>
+                                        <dt class="govuk-summary-list__key">Type</dt>
                                         <dd class="govuk-summary-list__value">
-                                            {{ org_name }} (<code>{{ card.application_directory.application_data.application_instance_org_id }}</code>)
+                                            {{ log.type_name }}
                                         </dd>
                                     </div>
-                                {% else %}
                                     <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Instance organisation ID</dt>
+                                        <dt class="govuk-summary-list__key">SAM sequence number</dt>
                                         <dd class="govuk-summary-list__value">
-                                            <code>{{ card.application_directory.application_data.application_instance_org_id }}</code>
+                                            {{ log.general.sam_sequence_number }}
                                         </dd>
                                     </div>
-                                {% endif %}
-                            {% endwith %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Version</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.application_data.app_version }}</code>
-                                </dd>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">SAM ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ log.general.sam_id }}
+                                        </dd>
+                                    </div>
+                                    {% with org_name=log.general.operator_org_name_opt %}
+                                        {% if org_name %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Operator organisation</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    {{ org_name }} (<code>{{ log.general.operator_org_id }}</code>)
+                                                </dd>
+                                            </div>
+                                        {% else %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Operator organisation ID</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ log.general.operator_org_id }}</code></dd>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Timestamp</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ log.general.timestamp.as_datetime|date:"F d, Y H:i:s e" }}
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Terminal</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                                {% with type_name=log.general.terminal_type_name_opt %}
+                                                    {% if type_name %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Type</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ type_name }}
+                                                                (<code>{{ log.general.terminal_type }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Type Code</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ log.general.terminal_type }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Number</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.general.terminal_number }}</code>
+                                                    </dd>
+                                                </div>
+                                                {% with org_name=log.general.terminal_org_name_opt %}
+                                                    {% if org_name %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Owner</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ org_name }}
+                                                                (<code>{{ log.general.terminal_org_id }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Owner ID</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ log.general.terminal_org_id }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </dl>
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Location</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                                {% with type_name=log.general.location_type_name_opt %}
+                                                    {% if type_name %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Type</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ type_name }}
+                                                                (<code>{{ log.general.location_type }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Type Code</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ log.general.location_type }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Number</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.general.location_number }}</code>
+                                                    </dd>
+                                                </div>
+                                                {% with org_name=log.general.location_org_name_opt %}
+                                                    {% if org_name %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Owner</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ org_name }}
+                                                                (<code>{{ log.general.location_org_id }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Owner ID</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ log.general.location_org_id }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </dl>
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Transaction type</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ log.general.transaction_type }}
+                                        </dd>
+                                    </div>
+                                </dl>
                             </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Valid from</dt>
-                                <dd class="govuk-summary-list__value">
-                                    {{ card.application_directory.application_data.valid_from.as_datetime|date:"F d, Y" }}
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Valid until</dt>
-                                <dd class="govuk-summary-list__value">
-                                    {{ card.application_directory.application_data.valid_to.as_datetime|date:"F d, Y" }}
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Status</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.application_data.app_status }}</code>
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Synchronization number</dt>
-                                <dd class="govuk-summary-list__value">
-                                    {{ card.application_directory.application_data.app_synchronization_number }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Application Logbook</dt>
-                    <dd class="govuk-summary-list__value">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.application_logbook.data_pointer }}</code>
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Sequence</dt>
-                                <dd class="govuk-summary-list__value">
-                                    {{ card.application_directory.application_logbook.sequence_number }}
-                                </dd>
-                            </div>
-                        </dl>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Customer data</dt>
-                    <dd class="govuk-summary-list__value">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.customer_data.data_pointer }}</code>
-                                </dd>
-                            </div>
-                        </dl>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Last transaction</dt>
-                    <dd class="govuk-summary-list__value">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.last_transaction.data_pointer }}</code>
-                                </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Transaction type</dt>
-                                <dd class="govuk-summary-list__value">
-                                    <code>{{ card.application_directory.last_transaction.transaction_type }}</code>
-                                </dd>
-                            </div>
-                        </dl>
-                    </dd>
-                </div>
-            </dl>
+                        </div>
+                    {% endwith %}
+                {% endfor %}
 
-            <h2 class="govuk-heading-m">Certificate chain</h2>
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Root CA verification</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if card.verify_root_ca %}
-                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                        {% else %}
-                            <div class="govuk-warning-text">
-                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                <strong class="govuk-warning-text__text">
-                                    Signature verification failed, something has gone very wrong
-                                </strong>
-                            </div>
-                        {% endif %}
-                    </dd>
+                <h2 class="govuk-heading-m">Certificate chain</h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Root CA verification</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if card.verify_root_ca %}
+                                <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                            {% else %}
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        Signature verification failed, something has gone very wrong
+                                    </strong>
+                                </div>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Issuing CA verification</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if card.verify_ca_cert %}
+                                <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                            {% else %}
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        Signature verification failed, this card is likely invalid
+                                    </strong>
+                                </div>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Card certificate verification</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if card.verify_application_cert %}
+                                <strong class="govuk-tag govuk-tag--green">Valid</strong>
+                            {% else %}
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        Signature verification failed, this card is likely invalid
+                                    </strong>
+                                </div>
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">Root CA</h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% include "main/certificate.html" with cert=card.root_ca_data %}
+                    </div>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Issuing CA verification</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if card.verify_ca_cert %}
-                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                        {% else %}
-                            <div class="govuk-warning-text">
-                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                <strong class="govuk-warning-text__text">
-                                    Signature verification failed, this card is likely invalid
-                                </strong>
-                            </div>
-                        {% endif %}
-                    </dd>
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">Issuing CA</h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% include "main/certificate.html" with cert=card.ca_cert_data %}
+                    </div>
                 </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Card certificate verification</dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if card.verify_application_cert %}
-                            <strong class="govuk-tag govuk-tag--green">Valid</strong>
-                        {% else %}
-                            <div class="govuk-warning-text">
-                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                <strong class="govuk-warning-text__text">
-                                    Signature verification failed, this card is likely invalid
-                                </strong>
-                            </div>
-                        {% endif %}
-                    </dd>
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">Card Certificate</h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        {% include "main/certificate.html" with cert=card.application_cert_data %}
+                    </div>
                 </div>
-            </dl>
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Root CA</h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    {% include "main/certificate.html" with cert=card.root_ca_data %}
-                </div>
-            </div>
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Issuing CA</h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    {% include "main/certificate.html" with cert=card.ca_cert_data %}
-                </div>
-            </div>
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">Card Certificate</h2>
-                </div>
-                <div class="govuk-summary-card__content">
-                    {% include "main/certificate.html" with cert=card.application_cert_data %}
-                </div>
-            </div>
-        {% endwith %}
-    </div>
-
+            {% endwith %}
+        </div>
+    {% endlocaltime %}
 {% endblock content %}

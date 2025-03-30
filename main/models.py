@@ -35,6 +35,7 @@ class Account(models.Model):
     sbahn_berlin_token = models.TextField(null=True, blank=True, verbose_name="S-Bahn Berlin Token")
     sbahn_berlin_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="S-Bahn Berlin Device ID")
     calendar_token = models.CharField(max_length=255, verbose_name="iCal token", default=make_pass_token)
+    nfc_link_token = models.CharField(max_length=255, verbose_name="NFC link token", default=make_pass_token)
 
     def __str__(self):
         return str(self.user)
@@ -572,6 +573,10 @@ class VDVSmartcard(models.Model):
     application_directory = models.BinaryField()
     ca_cert = models.BinaryField()
     application_cert = models.BinaryField()
+    application_data = models.BinaryField()
+    application_info_text = models.TextField(blank=True, null=False)
+    key_register = models.BinaryField()
+    customer_info_text = models.TextField(blank=True, null=False)
 
     class Meta:
         verbose_name = "VDV Smartcard"
@@ -590,6 +595,21 @@ class VDVSmartcard(models.Model):
         return vdv_nm.card.Card(
             fci=vdv_nm.fci.FCI.parse(bytes(self.fci)),
             application_directory=vdv_nm.application_directory.ApplicationDirectory.parse(bytes(self.application_directory)),
+            application_data=vdv_nm.application_data.ApplicationData.parse(bytes(self.application_data)),
             ca_cert=vdv.Certificate.parse(bytes(self.ca_cert)),
             application_cert=vdv.Certificate.parse(bytes(self.application_cert)),
         )
+
+class VDVSmartcardLog(models.Model):
+    smartcard = models.ForeignKey(VDVSmartcard, on_delete=models.CASCADE, related_name="logs")
+    sequence_number = models.IntegerField()
+    log_entry = models.BinaryField()
+
+    class Meta:
+        unique_together = [("smartcard", "sequence_number")]
+
+    def __str__(self):
+        return f"{self.smartcard} #{self.sequence_number}"
+
+    def as_log(self) -> vdv_nm.log.LogEntry:
+        return vdv_nm.log.parse_log(self.log_entry)
