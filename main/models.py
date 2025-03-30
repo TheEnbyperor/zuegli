@@ -612,4 +612,4 @@ class VDVSmartcardLog(models.Model):
         return f"{self.smartcard} #{self.sequence_number}"
 
     def as_log(self) -> vdv_nm.log.LogEntry:
-        return vdv_nm.log.parse_log(self.log_entry)
+        return vdv_nm.log.parse_log(bytes(self.log_entry))
