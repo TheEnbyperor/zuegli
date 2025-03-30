@@ -94,16 +94,6 @@ class AccessLogInline(admin.StackedInline):
     ]
 
 
-class TicketAccountInline(admin.StackedInline):
-    extra = 0
-    model = models.Ticket
-    fk_name = "account"
-    readonly_fields = [
-        "pkpass_authentication_token",
-        "last_updated",
-    ]
-
-
 class TicketDBSubscriptionInline(admin.StackedInline):
     extra = 0
     model = models.Ticket
@@ -111,14 +101,6 @@ class TicketDBSubscriptionInline(admin.StackedInline):
     readonly_fields = [
         "pkpass_authentication_token",
         "last_updated",
-    ]
-
-
-class DBSubscriptionInline(admin.StackedInline):
-    extra = 0
-    model = models.DBSubscription
-    readonly_fields = [
-        "device_token"
     ]
 
 
@@ -195,6 +177,34 @@ class AppleDeviceAdmin(admin.ModelAdmin):
     ]
 
 
+class TicketAccountInline(admin.StackedInline):
+    extra = 0
+    model = models.Ticket
+    fk_name = "account"
+    readonly_fields = [
+        "pkpass_authentication_token",
+        "last_updated",
+    ]
+
+
+class VDVSmartcardInline(admin.StackedInline):
+    extra = 0
+    model = models.VDVSmartcard
+    fk_name = "account"
+    readonly_fields = [
+        "id",
+        "created",
+        "last_updated"
+    ]
+
+
+class DBSubscriptionInline(admin.StackedInline):
+    extra = 0
+    model = models.DBSubscription
+    readonly_fields = [
+        "device_token"
+    ]
+
 @admin.register(models.Account)
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = [
@@ -216,6 +226,7 @@ class AccountAdmin(admin.ModelAdmin):
     inlines = [
         TicketAccountInline,
         DBSubscriptionInline,
+        VDVSmartcardInline,
     ]
 
 
@@ -226,6 +237,15 @@ class DBSubscriptionAdmin(admin.ModelAdmin):
     ]
     inlines = [
         TicketDBSubscriptionInline
+    ]
+
+
+class VDVSmartcardLogAdmin(admin.StackedInline):
+    model = models.VDVSmartcardLog
+    readonly_fields = [
+        "smartcard",
+        "sequence_number",
+        "log_entry"
     ]
 
 
@@ -244,3 +264,6 @@ class VDVSmartcardAdmin(admin.ModelAdmin):
         "created",
     ]
     date_hierarchy = "last_updated"
+    inlines = [
+        VDVSmartcardLogAdmin
+    ]
