@@ -74,8 +74,8 @@ class ApplicationData:
     application_instance_number: int
     application_instance_org_id: int
     app_version: int
-    valid_from: vdv.util.DateTime
-    valid_to: vdv.util.DateTime
+    valid_from: typing.Optional[vdv.util.DateTime]
+    valid_to: typing.Optional[vdv.util.DateTime]
     app_status: int
     app_synchronization_number: int
 
@@ -116,8 +116,8 @@ class ApplicationData:
             application_instance_number=int.from_bytes(static_data[0:4], "big"),
             application_instance_org_id=int.from_bytes(static_data[4:6], "big"),
             app_version=static_data[6],
-            valid_from=vdv.util.DateTime.from_bytes(static_data[7:11]),
-            valid_to=vdv.util.DateTime.from_bytes(static_data[11:15]),
+            valid_from=vdv.util.DateTime.from_bytes(static_data[7:11]) if static_data[7:11] != b"\x00\x00\x00\x00" else None,
+            valid_to=vdv.util.DateTime.from_bytes(static_data[11:15]) if static_data[11:15] != b"\x00\x00\x00\x00" else None,
             app_status=dynamic_data[0],
             app_synchronization_number=dynamic_data[1],
         )

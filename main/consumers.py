@@ -284,25 +284,54 @@ class VDVConsumer(JsonWebsocketConsumer):
                 authorization_infotext = vdv_nm.info_text.InfoText.parse(authorization_infotext.data)
 
             self.message("Reading public keys...")
+
+            ca_pk_bytes = bytearray()
             ca_pk_data = self.apdu(RequestAPDU(
-                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x12,
-                data=b"", expected_response_length=65536,
+                instruction_class=0x10, instruction=0xCA, p1=0x01, p2=0x12,
+                data=b"", expected_response_length=256,
             ))
             if not ca_pk_data.is_success():
                 self.error("Failed to read CA Certificate")
+            while len(ca_pk_data.data) == 256:
+                ca_pk_bytes.extend(ca_pk_data.data)
+                ca_pk_data = self.apdu(RequestAPDU(
+                    instruction_class=0x10, instruction=0xCA, p1=0x01, p2=0x12,
+                    data=b"", expected_response_length=256,
+                ))
+                if not ca_pk_data.is_success():
+                    self.error("Failed to read CA Certificate")
+            self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x12,
+                data=b"", expected_response_length=256,
+            ))
+            ca_pk_bytes.extend(ca_pk_data.data)
 
-            ca_pk = vdv.Certificate.parse(ca_pk_data.data)
+            ca_pk = vdv.Certificate.parse(ca_pk_bytes)
             vdv.CertificateData.parse(ca_pk)
 
+            application_pk_bytes = bytearray()
             application_pk_data = self.apdu(RequestAPDU(
-                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x11,
-                data=b"", expected_response_length=65536,
+                instruction_class=0x10, instruction=0xCA, p1=0x01, p2=0x11,
+                data=b"", expected_response_length=256,
             ))
             if not application_pk_data.is_success():
                 self.error("Failed to read Application Certificate")
                 return
+            while len(application_pk_data.data) == 256:
+                application_pk_bytes.extend(application_pk_data.data)
+                application_pk_data = self.apdu(RequestAPDU(
+                    instruction_class=0x10, instruction=0xCA, p1=0x01, p2=0x11,
+                    data=b"", expected_response_length=256,
+                ))
+                if not application_pk_data.is_success():
+                    self.error("Failed to read Application Certificate")
+            self.apdu(RequestAPDU(
+                instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0x11,
+                data=b"", expected_response_length=256,
+            ))
+            application_pk_bytes.extend(application_pk_data.data)
 
-            application_pk = vdv.Certificate.parse(application_pk_data.data)
+            application_pk = vdv.Certificate.parse(application_pk_bytes)
             vdv.CertificateData.parse(application_pk)
 
             self.message("Saving...")
@@ -314,12 +343,12 @@ class VDVConsumer(JsonWebsocketConsumer):
                 "last_updated": datetime.datetime.now(),
                 "fci": fci_data.data,
                 "application_directory": application_directory_data.data,
-                "ca_cert": ca_pk_data.data,
-                "application_cert": application_pk_data.data,
+                "ca_cert": ca_pk_bytes,
+                "application_cert": application_pk_bytes,
                 "application_data": application_data.data,
                 "application_info_text": application_info_text.text,
                 "key_register": key_register.data,
-                "customer_infotext": customer_infotext.text,
+                "customer_info_text": customer_infotext.text,
             }
             if self.account:
                 d["account"] = self.account

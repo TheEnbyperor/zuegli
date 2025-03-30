@@ -17,19 +17,6 @@ def get_pki():
 
     return pki_store
 
-def get_root_ca():
-    global ROOT_CA
-
-    if ROOT_CA is not None:
-        return ROOT_CA
-
-    pki_store = get_pki()
-    raw_root_ca = pki_store.find_certificate(vdv.CAReference.root())
-
-    ROOT_CA = vdv.Certificate.parse(raw_root_ca.data)
-
-    return ROOT_CA
-
 @dataclasses.dataclass
 class Card:
     fci: fci.FCI
@@ -38,18 +25,22 @@ class Card:
     ca_cert: vdv.Certificate
     application_cert: vdv.Certificate
 
-    @staticmethod
-    def root_ca_data():
-        root_ca = get_root_ca()
-        assert not root_ca.needs_ca_key()
+    def root_ca_data(self):
+        pki_store = get_pki()
+        raw_root_ca = pki_store.find_certificate(self.ca_cert_data().ca_reference)
+        if not raw_root_ca:
+            return None
+        root_ca = vdv.Certificate.parse(raw_root_ca.data)
         root_ca_data = vdv.CertificateData.parse(root_ca)
-        assert root_ca_data.ca_reference == vdv.CAReference.root()
-        assert root_ca_data.certificate_holder_reference == vdv.CAReference.root()
 
         return root_ca_data
 
     def verify_root_ca(self):
-        root_ca = get_root_ca()
+        pki_store = get_pki()
+        raw_root_ca = pki_store.find_certificate(self.ca_cert_data().ca_reference)
+        if not raw_root_ca:
+            return False
+        root_ca = vdv.Certificate.parse(raw_root_ca.data)
 
         try:
             root_ca.verify_signature(self.root_ca_data())
@@ -58,8 +49,12 @@ class Card:
         return True
 
     def verify_ca_cert(self):
+        root_ca_data = self.root_ca_data()
+        if not root_ca_data:
+            return False
+
         try:
-            self.ca_cert.verify_signature(self.root_ca_data())
+            self.ca_cert.verify_signature(root_ca_data)
         except vdv.VDVException:
             return False
         return True
