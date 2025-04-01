@@ -273,6 +273,9 @@ class VDVConsumer(JsonWebsocketConsumer):
                     data=bytes([0xEA, auth.data_pointer]),
                     expected_response_length=256,
                 ))
+                if not authorization.is_success():
+                    self.error("Failed to read Authorization Data")
+                authorization = vdv_nm.authorization.Authorization.parse(authorization.data)
 
                 authorization_infotext = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,

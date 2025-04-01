@@ -247,6 +247,7 @@ class VDVSmartcardLogAdmin(admin.StackedInline):
         "sequence_number",
         "log_entry"
     ]
+    extra = 0
 
 
 @admin.register(models.VDVSmartcard)
