@@ -44,8 +44,6 @@ class ApplicationData:
             raise VDVNMException("Missing issuing application")
         issuing_application = issuing_application[1]
 
-        print(issuing_application)
-
         return cls(
             pv_key_version=key_version[0],
             kvp_key_version=key_version[1],

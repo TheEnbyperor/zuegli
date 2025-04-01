@@ -606,6 +606,8 @@ class VDVSmartcardLog(models.Model):
     log_entry = models.BinaryField()
 
     class Meta:
+        verbose_name = "VDV Smartcard Log Entry"
+        verbose_name_plural = "VDV Smartcard Log Entries"
         unique_together = [("smartcard", "sequence_number")]
 
     def __str__(self):

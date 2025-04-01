@@ -454,6 +454,8 @@ class BasicData:
             return "Fahrrad"
         elif t == 66:
             return "Hund"
+        else:
+            return None
 
     def passenger_type_name_opt(self):
         return self.map_passenger_type(self.passenger_type)

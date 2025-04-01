@@ -23,7 +23,9 @@ def parse_log(data: bytes):
 
     general = GeneralData.parse(general_data)
 
-    if log_type == 0xf3:
+    if log_type == 0xf1:
+        return TicketUse.parse(general, data)
+    elif log_type == 0xf3:
         return AuthorizationBlock.parse(general, data)
     elif log_type == 0xf4:
         return ApplicationBlock.parse(general, data)
@@ -112,6 +114,20 @@ class GeneralData:
 class LogEntry(abc.ABC):
     def type_name(self):
         raise NotImplementedError()
+
+
+@dataclasses.dataclass
+class TicketUse(LogEntry):
+    general: GeneralData
+
+    def type_name(self):
+        return "Ticket use"
+
+    @classmethod
+    def parse(cls, general: GeneralData, data):
+        return cls(
+            general=general,
+        )
 
 
 @dataclasses.dataclass

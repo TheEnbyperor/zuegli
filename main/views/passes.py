@@ -377,6 +377,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 add_pkp_img(pkp, UIC_NAME_LOGO[ticket_data.flex.data["issuingDetail"]["issuerName"]], "logo.png")
                 have_logo = True
 
+            if not have_logo and "issuerNum" in ticket_data.flex.data["issuingDetail"]:
+                issuing_rics = ticket_data.flex.data["issuingDetail"]["issuerNum"]
+                if issuing_rics in RICS_LOGO:
+                    add_pkp_img(pkp, RICS_LOGO[issuing_rics], "logo.png")
+                    have_logo = True
+                if issuing_rics in RICS_BG:
+                    pass_json["backgroundColor"] = RICS_BG[issuing_rics]
+                if issuing_rics in RICS_FG:
+                    pass_json["foregroundColor"] = RICS_FG[issuing_rics]
+                if issuing_rics in RICS_FG_SECONDARY:
+                    pass_json["labelColor"] = RICS_FG_SECONDARY[issuing_rics]
+
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
                 ticket_document = next(map(
                     lambda d: d["ticket"][1],
@@ -4997,7 +5009,7 @@ RICS_FG_SECONDARY = {
     3268: "rgb(67, 165, 0)",
     3306: "rgb(128, 204, 40)",
     3453: "#ffffff",
-    3497: "rgb(149, 200, 125)",
+    3497: "#96c87d",
     3602: "#69AB98",
     3606: "rgb(247, 147, 48)",
     3697: "rgb(110, 193, 228)",
