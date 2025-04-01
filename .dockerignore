@@ -7,7 +7,6 @@
 /iata-data
 /venv
 /db.sqlite3
-/package.json
 /yarn.lock
 /.gitignore
 /kube
