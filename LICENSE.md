@@ -1,0 +1,1 @@
+Licensed under the [European Union Public License v1.2](https://eupl.eu).
