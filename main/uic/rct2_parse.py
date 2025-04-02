@@ -99,12 +99,12 @@ class RCT2Parser:
                 arrival_date =   self.read_area(top=line, left=52, width=5, height=1)
                 arrival_time =   self.read_area(top=line, left=58, width=5, height=1)
 
-            departure_date = departure_date.strip("*-> ")
-            departure_time = departure_time.strip("*-> ")
-            departure_station = departure_station.strip("*-> ")
-            arrival_station = arrival_station.strip("*-> ")
-            arrival_date = arrival_date.strip("*-> ")
-            arrival_time = arrival_time.strip("*-> ")
+            departure_date = departure_date.strip("*-> \r\n")
+            departure_time = departure_time.strip("*-> \r\n")
+            departure_station = departure_station.strip("*-> \r\n")
+            arrival_station = arrival_station.strip("*-> \r\n")
+            arrival_date = arrival_date.strip("*-> \r\n")
+            arrival_time = arrival_time.strip("*-> \r\n")
 
             if departure_date or departure_time or arrival_date or arrival_time or departure_station or arrival_station:
                 trips.append(TripPart(
@@ -118,14 +118,13 @@ class RCT2Parser:
                     arrival=arrival_dt,
                 ))
 
-        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*-> ")
-
-        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*-> ")
-        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*-> ")
-        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*-> ")
-        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*-> ")
-        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*-> ")
-        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*-> ")
+        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*-> \r\n")
+        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*-> \r\n")
+        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*-> \r\n")
+        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*-> \r\n")
+        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*-> \r\n")
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*-> \r\n")
+        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*-> \r\n")
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
 
         try:
@@ -135,7 +134,7 @@ class RCT2Parser:
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)
 
         if operator_rics in (1088, 1184):
-            # benerail (NSI and NMBS International) uses square brackets in the via-string where chevrons should be used
+            # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">")
 
         return ParsedRCT2(
