@@ -106,8 +106,10 @@ class VDVConsumer(JsonWebsocketConsumer):
         self.transaction_queue = None
 
     def send_apdus(self):
-        while self.transaction_queue:
+        while True:
             transaction = self.transaction_queue.get()
+            if transaction is None:
+                return
             self.send_json({
                 "type": "request-apdu",
                 "class": transaction.request.instruction_class,
@@ -128,6 +130,7 @@ class VDVConsumer(JsonWebsocketConsumer):
             "type": "error",
             "message": message
         })
+        self.transaction_queue.put(None)
         self.close()
 
     def message(self, message: str):
@@ -141,7 +144,7 @@ class VDVConsumer(JsonWebsocketConsumer):
             "type": "done",
             "return-url": return_url
         })
-        self.transaction_queue = None
+        self.transaction_queue.put(None)
         self.close()
 
     def apdu(self, request: RequestAPDU) -> ResponseAPDU:
