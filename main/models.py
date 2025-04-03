@@ -104,7 +104,7 @@ class Ticket(models.Model):
     pkpass_authentication_token = models.CharField(max_length=255, verbose_name="PKPass authentication token", default=make_pass_token)
     last_updated = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
-    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets")
+    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", db_index=True)
     db_subscription = models.ForeignKey(
         "DBSubscription", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="DB Subscription", db_index=True
     )
@@ -184,6 +184,8 @@ class Ticket(models.Model):
         if ticket_instance := self.bahnbonus_instances.first():
             return ticket_instance
 
+        return None
+
 
 class AccessLogEntry(models.Model):
     ACTION_UPLOAD = "upload"
@@ -194,16 +196,16 @@ class AccessLogEntry(models.Model):
         (ACTION_DOWNLOAD_PKPASS, "Download PKPass"),
     )
 
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="access_logs")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="access_logs", db_index=True)
     action = models.CharField(choices=ACTIONS, max_length=255)
     remote_ip = models.GenericIPAddressField()
     headers = models.JSONField(default=dict)
-    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs")
+    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs", db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class VDVTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     ticket_org_id = models.PositiveIntegerField(verbose_name="Organization ID")
     validity_start = models.DateTimeField()
@@ -242,7 +244,7 @@ class VDVTicketInstance(models.Model):
 
 
 class UICTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
     issuing_time = models.DateTimeField()
@@ -276,10 +278,12 @@ class UICTicketInstance(models.Model):
         elif self.decoded_data.get("dosipas_envelope"):
             ticket_envelope = dacite.from_dict(data_class=uic.DOSIPASEnvelope, data=self.decoded_data["dosipas_envelope"], config=config)
             return t.UICTicket.from_dosipas(bytes(self.barcode_data), ticket_envelope, context)
+        else:
+            raise AssertionError("Unreachable code")
 
 
 class RSPTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp_instances", db_index=True)
     issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID")
     reference = models.CharField(max_length=20, verbose_name="Ticket reference")
     barcode_data = models.BinaryField()
@@ -315,7 +319,7 @@ class RSPTicketInstance(models.Model):
 
 
 class SNCFTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sncf_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sncf_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -333,7 +337,7 @@ class SNCFTicketInstance(models.Model):
 
 
 class HZPPTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="hzpp_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="hzpp_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -351,7 +355,7 @@ class HZPPTicketInstance(models.Model):
 
 
 class ELBTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="elb_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="elb_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -369,7 +373,7 @@ class ELBTicketInstance(models.Model):
 
 
 class SSBTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances", db_index=True)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
@@ -412,7 +416,7 @@ class SSBTicketInstance(models.Model):
 
 
 class SSB1TicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb1_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb1_instances", db_index=True)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
@@ -433,7 +437,7 @@ class SSB1TicketInstance(models.Model):
 
 
 class SwissPassTicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="swisspass_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="swisspass_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -451,7 +455,7 @@ class SwissPassTicketInstance(models.Model):
 
 
 class IATATicketInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="iata_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="iata_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -469,7 +473,7 @@ class IATATicketInstance(models.Model):
 
 
 class BahnBonusInstance(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="bahnbonus_instances")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="bahnbonus_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64)
     barcode_data = models.BinaryField()
 
@@ -502,8 +506,8 @@ class AppleDevice(models.Model):
 
 
 class AppleRegistration(models.Model):
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="apple_registrations")
-    device = models.ForeignKey(AppleDevice, on_delete=models.CASCADE, related_name="registrations")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="apple_registrations", db_index=True)
+    device = models.ForeignKey(AppleDevice, on_delete=models.CASCADE, related_name="registrations", db_index=True)
     ticket_part = models.CharField(max_length=255, verbose_name="Ticket part", blank=True, null=True)
 
     class Meta:
@@ -513,7 +517,7 @@ class AppleRegistration(models.Model):
 
 
 class DBSubscription(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="subscriptions")
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="subscriptions", db_index=True)
     device_token = models.CharField(max_length=255, verbose_name="Device token", unique=True)
     refresh_at = models.DateTimeField(verbose_name="Refresh at")
     info = models.JSONField(verbose_name="Info", default=dict)
@@ -565,7 +569,7 @@ class VDVSmartcard(models.Model):
     id = models.CharField(max_length=32, primary_key=True, verbose_name="ID")
     last_updated = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
-    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="vdv_smartcards")
+    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="vdv_smartcards", db_index=True)
     atr_identifier = models.BinaryField()
     atr_historical_bytes = models.BinaryField()
     atr_application_data = models.BinaryField()
@@ -601,7 +605,7 @@ class VDVSmartcard(models.Model):
         )
 
 class VDVSmartcardLog(models.Model):
-    smartcard = models.ForeignKey(VDVSmartcard, on_delete=models.CASCADE, related_name="logs")
+    smartcard = models.ForeignKey(VDVSmartcard, on_delete=models.CASCADE, related_name="logs", db_index=True)
     sequence_number = models.IntegerField()
     log_entry = models.BinaryField()
 
