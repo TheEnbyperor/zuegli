@@ -57,14 +57,14 @@ def check_pass_auth(f):
 
 def ticket_updated_date(_request, pass_type_id, serial_number):
     if pass_type_id != settings.PKPASS_CONF["pass_type"]:
-        return
+        return None
     if d := get_ticket(serial_number):
         ticket_obj, _ = d
         if not ticket_obj:
-            return
+            return None
         return ticket_obj.last_updated
     else:
-        return HttpResponse(status=404)
+        return None
 
 
 @csrf_exempt
