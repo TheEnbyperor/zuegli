@@ -206,8 +206,8 @@ class AccessLogEntry(models.Model):
 
 class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
-    ticket_org_id = models.PositiveIntegerField(verbose_name="Organization ID")
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    ticket_org_id = models.PositiveIntegerField(verbose_name="Organization ID", db_index=True)
     validity_start = models.DateTimeField()
     validity_end = models.DateTimeField()
     barcode_data = models.BinaryField()
@@ -245,8 +245,8 @@ class VDVTicketInstance(models.Model):
 
 class UICTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
-    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
     issuing_time = models.DateTimeField()
     barcode_data = models.BinaryField()
     decoded_data = models.JSONField()
@@ -284,8 +284,8 @@ class UICTicketInstance(models.Model):
 
 class RSPTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="rsp_instances", db_index=True)
-    issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID")
-    reference = models.CharField(max_length=20, verbose_name="Ticket reference")
+    issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID", db_index=True)
+    reference = models.CharField(max_length=20, verbose_name="Ticket reference", db_index=True)
     barcode_data = models.BinaryField()
     ticket_type = models.CharField(max_length=2, verbose_name="Ticket type", default="06")
     decoded_data = models.JSONField()
@@ -294,7 +294,10 @@ class RSPTicketInstance(models.Model):
 
     class Meta:
         unique_together = [
-            ["ticket_type", "reference", "issuer_id"],
+            ("ticket_type", "reference", "issuer_id"),
+        ]
+        index_together = [
+            ("ticket_type", "reference", "issuer_id"),
         ]
         verbose_name = "RSP ticket"
 
@@ -320,7 +323,7 @@ class RSPTicketInstance(models.Model):
 
 class SNCFTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sncf_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -338,7 +341,7 @@ class SNCFTicketInstance(models.Model):
 
 class HZPPTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="hzpp_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -356,7 +359,7 @@ class HZPPTicketInstance(models.Model):
 
 class ELBTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="elb_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -374,8 +377,8 @@ class ELBTicketInstance(models.Model):
 
 class SSBTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb_instances", db_index=True)
-    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
     ssb_data = models.BinaryField(null=True)
 
@@ -417,8 +420,8 @@ class SSBTicketInstance(models.Model):
 
 class SSB1TicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb1_instances", db_index=True)
-    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS")
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -438,7 +441,7 @@ class SSB1TicketInstance(models.Model):
 
 class SwissPassTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="swisspass_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -456,7 +459,7 @@ class SwissPassTicketInstance(models.Model):
 
 class IATATicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="iata_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
@@ -474,7 +477,7 @@ class IATATicketInstance(models.Model):
 
 class BahnBonusInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="bahnbonus_instances", db_index=True)
-    barcode_hash = models.CharField(unique=True, max_length=64)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     barcode_data = models.BinaryField()
 
     class Meta:
