@@ -6,6 +6,11 @@
 {% block content %}
     <div class="govuk-width-container">
         <h1 class="govuk-heading-xl">Add DB ticket</h1>
+        <p class="govuk-body">
+            This page is only for single/return tickets (Einzelfahrausweise).
+            If you're trying to add a subscription ticket - such as a Deutschlandticket -
+            please use the <a href="{% url 'new_db_abo' %}" class="govuk-link">DB Subscriptions form</a>.
+        </p>
         {% crispy form %}
     </div>
 {% endblock %}

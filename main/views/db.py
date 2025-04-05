@@ -335,7 +335,7 @@ def db_add_ticket(request):
                 "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
                 "Content-Type": "application/x.db.vendo.mob.auftraege.v7+json",
                 "X-Correlation-ID": secrets.token_hex(16),
-                "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                "User-Agent": "VDV PKPass (q@magicalcodewit.ch)",
             }, json={
                 "nachname": surname,
             })
@@ -344,6 +344,10 @@ def db_add_ticket(request):
             elif not r.ok:
                 messages.error(request, "Failed to fetch ticket")
             else:
+                if not request.user.last_name:
+                    request.user.last_name = surname
+                    request.user.save()
+
                 data = r.json()
                 added = []
                 for ticket in data["auftragsbezogeneReisen"]:

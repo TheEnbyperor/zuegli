@@ -16,9 +16,13 @@ def view_db_abo(request):
 
 @login_required
 def new_abo(request):
+    initial = {
+        "surname": request.user.last_name,
+    }
+
     already_present = False
     if request.method == "POST":
-        form = forms.DBAboForm(request.POST)
+        form = forms.DBAboForm(request.POST, initial=initial)
         if form.is_valid():
             if request.POST.get("action") == "remove":
                 r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json={
@@ -45,6 +49,10 @@ def new_abo(request):
                 elif not r.ok:
                     messages.add_message(request, messages.ERROR, "Unknown error")
                 else:
+                    if not request.user.last_name:
+                        request.user.last_name = form.cleaned_data["surname"]
+                        request.user.save()
+
                     data = r.json()
                     device_token = data["deviceToken"]
                     refresh_at = datetime.datetime.fromisoformat(data["refreshDatum"])
@@ -56,7 +64,7 @@ def new_abo(request):
                     db_abo.update_abo_tickets(abo)
                     return redirect("db_abo")
     else:
-        form = forms.DBAboForm()
+        form = forms.DBAboForm(initial=initial)
 
     return render(request, "main/account/db_abo_new.html", {
         "form": form,
