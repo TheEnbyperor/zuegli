@@ -143,6 +143,7 @@ def view_ticket(request, pk):
     gwallet_url = gwallet.create_jwt_link(ticket_obj)
 
     is_saarvv = False
+    is_sbahn_berlin = False
     is_db_abo = False
     active_instance = ticket_obj.active_instance()
     if isinstance(active_instance, models.VDVTicketInstance):
@@ -150,11 +151,14 @@ def view_ticket(request, pk):
             is_saarvv = True
         elif active_instance.ticket_org_id == 6061:
             is_db_abo = True
+        elif active_instance.ticket_org_id == 6135:
+            is_sbahn_berlin = True
     elif isinstance(active_instance, models.UICTicketInstance):
         if active_instance.distributor_rics in (80, 1080):
             is_db_abo = True
 
     has_saarvv = ticket_obj.account and ticket_obj.account.is_saarvv_authenticated()
+    has_sbahn_berlin = ticket_obj.account and ticket_obj.account.is_sbahn_berlin_authenticated()
     has_db_abo = (ticket_obj.account and ticket_obj.account.is_db_authenticated()) or ticket_obj.db_subscription
 
     photo_upload_forms = {}
@@ -198,6 +202,8 @@ def view_ticket(request, pk):
         "photo_upload_forms": photo_upload_forms,
         "is_saarvv": is_saarvv,
         "has_saarvv": has_saarvv,
+        "is_sbahn_berlin": is_sbahn_berlin,
+        "has_sbahn_berlin": has_sbahn_berlin,
         "is_db_abo": is_db_abo,
         "has_db_abo": has_db_abo,
     })
@@ -4959,7 +4965,7 @@ RICS_LOGO = {
 
 RICS_BG = {
     1084: "#ffc917",
-    1154: "#000adc",
+    1154: "#00a0dc",
     1174: "#05aa3b",
     1184: "#ffc917",
     3018: "#af1634",

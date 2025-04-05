@@ -64,6 +64,23 @@
             </div>
         {% endif %}
 
+        {% if is_sbahn_berlin and not has_sbahn_berlin %}
+            <div class="govuk-notification-banner govuk-notification-banner--info"
+                 role="region"
+                 data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__content">
+                    This appears to be an S-Bahn Berlin ticket.
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'sbahn_berlin_login' %}">Link your S-Bahn Berlin account</a> to have it automatically
+                        refresh in the background.
+                    {% else %}
+                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your S-Bahn Berlin account to
+                        have it automatically refresh in the background.
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
         {% if is_db_abo and not has_db_abo %}
             <div class="govuk-notification-banner govuk-notification-banner--info"
                  role="region"
