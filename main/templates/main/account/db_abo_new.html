@@ -14,6 +14,7 @@
                         {% csrf_token %}
                         <input type="hidden" name="subscription_number" value="{{ form.subscription_number.value }}">
                         <input type="hidden" name="surname" value="{{ form.surname.value }}">
+                        <input type="hidden" name="date_of_birth" value="{{ form.date_of_birth.value }}">
                         <input type="hidden" name="action" value="remove">
                         <div class="govuk-error-summary__body">
                             <p class="govuk-body">

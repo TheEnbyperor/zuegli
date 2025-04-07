@@ -1,0 +1,46 @@
+<div class="govuk-form-group{% if field.errors %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset" role="group">
+        <legend class="govuk-fieldset__legend">{{ field.label }}</legend>
+        <div class="govuk-hint">
+            For example, 27 3 1997
+        </div>
+        {% if field.errors %}
+            <p class="govuk-error-message">
+                {% for error in field.errors %}
+                    {{ error }}
+                    {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
+        <div class="govuk-date-input">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="{{ field.auto_id }}_day">
+                        Day
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="{{ field.auto_id }}_day"
+                           name="{{ field.name }}_day" type="text" inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="{{ field.auto_id }}_month">
+                        Month
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="{{ field.auto_id }}_month"
+                           name="{{ field.name }}_month" type="text" inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="{{ field.auto_id }}_year">
+                        Year
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4"
+                           id="{{ field.auto_id }}_year"
+                           name="{{ field.name }}_year" type="text" inputmode="numeric">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

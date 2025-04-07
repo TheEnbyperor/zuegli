@@ -14,6 +14,7 @@ def view_db_abo(request):
         "subscriptions": subscriptions
     })
 
+
 @login_required
 def new_abo(request):
     initial = {
@@ -24,11 +25,15 @@ def new_abo(request):
     if request.method == "POST":
         form = forms.DBAboForm(request.POST, initial=initial)
         if form.is_valid():
+            abo_data = {
+                "abonummer": form.cleaned_data["subscription_number"],
+            }
+            if form.cleaned_data["surname"]:
+                abo_data["nachname"] = form.cleaned_data["surname"]
+            if form.cleaned_data["date_of_birth"]:
+                abo_data["geburtsdatum"] = form.cleaned_data["date_of_birth"].strftime("%d.%m.%Y")
             if request.POST.get("action") == "remove":
-                r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json={
-                    "abonummer": form.cleaned_data["subscription_number"],
-                    "nachname": form.cleaned_data["surname"],
-                }, headers={
+                r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
                 })
                 if r.status_code == 200:
@@ -36,10 +41,7 @@ def new_abo(request):
                 else:
                     messages.error(request, f"Error occurred with removal request")
             else:
-                r = niquests.get("https://dig-aboprod.noncd.db.de/aboticket", params={
-                    "abonummer": form.cleaned_data["subscription_number"],
-                    "nachname": form.cleaned_data["surname"],
-                }, headers={
+                r = niquests.get("https://dig-aboprod.noncd.db.de/aboticket", params=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
                 })
                 if r.status_code == 404:

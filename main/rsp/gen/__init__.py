@@ -23,6 +23,9 @@ from main.rsp.gen.bs7666_v2_0 import (
     Town,
     UniquePropertyReferenceNumber,
 )
+from main.rsp.gen.fare_locations_ref_data_v1_3 import (
+    FareLocationsReferenceData,
+)
 from main.rsp.gen.nre_common_v5_0 import (
     AnnotatedStructure,
     AnnotationContent,
@@ -171,6 +174,7 @@ __all__ = [
     "StreetStructure",
     "Town",
     "UniquePropertyReferenceNumber",
+    "FareLocationsReferenceData",
     "AnnotatedStructure",
     "AnnotationContent",
     "AtocListStructure",
