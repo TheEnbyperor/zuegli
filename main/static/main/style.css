@@ -15,6 +15,12 @@
     src: url(din-mono.ttf) format('truetype');
 }
 
+
+@font-face {
+    font-family: 'Rail Alphabet';
+    src: url("ATOC Rail Alphabet.ttf") format('truetype');
+}
+
 .govuk-header__container, .govuk-header--full-width-border {
     border-bottom-color: #EC0016;
 }
@@ -85,6 +91,15 @@
 
 pre {
     margin-top: 0;
+}
+
+code {
+    font-family: 'DIN Mono', monospace;
+}
+
+.rail-alphabet {
+    font-family: 'Rail Alphabet', sans-serif;
+    font-size: 1.25rem;
 }
 
 .g-wallet-button, .apple-wallet-button {

@@ -107,7 +107,7 @@
                     {% if station %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name</dt>
-                            <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                            <dd class="govuk-summary-list__value rail-alphabet">{{ station.name }}</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">CRS Code</dt>
@@ -126,7 +126,7 @@
                     {% else %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name</dt>
-                            <dd class="govuk-summary-list__value">{{ data.origin_nlc_name }}</dd>
+                            <dd class="govuk-summary-list__value rail-alphabet">{{ data.origin_nlc_name }}</dd>
                         </div>
                     {% endif %}
                 {% endwith %}
@@ -145,7 +145,7 @@
                     {% if station %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name</dt>
-                            <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                            <dd class="govuk-summary-list__value rail-alphabet">{{ station.name }}</dd>
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">CRS Code</dt>
@@ -164,7 +164,7 @@
                     {% else %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Name</dt>
-                            <dd class="govuk-summary-list__value">{{ data.destination_nlc_name }}</dd>
+                            <dd class="govuk-summary-list__value rail-alphabet">{{ data.destination_nlc_name }}</dd>
                         </div>
                     {% endif %}
                 {% endwith %}
@@ -573,7 +573,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Name</dt>
-                    <dd class="govuk-summary-list__value">{{ data.selling_nlc_name }}</dd>
+                    <dd class="govuk-summary-list__value rail-alphabet">{{ data.selling_nlc_name }}</dd>
                 </div>
             </dl>
         </dd>

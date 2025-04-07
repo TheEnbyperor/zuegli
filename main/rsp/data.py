@@ -79,6 +79,7 @@ class CouponType(enum.Enum):
             return "Return - outbound"
         elif self == CouponType.Inbound:
             return "Return - inbound"
+        return None
 
 class DepartureTime(enum.Enum):
     NotSet = 0
@@ -92,6 +93,7 @@ class DepartureTime(enum.Enum):
             return "valid after"
         elif self == DepartureTime.SpecificDeparture:
             return "specific departure"
+        return None
 
 @dataclasses.dataclass
 class TicketData:
@@ -140,6 +142,7 @@ class TicketData:
             return "2.2"
         elif self.spec_version == 1:
             return "2.3"
+        return None
 
     @classmethod
     def parse(cls, payload: bytes):
@@ -438,6 +441,7 @@ class RailcardData:
             return "#01835d"
         elif self.railcard_type == "NEW":
             return "#1075cf"
+        return None
 
     def selling_nlc_name(self):
         if l := locations.get_station_by_nlc(self.selling_nlc):

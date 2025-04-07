@@ -2555,6 +2555,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "altText": f"{ticket_instance.issuer_id}-{ticket_instance.reference}",
         }]
         pass_json["organizationName"] = ticket_data.issuer_name()
+        pass_json["backgroundColor"] = "#fff6e9"
 
         if isinstance(ticket_data.data, rsp.TicketData):
             validity_start = ticket_data.data.validity_start_time()
@@ -2608,6 +2609,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "product-label",
                     "value": "Scotrail\nTap & Pay"
                 })
+            elif ticket_data.data.fare_label == "PBD":
+                to_station = rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc)
+                pass_fields["primaryFields"].append({
+                    "key": "product",
+                    "label": "product-label",
+                    "value": to_station["NLCDESC"],
+                })
+                add_pkp_img(pkp, "pass/plusbus.png", "thumbnail.png")
             else:
                 pass_type = "boardingPass"
                 if from_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.origin_nlc):
@@ -2633,10 +2642,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station.name}</a>",
                     })
                 elif from_station := rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc):
+                    if "3ALPHA" in from_station:
+                        name = from_station["3ALPHA"]
+                    else:
+                        name = from_station["NLCDESC"]
                     pass_fields["primaryFields"].append({
                         "key": "from-station",
                         "label": "from-station-label",
-                        "value": from_station["3ALPHA"],
+                        "value": name,
                         "semantics": {
                             "departureStationName": from_station["NLCDESC"]
                         }
@@ -2670,10 +2683,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station.name}</a>",
                     })
                 elif to_station := rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc):
+                    if "3ALPHA" in to_station:
+                        name = to_station["3ALPHA"]
+                    else:
+                        name = to_station["NLCDESC"]
                     pass_fields["primaryFields"].append({
                         "key": "to-station",
                         "label": "to-station-label",
-                        "value": to_station["3ALPHA"],
+                        "value": name,
                         "semantics": {
                             "departureStationName": to_station["NLCDESC"]
                         }

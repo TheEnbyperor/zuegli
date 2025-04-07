@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  
+  <xsd:element name="FareLocationsReferenceData">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="FareLocation" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:all>
+              <xsd:element name="Nlc" type="nlcType" />
+              <xsd:element name="Name" type="xsd:string" />
+              <xsd:element name="OJPEnabled" type="xsd:boolean" />
+              <xsd:element name="OJPDisplayName" type="xsd:string" />
+              <xsd:element name="RSPDisplayName" type="displayNameType" />
+              <xsd:element name="AttendedTIS" type="xsd:boolean" />
+              <xsd:element name="UnattendedTIS" type="xsd:boolean" />
+              <xsd:element name="UsedByWct" type="xsd:boolean" />
+            </xsd:all>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="xsd:decimal" use="required" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="displayNameType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="255" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="nlcType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="4" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

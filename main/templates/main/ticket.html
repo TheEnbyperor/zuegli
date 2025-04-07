@@ -120,9 +120,9 @@
                     {% csrf_token %}
                     <input type="hidden" name="photo-upload" value="{{ k }}">
                     <div class="govuk-form-group">
-                        {% if f.error %}
+                        {% if f.errors %}
                             <p class="govuk-error-message">
-                                {{ f.error }}
+                                {{ f.errors }}
                             </p>
                         {% endif %}
                         <label class="govuk-label" for="file-upload-1">
