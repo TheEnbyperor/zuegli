@@ -236,6 +236,7 @@ class RawCertificate:
     ca_reference: CAReference
     data: bytes
 
+
 class CertificateStore:
     certificates: typing.List[RawCertificate]
 
@@ -271,6 +272,21 @@ class CertificateStore:
                     certificate.ca_reference.generation_year == ca_reference.generation_year:
                 return certificate
         return None
+
+
+PKI_STORE = None
+
+def get_pki_store():
+    global PKI_STORE
+
+    if PKI_STORE is not None:
+        return PKI_STORE
+
+    pki_store = CertificateStore()
+    pki_store.load_certificates()
+    PKI_STORE = pki_store
+
+    return pki_store
 
 
 @dataclasses.dataclass

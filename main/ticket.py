@@ -595,15 +595,7 @@ class BahnBonusCode:
 
 
 def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVTicket:
-    pki_store = vdv.CertificateStore()
-    try:
-        pki_store.load_certificates()
-    except vdv.util.VDVException:
-        raise TicketError(
-            title="Internal error",
-            message="The PKI certificates could not be loaded. This is almost certainly a bug.",
-            exception=traceback.format_exc()
-        )
+    pki_store = vdv.get_pki_store()
 
     raw_root_ca = pki_store.find_certificate(vdv.CAReference.root())
     if not raw_root_ca:
@@ -1078,8 +1070,7 @@ def parse_ticket_uic_qr(ticket_bytes: bytes, context: "vdv.ticket.Context") -> U
 
 
 def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
-    pki_store = rsp.CertificateStore()
-    pki_store.load_certificates()
+    pki_store = rsp.get_pki_store()
 
     try:
         ticket_envelope = rsp.Envelope.parse(ticket_bytes)

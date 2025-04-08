@@ -5,18 +5,6 @@ from .. import vdv
 PKI_STORE = None
 ROOT_CA = None
 
-def get_pki():
-    global PKI_STORE
-
-    if PKI_STORE is not None:
-        return PKI_STORE
-
-    pki_store = vdv.CertificateStore()
-    pki_store.load_certificates()
-    PKI_STORE = pki_store
-
-    return pki_store
-
 @dataclasses.dataclass
 class Card:
     fci: fci.FCI
@@ -26,7 +14,7 @@ class Card:
     application_cert: vdv.Certificate
 
     def root_ca_data(self):
-        pki_store = get_pki()
+        pki_store = vdv.get_pki_store()
         raw_root_ca = pki_store.find_certificate(self.ca_cert_data().ca_reference)
         if not raw_root_ca:
             return None
@@ -36,7 +24,7 @@ class Card:
         return root_ca_data
 
     def verify_root_ca(self):
-        pki_store = get_pki()
+        pki_store = vdv.get_pki_store()
         raw_root_ca = pki_store.find_certificate(self.ca_cert_data().ca_reference)
         if not raw_root_ca:
             return False

@@ -4,6 +4,7 @@ import datetime
 import typing
 import django.core.files.storage
 
+
 @dataclasses.dataclass
 class Certificate:
     issuer_id: str
@@ -41,3 +42,17 @@ class CertificateStore:
                 keys = list(map(lambda k: Certificate.from_json(k), keys))
                 certificates[issuer] = keys
         self.certificates = certificates
+
+PKI_STORE = None
+
+def get_pki_store():
+    global PKI_STORE
+
+    if PKI_STORE is not None:
+        return PKI_STORE
+
+    pki_store = CertificateStore()
+    pki_store.load_certificates()
+    PKI_STORE = pki_store
+
+    return pki_store
