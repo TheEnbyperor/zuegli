@@ -32,7 +32,7 @@ def get_eos_instance(eos_type: str):
     with storages["staticfiles"].open(f"eos/{eos_type}.lcs", "rb") as f:
         encrypted_license = f.read()
 
-    with storages["staticfiles"].open(f"eos/{eos_type}.json", "rb") as f:
+    with storages["staticfiles"].oÏpen(f"eos/{eos_type}.json", "rb") as f:
         license_info = json.load(f)
 
     encryption_key = hashlib.sha512(
@@ -83,6 +83,8 @@ def map_customer_field(f):
         return f["content"].get("default")
     elif f["content"]["type"] == "date":
         return datetime.date.fromisoformat(f["content"]["default"])
+    else:
+        return None
 
 
 def get_customer_account(account: "models.Account", operator: str, url_base: str, eos_type: str):
@@ -106,6 +108,8 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
 
     token = getattr(account, f"{operator}_token")
     device_id = getattr(account, f"{operator}_device_id")
+
+    logger.info(f"Updating EOS {device_id}")
 
     r = niquests.post(f"{url_base}/index.php/mobileService/sync", json={}, hooks={
         "pre_request": [lambda req: sign_request(req, device_id, eos_type)],

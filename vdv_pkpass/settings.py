@@ -150,7 +150,11 @@ STORAGES = {
         "OPTIONS": {
             "bucket_name": "vdv-certs",
             "client_config": botocore.config.Config(
-                max_pool_connections=None,
+                retries={"max_attempts": 10},
+                connect_timeout=10,
+                max_pool_connections=50,
+                request_checksum_calculation="when_required",
+                response_checksum_calculation="when_required",
             )
         }
     },
@@ -159,7 +163,11 @@ STORAGES = {
         "OPTIONS": {
             "bucket_name": "uic-data",
             "client_config": botocore.config.Config(
-                max_pool_connections=None,
+                retries={"max_attempts": 10},
+                connect_timeout=10,
+                max_pool_connections=50,
+                request_checksum_calculation="when_required",
+                response_checksum_calculation="when_required",
             )
         }
     },
@@ -168,7 +176,11 @@ STORAGES = {
         "OPTIONS": {
             "bucket_name": "rsp-data",
             "client_config": botocore.config.Config(
-                max_pool_connections=None,
+                retries={"max_attempts": 10},
+                connect_timeout=10,
+                max_pool_connections=50,
+                request_checksum_calculation="when_required",
+                response_checksum_calculation="when_required",
             )
         }
     },
@@ -177,7 +189,11 @@ STORAGES = {
         "OPTIONS": {
             "bucket_name": "iata-data",
             "client_config": botocore.config.Config(
-                max_pool_connections=None,
+                retries={"max_attempts": 10},
+                connect_timeout=10,
+                max_pool_connections=50,
+                request_checksum_calculation="when_required",
+                response_checksum_calculation="when_required",
             )
         }
     },
