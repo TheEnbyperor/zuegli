@@ -32,7 +32,7 @@ def get_eos_instance(eos_type: str):
     with storages["staticfiles"].open(f"eos/{eos_type}.lcs", "rb") as f:
         encrypted_license = f.read()
 
-    with storages["staticfiles"].oÏpen(f"eos/{eos_type}.json", "rb") as f:
+    with storages["staticfiles"].open(f"eos/{eos_type}.json", "rb") as f:
         license_info = json.load(f)
 
     encryption_key = hashlib.sha512(
