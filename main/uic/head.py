@@ -53,7 +53,7 @@ class HeadV1:
         except UnicodeDecodeError as e:
             raise util.UICException("Invalid UIC ticket ID") from e
 
-        issuing_time = util.Timestamp.from_bytes(data[24:36])
+        issuing_time = util.Timestamp.from_bytes(data[24:36], distributing_rics)
 
         if data[36] & 0x30 == 0x30:
             try:

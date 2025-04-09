@@ -118,13 +118,13 @@ class RCT2Parser:
                     arrival=arrival_dt,
                 ))
 
-        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*-> \r\n")
-        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*-> \r\n")
-        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*-> \r\n")
-        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*-> \r\n")
-        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*-> \r\n")
-        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*-> \r\n")
-        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*-> \r\n")
+        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*- \r\n")
+        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*- \r\n")
+        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*- \r\n")
+        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*- \r\n")
+        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*- \r\n")
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*- \r\n")
+        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*- \r\n")
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
 
         try:
