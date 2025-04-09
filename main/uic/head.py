@@ -1,7 +1,7 @@
 import dataclasses
 import typing
 
-from . import util, rics
+from . import util, rics, lang
 
 class Flags:
     def __init__(self, flags: int):
@@ -81,3 +81,6 @@ class HeadV1:
             language=language,
             second_language=second_language
        )
+
+    def get_language_mapping(self):
+        return lang.TicketLanguage.from_header(self.language.upper(), self.second_language.upper())

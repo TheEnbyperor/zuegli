@@ -314,7 +314,7 @@
     {% endif %}
 
     {% if ticket.layout %}
-        {% include 'main/uic/paper.html' with layout=ticket.layout %}
+        {% include 'main/uic/paper.html' with layout=ticket.layout head=ticket.head %}
     {% endif %}
 
     {% with parsed_layout=ticket.parsed_layout %}

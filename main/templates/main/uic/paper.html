@@ -4,15 +4,17 @@
     <div class="paper-ticket-container">
         <div class="paper-ticket">
             <div class="rct2-ticket-inner">
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left:  1ch;width: 5ch;height: 2em;">Datum</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left:  7ch;width: 5ch;height: 2em;">Zeit</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left: 13ch;width: 3ch;height: 2em;">Von</span>
-                <span class="rct2-ticket-fixed-field"
-                      style="top: 4em;left: 32ch;width: 2ch;height: 2em;">&#x2B95;</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left: 34ch;width: 4ch;height: 2em;">Nach</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left: 52ch;width: 5ch;height: 2em;">Datum</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left: 58ch;width: 5ch;height: 2em;">Zeit</span>
-                <span class="rct2-ticket-fixed-field" style="top: 4em;left: 66ch;width: 5ch;height: 2em;">Kl.</span>
+                {% with lang=head.get_language_mapping %}
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left:  1ch;width: 5ch;height: 2em;text-align: center;">{{ lang.date_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left:  7ch;width: 5ch;height: 2em;text-align: center;">{{ lang.time_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left: 13ch;width: 19ch;height: 2em;">{{ lang.from_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field"
+                          style="top: 4em;left: 32ch;width: 2ch;height: 2em;">&#x2B95;</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left: 34ch;width: 19ch;height: 2em;">{{ lang.to_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left: 52ch;width: 5ch;height: 2em;text-align: center;">{{ lang.date_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left: 58ch;width: 5ch;height: 2em;text-align: center;">{{ lang.time_label|linebreaksbr }}</span>
+                    <span class="rct2-ticket-fixed-field" style="top: 4em;left: 66ch;width: 5ch;height: 2em;text-align: center;">{{ lang.class_label|linebreaksbr }}</span>
+                {% endwith %}
 
                 <div class="rct2-ticket-fixed-area" style="--top:  4em;--left:  1ch;--width:  5ch;--height: 2em;"></div>
                 <div class="rct2-ticket-fixed-area" style="--top:  6em;--left:  1ch;--width:  5ch;--height: 2em;"></div>

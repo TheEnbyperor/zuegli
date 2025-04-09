@@ -67,16 +67,13 @@
     display: inline-block;
     position: absolute;
     border: 1px solid black;
-    top: calc(var(--top) + 1px);
+    top: var(--top);
     left: calc(var(--left) - 1px);
     height: calc(var(--height) - 1px);
     width: calc(var(--width) + 1px);
 }
 
 .rct2-ticket-fixed-field {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
     position: absolute;
     letter-spacing: -1px;
 }
