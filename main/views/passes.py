@@ -343,6 +343,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
         issuing_rics = ticket_data.issuing_rics()
 
+        if issuing_rics == 1184:
+            # NSI occasionally issues domestic tickets. If the signature key ID is not
+            # known to be used by tickets issued using benerail, set issuing_rics to 1084
+            # as a fallback
+            if ticket_data.envelope.signature_key_id not in (18,):
+                issuing_rics = 1084
+
+
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
             "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
@@ -4946,7 +4954,7 @@ RICS_LOGO = {
     1181: "pass/logo-oebb.png",
     1182: "pass/logo-cfl.png",
     1183: "pass/logo-trenitalia.png",
-    1184: "pass/logo-ns.png",
+    1184: "pass/logo-nsi.png",
     1186: "pass/logo-dsb.png",
     1187: "pass/logo-sncf.png",
     1188: "pass/logo-sncb.png",
@@ -4984,7 +4992,7 @@ RICS_BG = {
     1084: "#ffc917",
     1154: "#00a0dc",
     1174: "#05aa3b",
-    1184: "#ffc917",
+    1184: "#1b1a68",
     3018: "#af1634",
     3453: "#018e4a",
     3497: "#14181a",
@@ -5001,7 +5009,7 @@ RICS_FG = {
     1073: "#27509b",
     1154: "#ffffff",
     1174: "#ffffff",
-    1184: "rgb(7, 7, 33)",
+    1184: "rgb(223, 223, 200)",
     1187: "#282828",
     3018: "#ffffff",
     3453: "#ffffff",
@@ -5024,7 +5032,7 @@ RICS_FG_SECONDARY = {
     1174: "#ffffff",
     1181: "#e33c3e",
     1183: "rgb(0, 106, 106)",
-    1184: "rgb(32, 32, 55)",
+    1184: "#fec917",
     1187: "#6e1b6e",
     3018: "#ffffff",
     3153: "rgb(227, 0, 21)",
