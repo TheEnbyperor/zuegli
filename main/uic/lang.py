@@ -85,13 +85,13 @@ LANGUAGES = {
         time_label="Tijd",
         from_label="Van",
         to_label="Naar",
-        class_label="Klas",
+        class_label="Kl.",
     ),
     "FR": Language(
         date_label="Date",
         time_label="Temps",
-        from_label="Depuis",
-        to_label="Après",
+        from_label="De",
+        to_label="À",
         class_label="Cl.",
     ),
     "IT": Language(
