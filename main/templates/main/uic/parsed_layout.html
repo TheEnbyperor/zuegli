@@ -45,13 +45,25 @@
     {% if parsed_layout.document_type %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Document type</dt>
-            <dd class="govuk-summary-list__value">{{ parsed_layout.document_type }}</dd>
+            <dd class="govuk-summary-list__value">{{ parsed_layout.document_type|linebreaksbr }}</dd>
         </div>
     {% endif %}
     {% if parsed_layout.traveller %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Traveller</dt>
             <dd class="govuk-summary-list__value">{{ parsed_layout.traveller|linebreaksbr }}</dd>
+        </div>
+    {% endif %}
+    {% if parsed_layout.passenger_name %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Passenger name</dt>
+            <dd class="govuk-summary-list__value">{{ parsed_layout.passenger_name }}</dd>
+        </div>
+    {% endif %}
+    {% if parsed_layout.date_of_birth %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Date of Birth</dt>
+            <dd class="govuk-summary-list__value">{{ parsed_layout.date_of_birth|date:"F d, Y" }}</dd>
         </div>
     {% endif %}
     {% if parsed_layout.price %}

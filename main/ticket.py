@@ -104,10 +104,12 @@ class UICTicket:
                             ((issuer_num or security_num) in (
                                     1080,  # Deutsche Bahn
                                     5143,  # AMCON Software GmbH
-                                    5173,  # Nahverkehrsservice Sachsen-Anhalt
                                     3076,  # Transdev GmbH
                                     3497,  # Regensburger Verkehrsverbund GmbH
                                     5008,  # Verkehrsverbund Rhein-Neckar GmbH
+                                    5062,  # Dessauer Verkehrs GmbH
+                                    5173,  # Nahverkehrsservice Sachsen-Anhalt GmbH
+                                    5197,  # Augsburger Verkehrs- und Tarifverbund GmbH
                             ) or self.dt_ti or self.dt_pa):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
@@ -143,6 +145,15 @@ class UICTicket:
         elif self.vor_fi:
             return models.Ticket.TYPE_FAHRKARTE
         elif self.layout and self.layout.standard in ("RCT2", "RTC2"):
+            parser = uic.rct2_parse.RCT2Parser()
+            parser.read(self.layout)
+            layout = parser.parse(self.issuing_rics())
+
+            if "deutschlandsemesterticket" in layout.document_type.lower() or \
+                "deutschlandticket" in layout.document_type.lower() or \
+                "deutschland-ticket" in layout.document_type.lower():
+                return models.Ticket.TYPE_DEUTCHLANDTICKET
+
             return models.Ticket.TYPE_FAHRKARTE
         elif self.st01:
             if self.st01.ticket_type == "Deutschlandticket":
@@ -158,30 +169,36 @@ class UICTicket:
         ticket_type = self.type()
 
         if ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
+            hd.update(b"deutschlandticket")
+            hd.update(self.issuing_rics().to_bytes(8, "big"))
             if self.flex:
                 passenger = self.flex.data.get("travelerDetail", {}).get("traveler", [{}])[0]
                 dob_year = passenger.get("yearOfBirth", 0)
                 dob_month = passenger.get("monthOfBirth", 0)
                 dob_day = passenger.get("dayOfBirthInMonth", 0)
-                hd.update(b"deutschlandticket")
-                hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(passenger.get("firstName").encode("utf-8"))
                 hd.update(passenger.get("lastName").encode("utf-8"))
                 hd.update(f"{dob_year:04d}-{dob_month:02d}-{dob_day:02d}".encode("utf-8"))
-                return base64.b32hexencode(hd.digest()).decode("utf-8")
             elif self.dt_pa:
-                hd.update(b"deutschlandticket")
-                hd.update(self.issuing_rics().to_bytes(8, "big"))
                 hd.update(self.dt_pa.passenger_name.encode("utf-8"))
-                return base64.b32hexencode(hd.digest()).decode("utf-8")
             elif self.st01:
-                hd.update(b"deutschlandticket")
-                hd.update(self.issuing_rics().to_bytes(8, "big"))
                 if self.st01.passenger_name:
                     hd.update(self.st01.passenger_name.encode("utf-8"))
                 if self.st01.passenger_dob:
                     hd.update(self.st01.passenger_dob.isoformat().encode("utf-8"))
-                return base64.b32hexencode(hd.digest()).decode("utf-8")
+            elif self.layout and self.layout.standard in ("RCT2", "RTC2"):
+                parser = uic.rct2_parse.RCT2Parser()
+                parser.read(self.layout)
+                layout = parser.parse(self.issuing_rics())
+
+                if layout.passenger_name:
+                    hd.update(layout.passenger_name.encode("utf-8"))
+                if layout.date_of_birth:
+                    hd.update(layout.date_of_birth.isoformat().encode("utf-8"))
+            else:
+                hd.update(self.ticket_id().encode("utf-8"))
+
+            return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_BAHNCARD:
             card = self.flex.data["transportDocument"][0]["ticket"][1]
@@ -263,6 +280,8 @@ class UICTicket:
         if self.envelope:
             return self.envelope.issuer_rics
 
+        return 0
+
     def distributor(self):
         return uic.rics.get_rics(self.issuing_rics())
 
@@ -295,6 +314,8 @@ class UICTicket:
             parser = uic.rct2_parse.RCT2Parser()
             parser.read(self.layout)
             return parser.parse(self.issuing_rics())
+
+        return None
 
     @classmethod
     def from_envelope(

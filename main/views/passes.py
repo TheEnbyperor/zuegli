@@ -2232,7 +2232,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
                 else:
                     if parsed_layout.trips[0].departure:
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "dateStyle": "PKDateStyleMedium",
@@ -2241,13 +2241,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "ignoresTimeZone": True
                         })
                     elif parsed_layout.trips[0].departure_time:
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "value": f"{parsed_layout.trips[0].departure_date} {parsed_layout.trips[0].departure_time}",
                         })
                     elif parsed_layout.trips[0].departure_date:
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "value": parsed_layout.trips[0].departure_date
@@ -2256,7 +2256,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     if parsed_layout.trips[0].arrival:
                         if "expirationDate" not in pass_json:
                             pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "dateStyle": "PKDateStyleMedium",
@@ -2265,13 +2265,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "ignoresTimeZone": True
                         })
                     elif parsed_layout.trips[0].arrival_time:
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "value": f"{parsed_layout.trips[0].arrival_date} {parsed_layout.trips[0].arrival_time}",
                         })
                     elif parsed_layout.trips[0].arrival_date:
-                        pass_fields["secondaryFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "value": parsed_layout.trips[0].arrival_date
@@ -2298,11 +2298,26 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": parsed_layout.document_type,
                 })
 
+            if parsed_layout.passenger_name:
+                pass_fields["primaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": parsed_layout.passenger_name,
+                })
+
             if parsed_layout.traveller:
                 pass_fields["backFields"].append({
                     "key": "traveller",
                     "label": "passenger-label",
                     "value": parsed_layout.traveller,
+                })
+
+            if parsed_layout.date_of_birth:
+                pass_fields["secondaryFields"].append({
+                    "key": "date-of-birth",
+                    "label": "date-of-birth-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "value": parsed_layout.date_of_birth.strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
 
             if parsed_layout.train_data:

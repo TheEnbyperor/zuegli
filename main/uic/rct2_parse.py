@@ -1,6 +1,7 @@
 import dataclasses
 import typing
 import datetime
+import re
 from . import layout
 
 @dataclasses.dataclass
@@ -24,11 +25,13 @@ class ParsedRCT2:
     trips: typing.List[TripPart]
     document_type: str
     traveller: str
+    passenger_name: typing.Optional[str]
     price: str
     train_data: str
     conditions: str
     extra: str
     valid_region: str
+    date_of_birth: typing.Optional[datetime.date]
 
 
 class RCT2Parser:
@@ -79,6 +82,11 @@ class RCT2Parser:
         operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
         extra_data =          self.read_area(top=3,  left=0,  width=52, height=1).strip("*- \r\n")
 
+        if issuing_rics in (3153, 3818):
+            dob_text =            self.read_area(top=1,  left=52, width=20, height=1).strip("*- \r\n")
+        else:
+            dob_text =            self.read_area(top=3,  left=52, width=20, height=1).strip("*- \r\n")
+
         try:
             operator_rics = int(operator_rics, 10)
         except ValueError:
@@ -87,6 +95,16 @@ class RCT2Parser:
         if operator_rics in (1088, 1184):
             # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">")
+
+        try:
+            date_of_birth = datetime.datetime.strptime(dob_text, "%d.%m.%Y").date()
+        except ValueError:
+            date_of_birth = None
+
+        if issuing_rics in (3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
+            passenger_name = re.sub("\s+", " ", traveller_data.split("\n")[0])
+        else:
+            passenger_name = None
 
         for line in (6, 7):
             departure_dt = None
@@ -168,9 +186,11 @@ class RCT2Parser:
             trips=trips,
             document_type=document_data,
             traveller=traveller_data,
+            passenger_name=passenger_name,
             price=price_data,
             train_data=train_data,
             conditions=conditions_data,
             extra=extra_data,
-            valid_region = valid_region,
+            valid_region=valid_region,
+            date_of_birth=date_of_birth,
         )

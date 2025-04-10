@@ -177,6 +177,7 @@ def rics_arrival_time(value, issuing_time: datetime.datetime):
 def nuts_region_name(value):
     if region := uic.nuts.get_nuts_by_code(value):
         return region["NUTS_NAME"]
+    return None
 
 
 @register.filter(name="via_as_graphviz")
@@ -184,6 +185,7 @@ def via_as_graphviz(value):
     if value.lower().startswith("via:") or value.lower().startswith("via "):
         via = uic.parse_via.parse_via(value)
         return uuid.uuid4(), via.to_graph()
+    return None
 
 
 @register.filter(name="flex_via_as_graphviz")
