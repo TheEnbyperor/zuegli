@@ -2254,6 +2254,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                     if parsed_layout.trips[0].arrival:
+                        if "expirationDate" not in pass_json:
+                            pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
                         pass_fields["secondaryFields"].append({
                             "key": "validity-end",
                             "label": "validity-end-label",

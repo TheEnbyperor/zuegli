@@ -68,6 +68,26 @@ class RCT2Parser:
 
     def parse(self, issuing_rics: typing.Optional[int] = None) -> ParsedRCT2:
         trips = []
+
+        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*- \r\n")
+        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*- \r\n")
+        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*- \r\n")
+        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*- \r\n")
+        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*- \r\n")
+        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*- \r\n")
+        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*- \r\n")
+        operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
+        extra_data =          self.read_area(top=3,  left=0,  width=52, height=1).strip("*- \r\n")
+
+        try:
+            operator_rics = int(operator_rics, 10)
+        except ValueError:
+            operator_rics = 0
+
+        if operator_rics in (1088, 1184):
+            # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
+            valid_region = valid_region.replace("[", "<").replace("]", ">")
+
         for line in (6, 7):
             departure_dt = None
             arrival_dt = None
@@ -112,6 +132,18 @@ class RCT2Parser:
             arrival_date = arrival_date.strip("*-> \r\n")
             arrival_time = arrival_time.strip("*-> \r\n")
 
+            if not departure_dt:
+                try:
+                    departure_dt = datetime.datetime.strptime(f"{extra_data} {departure_date} {departure_time}", "%Y %d.%m %H.%M")
+                except ValueError:
+                    pass
+
+            if not arrival_dt:
+                try:
+                    arrival_dt = datetime.datetime.strptime(f"{extra_data} {arrival_date} {arrival_time}", "%Y %d.%m %H.%M")
+                except ValueError:
+                    pass
+
             if departure_date or departure_time or arrival_date or arrival_time or departure_station or arrival_station:
                 trips.append(TripPart(
                     departure_date=departure_date,
@@ -123,25 +155,6 @@ class RCT2Parser:
                     departure=departure_dt,
                     arrival=arrival_dt,
                 ))
-
-        travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*- \r\n")
-        document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*- \r\n")
-        traveller_data =      self.read_area(top=0,  left=52, width=20, height=3).strip("*- \r\n")
-        price_data =          self.read_area(top=13, left=52, width=20, height=2).strip("*- \r\n")
-        train_data =          self.read_area(top=8,  left=0,  width=72, height=4).strip("*- \r\n")
-        valid_region =        self.read_area(top=8,  left=0,  width=72, height=1).strip("*- \r\n")
-        conditions_data =     self.read_area(top=12, left=0,  width=50, height=3).strip("*- \r\n")
-        operator_rics =       self.read_area(top=2,  left=5,  width=4,  height=1).lstrip(" 0").rstrip(" ")
-
-        try:
-            operator_rics = int(operator_rics, 10)
-        except ValueError:
-            operator_rics = 0
-        extra_data =          self.read_area(top=3,  left=0,  width=52, height=1)
-
-        if operator_rics in (1088, 1184):
-            # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
-            valid_region = valid_region.replace("[", "<").replace("]", ">")
 
         return ParsedRCT2(
             operator_rics=operator_rics,
