@@ -4,14 +4,12 @@ import hashlib
 import urllib.parse
 import binascii
 import niquests
-import jwt
 import datetime
-import bs4
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import models, forms, db_ticket
+from .. import models, avv
 
 DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
 AVV_AUTH_URL = "https://zvp-sso.avv.de/auth/realms/zvp/protocol/openid-connect/auth"
@@ -183,6 +181,8 @@ def avv_login_callback(request):
     request.user.account.avv_refresh_token_expires_at = refresh_token_expires_at
     request.user.account.avv_device_id = secrets.token_hex(16)
     request.user.account.save()
+
+    avv.update_avv_tickets(request.user.account)
 
     return redirect('account')
 
