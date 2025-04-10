@@ -82,7 +82,7 @@ def map_customer_field(f):
     elif f["content"]["type"] == "text":
         return f["content"].get("default")
     elif f["content"]["type"] == "date":
-        return datetime.date.fromisoformat(f["content"]["default"])
+        return datetime.date.fromisoformat(f["content"]["default"]) if "default" in f["content"] else None
     else:
         return None
 

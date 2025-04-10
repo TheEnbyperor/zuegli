@@ -194,7 +194,9 @@ def flex_via_as_graphviz(value):
 
 @register.filter(name="vdv_org_id")
 def vdv_org_id(value):
-    if value.startswith("VDV"):
+    if isinstance(value, int):
+        return vdv.ticket.map_org_id(value, True)
+    elif value.startswith("VDV"):
         value = value[3:]
         if value.startswith("KA"):
             value = value[2:]
@@ -203,11 +205,13 @@ def vdv_org_id(value):
         except ValueError:
             return
         return vdv.ticket.map_org_id(org_id, True)
+    else:
+        return None
 
 
 @register.filter(name="vdv_product_id")
 def vdv_product_id(value, org_id: str):
-    if org_id.startswith("VDV"):
+    if value.startswith("VDV"):
         org_id = org_id[3:]
         if org_id.startswith("KA"):
             org_id = org_id[2:]
@@ -216,6 +220,8 @@ def vdv_product_id(value, org_id: str):
         except ValueError:
             return
         return vdv.ticket.product_name(org_id, value, True)
+    else:
+        return None
 
 
 @register.filter(name="swisspass_org_id")

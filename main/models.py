@@ -30,6 +30,11 @@ class Account(models.Model):
     bahnbonus_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus bearer token expiration")
     bahnbonus_refresh_token = models.TextField(null=True, blank=True, verbose_name="BahnBonus refresh token")
     bahnbonus_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus refresh token expiration")
+    avv_token = models.TextField(null=True, blank=True, verbose_name="AVV Bearer token")
+    avv_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="AVV Bearer token expiration")
+    avv_refresh_token = models.TextField(null=True, blank=True, verbose_name="AVV Refresh token")
+    avv_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="AVV Rrefresh token expiration")
+    avv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="AVV Device ID")
     saarvv_token = models.TextField(null=True, blank=True, verbose_name="SaarVV Token")
     saarvv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="SaarVV Device ID")
     sbahn_berlin_token = models.TextField(null=True, blank=True, verbose_name="S-Bahn Berlin Token")
@@ -54,6 +59,15 @@ class Account(models.Model):
         if self.bahnbonus_token and self.bahnbonus_token_expires_at and self.bahnbonus_token_expires_at > now:
             return True
         elif self.bahnbonus_refresh_token and self.bahnbonus_refresh_token_expires_at and self.bahnbonus_refresh_token_expires_at > now:
+            return True
+        else:
+            return False
+
+    def is_avv_authenticated(self) -> bool:
+        now = timezone.now()
+        if self.avv_token and self.avv_token_expires_at and self.avv_token_expires_at > now:
+            return True
+        elif self.avv_refresh_token and self.avv_refresh_token_expires_at and self.avv_refresh_token_expires_at > now:
             return True
         else:
             return False
@@ -113,6 +127,9 @@ class Ticket(models.Model):
     )
     sbahn_berlin_account = models.ForeignKey(
         "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="sbahn_berlin_tickets", verbose_name="S-Bahn Berlin Account", db_index=True
+    )
+    avv_account = models.ForeignKey(
+        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="avv_tickets", verbose_name="AVV Account", db_index=True
     )
     photos = models.JSONField(default=dict)
 

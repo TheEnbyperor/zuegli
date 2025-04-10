@@ -73,6 +73,19 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">AVV Account</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_avv_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'avv_login' %}">Reauthenticate</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'avv_logout' %}">Unlink</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'avv_login' %}">Login with AVV</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">SaarVV Account</dt>
                 <dd class="govuk-summary-list__value">
                     {% if user.account.is_saarvv_authenticated %}

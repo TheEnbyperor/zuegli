@@ -45,6 +45,12 @@ urlpatterns = [
     path('account/sbahn_berlin_login/logout/', views.sbahn_berlin.sbahn_berlin_logout, name='sbahn_berlin_logout'),
     path('account/sbahn_berlin/', views.sbahn_berlin.sbahn_berlin_account, name='sbahn_berlin_account'),
 
+    path('account/avv_login/', views.avv.avv_login, name='avv_login'),
+    path('account/avv_login/login', views.avv.avv_login_start, name='avv_login_start'),
+    path('account/avv_login/logout', views.avv.avv_logout, name='avv_logout'),
+    path('account/avv_login/callback', views.avv.avv_login_callback, name='avv_login_callback'),
+    path('account/avv/', views.avv.avv_account, name='avv_account'),
+
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
     path('calendar/<str:account_token>.ics', views.ical.account_calendar, name='account_calendar'),

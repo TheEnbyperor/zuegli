@@ -53,7 +53,7 @@
                             </a>
                         </li>
                         {% if user.is_authenticated %}
-                            <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' %} govuk-service-navigation__item--active{% endif %}">
+                            <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link" href="{% url 'account' %}">
                                     Account
                                 </a>
@@ -75,7 +75,7 @@
                     </ul>
                 </nav>
             </div>
-            {% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' %}
+            {% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' %}
                 <div class="govuk-service-navigation__container">
                     <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
                         <button type="button"
@@ -113,6 +113,13 @@
                                 <li class="govuk-service-navigation__item{% if url_name == 'sbahn_berlin_account' %} govuk-service-navigation__item--active{% endif %}">
                                     <a class="govuk-service-navigation__link" href="{% url 'sbahn_berlin_account' %}">
                                         S-Bahn Berlin Account
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% if user.is_authenticated and user.account.is_avv_authenticated %}
+                                <li class="govuk-service-navigation__item{% if url_name == 'avv_account' %} govuk-service-navigation__item--active{% endif %}">
+                                    <a class="govuk-service-navigation__link" href="{% url 'avv_account' %}">
+                                        AVV Account
                                     </a>
                                 </li>
                             {% endif %}

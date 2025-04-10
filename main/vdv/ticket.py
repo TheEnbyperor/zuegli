@@ -415,6 +415,8 @@ class BasicData:
             return "HandyTicket Konto"
         elif self.payment_type == 28:
             return "Mobilfunkrechnung"
+        elif self.payment_type == 111:
+            return "PayPal"
         else:
             return None
 
