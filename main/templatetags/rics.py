@@ -203,7 +203,7 @@ def vdv_org_id(value):
         try:
             org_id = int(value)
         except ValueError:
-            return
+            return None
         return vdv.ticket.map_org_id(org_id, True)
     else:
         return None
@@ -211,14 +211,14 @@ def vdv_org_id(value):
 
 @register.filter(name="vdv_product_id")
 def vdv_product_id(value, org_id: str):
-    if value.startswith("VDV"):
+    if org_id.startswith("VDV"):
         org_id = org_id[3:]
         if org_id.startswith("KA"):
             org_id = org_id[2:]
         try:
             org_id = int(org_id)
         except ValueError:
-            return
+            return None
         return vdv.ticket.product_name(org_id, value, True)
     else:
         return None
