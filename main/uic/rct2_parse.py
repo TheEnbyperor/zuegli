@@ -136,13 +136,19 @@ class RCT2Parser:
                 try:
                     departure_dt = datetime.datetime.strptime(f"{extra_data} {departure_date} {departure_time}", "%Y %d.%m %H.%M")
                 except ValueError:
-                    pass
+                    try:
+                        departure_dt = datetime.datetime.strptime(f"{extra_data} {departure_date} {departure_time}", "%Y %d.%m %H:%M")
+                    except ValueError:
+                        pass
 
             if not arrival_dt:
                 try:
                     arrival_dt = datetime.datetime.strptime(f"{extra_data} {arrival_date} {arrival_time}", "%Y %d.%m %H.%M")
                 except ValueError:
-                    pass
+                    try:
+                        arrival_dt = datetime.datetime.strptime(f"{extra_data} {arrival_date} {arrival_time}","%Y %d.%m %H:%M")
+                    except ValueError:
+                        pass
 
             if departure_date or departure_time or arrival_date or arrival_time or departure_station or arrival_station:
                 trips.append(TripPart(
