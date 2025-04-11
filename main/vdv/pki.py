@@ -74,6 +74,10 @@ class CAReference:
     def root(cls):
         return cls("EU", "VDV", 1, 0, 1, 2006)
 
+    @classmethod
+    def test_root(cls):
+        return cls("EU", "VDV", 1, 8, 3, 2006)
+
     @property
     def service_indicator_name(self):
         if self.service_indicator == 0:
@@ -234,6 +238,7 @@ class CertificateHolderAuthorization:
 class RawCertificate:
     filename: str
     ca_reference: CAReference
+    prod: bool
     data: bytes
 
 
@@ -251,6 +256,14 @@ class CertificateStore:
                 continue
             with certificate_storage.open(filename, "rb") as f:
                 data = f.read()
+            if filename.startswith("prod_"):
+                prod = True
+                filename = filename[5:]
+            elif filename.startswith("test_"):
+                prod = False
+                filename = filename[5:]
+            else:
+                continue
             try:
                 car_bytes = bytes.fromhex(filename[:-4])
             except ValueError:
@@ -258,6 +271,7 @@ class CertificateStore:
             certificates.append(RawCertificate(
                 filename=filename,
                 ca_reference=CAReference.from_bytes(car_bytes),
+                prod=prod,
                 data=data
             ))
         self.certificates = certificates

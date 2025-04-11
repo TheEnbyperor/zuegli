@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
-{% load static crispy_forms_tags rics tz %}
+{% load static crispy_forms_tags rics tz i18n %}
 
-{% block title %}DB Subscriptions - VDV to Apple Wallet{% endblock title %}
+{% block title %}{% trans "DB Subscriptions" %}{% endblock title %}
 
 {% block content %}
     {% localtime off %}

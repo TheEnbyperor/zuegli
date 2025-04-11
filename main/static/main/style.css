@@ -21,6 +21,14 @@
     src: url("ATOC Rail Alphabet.ttf") format('truetype');
 }
 
+.button-link {
+    background: none;
+    border: none;
+    font-size: 19px;
+    color: #fff;
+    font-family: 'GDS Transport', sans-serif;
+}
+
 .govuk-header__container, .govuk-header--full-width-border {
     border-bottom-color: #EC0016;
 }

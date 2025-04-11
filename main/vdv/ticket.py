@@ -166,16 +166,16 @@ class VDVTicket:
               f"""  Version: {self.version}\n""" \
               f"""  Ticket:\n""" \
               f"""    ID: {self.ticket_id}\n""" \
-              f"""    Organization ID: {self.ticket_org_id}\n""" \
+              f"""    Organisation ID: {self.ticket_org_id}\n""" \
               f"""  Product:\n""" \
               f"""    Number: {self.product_number}\n""" \
-              f"""    Organization ID: {self.product_org_id}\n""" \
+              f"""    Organisation ID: {self.product_org_id}\n""" \
               f"""  Validity:\n""" \
               f"""   Start: {self.validity_start}\n""" \
               f"""   End: {self.validity_end}\n""" \
               f"""  Transaction:\n""" \
               f"""    Time: {self.transaction_time}\n""" \
-              f"""    KVP Organization ID: {self.kvp_org_id}\n""" \
+              f"""    KVP Organisation ID: {self.kvp_org_id}\n""" \
               f"""    Terminal:\n""" \
               f"""      Type: {self.terminal_type}\n""" \
               f"""      Number: {self.terminal_number}\n""" \
@@ -183,7 +183,7 @@ class VDVTicket:
               f"""    Location:\n""" \
               f"""      Type: {self.location_type}\n""" \
               f"""      Number: {self.location_number}\n""" \
-              f"""      Organization ID: {self.location_org_id}\n""" \
+              f"""      Organisation ID: {self.location_org_id}\n""" \
               f"""  SAM:\n""" \
               f"""    Sequence Number 1: {self.sam_sequence_number_1}\n""" \
               f"""    Sequence Number 2: {self.sam_sequence_number_2}\n""" \

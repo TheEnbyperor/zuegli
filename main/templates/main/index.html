@@ -1,30 +1,34 @@
 {% extends "main/base.html" %}
-{% load static crispy_forms_tags %}
+{% load static crispy_forms_tags i18n %}
+
+{% block title %}{% trans "Home" %}{% endblock %}
 
 {% block content %}
     <div class="govuk-width-container">
-        <h1 class="govuk-heading-xl">Train tickets to Apple/Google Wallet Passes</h1>
+        <h1 class="govuk-heading-xl">Zügli</h1>
         <p class="govuk-body-l">
-            Turn your public transport ticket into an Apple and Google Wallet pass.
+            {% trans "Turn your public transport tickets into an Apple/Google Wallet passes." %}
         </p>
         <p class="govuk-body">
-            Supported ticket types include:
+            {% trans "Supported ticket types include:" %}
         </p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>VDV - German local transport operators, Deutschlandticket</li>
-            <li>UIC - Deutsche Bahn, NS, ÖBB and other long-distance operators, Klimaticket, InterRail</li>
-            <li>SSB - Select long-distance operators (e.g. SNCB, VR), NS/DB Keycards</li>
-            <li>RSP6 - UK train tickets</li>
-            <li>RSP8 - UK Railcards</li>
-            <li>SNCF domestic tickets</li>
-            <li>ELB - Eurostar</li>
-            <li>SwissPass/NOVA - SBB, ZVV, and other Swiss operators (VöV)</li>
-            <li>IATA Barcoded Boarding Pass</li>
-            <li>BahnBonus vouchers and lounge access codes</li>
+            <li>{% trans "VDV - German local transport operators, Deutschlandticket" %}</li>
+            <li>{% trans "UIC - Deutsche Bahn, NS, ÖBB and other long-distance operators, Klimaticket, InterRail" %}</li>
+            <li>{% trans "SSB - Select long-distance operators (e.g. SNCB, VR), NS/DB Keycards" %}</li>
+            <li>{% trans "RSP6 - UK train tickets" %}</li>
+            <li>{% trans "RSP8 - UK Railcards" %}</li>
+            <li>{% trans "SNCF domestic tickets" %}</li>
+            <li>{% trans "ELB - Eurostar" %}</li>
+            <li>{% trans "SwissPass/NOVA - SBB, ZVV, and other Swiss operators (VöV)" %}</li>
+            <li>{% trans "IATA Barcoded Boarding Pass" %}</li>
+            <li>{% trans "BahnBonus vouchers and lounge access codes" %}</li>
         </ul>
         <p class="govuk-body">
-            If you want your tickets to automatically update when they are renewed you can create an account and add the
-            subscription. Currently, DB, SaarVV, S-Bahn Berlin, and AVV (Aachen) are supported.
+            {% blocktrans trimmed %}
+                If you want your tickets to automatically update when they are renewed you can create an account and add
+                the subscription. Currently, DB, SaarVV, S-Bahn Berlin, and AVV (Aachen) are supported.
+            {% endblocktrans %}
         </p>
 
         {% if error %}
@@ -36,7 +40,7 @@
                         {% if error.exception %}
                             <details class="govuk-details">
                                 <summary class="govuk-details__summary">
-                                    <span class="govuk-details__summary-text">Full exception</span>
+                                    <span class="govuk-details__summary-text">{% trans "Full exception" %}</span>
                                 </summary>
                                 <div class="govuk-details__text">
                                     <pre style="overflow-x: auto;font-size: 1rem;">{{ error.exception }}</pre>
@@ -45,7 +49,7 @@
                         {% endif %}
                         {% if error.ticket_contents %}
                             <p class="govuk-body-s">
-                                Ticket contents; please send this when asking for support:<br/>
+                                {% trans "Ticket contents; please send this when asking for support:" %}<br/>
                                 <code style="line-break: anywhere;">{{ error.ticket_contents }}</code>
                             </p>
                         {% endif %}
@@ -58,12 +62,14 @@
             <div class="govuk-error-summary" data-module="govuk-error-summary" id="error-banner">
                 <div role="alert">
                     <h2 class="govuk-error-summary__title">
-                        JavaScript is required to scan tickets
+                        {% trans "JavaScript is required to scan tickets" %}
                     </h2>
                     <div class="govuk-error-summary__body">
                         <p class="govuk-body">
-                            JavaScript is required to scan tickets in your browser.
-                            You can still upload a picture of your ticket to have it processed server-side.
+                            {% blocktrans trimmed %}
+                                JavaScript is required to scan tickets in your browser.
+                                You can still upload a picture of your ticket to have it processed server-side.
+                            {% endblocktrans %}
                         </p>
                     </div>
                 </div>
@@ -71,7 +77,7 @@
         </noscript>
 
         <button id="scan-button" class="govuk-button govuk-button--start" disabled>
-            Scan your ticket
+            {% trans "Scan your ticket" %}
             <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
                  viewBox="0 0 33 40" aria-hidden="true" focusable="false">
                 <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
@@ -89,37 +95,42 @@
         </form>
 
         <p class="govuk-body">
-            If you're having trouble scanning your ticket uploading a picture/screenshot of your ticket usually works
-            better.
-            The decoder on the server is better than the one in your browser.
+            {% blocktrans trimmed %}
+                If you're having trouble scanning your ticket uploading a picture/screenshot of your ticket usually
+                works better. The decoder on the server is better than the one in your browser.
+            {% endblocktrans %}
         </p>
 
-        <h2 class="govuk-heading-l">Upload a picture or a PDF instead</h2>
+        <h2 class="govuk-heading-l">{% trans "Upload a picture or a PDF instead" %}</h2>
         {% crispy image_form %}
 
-        <h2 class="govuk-heading-l">Paste your ticket as hex/text</h2>
+        <h2 class="govuk-heading-l">{% trans "Paste your ticket as hex/text" %}</h2>
         <form action="" method="post">
             {% csrf_token %}
             <input type="hidden" name="type" value="text">
             <div id="div_id_ticket" class="govuk-form-group">
-                <label for="ticket_paste" class="govuk-label">Your ticket</label>
+                <label for="ticket_paste" class="govuk-label">{% trans "Your ticket" %}</label>
                 <input type="text" name="ticket_text" id="ticket_paste" required class="govuk-input">
             </div>
-            <button type="submit" class="govuk-button">Submit</button>
+            <button type="submit" class="govuk-button">{% trans "Submit" %}</button>
         </form>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-        <h2 class="govuk-heading-l">Have your ticket on a Smartcard?</h2>
+        <h2 class="govuk-heading-l">{% trans "Have your ticket on a Smartcard?" %}</h2>
         <p class="govuk-body-lead">
-            VDV-KA (German) Smartcards can also be read, click below to start.
+            {% blocktrans trimmed %}
+                VDV-KA (German) Smartcards can also be read, click below to start.
+            {% endblocktrans %}
         </p>
         <p class="govuk-body">
-            Currently, it is not possible to convert Smartcard tickets to Wallet passes.
+            {% blocktrans trimmed %}
+                Currently, it is not possible to convert Smartcard tickets to Wallet passes.
+            {% endblocktrans %}
         </p>
 
-        <a href="{% url 'vdv_read' %}" class="govuk-button govuk-button--start" >
-            Read your Smartcard
+        <a href="{% url 'vdv_read' %}" class="govuk-button govuk-button--start">
+            {% trans "Read your Smartcard" %}
             <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
                  viewBox="0 0 33 40" aria-hidden="true" focusable="false">
                 <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
@@ -128,30 +139,36 @@
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-        <h3 class="govuk-heading-m">Not working?</h3>
+        <h3 class="govuk-heading-m">{% trans "Not working?" %}</h3>
         <p class="govuk-body">
-            Get in touch with a picture of your ticket and I'll see what I can do.
+            {% blocktrans trimmed %}
+                Get in touch with a picture of your ticket and I'll see what I can do.
+            {% endblocktrans %}
         </p>
         <ul class="govuk-list govuk-inset-text">
             <li>Fedi: <a href="https://glauca.space/@q" class="govuk-link">@q@glauca.space</a></li>
             <li>Email: <a href="mailto:q@magicalcodewit.ch" class="govuk-link">q@magicalcodewit.ch</a></li>
         </ul>
-        <h3 class="govuk-heading-m">Privacy</h3>
+        <h3 class="govuk-heading-m">{% trans "Privacy" %}</h3>
         <p class="govuk-body">
-            Your ticket barcode will be stored to allow automatic updates to subscription tickets.
-            Tickets commonly include your name and date of birth - this information is not processed except to
-            generate the pass. Ticket data may be inspected by a human if you ask for help.
+            {% blocktrans trimmed %}
+                Your ticket barcode will be stored to allow automatic updates to subscription tickets.
+                Tickets commonly include your name and date of birth - this information is not processed except to
+                generate the pass. Ticket data may be inspected by a human if you ask for help.
+            {% endblocktrans %}
         </p>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-        <h3 class="govuk-heading-m">API</h3>
+        <h3 class="govuk-heading-m">{% trans "API" %}</h3>
         <p class="govuk-body">
-            You can send scanned Aztec barcode contents to this service's API and retrieve PKPass files from it.
+            {% blocktrans trimmed %}
+                You can send scanned Aztec barcode contents to this service's API and retrieve PKPass files from it.
+            {% endblocktrans %}
         </p>
         <details class="govuk-details">
             <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">API details</span>
+                <span class="govuk-details__summary-text">{% trans "API details" %}</span>
             </summary>
             <div class="govuk-details__text">
                 <h4 class="govuk-heading-s"><code>POST /api/upload</code></h4>
@@ -261,4 +278,5 @@ Pass Contents</code></pre>
 
             window.addEventListener('load', barkoderInit);
         </script>
+    </div>
 {% endblock content %}
