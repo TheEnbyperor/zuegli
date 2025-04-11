@@ -22,6 +22,32 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: zuegli
+  namespace: q-personal
+  annotations:
+    cert-manager.io/cluster-issuer: "gts"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - xn--zgli-0ra.app
+      secretName: zuegli-tls
+  rules:
+    - host: xn--zgli-0ra.app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vdv-pkpass-django
+                port:
+                  number: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: vdv-pkpass
   namespace: q-personal
   annotations:

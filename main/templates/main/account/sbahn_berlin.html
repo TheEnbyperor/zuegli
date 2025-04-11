@@ -1,32 +1,32 @@
 {% extends "main/base.html" %}
-{% load static crispy_forms_tags rics %}
+{% load static crispy_forms_tags rics i18n %}
 
-{% block title %}S-Bahn Berlin Account - Train Tickets to Wallet Passes{% endblock title %}
+{% block title %}{% trans "S-Bahn Berlin Account" %}{% endblock title %}
 
 {% block content %}
     <div class="govuk-width-container">
-        <h1 class="govuk-heading-xl">S-Bahn Berlin Account</h1>
+        <h1 class="govuk-heading-xl">{% trans "S-Bahn Berlin Account" %}</h1>
         <dl class="govuk-summary-list">
             {% if fields.salutation %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Salutation</dt>
+                    <dt class="govuk-summary-list__key">{% trans "Salutation" %}</dt>
                     <dd class="govuk-summary-list__value">{{ fields.salutation }}</dd>
                 </div>
             {% endif %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Forename</dt>
+                <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>
                 <dd class="govuk-summary-list__value">{{ fields.first_name }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Surname</dt>
+                <dt class="govuk-summary-list__key">{% trans "Surname" %}</dt>
                 <dd class="govuk-summary-list__value">{{ fields.last_name }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Birthday</dt>
+                <dt class="govuk-summary-list__key">{% trans "Date of birth" %}</dt>
                 <dd class="govuk-summary-list__value">{{ fields.birthday|date:"F d, Y" }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Address</dt>
+                <dt class="govuk-summary-list__key">{% trans "Address" %}</dt>
                 <dd class="govuk-summary-list__value">
                     <p class="govuk-body">
                         {% if fields.street or fields.street_number %}
@@ -41,7 +41,7 @@
                 </dd>
             </div>
         </dl>
-        <h2 class="govuk-heading-l">Tickets</h2>
+        <h2 class="govuk-heading-l">{% trans "Tickets" %}</h2>
         {% if tickets.count %}
             <ul class="govuk-list govuk-list--spaced">
                 {% for ticket in tickets.all %}

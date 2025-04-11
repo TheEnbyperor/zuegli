@@ -1,25 +1,25 @@
 {% extends "main/base.html" %}
-{% load static tz %}
+{% load static tz i18n %}
 
-{% block title %}Ticket {{ ticket.public_id }} - Train Tickets to Wallet Passes{% endblock title %}
+{% block title %}{% blocktrans with id=ticket.public_id %}Ticket {{ id }}{% endblocktrans %}{% endblock title %}
 
 {% block content %}
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds-from-desktop">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
-                    Ticket #{{ ticket.public_id }}
+                    {% blocktrans with id=ticket.public_id %}Ticket #{{ id }}{% endblocktrans %}
                     <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
                 </h1>
             </div>
             <div class="govuk-grid-column-one-third-from-desktop">
                 <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">
-                    Delete
+                    {% trans "Delete" %}
                 </a>
             </div>
         </div>
 
-        <p class="govuk-body">Quote the above ticket number when asking for help.</p>
+        <p class="govuk-body">{% trans "Quote the above ticket number when asking for help." %}</p>
 
         {% if ticket_updated %}
             <div class="govuk-notification-banner govuk-notification-banner--success" role="region"
@@ -27,20 +27,24 @@
                 <div class="govuk-notification-banner__header">
                     <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                         {% if ticket_created %}
-                            Ticket created
+                            {% trans "Ticket created" %}
                         {% else %}
-                            Ticket updated
+                            {% trans "Ticket updated" %}
                         {% endif %}
                     </h2>
                 </div>
                 <div class="govuk-notification-banner__content">
                     <p class="govuk-body">
                         {% if ticket_created %}
-                            Your ticket has been created; download your pass below to add it to your Apple or Google
-                            Wallet.
+                            {% blocktrans trimmed %}
+                                Your ticket has been created; download your pass below to add it to your Apple or Google
+                                Wallet.
+                            {% endblocktrans %}
                         {% else %}
-                            Your ticket has been updated; it has been sent to your Apple and Google devices in the
-                            background.
+                            {% blocktrans trimmed %}
+                                Your ticket has been updated; it has been sent to your Apple and Google devices in the
+                                background.
+                            {% endblocktrans %}
                         {% endif %}
                     </p>
                 </div>
@@ -52,13 +56,19 @@
                  role="region"
                  data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__content">
-                    This appears to be a SaarVV ticket.
+                    {% trans "This appears to be a SaarVV ticket." %}
                     {% if user.is_authenticated %}
-                        <a href="{% url 'saarvv_login' %}">Link your SaarVV account</a> to have it automatically
-                        refresh in the background.
+                        {% url 'saarvv_login' as url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Link your SaarVV account</a> to have it automatically
+                            refresh in the background.
+                        {% endblocktrans %}
                     {% else %}
-                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your SaarVV account to
-                        have it automatically refresh in the background.
+                        {% url 'magiclink:login' as url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Login to your account</a> and link your SaarVV
+                            account to have it automatically refresh in the background.
+                        {% endblocktrans %}
                     {% endif %}
                 </div>
             </div>
@@ -69,13 +79,19 @@
                  role="region"
                  data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__content">
-                    This appears to be an S-Bahn Berlin ticket.
+                    {% trans "This appears to be an S-Bahn Berlin ticket." %}
                     {% if user.is_authenticated %}
-                        <a href="{% url 'sbahn_berlin_login' %}">Link your S-Bahn Berlin account</a> to have it automatically
-                        refresh in the background.
+                        {% url 'sbahn_berlin_login' as url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Link your S-Bahn Berlin account</a> to have it automatically
+                            refresh in the background.
+                        {% endblocktrans %}
                     {% else %}
-                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your S-Bahn Berlin account to
-                        have it automatically refresh in the background.
+                        {% url 'magiclink:login' as url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Login to your account</a> and link your S-Bahn Berlin
+                            account to have it automatically refresh in the background.
+                        {% endblocktrans %}
                     {% endif %}
                 </div>
             </div>
@@ -86,30 +102,37 @@
                  role="region"
                  data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__content">
-                    This appears to be a Deutsche Bahn ticket.
+                    {% trans "This appears to be a Deutsche Bahn ticket." %}
                     {% if user.is_authenticated %}
-                        <a href="{% url 'db_login' %}">Link your DB account</a> or
-                        <a href="{% url 'new_db_abo' %}">add your DB subscription</a> to have it automatically refresh
-                        in the background.
+                        {% url 'db_login' as login_url %}
+                        {% url 'new_db_abo' as abo_url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Link your DB account</a> or
+                            <a href="{{ url }}">add your DB subscription</a> to have it automatically refresh
+                            in the background.
+                        {% endblocktrans %}
                     {% else %}
-                        <a href="{% url 'magiclink:login' %}">Login to your account</a> and link your DB account or add
-                        your DB subscription to have it automatically refresh in the background.
+                        {% url 'magiclink:login' as url %}
+                        {% blocktrans trimmed %}
+                            <a href="{{ url }}">Login to your account</a> and link your DB account or add
+                            your DB subscription to have it automatically refresh in the background.
+                        {% endblocktrans %}
                     {% endif %}
                 </div>
             </div>
         {% endif %}
 
         {% if photo_upload_forms %}
-            <h2 class="govuk-heading-m">Photos</h2>
+            <h2 class="govuk-heading-m">{% trans "Photos" %}</h2>
             <p class="govuk-body">
-                Your pass requires passport style photos. Please upload them below.
+                {% trans "Your pass requires passport style photos. Please upload them below." %}
             </p>
             {% for k, f in photo_upload_forms.items %}
                 <h3 class="govuk-heading-s">Photo for {{ f.name }}</h3>
                 {% if f.current %}
                     <details class="govuk-details">
                         <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">Current photo</span>
+                            <span class="govuk-details__summary-text">{% trans "Current photo" %}</span>
                         </summary>
                         <div class="govuk-details__text">
                             <img src="{{ f.current }}" alt="" style="max-width: 100px">
@@ -126,12 +149,12 @@
                             </p>
                         {% endif %}
                         <label class="govuk-label" for="file-upload-1">
-                            Upload photo
+                            {% trans "Upload photo" %}
                         </label>
                         <input class="govuk-file-upload" name="photo" type="file" accept="image/*">
                     </div>
                     <button type="submit" class="govuk-button" data-module="govuk-button">
-                        Save
+                        {% trans "Save" %}
                     </button>
                 </form>
             {% endfor %}
@@ -139,38 +162,57 @@
 
         <div class="govuk-panel govuk-panel--confirmation">
             <h1 class="govuk-panel__title">
-                Download your pass
+                {% trans "Download your pass" %}
             </h1>
             <div class="govuk-panel__body">
-                <a href="{% url 'ticket_pkpass' ticket.id %}"><img src="{% static 'main/add-to-apple-wallet.svg' %}"
-                                                                   alt="Add to Apple Wallet"
-                                                                   class="apple-wallet-button"></a>
+                {% get_current_language as LANGUAGE %}
+                {% if LANGUAGE == "de" %}
+                    <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-link--no-underline">
+                        <img src="{% static 'main/add-to-apple-wallet-de.svg' %}" alt="Hinzufügen zu Apple Wallet"
+                             class="apple-wallet-button">
+                    </a>
+                {% else %}
+                    <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-link--no-underline">
+                        <img src="{% static 'main/add-to-apple-wallet.svg' %}" alt="Add to Apple Wallet"
+                             class="apple-wallet-button">
+                    </a>
+                {% endif %}
                 {% if gwallet_url %}
-                    <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank"><img
-                            src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet"
-                            class="g-wallet-button"></a>
+                    {% if LANGUAGE == "de" %}
+                        <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank">
+                            <img src="{% static 'main/add-to-google-wallet-de.svg' %}" alt="Hinzufügen zu Google Wallet"
+                                 class="g-wallet-button">
+                        </a>
+                    {% else %}
+                        <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank">
+                            <img src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet"
+                                 class="g-wallet-button">
+                        </a>
+                    {% endif %}
                 {% endif %}
                 {% if ical_url %}
                     <br/>
                     <a href="{{ ical_url }}"
-                       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-4">Add to
-                        Calendar</a>
+                       class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-4">
+                        {% trans "Add to Calendar" %}</a>
                 {% endif %}
             </div>
         </div>
     </div>
 
     <div class="govuk-!-margin-7">
-        <h2 class="govuk-heading-l">Ticket details</h2>
+        <h2 class="govuk-heading-l">{% trans "Ticket details" %}</h2>
         {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count and not ticket.iata_instances.count and not ticket.bahnbonus_instances.count %}
-            <p class="govuk-body">No instances found for this ticket.</p>
+            <p class="govuk-body">{% trans "No instances found for this ticket." %}</p>
         {% else %}
             {% localtime off %}
                 {% for instance in ticket.vdv_instances.all %}
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.ticket_id }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                                 <span>{{ instance.validity_start|date:"F d, Y H:i:s e" }} - {{ instance.validity_end|date:"F d, Y H:i:s e" }}</span>
                             </summary>
                             <div class="govuk-details__text">
@@ -185,16 +227,20 @@
                             <div class="govuk-width-container">
                                 <div class="govuk-error-summary">
                                     <div role="alert">
-                                        <h2 class="govuk-error-summary__title">This ticket is invalid</h2>
+                                        <h2 class="govuk-error-summary__title">{% trans "This ticket is invalid" %}</h2>
                                         <div class="govuk-error-summary__body">
                                             <div class="govuk-warning-text">
                                                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                                                 <strong class="govuk-warning-text__text">
-                                                    The key used to sign this ticket has been revoked due to misuse.
-                                                    Travelling on this ticket is likely to result in a penalty fare.
-                                                    More details:
-                                                    <a href="https://www.heise.de/news/Vorsicht-vor-ungueltigen-Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html" target="_blank">German version</a>,
-                                                    <a href="https://www.heise.de/en/news/Beware-of-invalid-Germany-tickets-fare-dodgers-against-their-will-10280040.html" target="_blank">English version</a>.
+                                                    {% blocktrans trimmed %}
+                                                        The key used to sign this ticket has been revoked due to misuse.
+                                                        Travelling on this ticket is likely to result in a penalty fare.
+                                                        More details:
+                                                        <a href="https://www.heise.de/en/news/Beware-of-invalid-Germany-tickets-fare-dodgers-against-their-will-10280040.html"
+                                                           target="_blank">English version</a>.
+                                                    {% endblocktrans %}
+                                                    <a href="https://www.heise.de/news/Vorsicht-vor-ungueltigen-Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html"
+                                                       target="_blank">German version</a>
                                                 </strong>
                                             </div>
                                         </div>
@@ -204,7 +250,9 @@
                         {% endif %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket_id }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
                                         <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
@@ -221,8 +269,10 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ instance.reference }}</span>
-                                Type {{ instance.ticket_type }} - {{ instance.issuer_id }}
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=instance.reference %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
+                                {% trans "Type" %} {{ instance.ticket_type }} - {{ instance.issuer_id }}
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/rsp/rsp_ticket_details.html' with ticket=ticket_obj %}
@@ -234,7 +284,9 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/sncf_ticket_details.html' with ticket=ticket_obj %}
@@ -246,7 +298,11 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence_number }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    -
+                                    {% blocktrans with seq=ticket_obj.data.sequence_number %}sequence #{{ seq }}{% endblocktrans %}
+                                </span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/elb_ticket_details.html' with ticket=ticket_obj %}
@@ -258,7 +314,9 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                                 {% with distributor=ticket_obj.envelope.issuer %}
                                     {% if distributor %}
                                         <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
@@ -275,7 +333,9 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.ticket.pnr }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                                 {% with distributor=ticket_obj.ticket.issuer %}
                                     {% if distributor %}
                                         <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
@@ -292,7 +352,9 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.ticket_number }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/hzpp_ticket_details.html' with ticket=ticket_obj %}
@@ -304,7 +366,9 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.ticket.ticket_data.ticket_id }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.ticket_data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                </span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/swisspass_ticket_details.html' with ticket=ticket_obj %}
@@ -316,7 +380,11 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">Ticket #{{ ticket_obj.data.pnr }} - sequence #{{ ticket_obj.data.sequence }}</span>
+                                <span class="govuk-details__summary-text">
+                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    -
+                                    {% blocktrans with seq=ticket_obj.data.sequence %}sequence #{{ seq }}{% endblocktrans %}
+                                </span>
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/iata_ticket_details.html' with ticket=ticket_obj %}

@@ -139,7 +139,7 @@ class UICTicket:
         elif self.oebb_99:
             return models.Ticket.TYPE_FAHRKARTE
         elif self.dt_ti:
-            if self.dt_ti.product_name == "Deutschlandticket":
+            if self.dt_ti.product_name.lower() in ("deutschlandticket", "deutschlandticket job"):
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
             return models.Ticket.TYPE_FAHRKARTE
         elif self.vor_fi:
@@ -618,7 +618,37 @@ class BahnBonusCode:
 def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVTicket:
     pki_store = vdv.get_pki_store()
 
-    raw_root_ca = pki_store.find_certificate(vdv.CAReference.root())
+    try:
+        motics = vdv.Motics.parse(ticket_bytes)
+        envelope = vdv.EnvelopeV2.parse(motics.application_data)
+    except vdv.motics.NotAMoticsException:
+        try:
+            motics = None
+            envelope = vdv.EnvelopeV2.parse(ticket_bytes)
+        except vdv.util.VDVException:
+            raise TicketError(
+                title="This doesn't look like a valid VDV ticket",
+                message="You may have scanned something that is not a VDV ticket, the ticket is corrupted, or there "
+                        "is a bug in this program.",
+                exception=traceback.format_exc()
+            )
+    except vdv.util.VDVException:
+        raise TicketError(
+            title="This doesn't look like a valid VDV Motics ticket",
+            message="You may have scanned something that is not a VDV Motics ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    raw_issuing_ca = pki_store.find_certificate(envelope.ca_reference)
+    if not raw_issuing_ca:
+        raise TicketError(
+            title="Unknown issuing certificate",
+            message="The certificate that issued this ticket is not known - the ticket is likely invalid."
+        )
+
+    root_ca_ref = vdv.CAReference.root() if raw_issuing_ca.prod else vdv.CAReference.test_root()
+    raw_root_ca = pki_store.find_certificate(root_ca_ref)
     if not raw_root_ca:
         raise TicketError(
             title="Internal error",
@@ -649,8 +679,7 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
             exception=traceback.format_exc()
         )
 
-    if root_ca_data.ca_reference != vdv.CAReference.root() or \
-            root_ca_data.certificate_holder_reference != vdv.CAReference.root():
+    if root_ca_data.ca_reference != root_ca_ref or root_ca_data.certificate_holder_reference != root_ca_ref:
         raise TicketError(
             title="Internal error",
             message="The root CA appears to not be a root. This is almost certainly a bug."
@@ -663,35 +692,6 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
             title="Internal error",
             message="The root CA certificate signature is invalid. This is almost certainly a bug.",
             exception=traceback.format_exc()
-        )
-
-    try:
-        motics = vdv.Motics.parse(ticket_bytes)
-        envelope = vdv.EnvelopeV2.parse(motics.application_data)
-    except vdv.motics.NotAMoticsException:
-        try:
-            motics = None
-            envelope = vdv.EnvelopeV2.parse(ticket_bytes)
-        except vdv.util.VDVException:
-            raise TicketError(
-                title="This doesn't look like a valid VDV ticket",
-                message="You may have scanned something that is not a VDV ticket, the ticket is corrupted, or there "
-                        "is a bug in this program.",
-                exception=traceback.format_exc()
-            )
-    except vdv.util.VDVException:
-        raise TicketError(
-            title="This doesn't look like a valid VDV Motics ticket",
-            message="You may have scanned something that is not a VDV Motics ticket, the ticket is corrupted, or there "
-                    "is a bug in this program.",
-            exception=traceback.format_exc()
-        )
-
-    raw_issuing_ca = pki_store.find_certificate(envelope.ca_reference)
-    if not raw_issuing_ca:
-        raise TicketError(
-            title="Unknown issuing certificate",
-            message="The certificate that issued this ticket is not known - the ticket is likely invalid."
         )
 
     try:
@@ -1365,12 +1365,13 @@ def parse_ticket(
 
     try:
         ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
-        return parse_ticket_vdv(ticket_bytes, context)
     except Exception as e:
         raise TicketError(
             title="This doesn't look like a ticket type we support.",
             message="If you'd like to see support for this added, please forward your original ticket to us.",
         )
+
+    return parse_ticket_vdv(ticket_bytes, context)
 
 
 

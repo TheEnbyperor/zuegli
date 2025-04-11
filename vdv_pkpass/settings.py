@@ -16,6 +16,7 @@ import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
 import google.auth.crypt
+from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "")
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv("HOST", "vdv-pkpass.magicalcodewit.ch").split(",")
+ALLOWED_HOSTS = os.getenv("HOST", "xn--zgli-0ra.app").split(",")
 
 if ip := os.getenv("POD_IP"):
     ALLOWED_HOSTS.append(ip)
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     "xff.middleware.XForwardedForMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -112,6 +114,11 @@ LANGUAGE_CODE = "en-gb"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
+
+LANGUAGES = [
+    ("en", _("English")),
+    ("de", _("German")),
+]
 
 USE_TZ = True
 

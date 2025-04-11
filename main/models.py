@@ -10,6 +10,7 @@ from django.core import validators
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from . import ticket as t
 from . import vdv_nm
 from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus
@@ -100,17 +101,17 @@ class Ticket(models.Model):
     TYPE_UNKNOWN = "unknown"
 
     TICKET_TYPES = (
-        (TYPE_DEUTCHLANDTICKET, "Deutschlandticket"),
-        (TYPE_KLIMATICKET, "Klimaticket"),
-        (TYPE_BAHNCARD, "Bahncard"),
-        (TYPE_FAHRKARTE, "Fahrkarte"),
-        (TYPE_BORDKARTE, "Bordkarte"),
-        (TYPE_RESERVIERUNG, "Reservierung"),
-        (TYPE_INTERRAIL, "Interrail"),
-        (TYPE_RAILCARD, "Railcard"),
-        (TYPE_KEYCARD, "Keycard"),
-        (TYPE_BAHNBONUS, "BahnBonus"),
-        (TYPE_UNKNOWN, "Unknown"),
+        (TYPE_DEUTCHLANDTICKET, _("Deutschlandticket")),
+        (TYPE_KLIMATICKET, _("Klimaticket")),
+        (TYPE_BAHNCARD, _("Bahncard")),
+        (TYPE_FAHRKARTE, _("Travel ticket")),
+        (TYPE_BORDKARTE, _("Boarding card")),
+        (TYPE_RESERVIERUNG, _("Reservation")),
+        (TYPE_INTERRAIL, _("Interrail")),
+        (TYPE_RAILCARD, _("Railcard")),
+        (TYPE_KEYCARD, _("Keycard")),
+        (TYPE_BAHNBONUS, _("BahnBonus")),
+        (TYPE_UNKNOWN, _("Unknown")),
     )
 
     id = models.CharField(max_length=32, primary_key=True, verbose_name="ID")

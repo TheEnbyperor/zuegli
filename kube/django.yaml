@@ -4,9 +4,9 @@ metadata:
   name: vdv-pkpass
   namespace: q-personal
 data:
-  HOST: "vdv-pkpass.magicalcodewit.ch"
+  HOST: "xn--zgli-0ra.app"
   DJANGO_SETTINGS_MODULE: "vdv_pkpass.settings"
-  EXTERNAL_URL: "https://vdv-pkpass.magicalcodewit.ch"
+  EXTERNAL_URL: "https://xn--zgli-0ra.app"
   DB_HOST: "cockroachdb.default"
   DB_NAME: "vdv_pkpass"
   S3_ENDPOINT: "https://s3.as207960.net"

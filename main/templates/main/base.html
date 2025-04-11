@@ -1,21 +1,22 @@
-{% load static mapkit %}
+{% load static mapkit i18n %}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}Train Tickets to Wallet Passes{% endblock title %}</title>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}{% endblock title %} - Zügli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <link href='{% static "govuk/govuk-frontend-5.6.0.min.css" %}' rel="stylesheet">
     <link href='{% static "main/style.css" %}' rel="stylesheet">
 
-    <meta name="description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
-    <meta property="og:title" content="Train Tickets to Wallet Passes">
+    <meta name="description"
+          content="{% trans "Turn your public transport tickets into an Apple/Google Wallet passes." %}">
+    <meta property="og:title" content="Zügli">
     <meta property="og:type" content="website"/>
-    <meta property="og:description" content="Turn your public transport tickets into an Apple/Google Wallet passes.">
+    <meta property="og:description"
+          content="{% trans "Turn your public transport tickets into an Apple/Google Wallet passes." %}">
     <meta name="fediverse:creator" content="@q@glauca.space"/>
 </head>
 <body class="govuk-template__body">
@@ -27,9 +28,27 @@
 {% endblock body_start %}
 <header class="govuk-header govuk-header--full-width-border" data-module="govuk-header">
     <div class="govuk-header__container govuk-width-container">
-        <a href="{% url 'index' %}" class="govuk-header__link govuk-header__service-name">
-            Train Tickets to Wallet Passes
-        </a>
+        <div class="govuk-service-navigation__container" style="justify-content: space-between;">
+            <a href="{% url 'index' %}" class="govuk-header__link govuk-header__service-name"
+               style="align-self: center">
+                Zügli
+            </a>
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                <ul class="govuk-service-navigation__list" id="navigation">
+                    {% for language in languages %}
+                        <li class="govuk-service-navigation__item{% if language.code == LANGUAGE_CODE %} govuk-service-navigation__item--active{% endif %}">
+                            <button class="button-link" type="submit" name="language"
+                                    value="{{ language.code }}">{{ language.name_local }}</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </form>
+        </div>
     </div>
 </header>
 {% with request.resolver_match.url_name as url_name %}
@@ -38,37 +57,37 @@
             <div class="govuk-service-navigation__container">
                 {% if user.is_authenticated %}
                     <span class="govuk-service-navigation__service-name">
-                    Hi {{ user.get_short_name }}!
-                </span>
+                        {% blocktranslate with name=user.get_short_name %}Hi {{ name }}!{% endblocktranslate %}
+                    </span>
                 {% endif %}
                 <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
                     <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
                             aria-controls="navigation" hidden>
-                        Menu
+                        {% trans "Menu" %}
                     </button>
                     <ul class="govuk-service-navigation__list" id="navigation">
                         <li class="govuk-service-navigation__item{% if url_name == 'index' %} govuk-service-navigation__item--active{% endif %}">
                             <a class="govuk-service-navigation__link" href="{% url 'index' %}">
-                                Home
+                                {% trans "Home" %}
                             </a>
                         </li>
                         {% if user.is_authenticated %}
                             <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link" href="{% url 'account' %}">
-                                    Account
+                                    {% trans "Account" %}
                                 </a>
                             </li>
                             <li class="govuk-service-navigation__item">
                                 <a class="govuk-service-navigation__link"
                                    href="{% url 'magiclink:logout' %}?next={{ request.path }}">
-                                    Logout
+                                    {% trans "Logout" %}
                                 </a>
                             </li>
                         {% else %}
                             <li class="govuk-service-navigation__item{% if url_name == 'login' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link"
                                    href="{% url 'magiclink:login' %}?next={{ request.path }}">
-                                    Login
+                                    {% trans "Login" %}
                                 </a>
                             </li>
                         {% endif %}
@@ -81,45 +100,45 @@
                         <button type="button"
                                 class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
                                 aria-controls="navigation" hidden>
-                            Menu
+                            {% trans "Menu" %}
                         </button>
                         <ul class="govuk-service-navigation__list" id="navigation">
                             <li class="govuk-service-navigation__item{% if url_name == 'account' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link" href="{% url 'account' %}">
-                                    Account home
+                                    {% trans "Account home" %}
                                 </a>
                             </li>
                             {% if user.is_authenticated and user.account.is_db_authenticated %}
                                 <li class="govuk-service-navigation__item{% if url_name == 'db_account' %} govuk-service-navigation__item--active{% endif %}">
                                     <a class="govuk-service-navigation__link" href="{% url 'db_account' %}"
                                        aria-current="true">
-                                        DB Account
+                                        {% trans "DB Account" %}
                                     </a>
                                 </li>
                             {% endif %}
                             <li class="govuk-service-navigation__item{% if url_name == 'db_abo' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link " href="{% url 'db_abo' %}">
-                                    DB Subscriptions
+                                    {% trans "DB Subscriptions" %}
                                 </a>
                             </li>
                             {% if user.is_authenticated and user.account.is_saarvv_authenticated %}
                                 <li class="govuk-service-navigation__item{% if url_name == 'saarvv_account' %} govuk-service-navigation__item--active{% endif %}">
                                     <a class="govuk-service-navigation__link" href="{% url 'saarvv_account' %}">
-                                        SaarVV Account
+                                        {% trans "SaarVV Account" %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if user.is_authenticated and user.account.is_sbahn_berlin_authenticated %}
                                 <li class="govuk-service-navigation__item{% if url_name == 'sbahn_berlin_account' %} govuk-service-navigation__item--active{% endif %}">
                                     <a class="govuk-service-navigation__link" href="{% url 'sbahn_berlin_account' %}">
-                                        S-Bahn Berlin Account
+                                        {% trans "S-Bahn Berlin Account" %}
                                     </a>
                                 </li>
                             {% endif %}
                             {% if user.is_authenticated and user.account.is_avv_authenticated %}
                                 <li class="govuk-service-navigation__item{% if url_name == 'avv_account' %} govuk-service-navigation__item--active{% endif %}">
                                     <a class="govuk-service-navigation__link" href="{% url 'avv_account' %}">
-                                        AVV Account
+                                        {% trans "AVV Account" %}
                                     </a>
                                 </li>
                             {% endif %}
@@ -130,16 +149,6 @@
         </div>
     </div>
 {% endwith %}
-<div class="govuk-width-container">
-    <div class="govuk-phase-banner">
-        <p class="govuk-phase-banner__content">
-            <strong class="govuk-tag govuk-phase-banner__content__tag">Beta</strong>
-            <span class="govuk-phase-banner__text">
-              This is a new service - it may break in any number of ways. Please report any issues you find!
-            </span>
-        </p>
-    </div>
-</div>
 <main class="govuk-main-wrapper" id="content" role="main">
     {% if messages %}
         <div class="govuk-width-container">
@@ -172,26 +181,35 @@
         <div class="govuk-footer__meta">
             <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
                 <div class="govuk-footer__meta-custom">
-                    Not affiliated with the Verband Deutscher Verkehrsunternehmen (VDV),
-                    Union Internationale des Chemins de fer (UIC), Rail Delivery Group (RDG), or any of their
-                    respective members.
+                    {% blocktrans trimmed %}
+                        Not affiliated with the Verband Deutscher Verkehrsunternehmen (VDV),
+                        Union Internationale des Chemins de fer (UIC), Rail Delivery Group (RDG), or any of their
+                        respective members.
+                    {% endblocktrans %}
                 </div>
                 <div class="govuk-footer__meta-custom">
-                    <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK
-                        Design System</a>
-                    used under license.
+                    {% blocktrans trimmed %}
+                        <a class="govuk-footer__link" href="https://github.com/alphagov/govuk-frontend" target="_blank">GOV.UK
+                            Design System</a>
+                        used under license.
+                    {% endblocktrans %}
                 </div>
                 <div class="govuk-footer__meta-custom">
                     {% if git_hash %}
-                        Running version <a href="https://github.com/theenbyperor/vdv-pkpass" class="govuk-footer__link"
-                                          target="_blank">{{ git_hash }}</a>.
+                        {% blocktrans trimmed %}
+                            Running version
+                            <a href="https://github.com/theenbyperor/vdv-pkpass" class="govuk-footer__link"
+                               target="_blank">{{ git_hash }}</a>.
+                        {% endblocktrans %}
                     {% else %}
-                        Development build.
+                        {% trans "Development build." %}
                     {% endif %}
                 </div>
                 <span class="govuk-footer__licence-description">
-                    Licensed under the <a href="https://eupl.eu" class="govuk-footer__link"
-                                          target="_blank">EUPL v1.2</a>.
+                    {% blocktrans trimmed %}
+                        Licensed under the <a href="https://eupl.eu" class="govuk-footer__link"
+                                              target="_blank">EUPL v1.2</a>.
+                    {% endblocktrans %}
                 </span>
             </div>
             <div class="govuk-footer__meta-item">
