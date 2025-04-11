@@ -498,7 +498,7 @@ msgid ""
 "of your ticket usually works better. The decoder on the server is better "
 "than the one in your browser."
 msgstr ""
-"Wenn Sie Probleme beim Einscannen Ihrer Karte haben, bitte laden Sie ein "
+"Wenn Sie Probleme beim Einscannen Ihren Barcode haben, bitte laden Sie ein "
 "Bild hoch. Das klappt meist besser; der Decoder an den Server ist besser als "
 "der in Ihrem Browser."
 
@@ -516,7 +516,7 @@ msgstr "Schicken"
 
 #: templates/main/index.html:120
 msgid "Have your ticket on a Smartcard?"
-msgstr "Ihre Karte ist an eine Chipkarte?"
+msgstr "Haben Sie eine Chipkarte?"
 
 #: templates/main/index.html:122
 msgid "VDV-KA (German) Smartcards can also be read, click below to start."
