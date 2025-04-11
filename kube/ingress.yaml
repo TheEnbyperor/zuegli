@@ -25,7 +25,7 @@ metadata:
   name: zuegli
   namespace: q-personal
   annotations:
-    cert-manager.io/cluster-issuer: "gts"
+    cert-manager.io/cluster-issuer: "letsencrypt"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
 spec:
   ingressClassName: nginx
@@ -53,6 +53,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "gts"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/rewrite-target: "https://xn--zgli-0ra.app$request_uri"
 spec:
   ingressClassName: nginx
   tls:
@@ -79,7 +80,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: "gts"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/rewrite-target: "https://vdv-pkpass.magicalcodewit.ch$request_uri"
+    nginx.ingress.kubernetes.io/rewrite-target: "https://xn--zgli-0ra.app$request_uri"
 spec:
   ingressClassName: nginx
   tls:

@@ -39,14 +39,20 @@
                 {% get_current_language as LANGUAGE_CODE %}
                 {% get_available_languages as LANGUAGES %}
                 {% get_language_info_list for LANGUAGES as languages %}
-                <ul class="govuk-service-navigation__list" id="navigation">
-                    {% for language in languages %}
-                        <li class="govuk-service-navigation__item{% if language.code == LANGUAGE_CODE %} govuk-service-navigation__item--active{% endif %}">
-                            <button class="button-link" type="submit" name="language"
-                                    value="{{ language.code }}">{{ language.name_local }}</button>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <nav class="govuk-service-navigation__wrapper" data-module="govuk-service-navigation">
+                    <button type="button" class="govuk-service-navigation__toggle button-link govuk-js-service-navigation-toggle"
+                            aria-controls="languages-list" hidden>
+                        {% trans "Language" %}
+                    </button>
+                    <ul class="govuk-service-navigation__list" id="languages-list">
+                        {% for language in languages %}
+                            <li class="govuk-service-navigation__item{% if language.code == LANGUAGE_CODE %} govuk-service-navigation__item--active{% endif %}">
+                                <button class="button-link" type="submit" name="language"
+                                        value="{{ language.code }}">{{ language.name_local }}</button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
             </form>
         </div>
     </div>
