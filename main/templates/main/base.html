@@ -18,6 +18,9 @@
     <meta property="og:description"
           content="{% trans "Turn your public transport tickets into an Apple/Google Wallet passes." %}">
     <meta name="fediverse:creator" content="@q@glauca.space"/>
+
+    <script defer data-api="https://s.as207960.net/api/event" data-domain="xn--zgli-0ra.app"
+            src="https://s.as207960.net/js/script.js"></script>
 </head>
 <body class="govuk-template__body">
 <script>
@@ -241,8 +244,6 @@
         crossorigin async
         data-callback="initMapKit"
         data-libraries="services,full-map"></script>
-<script defer data-api="https://s.as207960.net/api/event" data-domain="xn--zgli-0ra.app"
-        src="https://s.as207960.net/js/script.js"></script>
 <script>
     function initMapKit() {
         const loadedEvent = new Event("mapKitLoaded");
