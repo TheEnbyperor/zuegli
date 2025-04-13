@@ -305,7 +305,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "serialNumber": ticket_obj.pk,
         "groupingIdentifier": ticket_obj.pk,
         "description": ticket_obj.get_ticket_type_display(),
-        "sharingProhibited": True,
         "backgroundColor": "rgb(255, 255, 255)",
         "suppressStripShine": True,
         "suppressHeaderDarkening": True,

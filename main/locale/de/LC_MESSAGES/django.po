@@ -615,8 +615,8 @@ msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
 msgstr ""
-"Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, zu Ihre "
-"Apple- und Google-Wallet-Pässe hinzufügen."
+"Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um es zu "
+"Ihre Apple- und Google-Wallet-Pässe hinzufügen."
 
 #: templates/main/ticket.html:44
 msgid ""
