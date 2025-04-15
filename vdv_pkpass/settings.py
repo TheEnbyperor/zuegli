@@ -316,12 +316,12 @@ MAGICLINK_TOKEN_USES = 1
 MAGICLINK_AUTH_TIMEOUT = 900
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mx2.postal.as207960.net"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "mx2.postal.as207960.net")
 EMAIL_PORT = 25
-EMAIL_HOST_USER = "q-misell/main"
+EMAIL_HOST_USER = os.getenv("EMAIL_USER", "q-misell/zuegli")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = "VDV PKPass <noreply@magicalcodewit.ch>"
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_FROM", "Zügli <noreply@xn--zgli-0ra.app>")
 
 # SECURITY WARNING: We know. They have lawyers.
 BARKODER_LICENSE = "0MHXR8cuvoJT62F-vUCcqMQR74K0988ixUjSf_DnucZlrv_DJTneGfAh1avJBr72P0VecEQGK5JHDH0FmfI_Lp8PdEdFGLDlQzT_axGBusQQWRt4-vYYaAyxrCvqtGWZIVN6jhCiyvQ7fndQ7oDAwhdpufGp1KH2tYFeNfif84DE8anuMEXfTOGUjN3jfEu1"

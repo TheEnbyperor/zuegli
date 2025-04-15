@@ -85,7 +85,7 @@
     position: absolute;
     letter-spacing: -1px;
     display: inline-flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 }
 

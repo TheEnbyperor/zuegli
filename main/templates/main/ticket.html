@@ -167,24 +167,24 @@
             <div class="govuk-panel__body">
                 {% get_current_language as LANGUAGE %}
                 {% if LANGUAGE == "de" %}
-                    <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-link--no-underline">
+                    <a href="{% url 'ticket_pkpass' ticket.id %}" style="text-decoration: none;">
                         <img src="{% static 'main/add-to-apple-wallet-de.svg' %}" alt="Hinzufügen zu Apple Wallet"
                              class="apple-wallet-button">
                     </a>
                 {% else %}
-                    <a href="{% url 'ticket_pkpass' ticket.id %}" class="govuk-link--no-underline">
+                    <a href="{% url 'ticket_pkpass' ticket.id %}" style="text-decoration: none;">
                         <img src="{% static 'main/add-to-apple-wallet.svg' %}" alt="Add to Apple Wallet"
                              class="apple-wallet-button">
                     </a>
                 {% endif %}
                 {% if gwallet_url %}
                     {% if LANGUAGE == "de" %}
-                        <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank">
+                        <a href="{{ gwallet_url }}" style="text-decoration: none;" target="_blank">
                             <img src="{% static 'main/add-to-google-wallet-de.svg' %}" alt="Hinzufügen zu Google Wallet"
                                  class="g-wallet-button">
                         </a>
                     {% else %}
-                        <a href="{{ gwallet_url }}" class="govuk-link--no-underline" target="_blank">
+                        <a href="{{ gwallet_url }}" style="text-decoration: none;" target="_blank">
                             <img src="{% static 'main/add-to-google-wallet.svg' %}" alt="Add to Google Wallet"
                                  class="g-wallet-button">
                         </a>
