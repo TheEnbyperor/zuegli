@@ -13,7 +13,7 @@ class Command(BaseCommand):
         iata_storage = django.core.files.storage.storages["iata-data"]
 
         airports_r = niquests.get("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports-extended.dat", headers={
-            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+            "User-Agent": "Zügli Generator (magicalcodewit.ch)",
         })
         airports_r.raise_for_status()
         airports = csv.DictReader(
@@ -57,7 +57,7 @@ class Command(BaseCommand):
             json.dump(out, f)
 
         airlines_r = niquests.get("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat", headers={
-            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+            "User-Agent": "Zügli Generator (magicalcodewit.ch)",
         })
         airlines_r.raise_for_status()
         airlines = csv.DictReader(

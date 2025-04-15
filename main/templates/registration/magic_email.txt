@@ -1,5 +1,5 @@
 Hi {{ user.get_short_name }},
-You're receiving this email because you requested to login to your account for VDV PKPass.
+You're receiving this email because you requested to log in to your account for Zügli.
 
 Click the link below to sign in. This link will expire in {{ expiry|timeuntil }}.
 

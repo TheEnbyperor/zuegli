@@ -24,7 +24,7 @@ def db_account(request):
             "Authorization": f"Bearer {db_token}",
             "Accept": "application/x.db.vendo.mob.kundenkonto.v6+json",
             "X-Correlation-ID": secrets.token_hex(16),
-            "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+            "User-Agent": "Zügli q@magicalcodewit.ch"
         })
         if not r.ok:
             messages.add_message(request, messages.ERROR, "Failed to get DB account information")
@@ -36,7 +36,7 @@ def db_account(request):
             "Authorization": f"Bearer {db_token}",
             "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
             "X-Correlation-ID": secrets.token_hex(16),
-            "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+            "User-Agent": "Zügli q@magicalcodewit.ch"
         })
         if not r.ok:
             messages.add_message(request, messages.ERROR, "Failed to get BahnBonus information")

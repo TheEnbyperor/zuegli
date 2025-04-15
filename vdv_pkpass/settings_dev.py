@@ -227,7 +227,7 @@ except FileNotFoundError:
 GIT_HASH = None
 
 PKPASS_CONF = {
-    "organization_name": "VDV PKPass",
+    "organization_name": "Zügli",
     "pass_type": "pass.ch.magicalcodewit.vdv.ticket",
     "team_id": "MQ9TN9772U"
 }
@@ -282,7 +282,7 @@ MAGICLINK_LOGIN_TEMPLATE_NAME = "registration/magic_login.html"
 MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = "registration/magic_sent.html"
 MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = "registration/magic_failed.html"
 MAGICLINK_SIGNUP_TEMPLATE_NAME = "registration/magic_signup.html"
-MAGICLINK_EMAIL_SUBJECT = "VDV PKPass Login"
+MAGICLINK_EMAIL_SUBJECT = "Zügli Login"
 MAGICLINK_EMAIL_TEMPLATE_NAME_TEXT = "registration/magic_email.txt"
 MAGICLINK_EMAIL_TEMPLATE_NAME_HTML = "registration/magic_email.html"
 MAGICLINK_REQUIRE_SIGNUP = True
@@ -298,7 +298,7 @@ MAGICLINK_TOKEN_USES = 1
 MAGICLINK_AUTH_TIMEOUT = 900
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = "VDV PKPass <noreply@magicalcodewit.ch>"
+DEFAULT_FROM_EMAIL = "Zügli <noreply@magicalcodewit.ch>"
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://vdv-pkpass.eu.ngrok.io"]
 

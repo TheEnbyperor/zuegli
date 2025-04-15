@@ -14,7 +14,7 @@ class Command(BaseCommand):
             "https://pro.eticket.app/api/organisations/all",
             auth=("eticket-app-pro", "VDV-K3rn4ppl!kat1on"),
             headers={
-                "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+                "User-Agent": "Zügli Generator (magicalcodewit.ch)",
             },
         )
         r.raise_for_status()
