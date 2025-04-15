@@ -36,7 +36,7 @@ def get_avv_client_token():
         "client_id": AVV_CLIENT_ID,
         "client_secret": AVV_CLIENT_SECRET,
     }, headers={
-        "User-Agent": "Zügli q@magicalcodewit.ch"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     if not r.ok:
         return None
@@ -60,7 +60,7 @@ def get_avv_token(account: "models.Account"):
                 "client_secret": AVV_CLIENT_SECRET,
                 "refresh_token": account.avv_refresh_token,
             }, headers={
-                "User-Agent": "Zügli q@magicalcodewit.ch"
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)"
             })
             if not r.ok:
                 return None
@@ -159,7 +159,7 @@ def avv_login_callback(request):
         "code": code,
         "code_verifier": code_verifier,
     }, headers={
-        "User-Agent": "Zügli (q@magicalcodewit.ch)"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     data = r.json()
     if not r.ok:
@@ -199,7 +199,7 @@ def avv_account(request):
         "ClientToken": client_token,
         "deviceId": request.user.account.avv_device_id,
         "language": "de",
-        "User-Agent": "Zügli (q@magicalcodewit.ch)"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     data = r.json()
 

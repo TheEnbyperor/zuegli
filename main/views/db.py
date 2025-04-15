@@ -35,7 +35,7 @@ def get_db_token(account: "models.Account"):
                 "client_id": DB_CLIENT_ID,
                 "refresh_token": account.db_refresh_token,
             }, headers={
-                "User-Agent": "Zügli q@magicalcodewit.ch"
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)"
             })
             if not r.ok:
 
@@ -63,7 +63,7 @@ def get_bahnbonus_token(account: "models.Account"):
                 "client_id": BAHNBONUS_CLIENT_ID,
                 "refresh_token": account.bahnbonus_refresh_token,
             }, headers={
-                "User-Agent": "Zügli q@magicalcodewit.ch"
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)"
             })
             if not r.ok:
                 return None
@@ -201,7 +201,7 @@ def db_login_callback(request):
         "code": code,
         "code_verifier": code_verifier,
     }, headers={
-        "User-Agent": "Zügli q@magicalcodewit.ch"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     data = r.json()
     if not r.ok:
@@ -296,7 +296,7 @@ def bahnbonus_login_callback(request):
         "code": code,
         "code_verifier": code_verifier,
     }, headers={
-        "User-Agent": "Zügli q@magicalcodewit.ch"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     data = r.json()
     if not r.ok:
@@ -335,7 +335,7 @@ def db_add_ticket(request):
                 "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
                 "Content-Type": "application/x.db.vendo.mob.auftraege.v7+json",
                 "X-Correlation-ID": secrets.token_hex(16),
-                "User-Agent": "Zügli (q@magicalcodewit.ch)",
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             }, json={
                 "nachname": surname,
             })

@@ -31,7 +31,7 @@ def update_all():
                 "Authorization": f"Bearer {bb_token}",
                 "DB-Client-ID": "b4ceb052260d1df18955c9769f2f6ee1",
                 "DB-API-Key": "af42968e4445cf550ad06f8b114f0cda",
-                "User-Agent": "Zügli q@magicalcodewit.ch",
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             })
             if not r.ok:
                 logger.error(f"Failed to get vouchers for account {account} - {r.text}")
