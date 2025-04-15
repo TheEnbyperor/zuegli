@@ -332,7 +332,7 @@ class Command(BaseCommand):
                 "enableSmartTap": False,
                 "homepageUri": {
                     "uri": settings.EXTERNAL_URL_BASE,
-                    "description": "VDV PKPass"
+                    "description": "Zügli"
                 },
                 "securityAnimation": {
                     "animationType": "foilShimmer"

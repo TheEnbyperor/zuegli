@@ -64,7 +64,7 @@ def update_all():
                 "Authorization": f"Bearer {db_token}",
                 "Accept": "application/x.db.vendo.mob.kundenkonto.v6+json",
                 "X-Correlation-ID": secrets.token_hex(16),
-                "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                "User-Agent": "Zügli q@magicalcodewit.ch",
             })
             if not r.ok:
                 logger.error(f"Failed to get profiles for account {account.db_account_id} - {r.text}")
@@ -83,7 +83,7 @@ def update_all():
                     "Authorization": f"Bearer {db_token}",
                     "Accept": "application/x.db.vendo.mob.reisenuebersicht.v5+json",
                     "X-Correlation-ID": secrets.token_hex(16),
-                    "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                    "User-Agent": "Zügli q@magicalcodewit.ch",
                 })
                 if not r.ok:
                     logger.error(f"Failed to get bookings for profile {profile_id} - {r.text}")
@@ -101,7 +101,7 @@ def update_all():
                             "Authorization": f"Bearer {db_token}",
                             "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
                             "X-Correlation-ID": secrets.token_hex(16),
-                            "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                            "User-Agent": "Zügli q@magicalcodewit.ch",
                         })
                         if not r.ok:
                             logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {r.text}")

@@ -13,7 +13,7 @@ class Command(BaseCommand):
         uic_storage = django.core.files.storage.storages["uic-data"]
 
         rics_codes_r = niquests.get("https://teleref.era.europa.eu/Download_CompanycodesExcel.aspx", headers={
-            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+            "User-Agent": "Zügli Generator (magicalcodewit.ch)",
         })
         rics_codes_r.raise_for_status()
         rics_codes = csv.DictReader(rics_codes_r.text.splitlines(), delimiter="\t")
@@ -43,7 +43,7 @@ class Command(BaseCommand):
             json.dump(out, f)
 
         stations_r = niquests.get("https://api.kontrolor.si/stations", headers={
-            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+            "User-Agent": "Zügli Generator (magicalcodewit.ch)",
         })
         stations_r.raise_for_status()
         out = {
@@ -61,7 +61,7 @@ class Command(BaseCommand):
             json.dump(out, f)
 
         stations_r = niquests.get("https://github.com/trainline-eu/stations/raw/refs/heads/master/stations.csv", headers={
-            "User-Agent": "VDV PKPass Generator (magicalcodewit.ch)",
+            "User-Agent": "Zügli Generator (magicalcodewit.ch)",
         })
         stations_r.raise_for_status()
         stations = csv.DictReader(stations_r.text.splitlines(), delimiter=";")

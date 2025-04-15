@@ -34,7 +34,7 @@ def update_all():
                 "Authorization": f"Bearer {db_token}",
                 "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
                 "X-Correlation-ID": secrets.token_hex(16),
-                "User-Agent": "VDV PKPass q@magicalcodewit.ch"
+                "User-Agent": "Zügli q@magicalcodewit.ch"
             })
         if not r.ok:
             logger.error(f"Failed to get BahnBonus information for account {account} - {r.text}")
@@ -50,7 +50,7 @@ def update_all():
                 "Authorization": f"Bearer {db_token}",
                 "Accept": "application/x.db.vendo.mob.emobilebahncards.v2+json",
                 "X-Correlation-ID": secrets.token_hex(16),
-                "User-Agent": "VDV PKPass q@magicalcodewit.ch",
+                "User-Agent": "Zügli q@magicalcodewit.ch",
                 "Call-Trigger": "manual"
             })
             if not r.ok:

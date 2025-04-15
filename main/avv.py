@@ -42,7 +42,7 @@ def update_avv_tickets(account: "models.Account"):
         "ClientToken": client_token,
         "deviceId": account.avv_device_id,
         "language": "de",
-        "User-Agent": "VDV PKPass (q@magicalcodewit.ch)"
+        "User-Agent": "Zügli (q@magicalcodewit.ch)"
     }, json={
         "fromDtm": (now - datetime.timedelta(days=30)).isoformat(),
         "toDtm": (now + datetime.timedelta(days=30)).isoformat(),
@@ -66,7 +66,7 @@ def update_avv_tickets(account: "models.Account"):
             "ClientToken": client_token,
             "deviceId": entitlement["deviceId"],
             "language": "de",
-            "User-Agent": "VDV PKPass (q@magicalcodewit.ch)"
+            "User-Agent": "Zügli (q@magicalcodewit.ch)"
         })
         if not r.ok:
             logger.error(f"Failed to get ticket {eid} for account {account}")

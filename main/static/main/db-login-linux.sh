@@ -26,7 +26,7 @@ chmod +x ~/.local/bin/db-hook
 cat > ~/.local/share/applications/dbnav.desktop <<EOF
 [Desktop Entry]
 Type=Application
-Name=VDV PKPass DB Navigator Hook
+Name=Zügli DB Navigator Hook
 Exec=/bin/sh -c "$HOME/.local/bin/db-hook %u"
 StartupNotify=false
 MimeType=x-scheme-handler/dbnav;x-scheme-handler/bahnbonus;x-scheme-handler/de.eosuptrade.avvshop;
