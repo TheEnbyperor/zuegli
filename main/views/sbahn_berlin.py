@@ -19,7 +19,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
         "scope": "openid profile email offline_access",
         "redirect_uri": "https://sbahn-ber.tickeos.de/index.php/connect/request/1",
     }, headers={
-        "User-Agent": "Zügli (q@magicalcodewit.ch)"
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     r.raise_for_status()
     soup = bs4.BeautifulSoup(r.text, "html.parser")

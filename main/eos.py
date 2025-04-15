@@ -50,7 +50,7 @@ def sign_request(request: niquests.PreparedRequest, device_id: str, eos_type: st
     eos, version = get_eos_instance(eos_type)
 
     request.headers["User-Agent"] = (f"{eos['clientName']}/{version}/{eos['mobileServiceAPIVersion']}/"
-                                     f"{eos['identifier']} (Zügli q@magicalcodewit.ch)")
+                                     f"{eos['identifier']} (Zuegli q@magicalcodewit.ch)")
     request.headers["X-Eos-Date"] = datetime.datetime.now(datetime.UTC).strftime('%a, %d %b %Y %H:%M:%S GMT')
     request.headers["Device-Identifier"] = device_id
 
