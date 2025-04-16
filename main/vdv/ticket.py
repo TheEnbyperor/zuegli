@@ -248,7 +248,7 @@ class VDVTicket:
                 lambda m: cls.parse_product_data_element(m, context, product_org_id),
                 filter(lambda m: any(d != 0 for d in m[1]), product_data)
             ))
-        except (ber_tlv.tlv.BadTag, ber_tlv.tlv.BadParameter, ber_tlv.tlv.UnexpectedEnd):
+        except (ber_tlv.tlv.BadTag, ber_tlv.tlv.BadParameter, ber_tlv.tlv.UnexpectedEnd, ber_tlv.tlv.BadLength):
             if len(product_data) == 0x44:
                 product_data = [RMVProductData.parse(product_data)]
             else:

@@ -1365,7 +1365,7 @@ def parse_ticket(
 
     try:
         ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
-    except Exception as e:
+    except Exception:
         raise TicketError(
             title="This doesn't look like a ticket type we support.",
             message="If you'd like to see support for this added, please forward your original ticket to us.",
