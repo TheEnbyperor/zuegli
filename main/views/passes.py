@@ -2633,6 +2633,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "product-label",
                     "value": "Scotrail\nTap & Pay"
                 })
+            elif ticket_data.data.origin_nlc == "I668" and ticket_data.data.destination_nlc == "I668":
+                add_pkp_img(pkp, "pass/britrail.png", "logo.png")
+                have_logo = True
+                pass_json["backgroundColor"] = "#6dbde4"
+                pass_fields["primaryFields"].append({
+                    "key": "product",
+                    "label": "product-label",
+                    "value": "BritRail Pass"
+                })
             elif ticket_data.data.fare_label == "PBD":
                 to_station = rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc)
                 pass_fields["primaryFields"].append({
@@ -2939,12 +2948,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "attributedValue": format_text(ticket_type.refunds),
                     })
 
-            if ticket_data.issuer_id in RSP_ORG_LOGO:
-                add_pkp_img(pkp, RSP_ORG_LOGO[ticket_data.issuer_id], "logo.png")
-                have_logo = True
-            else:
-                add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
-                have_logo = True
+            if not have_logo:
+                if ticket_data.issuer_id in RSP_ORG_LOGO:
+                    add_pkp_img(pkp, RSP_ORG_LOGO[ticket_data.issuer_id], "logo.png")
+                    have_logo = True
+                else:
+                    add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
+                    have_logo = True
 
         elif isinstance(ticket_data.data, rsp.RailcardData):
             validity_start = ticket_data.data.validity_start_time()
