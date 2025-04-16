@@ -252,7 +252,7 @@ class VDVTicket:
             ))
         except (ber_tlv.tlv.BadTag, ber_tlv.tlv.BadParameter, ber_tlv.tlv.UnexpectedEnd, ber_tlv.tlv.BadLength):
             if len(product_data) == 0x44:
-                product_data = [RMVProductData.parse(product_data)]
+                product_data = [RMVProductData.parse(product_data, context)]
             else:
                 product_data = [UnknownElement(len(product_data), product_data)]
 
