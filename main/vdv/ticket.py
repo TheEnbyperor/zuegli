@@ -2,6 +2,8 @@ import dataclasses
 import decimal
 import enum
 import typing
+from typing import Any
+
 import ber_tlv.tlv
 import re
 import phonenumbers
@@ -566,12 +568,9 @@ class PassengerData:
     def __str__(self):
         return f"Passenger: forename={self.forename}, surname={self.surname}, date_of_birth={self.date_of_birth}, gender={self.gender}"
 
-    @classmethod
-    def parse(cls, data: bytes, context: Context) -> "PassengerData":
-        if len(data) < 5:
-            raise util.VDVException("Invalid passenger data element")
-
-        name = data[5:].decode("iso-8859-15", "replace")
+    @staticmethod
+    def parse_name(name: bytes, context: Context) -> typing.Tuple[str, str | None, str, str | None]:
+        name = name[5:].decode("iso-8859-15", "replace")
         forename = ""
         original_forename = None
         original_surname = None
@@ -636,6 +635,15 @@ class PassengerData:
                         surname = context.account_surname
         else:
             surname = name
+
+        return forename, original_forename, surname, original_surname
+
+    @classmethod
+    def parse(cls, data: bytes, context: Context) -> "PassengerData":
+        if len(data) < 5:
+            raise util.VDVException("Invalid passenger data element")
+
+        forename, original_forename, surname, original_surname = cls.parse_name(data[5:], context)
 
         return cls(
             gender=Gender(data[0]) if data[0] != 0 else None,
@@ -897,33 +905,36 @@ class RMVProductData:
 
     start_tariff_point: int
     end_tariff_point: int
-    name: str
-    gender: typing.Optional[Gender]
-    date_of_birth: util.Date
+    passenger_data: PassengerData
     price: decimal.Decimal
     price_level: int
     vat_rate: decimal.Decimal
 
     @classmethod
-    def parse(cls, data: bytes) -> "RMVProductData":
+    def parse(cls, data: bytes, context: Context) -> "RMVProductData":
         if len(data) != 0x44:
             raise util.VDVException("Invalid RMV product data length")
 
         price = decimal.Decimal(int.from_bytes(data[24:27], "big")) / decimal.Decimal(100)
         vat = decimal.Decimal(int.from_bytes(data[27:29], "big"))
-        name = data[34:59].decode("iso-8859-15")
         date_of_birth = util.Date(
             year=util.un_bcd(data[60:62]),
             month=util.un_bcd(data[62:63]),
             day=util.un_bcd(data[63:64]),
         )
+        forename, original_forename, surname, original_surname = PassengerData.parse_name(data[34:59], context)
 
         return RMVProductData(
             start_tariff_point=int.from_bytes(data[1:4], "big"),
             end_tariff_point=int.from_bytes(data[7:10], "big"),
-            name=name.strip(),
-            gender=Gender(data[59]) if data[59] else None,
-            date_of_birth=date_of_birth,
+            passenger_data=PassengerData(
+                forename=forename,
+                original_forename=original_forename,
+                surname=surname,
+                original_surname=original_surname,
+                gender=Gender(data[59]) if data[59] else None,
+                date_of_birth=date_of_birth,
+            ),
             price=price,
             price_level=data[23],
             vat_rate=vat,
@@ -936,6 +947,12 @@ class RMVProductData:
     @property
     def vat_str(self):
         return f"{self.vat_rate:.2f}%"
+
+    def start_tariff_point_name(self):
+        return SpacialValidity.map_names(36, [self.start_tariff_point])[0]
+
+    def end_tariff_point_name(self):
+        return SpacialValidity.map_names(36, [self.end_tariff_point])[0]
 
 
 @dataclasses.dataclass
