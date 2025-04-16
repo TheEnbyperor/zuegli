@@ -2542,6 +2542,45 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "label": "telephone-number-label",
                         "value": elm.international_phone_number() if elm.phone_number else elm.id_number
                     })
+            elif isinstance(elm, vdv.ticket.RMVProductData):
+                pass_fields["secondaryFields"].append({
+                    "key": "origin",
+                    "label": "from-station-label",
+                    "value": elm.start_tariff_point_name()
+                })
+                pass_fields["secondaryFields"].append({
+                    "key": "destination",
+                    "label": "to-station-label",
+                    "value": elm.end_tariff_point_name()
+                })
+
+                if elm.passenger_data.forename and elm.passenger_data.surname:
+                    name_value = f"{elm.passenger_data.forename}\n{elm.passenger_data.surname}"
+                elif elm.passenger_data.forename:
+                    name_value = elm.passenger_data.forename
+                elif elm.passenger_data.surname:
+                    name_value = elm.passenger_data.surname
+                else:
+                    name_value = ""
+                if name_value:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": name_value,
+                        "semantics": {
+                            "passengerName": {
+                                "familyName": elm.passenger_data.surname,
+                                "givenName": elm.passenger_data.forename
+                            }
+                        }
+                    })
+                if elm.passenger_data.date_of_birth:
+                    pass_fields["secondaryFields"].append({
+                        "key": "date-of-birth",
+                        "label": "date-of-birth-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": elm.passenger_data.date_of_birth.as_date().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
 
         if pass_fields["primaryFields"]:
             pass_fields["headerFields"].append({
