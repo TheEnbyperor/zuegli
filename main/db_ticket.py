@@ -20,21 +20,21 @@ def update_from_img_elm(barcode_elm, account):
     barcode_url = barcode_elm.attrs["src"]
     if not barcode_url.startswith("data:"):
         logger.error("Barcode image not a data URL")
-        return
+        return None
     media_type, data = barcode_url[5:].split(";", 1)
     encoding, data = data.split(",", 1)
     if not media_type.startswith("image/"):
         logger.error("Unsupported media type '%s'", media_type)
-        return
+        return None
     if encoding != "base64":
         logger.error("Unsupported encoding type '%s' in barcode image", encoding)
-        return
+        return None
     barcode_img_data = base64.urlsafe_b64decode(data)
     try:
         barcode_data = aztec.decode(barcode_img_data)
     except aztec.AztecError as e:
         logger.error("Error decoding barcode image: %s", e)
-        return
+        return None
 
     try:
         ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
@@ -42,7 +42,7 @@ def update_from_img_elm(barcode_elm, account):
         return ticket_obj
     except ticket.TicketError as e:
         logger.error("Error decoding barcode ticket: %s", e)
-        return
+        return None
 
 
 def update_all():

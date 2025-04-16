@@ -570,7 +570,7 @@ class PassengerData:
 
     @staticmethod
     def parse_name(name: bytes, context: Context) -> typing.Tuple[str, str | None, str, str | None]:
-        name = name[5:].decode("iso-8859-15", "replace")
+        name = name.decode("iso-8859-15", "replace")
         forename = ""
         original_forename = None
         original_surname = None
