@@ -654,7 +654,11 @@ class SpacialValidity:
     variant: str
     organization_id: int
     start_station: typing.Optional[int] = None
+    end_stations: typing.List[int] = list
+    start_tariff_point: typing.Optional[int] = None
+    end_tariff_point: typing.Optional[int] = None
     area: typing.Optional[int] = None
+    via_tariff_points: typing.List[int] = list
     tariff_points: typing.List[int] = list
     validity_ids: typing.List[int] = list
 
@@ -686,34 +690,53 @@ class SpacialValidity:
             variant = "G"
         elif definition_type in (0x1D, 0x1E, 0x1F, 0x20):
             variant = "H"
-        elif definition_type in (0x25, 0x26, 0x27, 0x28):
+        elif definition_type in (0x21, 0x24):
             variant = "I"
+        elif definition_type in (0x25, 0x26, 0x27, 0x28):
+            variant = "J"
         elif definition_type in (0x29, 0x2A, 0x2B, 0x2C):
             variant = "K"
 
-        if definition_type in (0x01, 0x05, 0x09, 0x0D, 0x11, 0x15, 0x19, 0x1D, 0x25, 0x29):
+        if definition_type in (0x01, 0x05, 0x09, 0x0D, 0x11, 0x15, 0x19, 0x1D, 0x21, 0x25, 0x29):
             area_ids = [int.from_bytes(data[i:i + 3], 'big') for i in range(3, len(data), 3)]
         elif definition_type in (0x02, 0x06, 0x0A, 0x0E, 0x12, 0x16, 0x1A, 0x1E, 0x26, 0x2A):
             area_ids = [int.from_bytes(data[i:i + 3], 'little') for i in range(3, len(data), 3)]
-        elif definition_type in (0x03, 0x07, 0x0B, 0x0F, 0x13, 0x17, 0x1B, 0x1F, 0x27, 0x2B):
+        elif definition_type in (0x03, 0x07, 0x0B, 0x0F, 0x13, 0x17, 0x1B, 0x1F, 0x24, 0x27, 0x2B):
             area_ids = [int.from_bytes(data[i:i + 2], 'big') for i in range(3, len(data), 2)]
         elif definition_type in (0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20, 0x28, 0x2C):
             area_ids = [int.from_bytes(data[i:i + 2], 'little') for i in range(3, len(data), 2)]
         else:
             area_ids = []
 
-        if variant == "B":
+        if variant == "A":
             return cls(
                 variant=variant,
                 organization_id=area_org_id,
                 area=area_ids[0],
-                tariff_points=[a for a in area_ids[1:] if a != 0]
+                start_tariff_point=area_ids[1],
+                end_tariff_point=area_ids[2],
+                via_tariff_points=area_ids[3:]
+            )
+        elif variant == "B":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                area=area_ids[0],
+                tariff_points=area_ids[1:]
+            )
+        elif variant == "C":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                start_tariff_point=area_ids[0],
+                end_tariff_point=area_ids[1],
+                via_tariff_points=area_ids[2:]
             )
         elif variant == "D":
             return cls(
                 variant=variant,
                 organization_id=area_org_id,
-                tariff_points=[a for a in area_ids if a != 0]
+                tariff_points=area_ids,
             )
         elif variant == "E":
             return cls(
@@ -721,14 +744,40 @@ class SpacialValidity:
                 organization_id=area_org_id,
                 start_station=area_ids[0],
                 area=area_ids[1],
-                tariff_points=[a for a in area_ids[2:] if a != 0]
+                start_tariff_point=area_ids[2],
+                end_tariff_point=area_ids[3],
+                tariff_points=area_ids[4:]
+            )
+        elif variant == "F":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                start_station=area_ids[0],
+                area=area_ids[1],
+                tariff_points=area_ids[2:]
+            )
+        elif variant == "G":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                start_station=area_ids[0],
+                start_tariff_point=area_ids[1],
+                end_tariff_point=area_ids[2],
+                via_tariff_points=area_ids[3:],
             )
         elif variant == "H":
             return cls(
                 variant=variant,
                 organization_id=area_org_id,
                 start_station=area_ids[0],
-                tariff_points=[a for a in area_ids[1:] if a != 0]
+                tariff_points=area_ids[1:],
+            )
+        elif variant == "I":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                start_station=area_ids[0],
+                end_stations=area_ids[1:],
             )
         elif variant:
             return cls(
@@ -776,6 +825,18 @@ class SpacialValidity:
 
     def start_station_name(self):
         return self.map_names(self.organization_id, [self.start_station])[0] if self.start_station else None
+
+    def end_stations_name(self):
+        return self.map_names(self.organization_id, self.end_stations)
+
+    def start_tariff_point_name(self):
+        return self.map_names(self.organization_id, [self.start_tariff_point])[0] if self.start_tariff_point else None
+
+    def end_tariff_point_name(self):
+        return self.map_names(self.organization_id, [self.end_tariff_point])[0] if self.end_tariff_point else None
+
+    def via_tariff_point_names(self):
+        return self.map_names(self.organization_id, self.via_tariff_points)
 
     def tariff_point_names(self):
         return self.map_names(self.organization_id, self.tariff_points)

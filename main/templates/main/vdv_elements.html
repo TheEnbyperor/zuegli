@@ -246,6 +246,34 @@
                                 </dd>
                             </div>
                         {% endif %}
+                        {% if elm.end_stations %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "End stations" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        {% for n in elm.end_stations_names %}
+                                            <li>{{ n }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.start_tariff_point %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Origin tariff point" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ elm.start_tariff_point_name }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if elm.end_tariff_point %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "End tariff point" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ elm.end_tariff_point_name }}
+                                </dd>
+                            </div>
+                        {% endif %}
                         {% if elm.area %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">{% trans "Area" %}</dt>
@@ -254,13 +282,25 @@
                                 </dd>
                             </div>
                         {% endif %}
+                        {% if elm.via_tariff_points %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Via tariff points" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        {% for tp in elm.via_tariff_point_names %}
+                                            <li>{{ tp }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </dd>
+                            </div>
+                        {% endif %}
                         {% if elm.tariff_points %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">{% trans "Tariff points" %}</dt>
                                 <dd class="govuk-summary-list__value">
                                     <ul class="govuk-list govuk-list--bullet">
-                                        {% for area in elm.tariff_point_names %}
-                                            <li>{{ area }}</li>
+                                        {% for tp in elm.tariff_point_names %}
+                                            <li>{{ tp }}</li>
                                         {% endfor %}
                                     </ul>
                                 </dd>

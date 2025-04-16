@@ -21,11 +21,15 @@ def get_vrs_tarifgebiete_list():
 def get_db_station_name(code: int):
     if station := stations.get_station_by_db(code):
         return station["name"]
+    else:
+        return None
 
 
 def vrs_tariff(code: int):
     if name := get_vrs_tarifgebiete_list().get(str(code), None):
         return name
+    else:
+        return None
 
 def vrr_tariff(code: int):
     if 100000 <= code <= 108999:
@@ -46,6 +50,8 @@ def vrr_tariff(code: int):
         return f"Preisstufe B im Bartarif: Waben {code - 180000}"
     elif 190000 <= code <= 190999:
         return f"Preisstufe C im Bartarif: Waben {code - 190000}"
+    else:
+        return None
 
 
 def vbb_tariff(code: int):
@@ -54,12 +60,22 @@ def vbb_tariff(code: int):
         code = f"900{code[1:]}"
         if station := models.ZHVStop.objects.filter(dhid_raw_id=code, authority="VBB").first():
             return f"{station.name}, {station.municipality}"
+        else:
+            return None
     elif code == 1200:
         return "Berlin AB"
     elif code == 1201:
         return "Berlin BC"
     elif code == 1202:
         return "Berlin ABC"
+    else:
+        return None
+
+def saarvv_tariff(code: int):
+    if code < 1000:
+        return f"Waben {code}"
+    else:
+        return None
 
 
 SPACIAL_VALIDITY = {
@@ -82,5 +98,6 @@ SPACIAL_VALIDITY = {
     6262: get_db_station_name,
     6292: {
         128: "Zone M"
-    }
+    },
+    6310: saarvv_tariff,
 }
