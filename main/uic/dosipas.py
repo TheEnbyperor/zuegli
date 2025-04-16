@@ -165,7 +165,7 @@ class DOSIPASEnvelope:
                     level_1_signature=data["level2SignedData"]["level1Signature"],
                     level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
-        except asn1tools.DecodeError:
+        except (asn1tools.DecodeError, IndexError):
             pass
 
         try:
@@ -180,7 +180,7 @@ class DOSIPASEnvelope:
                     level_1_signature=data["level2SignedData"]["level1Signature"],
                     level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
-        except asn1tools.DecodeError:
+        except (asn1tools.DecodeError, IndexError):
             pass
 
         if out:
