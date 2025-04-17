@@ -81,10 +81,10 @@ class Command(BaseCommand):
                 row["callsign"] = None
             out["airlines"].append(row)
             i = len(out["airlines"]) - 1
-            if row["iata_code"]:
+            if row["iata_code"] and row["active"] == "Y":
                 if row["iata_code"] not in out["iata_codes"]:
                     out["iata_codes"][row["iata_code"]] = i
-            if row["icao_code"]:
+            if row["icao_code"] and row["active"] == "Y":
                 if row["icao_code"] not in out["icao_codes"]:
                     out["icao_codes"][row["icao_code"]] = i
 
