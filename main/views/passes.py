@@ -463,7 +463,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 to_station = templatetags.rics.get_station(
                                     ticket_document["toStationNum"], ticket_document)
 
-                            if via_stations[0].get("route"):
+                            if via_stations and via_stations[0].get("route"):
                                 route_start = via_stations[0]["route"][0]
                                 route_end = via_stations[0]["route"][-1]
 
