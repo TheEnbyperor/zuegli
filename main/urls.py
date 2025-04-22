@@ -51,6 +51,11 @@ urlpatterns = [
     path('account/avv_login/callback', views.avv.avv_login_callback, name='avv_login_callback'),
     path('account/avv/', views.avv.avv_account, name='avv_account'),
 
+    path('account/vestische_login/', views.vrr.vestische_login, name='vestische_login'),
+    path('account/vestische_login/login', views.vrr.vestische_login_start, name='vestische_login_start'),
+    path('account/vestische_login/logout', views.vrr.vestische_logout, name='vestische_logout'),
+    path('account/vestische_login/callback', views.vrr.vestische_login_callback, name='vestische_login_callback'),
+
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 
     path('calendar/<str:account_token>.ics', views.ical.account_calendar, name='account_calendar'),

@@ -87,6 +87,31 @@ def create_user_profile(instance, created, **kwargs):
     instance.account.save()
 
 
+class AccountOAuth(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="oauth")
+    provider = models.CharField(max_length=255, verbose_name="Provider", db_index=True)
+    token = models.TextField(null=True, blank=True, verbose_name="Bearer token")
+    token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Bearer token expiration")
+    refresh_token = models.TextField(null=True, blank=True, verbose_name="Refresh token")
+    refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Refresh token expiration")
+
+    class Meta:
+        verbose_name = "Account OAuth"
+        verbose_name_plural = "Account OAuths"
+
+    def __str__(self):
+        return f"{self.provider} ({self.account})"
+
+    def is_authenticated(self) -> bool:
+        now = timezone.now()
+        if self.token and self.token_expires_at and self.token_expires_at > now:
+            return True
+        elif self.refresh_token and (not self.refresh_token_expires_at or self.refresh_token_expires_at > now):
+            return True
+        else:
+            return False
+
+
 class Ticket(models.Model):
     TYPE_DEUTCHLANDTICKET = "deutschlandticket"
     TYPE_KLIMATICKET = "klimaticket"
@@ -131,6 +156,9 @@ class Ticket(models.Model):
     )
     avv_account = models.ForeignKey(
         "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="avv_tickets", verbose_name="AVV Account", db_index=True
+    )
+    oauth_account = models.ForeignKey(
+        "AccountOAuth", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="OAuth Account", db_index=True
     )
     photos = models.JSONField(default=dict)
 

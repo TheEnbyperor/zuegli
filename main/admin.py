@@ -177,6 +177,19 @@ class AppleDeviceAdmin(admin.ModelAdmin):
     ]
 
 
+class OAuthInline(admin.StackedInline):
+    extra = 0
+    model = models.AccountOAuth
+    fk_name = "account"
+    readonly_fields = [
+        "provider",
+        "token",
+        "token_expires_at",
+        "refresh_token",
+        "refresh_token_expires_at",
+    ]
+
+
 class TicketAccountInline(admin.StackedInline):
     extra = 0
     model = models.Ticket
@@ -224,6 +237,7 @@ class AccountAdmin(admin.ModelAdmin):
         "calendar_token",
     ]
     inlines = [
+        OAuthInline,
         TicketAccountInline,
         DBSubscriptionInline,
         VDVSmartcardInline,
