@@ -101,7 +101,7 @@ class RCT2Parser:
         except ValueError:
             date_of_birth = None
 
-        if issuing_rics in (60, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
+        if issuing_rics in (60, 1174, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
             passenger_name = re.sub(r"\s+", " ", traveller_data.split("\n")[0])
         else:
             passenger_name = None

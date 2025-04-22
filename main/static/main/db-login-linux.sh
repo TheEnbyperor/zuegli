@@ -10,13 +10,16 @@ cat > ~/.local/bin/db-hook <<EOF
 
 if [[ "\$1" == "dbnav:"* ]]; then
   url=\$(echo -n \$1 | base64)
-  xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/db_login/callback?url=\$url"
+  xdg-open "https://xn--zgli-0ra.app/account/db_login/callback?url=\$url"
 elif [[ "\$1" == "bahnbonus:"* ]]; then
   url=\$(echo -n \$1 | base64)
-  xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/bahnbonus_login/callback?url=\$url"
+  xdg-open "https://xn--zgli-0ra.app/account/bahnbonus_login/callback?url=\$url"
 elif [[ "\$1" == "de.eosuptrade.avvshop:"* ]]; then
   url=\$(echo -n \$1 | base64)
-  xdg-open "https://vdv-pkpass.magicalcodewit.ch/account/avv_login/callback?url=\$url"
+  xdg-open "https://xn--zgli-0ra.app/account/avv_login/callback?url=\$url"
+elif [[ "\$1" == "vestische:"* ]]; then
+  url=\$(echo -n \$1 | base64)
+  xdg-open "https://xn--zgli-0ra.app/account/vestische_login/callback?url=\$url"
 else
   xdg-open "\$1"
 fi
