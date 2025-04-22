@@ -5,11 +5,17 @@
   "040": "Kinderreich Familie",
   "046": "Erhöhte Kostenbeteiligung",
   "090": "Weekend Ticket",
+  "097": "Kids Ticket (-12)",
+  "832": "Bike Ticket",
+  "980": "MoBIB manufacturerd proof",
   "DP1": "Standard Multi",
+  "DP2": "Standard Multi",
   "DP3": "Local Multi",
   "DP5": "Youth Multi Under 26",
   "DP7": "Youth Holidays 1 Week",
+  "DW3": "Off-peak Unlimited",
   "65P": "Senior Ticket 65+",
   "0040002614": "BruPass",
-  "0040002615": "BruPass XL"
+  "0040002615": "BruPass XL",
+  "VAC": "Vaccination Ticket"
 }
