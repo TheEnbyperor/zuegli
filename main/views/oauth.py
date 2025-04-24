@@ -8,7 +8,25 @@ SCHEMES = {
     "bahnbonus": "bahnbonus",
     "de.eosuptrade.avvshop": "avv",
     "vestische": "vestische",
-    "bvr": "nrway"
+    "bvr": "nrway",
+    "sobus": "sobus",
+    "classic": "vrr",
+    "bogestra": "bogestra",
+    "dsw21": "dsw21",
+    "dvg": "dvg",
+    "hst": "hagen",
+    "hcr": "hcr",
+    "moebus": "moebus",
+    "viersen": "viersen",
+    "niag": "niag",
+    "evag": "ruhrbahn-essen",
+    "mvg": "ruhrbahn-muellheim",
+    "sdg": "dormagen",
+    "swn": "neuss",
+    "swr": "remscheid",
+    "stoag": "oberhausen",
+    "swk": "swk",
+    "ver": "ver",
 }
 
 @login_required
