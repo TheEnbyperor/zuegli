@@ -7,7 +7,7 @@
     <div class="govuk-width-container">
         <h1 class="govuk-heading-xl">BahnBonus - Login with DB</h1>
         {% include "main/account/db_login_install.html" %}
-        <a href="{% url 'bahnbonus_login_start' %}" class="govuk-button govuk-button--start">
+        <a href="{% url 'oauth_login_start' 'bahnbonus' %}" class="govuk-button govuk-button--start">
             Login
             <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19"
                  viewBox="0 0 33 40" aria-hidden="true" focusable="false">

@@ -1,10 +1,16 @@
 import base64
+import dataclasses
 import niquests
 import niquests.exceptions
 import niquests.adapters
 import logging
 import urllib3.util
-from . import models, ticket, views, aztec
+from . import models, ticket, oauth, aztec
+
+@dataclasses.dataclass
+class Provider:
+    orders: str
+    barcode: str
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -13,10 +19,14 @@ retry_strategy = urllib3.util.Retry(
 )
 
 PROVIDERS = {
-    "vestische": {
-        "orders": "https://ticketshop.vestische.de/TicketShop/Shop/ListOrdersV2",
-        "barcode": "https://ticketshop.vestische.de/TicketShop/Shop/QRCode"
-    }
+    "vestische": Provider(
+        orders="https://ticketshop.vestische.de/TicketShop/Shop/ListOrdersV2",
+        barcode="https://ticketshop.vestische.de/TicketShop/Shop/QRCode"
+    ),
+    "nrway": Provider(
+        orders="https://nrway.dbregiobus-nrw.de/TicketShop/Shop/ListOrdersV2",
+        barcode="https://nrway.dbregiobus-nrw.de/TicketShop/Shop/QRCode"
+    )
 }
 
 def update_all():
@@ -30,18 +40,17 @@ def update_all():
 
 def update_vrr_tickets(session, account: "models.Account"):
     for provider_id, provider in PROVIDERS.items():
-        oauth = account.oauth.filter(provider=provider_id).first()
-        if not oauth:
-            continue
-        if not oauth.is_authenticated():
+        if not account.is_oauth_authenticated(provider_id):
             continue
 
-        token = views.vrr.get_token(account, provider_id)
+        logger.info(f"Updating {provider_id} for account {account}")
+
+        token = oauth.get_token(account, provider_id)
         if not token:
             logger.error(f"Failed to get access token for account {account}")
             return
 
-        r = session.post(provider["orders"], headers={
+        r = session.post(provider.orders, headers={
             "Authorization": f"Bearer {token}",
             "User-Agent": "Zuegli (q@magicalcodewit.ch)"
         }, json={
@@ -55,7 +64,7 @@ def update_vrr_tickets(session, account: "models.Account"):
 
         for order in data["Orders"]:
             for t in order["Tickets"]:
-                r = session.post(provider["barcode"], headers={
+                r = session.post(provider.barcode, headers={
                     "Authorization": f"Bearer {token}",
                     "User-Agent": "Zuegli (q@magicalcodewit.ch)"
                 }, json={
@@ -86,3 +95,5 @@ def update_vrr_tickets(session, account: "models.Account"):
                         logger.info(f"Updated ticket {t['ID']} for account {account}")
                     except ticket.TicketError as e:
                         logger.error(f"Error decoding barcode ticket: {e}")
+
+        logger.info(f"Updated {provider_id} for account {account}")

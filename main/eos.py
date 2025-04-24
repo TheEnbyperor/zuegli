@@ -88,13 +88,12 @@ def map_customer_field(f):
 
 
 def get_customer_account(account: "models.Account", operator: str, url_base: str, eos_type: str):
-    token = getattr(account, f"{operator}_token")
-    device_id = getattr(account, f"{operator}_device_id")
+    account_token = models.AccountOAuth.objects.get(account=account, provider=operator)
 
     r = niquests.post(f"{url_base}/index.php/mobileService/customer/fields", json={}, hooks={
-        "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+        "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
     }, headers={
-        "Authorization": token
+        "Authorization": account_token.token,
     })
     r.raise_for_status()
     data = r.json()
@@ -103,21 +102,19 @@ def get_customer_account(account: "models.Account", operator: str, url_base: str
 
 
 def update_eos_tickets(account: "models.Account", operator: str, url_base: str, eos_type: str):
-    if not getattr(account, f"{operator}_token") or not getattr(account, f"{operator}_device_id"):
+    account_token = models.AccountOAuth.objects.filter(account=account, provider=operator).first()
+    if not account_token:
         return
 
-    token = getattr(account, f"{operator}_token")
-    device_id = getattr(account, f"{operator}_device_id")
-
-    logger.info(f"Updating EOS {device_id}")
+    logger.info(f"Updating EOS {account_token.device_id}")
 
     r = niquests.post(f"{url_base}/index.php/mobileService/sync", json={}, hooks={
-        "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+        "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
     }, headers={
-        "Authorization": token
+        "Authorization": account_token.token,
     })
     if not r.ok:
-        logger.error(f"Failed to update EOS {device_id}: {r.text}")
+        logger.error(f"Failed to update EOS {account_token.device_id}: {r.text}")
         return
 
     data = r.json()
@@ -129,12 +126,12 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
             "provide_aztec_content": False,
             "parameters": False,
         }, hooks={
-            "pre_request": [lambda req: sign_request(req, device_id, eos_type)],
+            "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
         }, headers={
-            "Authorization": token
+            "Authorization": account_token.token,
         })
         if not r.ok:
-            logger.error(f"Failed to update EOS {device_id}: {r.text}")
+            logger.error(f"Failed to update EOS {account_token.device_id}: {r.text}")
         data = r.json()
         for t in data["tickets"].values():
             template = json.loads(t["template"])
@@ -172,10 +169,10 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
 
             try:
                 ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
-                setattr(ticket_obj, f"{operator}_account", account)
+                ticket_obj.oauth_account = account_token
                 ticket_obj.save()
             except ticket.TicketError as e:
                 logger.error("Error decoding barcode ticket: %s", e)
                 continue
 
-    logger.info(f"Successfully updated EOS {device_id}")
+    logger.info(f"Successfully updated EOS {account_token.device_id}")

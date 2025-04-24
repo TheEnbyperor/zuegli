@@ -24,11 +24,10 @@
                 <dt class="govuk-summary-list__key">{% trans "DB Account" %}</dt>
                 <dd class="govuk-summary-list__value">
                     {% if user.account.is_db_authenticated %}
-                        <p class="govuk-body"><code>{{ user.account.db_account_id }}</code></p>
                         <div class="govuk-button-group">
                             <a class="govuk-button govuk-button--secondary"
                                href="{% url 'db_login' %}">{% trans "Reauthenticate" %}</a>
-                            <a class="govuk-button govuk-button--warning" href="{% url 'db_logout' %}">{% trans "Unlink" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'db' %}">{% trans "Unlink" %}</a>
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'db_login' %}">{% trans "Login with DB" %}</a>
@@ -48,7 +47,7 @@
                         <div class="govuk-button-group">
                             <a class="govuk-button govuk-button--secondary"
                                href="{% url 'bahnbonus_login' %}">{% trans "Reauthenticate" %}</a>
-                            <a class="govuk-button govuk-button--warning" href="{% url 'bahnbonus_logout' %}">{% trans "Unlink" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'bahnbonus' %}">{% trans "Unlink" %}</a>
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'bahnbonus_login' %}">{% trans "Login with DB" %}</a>
@@ -67,7 +66,7 @@
                     {% if user.account.is_sbahn_berlin_authenticated %}
                         <div class="govuk-button-group">
                             <a class="govuk-button govuk-button--secondary" href="{% url 'sbahn_berlin_login' %}">{% trans "Reauthenticate" %}</a>
-                            <a class="govuk-button govuk-button--warning" href="{% url 'sbahn_berlin_logout' %}">{% trans "Unlink" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'sbahn_berlin' %}">{% trans "Unlink" %}</a>
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'sbahn_berlin_login' %}">{% trans "Login with S-Bahn Berlin" %}</a>
@@ -80,7 +79,7 @@
                     {% if user.account.is_avv_authenticated %}
                         <div class="govuk-button-group">
                             <a class="govuk-button govuk-button--secondary" href="{% url 'avv_login' %}">{% trans "Reauthenticate" %}</a>
-                            <a class="govuk-button govuk-button--warning" href="{% url 'avv_logout' %}">{% trans "Unlink" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'avv' %}">{% trans "Unlink" %}</a>
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'avv_login' %}">{% trans "Login with AVV" %}</a>
@@ -93,10 +92,36 @@
                     {% if user.account.is_saarvv_authenticated %}
                         <div class="govuk-button-group">
                             <a class="govuk-button govuk-button--secondary" href="{% url 'saarvv_login' %}">{% trans "Reauthenticate" %}</a>
-                            <a class="govuk-button govuk-button--warning" href="{% url 'saarvv_logout' %}">{% trans "Unlink" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'saarvv' %}">{% trans "Unlink" %}</a>
                         </div>
                     {% else %}
                         <a class="govuk-button" href="{% url 'saarvv_login' %}">{% trans "Login with SaarVV" %}</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "DB Regio NRW Account" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_nrway_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'nrway_login' %}">{% trans "Reauthenticate" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'nrway' %}">{% trans "Unlink" %}</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'nrway_login' %}">{% trans "Login with DB" %}</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Vestische Account" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_vestische_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'vestische_login' %}">{% trans "Reauthenticate" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'vestische' %}">{% trans "Unlink" %}</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'vestische_login' %}">{% trans "Login with Vestische" %}</a>
                     {% endif %}
                 </dd>
             </div>

@@ -6,8 +6,7 @@ import logging
 import bs4
 import secrets
 import urllib3.util
-
-from . import models, aztec, ticket, views
+from . import models, aztec, ticket, oauth
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -54,7 +53,7 @@ def update_all():
         if not account.is_db_authenticated():
             continue
 
-        db_token = views.db.get_db_token(account)
+        db_token = oauth.get_token(account, "db")
         if not db_token:
             logger.error(f"Failed to get access token for account {account.db_account_id}")
             continue

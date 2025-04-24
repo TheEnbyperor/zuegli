@@ -22,62 +22,44 @@ def make_pass_token():
 
 class Account(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    db_token = models.TextField(null=True, blank=True, verbose_name="Deutsche Bahn bearer token")
-    db_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Deutsche Bahn bearer token expiration")
-    db_refresh_token = models.TextField(null=True, blank=True, verbose_name="Deutsche Bahn refresh token")
-    db_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Deutsche Bahn refresh token expiration")
-    db_account_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Deutsche Bahn Account ID")
-    bahnbonus_token = models.TextField(null=True, blank=True, verbose_name="BahnBonus bearer token")
-    bahnbonus_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus bearer token expiration")
-    bahnbonus_refresh_token = models.TextField(null=True, blank=True, verbose_name="BahnBonus refresh token")
-    bahnbonus_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="BahnBonus refresh token expiration")
-    avv_token = models.TextField(null=True, blank=True, verbose_name="AVV Bearer token")
-    avv_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="AVV Bearer token expiration")
-    avv_refresh_token = models.TextField(null=True, blank=True, verbose_name="AVV Refresh token")
-    avv_refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="AVV Rrefresh token expiration")
-    avv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="AVV Device ID")
-    saarvv_token = models.TextField(null=True, blank=True, verbose_name="SaarVV Token")
-    saarvv_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="SaarVV Device ID")
-    sbahn_berlin_token = models.TextField(null=True, blank=True, verbose_name="S-Bahn Berlin Token")
-    sbahn_berlin_device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="S-Bahn Berlin Device ID")
     calendar_token = models.CharField(max_length=255, verbose_name="iCal token", default=make_pass_token)
     nfc_link_token = models.CharField(max_length=255, verbose_name="NFC link token", default=make_pass_token)
 
     def __str__(self):
         return str(self.user)
 
-    def is_db_authenticated(self) -> bool:
-        now = timezone.now()
-        if self.db_token and self.db_token_expires_at and self.db_token_expires_at > now:
-            return True
-        elif self.db_refresh_token and self.db_refresh_token_expires_at and self.db_refresh_token_expires_at > now:
-            return True
-        else:
+    def is_oauth_authenticated(self, provider: str) -> bool:
+        oauth = self.oauth.filter(provider=provider).first()
+        if not oauth:
             return False
+        return oauth.is_authenticated()
 
-    def is_bahnbonus_authenticated(self) -> bool:
-        now = timezone.now()
-        if self.bahnbonus_token and self.bahnbonus_token_expires_at and self.bahnbonus_token_expires_at > now:
-            return True
-        elif self.bahnbonus_refresh_token and self.bahnbonus_refresh_token_expires_at and self.bahnbonus_refresh_token_expires_at > now:
-            return True
-        else:
-            return False
+    def is_db_authenticated(self):
+        return self.is_oauth_authenticated("db")
 
-    def is_avv_authenticated(self) -> bool:
-        now = timezone.now()
-        if self.avv_token and self.avv_token_expires_at and self.avv_token_expires_at > now:
-            return True
-        elif self.avv_refresh_token and self.avv_refresh_token_expires_at and self.avv_refresh_token_expires_at > now:
-            return True
-        else:
-            return False
+    def is_bahnbonus_authenticated(self):
+        return self.is_oauth_authenticated("bahnbonus")
 
-    def is_saarvv_authenticated(self) -> bool:
-        return bool(self.saarvv_token)
+    def is_avv_authenticated(self):
+        return self.is_oauth_authenticated("avv")
 
-    def is_sbahn_berlin_authenticated(self) -> bool:
-        return bool(self.sbahn_berlin_token)
+    def is_vestische_authenticated(self):
+        return self.is_oauth_authenticated("vestische")
+
+    def is_sobus_authenticated(self):
+        return self.is_oauth_authenticated("sobus")
+
+    def is_nrway_authenticated(self):
+        return self.is_oauth_authenticated("nrway")
+
+    def is_vrr_authenticated(self):
+        return self.is_oauth_authenticated("vrr")
+
+    def is_saarvv_authenticated(self):
+        return self.is_oauth_authenticated("saarvv")
+
+    def is_sbahn_berlin_authenticated(self):
+        return self.is_oauth_authenticated("sbahn_berlin")
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -94,6 +76,8 @@ class AccountOAuth(models.Model):
     token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Bearer token expiration")
     refresh_token = models.TextField(null=True, blank=True, verbose_name="Refresh token")
     refresh_token_expires_at = models.DateTimeField(blank=True, null=True, verbose_name="Refresh token expiration")
+    device_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Device ID")
+    extra_data = models.JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name = "Account OAuth"
@@ -104,7 +88,7 @@ class AccountOAuth(models.Model):
 
     def is_authenticated(self) -> bool:
         now = timezone.now()
-        if self.token and self.token_expires_at and self.token_expires_at > now:
+        if self.token and (not self.token_expires_at or self.token_expires_at > now):
             return True
         elif self.refresh_token and (not self.refresh_token_expires_at or self.refresh_token_expires_at > now):
             return True
@@ -148,19 +132,10 @@ class Ticket(models.Model):
     db_subscription = models.ForeignKey(
         "DBSubscription", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="DB Subscription", db_index=True
     )
-    saarvv_account = models.ForeignKey(
-        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="saarvv_tickets", verbose_name="SaarVV Account", db_index=True
-    )
-    sbahn_berlin_account = models.ForeignKey(
-        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="sbahn_berlin_tickets", verbose_name="S-Bahn Berlin Account", db_index=True
-    )
-    avv_account = models.ForeignKey(
-        "Account", on_delete=models.SET_NULL, null=True, blank=True, related_name="avv_tickets", verbose_name="AVV Account", db_index=True
-    )
     oauth_account = models.ForeignKey(
         "AccountOAuth", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="OAuth Account", db_index=True
     )
-    photos = models.JSONField(default=dict)
+    photos = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
         return f"{self.get_ticket_type_display()} - {self.id}"
@@ -245,7 +220,7 @@ class AccessLogEntry(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="access_logs", db_index=True)
     action = models.CharField(choices=ACTIONS, max_length=255)
     remote_ip = models.GenericIPAddressField()
-    headers = models.JSONField(default=dict)
+    headers = models.JSONField(default=dict, blank=True)
     account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs", db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 

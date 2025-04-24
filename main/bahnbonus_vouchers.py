@@ -4,7 +4,7 @@ import niquests.adapters
 import logging
 import urllib3.util
 
-from . import models, ticket, views
+from . import models, ticket, oauth
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -21,7 +21,7 @@ def update_all():
         if not account.is_bahnbonus_authenticated():
             continue
 
-        bb_token = views.db.get_bahnbonus_token(account)
+        bb_token = oauth.get_token(account, "bahnbonus")
         if not bb_token:
             logger.error(f"Failed to get BahnBonus access token for account {account}")
             continue
