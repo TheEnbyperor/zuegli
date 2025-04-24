@@ -222,18 +222,6 @@ class DBSubscriptionInline(admin.StackedInline):
 class AccountAdmin(admin.ModelAdmin):
     readonly_fields = [
         "user",
-        "db_token",
-        "db_token_expires_at",
-        "db_refresh_token",
-        "db_refresh_token_expires_at",
-        "bahnbonus_token",
-        "bahnbonus_token_expires_at",
-        "bahnbonus_refresh_token",
-        "bahnbonus_refresh_token_expires_at",
-        "saarvv_token",
-        "saarvv_device_id",
-        "sbahn_berlin_token",
-        "sbahn_berlin_device_id",
         "calendar_token",
     ]
     inlines = [

@@ -5,7 +5,7 @@ import urllib.parse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import forms, eos, sbahn_berlin
+from .. import forms, eos, sbahn_berlin, models
 
 
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
@@ -57,9 +57,14 @@ def sbahn_berlin_login(request):
             else:
                 messages.success(request, "Login successful")
                 token, device_id = token
-                request.user.account.sbahn_berlin_token = token
-                request.user.account.sbahn_berlin_device_id = device_id
-                request.user.account.save()
+                models.AccountOAuth.objects.update_or_create(
+                    account=request.user.account,
+                    provider="sbahn_berlin",
+                    defaults={
+                        "token": token,
+                        "device_id": device_id,
+                    }
+                )
                 sbahn_berlin.update_sbahn_berlin_tickets(request.user.account)
                 return redirect("sbahn_berlin_account")
     else:
@@ -71,22 +76,14 @@ def sbahn_berlin_login(request):
 
 
 @login_required
-def sbahn_berlin_logout(request):
-    request.user.account.sbahn_berlin_token = None
-    request.user.account.sbahn_berlin_device_id = None
-    request.user.account.save()
-    messages.add_message(request, messages.SUCCESS, "Successfully logged out")
-    return redirect("account")
-
-
-@login_required
 def sbahn_berlin_account(request):
-    if not request.user.account.sbahn_berlin_token:
+    if not request.user.account.is_sbahn_berlin_authenticated():
         return redirect("sbahn_berlin_login")
 
+    account_oauth = models.AccountOAuth.objects.get(account=request.user.account, provider="sbahn_berlin")
     fields = eos.get_customer_account(request.user.account, "sbahn_berlin", "https://sbahn-ber.tickeos.de", "sbb")
 
     return render(request, "main/account/sbahn_berlin.html", {
         "fields": fields,
-        "tickets": request.user.account.sbahn_berlin_tickets,
+        "tickets": account_oauth.tickets,
     })

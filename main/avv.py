@@ -5,7 +5,7 @@ import niquests.adapters
 import logging
 import urllib3.util
 from django.utils import timezone
-from . import models, ticket, views
+from . import models, ticket, views, oauth
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -30,17 +30,18 @@ def update_avv_tickets(account: "models.Account"):
     if not account.is_avv_authenticated():
         return
 
-    avv_token = views.avv.get_avv_token(account)
+    avv_token = oauth.get_token(account, "avv")
     if not avv_token:
         logger.error(f"Failed to get access token for account {account}")
         return
 
+    account_oauth = models.AccountOAuth.objects.get(account=account, provider="avv")
     now = timezone.now()
 
     r = niquests.post("https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements", headers={
         "Authorization": f"Bearer {avv_token}",
         "ClientToken": client_token,
-        "deviceId": account.avv_device_id,
+        "deviceId": account_oauth.device_id,
         "language": "de",
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     }, json={

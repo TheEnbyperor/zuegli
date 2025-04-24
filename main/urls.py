@@ -22,39 +22,27 @@ urlpatterns = [
 
     path('account/', views.account.index, name='account'),
 
-    path('account/db/', views.account.db_account, name='db_account'),
     path('account/db/add_ticket/', views.db.db_add_ticket, name='db_add_ticket'),
     path('account/db_abo/', views.db_abo.view_db_abo, name='db_abo'),
     path('account/db_abo/new/', views.db_abo.new_abo, name='new_db_abo'),
     path('account/db_abo/abo/<abo_id>/delete/', views.db_abo.delete_abo, name='delete_db_abo'),
-    path('account/db_login/', views.db.db_login, name='db_login'),
-    path('account/db_login/login', views.db.db_login_start, name='db_login_start'),
-    path('account/db_login/logout', views.db.db_logout, name='db_logout'),
-    path('account/db_login/callback', views.db.db_login_callback, name='db_login_callback'),
 
-    path('account/bahnbonus_login/', views.db.bahnbonus_login, name='bahnbonus_login'),
-    path('account/bahnbonus_login/login', views.db.bahnbonus_login_start, name='bahnbonus_login_start'),
-    path('account/bahnbonus_login/logout', views.db.bahnbonus_logout, name='bahnbonus_logout'),
-    path('account/bahnbonus_login/callback', views.db.bahnbonus_login_callback, name='bahnbonus_login_callback'),
-
-    path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
-    path('account/saarvv_login/logout/', views.saarvv.saarvv_logout, name='saarvv_logout'),
+    path('account/avv/', views.avv.avv_account, name='avv_account'),
+    path('account/db/', views.db.db_account, name='db_account'),
     path('account/saarvv/', views.saarvv.saarvv_account, name='saarvv_account'),
-
-    path('account/sbahn_berlin_login/', views.sbahn_berlin.sbahn_berlin_login, name='sbahn_berlin_login'),
-    path('account/sbahn_berlin_login/logout/', views.sbahn_berlin.sbahn_berlin_logout, name='sbahn_berlin_logout'),
     path('account/sbahn_berlin/', views.sbahn_berlin.sbahn_berlin_account, name='sbahn_berlin_account'),
 
+    path('account/db_login/', views.db.db_login, name='db_login'),
+    path('account/bahnbonus_login/', views.db.bahnbonus_login, name='bahnbonus_login'),
     path('account/avv_login/', views.avv.avv_login, name='avv_login'),
-    path('account/avv_login/login', views.avv.avv_login_start, name='avv_login_start'),
-    path('account/avv_login/logout', views.avv.avv_logout, name='avv_logout'),
-    path('account/avv_login/callback', views.avv.avv_login_callback, name='avv_login_callback'),
-    path('account/avv/', views.avv.avv_account, name='avv_account'),
-
     path('account/vestische_login/', views.vrr.vestische_login, name='vestische_login'),
-    path('account/vestische_login/login', views.vrr.vestische_login_start, name='vestische_login_start'),
-    path('account/vestische_login/logout', views.vrr.vestische_logout, name='vestische_logout'),
-    path('account/vestische_login/callback', views.vrr.vestische_login_callback, name='vestische_login_callback'),
+    path('account/nrway_login/', views.vrr.nrway_login, name='nrway_login'),
+    path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
+    path('account/sbahn_berlin_login/', views.sbahn_berlin.sbahn_berlin_login, name='sbahn_berlin_login'),
+
+    path('account/oauth/<str:provider>/login', views.oauth.oauth_login_start, name='oauth_login_start'),
+    path('account/oauth/<str:provider>/logout', views.oauth.oauth_logout, name='oauth_logout'),
+    path('account/oauth_callback', views.oauth.oauth_login_callback, name='oauth_login_callback'),
 
     path('account/sncb/add_ticket/', views.sncb.sncb_add_ticket, name='sncb_add_ticket'),
 

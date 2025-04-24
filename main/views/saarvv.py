@@ -3,7 +3,7 @@ import typing
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import forms, eos, saarvv
+from .. import forms, eos, saarvv, models
 
 
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
@@ -37,9 +37,14 @@ def saarvv_login(request):
             else:
                 messages.success(request, "Login successful")
                 token, device_id = token
-                request.user.account.saarvv_token = token
-                request.user.account.saarvv_device_id = device_id
-                request.user.account.save()
+                models.AccountOAuth.objects.update_or_create(
+                    account=request.user.account,
+                    provider="saarvv",
+                    defaults={
+                        "token": token,
+                        "device_id": device_id,
+                    }
+                )
                 saarvv.update_saarvv_tickets(request.user.account)
                 return redirect("saarvv_account")
     else:
@@ -49,23 +54,15 @@ def saarvv_login(request):
         "form": form,
     })
 
-
-@login_required
-def saarvv_logout(request):
-    request.user.account.saarvv_token = None
-    request.user.account.saarvv_device_id = None
-    request.user.account.save()
-    messages.add_message(request, messages.SUCCESS, "Successfully logged out")
-    return redirect("account")
-
 @login_required
 def saarvv_account(request):
-    if not request.user.account.saarvv_token:
+    if not request.user.account.is_saarvv_authenticated():
         return redirect("saarvv_login")
 
+    account_oauth = models.AccountOAuth.objects.get(account=request.user.account, provider="saarvv")
     fields = eos.get_customer_account(request.user.account, "saarvv", "https://saarvv.tickeos.de", "saarvv")
 
     return render(request, "main/account/saarvv.html", {
         "fields": fields,
-        "tickets": request.user.account.saarvv_tickets,
+        "tickets": account_oauth.tickets,
     })
