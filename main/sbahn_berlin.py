@@ -1,10 +1,10 @@
 from . import models, eos, apn
 
 def update_all():
-    for account in models.Account.objects.filter(sbahn_berlin_device_id__isnull=False):
-        update_sbahn_berlin_tickets(account)
+    for oauth in models.AccountOAuth.objects.filter(provider="sbahn_berlin", device_id__isnull=False):
+        update_sbahn_berlin_tickets(oauth.account)
 
-        for t in account.sbahn_berlin_tickets.all():
+        for t in oauth.tickets.all():
             apn.notify_ticket_if_renewed(t)
 
 def update_sbahn_berlin_tickets(account: "models.Account"):

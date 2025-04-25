@@ -28,8 +28,11 @@ def update_all():
         if not db_token:
             continue
 
+        account_oauth = models.AccountOAuth.objects.get(account=account, provider="db")
+        account_id = account_oauth.extra_data["account_id"]
+
         r = niquests.get(
-            f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account.db_account_id}/bbStatus", headers={
+            f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}/bbStatus", headers={
                 "Authorization": f"Bearer {db_token}",
                 "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
                 "X-Correlation-ID": secrets.token_hex(16),

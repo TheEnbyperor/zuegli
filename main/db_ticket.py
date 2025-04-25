@@ -55,21 +55,24 @@ def update_all():
 
         db_token = oauth.get_token(account, "db")
         if not db_token:
-            logger.error(f"Failed to get access token for account {account.db_account_id}")
+            logger.error(f"Failed to get access token for account {account}")
             continue
 
+        account_oauth = models.AccountOAuth.objects.get(account=account, provider="db")
+        account_id = account_oauth.extra_data["account_id"]
+
         try:
-            r = session.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account.db_account_id}", headers={
+            r = session.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
                 "Authorization": f"Bearer {db_token}",
                 "Accept": "application/x.db.vendo.mob.kundenkonto.v6+json",
                 "X-Correlation-ID": secrets.token_hex(16),
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             })
             if not r.ok:
-                logger.error(f"Failed to get profiles for account {account.db_account_id} - {r.text}")
+                logger.error(f"Failed to get profiles for account {account_id} - {r.text}")
                 continue
         except niquests.exceptions.RequestException as e:
-            logger.error(f"Failed to get profiles for account {account.db_account_id}: {e}")
+            logger.error(f"Failed to get profiles for account {account_id}: {e}")
             continue
 
         account_data = r.json()
