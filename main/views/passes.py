@@ -311,7 +311,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "labelColor": "rgb(75, 75, 75)",
         "foregroundColor": "rgb(0, 0, 0)",
         "locations": [],
-        "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple/",
+        "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple",
         "authenticationToken": ticket_obj.pkpass_authentication_token,
         "semantics": {}
     }

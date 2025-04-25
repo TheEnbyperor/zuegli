@@ -40,10 +40,10 @@ class SNCBData:
                 surname=match.group("surname")
             )
 
-            if out.forename and context.account_forename.upper().startswith(out.forename):
+            if out.forename and context.account_forename and context.account_forename.upper().startswith(out.forename):
                 out.original_forename = out.forename
                 out.forename = context.account_forename
-            if out.surname and context.account_surname.upper().startswith(out.surname):
+            if out.surname and context.account_surname and context.account_surname.upper().startswith(out.surname):
                 out.original_surname = out.surname
                 out.surname = context.account_surname
 
@@ -51,3 +51,5 @@ class SNCBData:
                 out.product_name = product_name
 
             return out
+
+        return None
