@@ -261,8 +261,8 @@ class Authorization:
     product_id: int
     product_org_id: int
     product_key_org_id: int
-    valid_from: vdv.util.DateTime
-    valid_to: vdv.util.DateTime
+    valid_from: typing.Optional[vdv.util.DateTime]
+    valid_to: typing.Optional[vdv.util.DateTime]
     status: int
     synchronization_number: int
 
@@ -317,8 +317,8 @@ class Authorization:
             product_id=int.from_bytes(static_data[6:8], "big"),
             product_org_id=int.from_bytes(static_data[8:10], "big"),
             product_key_org_id=int.from_bytes(static_data[10:12], "big"),
-            valid_from=vdv.util.DateTime.from_bytes(static_data[12:16]),
-            valid_to=vdv.util.DateTime.from_bytes(static_data[16:20]),
+            valid_from=vdv.util.DateTime.from_bytes(static_data[12:16]) if any(static_data[12:16]) else None,
+            valid_to=vdv.util.DateTime.from_bytes(static_data[16:20]) if any(static_data[16:20]) else None,
             status=dynamic_data[0],
             synchronization_number=dynamic_data[1],
         )

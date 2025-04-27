@@ -19,5 +19,5 @@ class InfoText:
         info_text = info_text[1].strip(b"\x00")
 
         return cls(
-            text=info_text.decode("utf-8"),
+            text=info_text.decode("iso-8859-15", "replace"),
         )
