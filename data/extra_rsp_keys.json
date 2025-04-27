@@ -1,12 +1,18 @@
 {
-  "R5": [
-    {
-      "is_test": false,
-      "issuer_id": "R5",
-      "modulus_hex": "a21f56fac2255ce908fb088ad703319530353416e2778311315d43bd164c9eed6a11aca0675acc65ff15a373724f0ae8729679617e2c725e1b0de4eedb7516e0a376f02b34d805ba1b7ff5ca4089517ba0ea572b60f51541b34c88108122b9c289810abcb23f3d772f85b2904eafc70b3a49013cd55f4a0bb927b185f1bf5939",
-      "public_exponent_hex": "10001",
-      "valid_from": "2022-12-12T11:25:58",
-      "valid_until": "2032-12-09T11:25:58"
-    }
-  ]
+  "R5": [{
+    "is_test": false,
+    "issuer_id": "R5",
+    "modulus_hex": "a21f56fac2255ce908fb088ad703319530353416e2778311315d43bd164c9eed6a11aca0675acc65ff15a373724f0ae8729679617e2c725e1b0de4eedb7516e0a376f02b34d805ba1b7ff5ca4089517ba0ea572b60f51541b34c88108122b9c289810abcb23f3d772f85b2904eafc70b3a49013cd55f4a0bb927b185f1bf5939",
+    "public_exponent_hex": "10001",
+    "valid_from": "2022-12-12T11:25:58",
+    "valid_until": "2032-12-09T11:25:58"
+  }],
+  "SZ": [{
+    "is_test": false,
+    "issuer_id": "SZ",
+    "modulus_hex": "c7eebab5314ab5e8a7ed380dab94cbe996d120ec656af897d6fe43b4c1b636dc0c760e81865e9d64f80cac35148f4c718df5a9d88ae82c1d405be572b0319f711119c5574b126f339f4c7de1d1f4b86303a9edd9b6856d82c272d7e10a0af9298816c2c6a383fb2e81f9f51bc8c13a5e550a44e566081ac3a321a52e43b62843",
+    "public_exponent_hex": "10001",
+    "valid_from": "2022-12-12T11:25:58",
+    "valid_until": "2032-12-09T11:25:58"
+  }]
 }

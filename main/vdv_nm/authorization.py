@@ -20,7 +20,6 @@ class Authorization:
             raise VDVNMException("Not an authorization")
         authorization = authorization[1]
 
-
         return cls(
         )
 
