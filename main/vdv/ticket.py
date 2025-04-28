@@ -662,13 +662,13 @@ class SpacialValidity:
     variant: str
     organization_id: int
     start_station: typing.Optional[int] = None
-    end_stations: typing.List[int] = list
+    end_stations: typing.List[int] = dataclasses.field(default_factory=list)
     start_tariff_point: typing.Optional[int] = None
     end_tariff_point: typing.Optional[int] = None
     area: typing.Optional[int] = None
-    via_tariff_points: typing.List[int] = list
-    tariff_points: typing.List[int] = list
-    validity_ids: typing.List[int] = list
+    via_tariff_points: typing.List[int] = dataclasses.field(default_factory=list)
+    tariff_points: typing.List[int] = dataclasses.field(default_factory=list)
+    validity_ids: typing.List[int] = dataclasses.field(default_factory=list)
 
     def __str__(self):
         return f"Spacial validity: org_id={self.organization_id}"
