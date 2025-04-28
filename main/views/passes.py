@@ -2553,27 +2553,27 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         add_pkp_img(pkp, "pass/berlin-ab.png", "thumbnail.png")
                     elif elm.area == 1202 or 1202 in elm.validity_ids:
                         add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
-                else:
-                    if elm.variant == "D":
-                        validity = ", ".join(elm.tariff_point_names())
+                        
+                if elm.variant == "D":
+                    validity = ", ".join(elm.tariff_point_names())
+                    pass_fields["secondaryFields"].append({
+                        "key": "valid-in",
+                        "label": "valid-region-label",
+                        "value": validity,
+                    })
+                elif elm.variant == "E":
+                    if elm.start_station:
+                        pass_fields["secondaryFields"].append({
+                            "key": "valid-from",
+                            "label": "from-station-label",
+                            "value": elm.start_station_name()
+                        })
+                    if elm.area:
                         pass_fields["secondaryFields"].append({
                             "key": "valid-in",
                             "label": "valid-region-label",
-                            "value": validity,
+                            "value": elm.area_name(),
                         })
-                    elif elm.variant == "E":
-                        if elm.start_station:
-                            pass_fields["secondaryFields"].append({
-                                "key": "valid-from",
-                                "label": "from-station-label",
-                                "value": elm.start_station_name()
-                            })
-                        if elm.area:
-                            pass_fields["secondaryFields"].append({
-                                "key": "valid-in",
-                                "label": "valid-region-label",
-                                "value": elm.area_name(),
-                            })
             elif isinstance(elm, vdv.ticket.IdentificationMedium):
                 if elm.id_type == 84:
                     pass_fields["secondaryFields"].append({
