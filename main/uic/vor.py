@@ -38,15 +38,13 @@ class VORRecordFI:
         validity_end_str = data[16:32]
 
         try:
-            validity_start = TZ.localize(datetime.datetime.strptime(validity_start_str, "%d.%m.%Y %H:%M")) \
-                .astimezone(tz=pytz.UTC)
+            validity_start = TZ.localize(datetime.datetime.strptime(validity_start_str, "%d.%m.%Y %H:%M"))
         except ValueError as e:
             raise VORException(f"Invalid validity start date") from e
 
         if validity_end_str.strip():
             try:
-                validity_end = TZ.localize(datetime.datetime.strptime(validity_end_str, "%d.%m.%Y %H:%M")) \
-                    .astimezone(tz=pytz.UTC)
+                validity_end = TZ.localize(datetime.datetime.strptime(validity_end_str, "%d.%m.%Y %H:%M"))
             except ValueError as e:
                 raise VORException(f"Invalid validity end date") from e
         else:

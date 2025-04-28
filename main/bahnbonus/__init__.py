@@ -56,3 +56,4 @@ class BahnBonusCode:
     def product(self) -> typing.Optional[products.Product]:
         if self.product_id in products.PRODUCTS:
             return products.PRODUCTS[self.product_id]
+        return None
