@@ -637,6 +637,7 @@ class VDVSmartcardLog(models.Model):
         verbose_name = "VDV Smartcard Log Entry"
         verbose_name_plural = "VDV Smartcard Log Entries"
         unique_together = [("smartcard", "sequence_number")]
+        ordering = ("sequence_number",)
 
     def __str__(self):
         return f"{self.smartcard} #{self.sequence_number}"
