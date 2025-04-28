@@ -2561,6 +2561,19 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "label": "valid-region-label",
                             "value": validity,
                         })
+                    elif elm.variant == "E":
+                        if elm.start_station:
+                            pass_fields["secondaryFields"].append({
+                                "key": "valid-from",
+                                "label": "from-station-label",
+                                "value": elm.start_station_name()
+                            })
+                        if elm.area:
+                            pass_fields["secondaryFields"].append({
+                                "key": "valid-in",
+                                "label": "valid-region-label",
+                                "value": elm.area_name(),
+                            })
             elif isinstance(elm, vdv.ticket.IdentificationMedium):
                 if elm.id_type == 84:
                     pass_fields["secondaryFields"].append({
