@@ -2051,29 +2051,29 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         elif ticket_data.vor_fi or ticket_data.vor_vd:
             if ticket_data.vor_fi:
-                pass_fields["secondaryFields"].append({
+                pass_fields["auxiliaryFields"].append({
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleNone",
-                    "value": ticket_data.vor_fi.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.vor_fi.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["backFields"].append({
                     "key": "validity-start-back",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleFull",
                     "timeStyle": "PKDateStyleFull",
-                    "value": ticket_data.vor_fi.validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "value": ticket_data.vor_fi.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
 
                 if ticket_data.vor_fi.validity_end:
-                    pass_json["expirationDate"] = ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    pass_fields["secondaryFields"].append({
+                    pass_json["expirationDate"] = ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_fields["auxiliaryFields"].append({
                         "key": "validity-end",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleNone",
-                        "value": ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "timeStyle": "PKDateStyleMedium",
+                        "value": ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "changeMessage": "validity-end-change"
                     })
                     pass_fields["backFields"].append({
@@ -2081,7 +2081,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleFull",
                         "timeStyle": "PKDateStyleFull",
-                        "value": ticket_data.vor_fi.validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "value": ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     })
 
             if ticket_data.vor_vd:
