@@ -4,6 +4,7 @@ from ..uic import stations
 from .. import models
 
 VRS_TARIFGEBIETE = None
+VBB_TARIFBEREICHE = None
 DATA_DIR = pathlib.Path(__file__).parent / 'data'
 
 def get_vrs_tarifgebiete_list():
@@ -16,6 +17,18 @@ def get_vrs_tarifgebiete_list():
         VRS_TARIFGEBIETE = json.load(f)
 
     return VRS_TARIFGEBIETE
+
+def get_vbb_tarifbereiche_list():
+    # https://sbahn.berlin/fileadmin/user_upload/Tickets/Tarifgebiet_Berlin-Brandenburg/Tarifbroschueren/vbbtarif-zielorte.pdf
+    global VBB_TARIFBEREICHE
+
+    if VBB_TARIFBEREICHE:
+        return VBB_TARIFBEREICHE
+
+    with open(DATA_DIR / "vbb-tarifbereiche.json") as f:
+        VBB_TARIFBEREICHE = json.load(f)
+
+    return VBB_TARIFBEREICHE
 
 
 def get_db_station_name(code: int):
@@ -62,12 +75,8 @@ def vbb_tariff(code: int):
             return f"{station.name}, {station.municipality}"
         else:
             return None
-    elif code == 1200:
-        return "Berlin AB"
-    elif code == 1201:
-        return "Berlin BC"
-    elif code == 1202:
-        return "Berlin ABC"
+    elif name := get_vbb_tarifbereiche_list().get(str(code), None):
+        return name
     else:
         return None
 
