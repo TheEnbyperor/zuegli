@@ -37,3 +37,4 @@ phonenumbers
 channels
 daphne
 uvicorn[standard]
+asn1crypto
