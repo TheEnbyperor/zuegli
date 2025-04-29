@@ -6,7 +6,7 @@ import re
 from cryptography.hazmat.primitives import serialization
 
 ROOT_DIR = pathlib.Path(__file__).parent.parent
-KEY_RE = re.compile("^(?P<rics>[0-9]{4})(?:-|key)?(?P<key_id>[A-Z0-9]+).pem$")
+KEY_RE = re.compile("^(?P<rics>[0-9]{4})-?(?P<key_id>[a-zA-Z0-9]+).pem$")
 
 def main():
     for filename in os.listdir(ROOT_DIR / "dtvg-certs"):

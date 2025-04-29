@@ -22,11 +22,11 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Issuer</dt>
-                <dd class="govuk-summary-list__value">{{ cert.issuer.rfc4514_string }}</dd>
+                <dd class="govuk-summary-list__value">{{ cert.issuer.rfc4514_string|undo_iso_8859 }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Subject</dt>
-                <dd class="govuk-summary-list__value">{{ cert.subject.rfc4514_string }}</dd>
+                <dd class="govuk-summary-list__value">{{ cert.subject.rfc4514_string|undo_iso_8859 }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Public key algorithm</dt>

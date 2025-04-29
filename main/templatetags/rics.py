@@ -18,6 +18,13 @@ def as_hex(value: bytes):
 def to_date(value):
     return datetime.datetime.fromisoformat(value)
 
+@register.filter(name="undo_iso_8859")
+def undo_iso_8859(value: str):
+    try:
+        return value.encode("iso-8859-1").decode("utf-8")
+    except ValueError:
+        return value
+
 @register.filter(name="rics")
 def get_rics_code(value):
     if not value:
