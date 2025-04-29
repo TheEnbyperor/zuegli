@@ -83,6 +83,7 @@ class UICTicket:
     db_vu: typing.Optional["uic.db_vu.DBRecordVU"] = None
     vor_fi: typing.Optional["uic.vor.VORRecordFI"] = None
     vor_vd: typing.Optional["uic.vor.VORRecordVD"] = None
+    vor_fk: typing.Optional["uic.vor.VORRecordFK"] = None
     st01: typing.Optional["uic.st01_parse.ParsedST01"] = None
     bravo: typing.Optional["uic.bravo.BravoRecord"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
@@ -343,6 +344,7 @@ class UICTicket:
             oebb_99=parse_ticket_uic_oebb_99(ticket_envelope),
             vor_fi=parse_ticket_uic_vor_fi(ticket_envelope),
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
+            vor_fk=parse_ticket_uic_vor_fk(ticket_envelope),
             bravo=parse_ticket_uic_bravo(ticket_envelope),
             st01=st01,
             other_records=[r for r in ticket_envelope.records if not (
@@ -353,7 +355,7 @@ class UICTicket:
                     or r.id == "3497TI" or r.id == "3497PA"
                     or r.id == "5245TI" or r.id == "5245PA"
                     or r.id == "3565TI" or r.id == "3565PA"
-                    or r.id == "3306FI" or r.id == "3306VD"
+                    or r.id == "3306FI" or r.id == "3306VD" or r.id == "3306FK"
                     or r.id == "3606AA" or r.id == "3697OT"
                     or r.id == "000IVU" or r.id == "CXX___"
                     or r.id == "3602AA"
@@ -1019,6 +1021,21 @@ def parse_ticket_uic_vor_vd(ticket_envelope: uic.Envelope) -> typing.Optional["u
         raise TicketError(
             title="Invalid VOR VD record",
             message="The VOR VD record can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_vor_fk(ticket_envelope: uic.Envelope) -> typing.Optional["uic.vor.VORRecordFK"]:
+    vor_record = next(filter(lambda r: r.id == "3306FK" and r.version == 1, ticket_envelope.records), None)
+    if not vor_record:
+        return None
+
+    try:
+        return uic.vor.VORRecordFK.parse(vor_record.data, vor_record.version)
+    except uic.vor.VORException:
+        raise TicketError(
+            title="Invalid VOR FK record",
+            message="The VOR FK record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 

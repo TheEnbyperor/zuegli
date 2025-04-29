@@ -134,3 +134,49 @@ class VORRecordVD:
             gender=gender,
             raw_data=data,
         )
+
+
+@dataclasses.dataclass
+class VORValidity:
+    region: typing.Optional[int] = None
+    other_data: str = ""
+
+@dataclasses.dataclass
+class VORRecordFK:
+    currency: str
+    validity: typing.List[VORValidity]
+    raw_data: str
+
+    @classmethod
+    def parse(cls, data: bytes, version: int):
+        if version != 1:
+            raise VORException(f"Unsupported FK record version {version}")
+
+        try:
+            data = data.decode("utf-8")
+        except UnicodeDecodeError as e:
+            raise VORException("Invalid FK record text encoding") from e
+
+        if len(data) < 13:
+            raise VORException("Invalid FK record length")
+
+        validity = []
+        for d in (data[i:i+9] for i in range(13, len(data), 9)):
+            r = d[0:5].strip()
+            if r:
+                try:
+                    r = int(r)
+                except ValueError as e:
+                    raise VORException("Invalid region ID") from e
+            else:
+                r = None
+            validity.append(VORValidity(
+                region=r,
+                other_data=d[5:],
+            ))
+
+        return cls(
+            currency=data[0:3],
+            validity=validity,
+            raw_data=data,
+        )

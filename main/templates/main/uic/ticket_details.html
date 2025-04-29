@@ -362,6 +362,10 @@
         {% include "main/uic/vor_vd.html" with vor=ticket.vor_vd %}
     {% endif %}
 
+    {% if ticket.vor_fk %}
+        {% include "main/uic/vor_fk.html" with vor=ticket.vor_fk %}
+    {% endif %}
+
     {% if ticket.st01 %}
         {% include "main/uic/st01.html" with st01=ticket.st01 %}
     {% endif %}
