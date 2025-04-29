@@ -32,8 +32,12 @@
                 <dd class="govuk-summary-list__value">
                     <p class="govuk-body">
                         {{ db_account.hauptadresse.strasse }}<br/>
-                        {{ db_account.hauptadresse.plz }} {{ db_account.hauptadresse.ort }}<br/>
-                        {{ db_account.hauptadresse.land|iso3166 }}
+                        {{ db_account.hauptadresse.plz }}
+                        {{ db_account.hauptadresse.ort }}
+                        {% if db_account.hauptadresse.land %}
+                            <br/>
+                            {{ db_account.hauptadresse.land|iso3166 }}
+                        {% endif %}
                     </p>
                 </dd>
             </div>
