@@ -158,7 +158,7 @@ def ticket_class_name(class_code: str):
                 "language": "nl",
                 "value": "2e"
             }, {
-                "language": "nl",
+                "language": "cy",
                 "value": "2ail"
             }],
             "defaultValue": {
@@ -564,7 +564,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "language": "de",
                                     "value": "Kartennummer"
                                 }, {
-                                    "language": "de",
+                                    "language": "nl",
                                     "value": "Kaart-ID"
                                 }, {
                                     "language": "cy",
@@ -585,7 +585,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     "language": "de",
                                     "value": "Kartennummer"
                                 }, {
-                                    "language": "de",
+                                    "language": "nl",
                                     "value": "Kaart-ID"
                                 }, {
                                     "language": "cy",
@@ -1161,7 +1161,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "language": "de",
                         "value": "Kartennummer"
                     }, {
-                        "language": "de",
+                        "language": "nl",
                         "value": "Kaart-ID"
                     }, {
                         "language": "cy",
