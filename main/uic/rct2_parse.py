@@ -5,6 +5,7 @@ import re
 from . import layout
 
 BENERAIL_VALIDITY = re.compile(r"^Valid on:(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
+NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
 
 @dataclasses.dataclass
 class TripPart:
@@ -103,7 +104,7 @@ class RCT2Parser:
         except ValueError:
             date_of_birth = None
 
-        if issuing_rics in (60, 1174, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
+        if issuing_rics in (60, 1084, 1174, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
             passenger_name = re.sub(r"\s+", " ", traveller_data.split("\n")[0])
         else:
             passenger_name = None
@@ -187,6 +188,12 @@ class RCT2Parser:
 
             if not departure_dt and not arrival_dt:
                 if m := BENERAIL_VALIDITY.fullmatch(extra_data):
+                    try:
+                        departure_dt = datetime.date(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")))
+                        arrival_dt = datetime.date(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")))
+                    except ValueError:
+                        pass
+                elif m := NS_VALIDITY.fullmatch(extra_data):
                     try:
                         departure_dt = datetime.date(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")))
                         arrival_dt = datetime.date(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")))
