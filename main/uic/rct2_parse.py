@@ -4,13 +4,15 @@ import datetime
 import re
 from . import layout
 
+BENERAIL_VALIDITY = re.compile(r"^Valid on:(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
+
 @dataclasses.dataclass
 class TripPart:
-    departure: typing.Optional[datetime.datetime]
+    departure: typing.Optional[typing.Union[datetime.datetime, datetime.date]]
     departure_date: str
     departure_time: str
 
-    arrival: typing.Optional[datetime.datetime]
+    arrival: typing.Optional[typing.Union[datetime.datetime, datetime.date]]
     arrival_date: str
     arrival_time: str
 
@@ -182,6 +184,14 @@ class RCT2Parser:
                             arrival_dt = datetime.datetime.strptime(f"{day_to} {arrival_time}", "%d.%m.%Y %H:%M")
                         except ValueError:
                             pass
+
+            if not departure_dt and not arrival_dt:
+                if m := BENERAIL_VALIDITY.fullmatch(extra_data):
+                    try:
+                        departure_dt = datetime.date(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")))
+                        arrival_dt = datetime.date(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")))
+                    except ValueError:
+                        pass
 
             if departure_date or departure_time or arrival_date or arrival_time or departure_station or arrival_station:
                 trips.append(TripPart(

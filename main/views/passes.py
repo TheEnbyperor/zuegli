@@ -2212,14 +2212,24 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
                     if parsed_layout.trips[0].departure:
-                        pass_fields["secondaryFields"].append({
-                            "key": "departure-time",
-                            "label": "departure-time-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
-                            "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
+                        if isinstance(parsed_layout.trips[0].departure, datetime.datetime):
+                            pass_fields["secondaryFields"].append({
+                                "key": "departure-time",
+                                "label": "departure-time-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleMedium",
+                                "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "ignoresTimeZone": True
+                            })
+                        elif isinstance(parsed_layout.trips[0].departure, datetime.date):
+                            pass_fields["secondaryFields"].append({
+                                "key": "validity-start",
+                                "label": "validity-start-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleNone",
+                                "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
+                                "ignoresTimeZone": True
+                            })
                     elif parsed_layout.trips[0].departure_time:
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
@@ -2234,14 +2244,26 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                     if parsed_layout.trips[0].arrival:
-                        pass_fields["secondaryFields"].append({
-                            "key": "arrival-time",
-                            "label": "arrival-time-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
-                            "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
+                        if isinstance(parsed_layout.trips[0].arrival, datetime.datetime):
+                            pass_fields["secondaryFields"].append({
+                                "key": "arrival-time",
+                                "label": "arrival-time-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleMedium",
+                                "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "ignoresTimeZone": True
+                            })
+                        elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
+                            if "expirationDate" not in pass_json:
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z")
+                            pass_fields["secondaryFields"].append({
+                                "key": "validity-end",
+                                "label": "validity-end-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleNone",
+                                "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z"),
+                                "ignoresTimeZone": True
+                            })
                     elif parsed_layout.trips[0].arrival_time:
                         pass_fields["secondaryFields"].append({
                             "key": "arrival-time",
@@ -2257,14 +2279,24 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
                 else:
                     if parsed_layout.trips[0].departure:
-                        pass_fields["auxiliaryFields"].append({
-                            "key": "validity-start",
-                            "label": "validity-start-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
-                            "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
+                        if isinstance(parsed_layout.trips[0].arrival, datetime.datetime):
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "validity-start",
+                                "label": "validity-start-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleMedium",
+                                "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "ignoresTimeZone": True
+                            })
+                        elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "validity-start",
+                                "label": "validity-start-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleNone",
+                                "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
+                                "ignoresTimeZone": True
+                            })
                     elif parsed_layout.trips[0].departure_time:
                         pass_fields["auxiliaryFields"].append({
                             "key": "validity-start",
@@ -2279,16 +2311,28 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
                     if parsed_layout.trips[0].arrival:
-                        if "expirationDate" not in pass_json:
-                            pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-                        pass_fields["auxiliaryFields"].append({
-                            "key": "validity-end",
-                            "label": "validity-end-label",
-                            "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
-                            "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                            "ignoresTimeZone": True
-                        })
+                        if isinstance(parsed_layout.trips[0].arrival, datetime.datetime):
+                            if "expirationDate" not in pass_json:
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "validity-end",
+                                "label": "validity-end-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleMedium",
+                                "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "ignoresTimeZone": True
+                            })
+                        elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
+                            if "expirationDate" not in pass_json:
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z")
+                            pass_fields["auxiliaryFields"].append({
+                                "key": "validity-end",
+                                "label": "validity-end-label",
+                                "dateStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleNone",
+                                "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z"),
+                                "ignoresTimeZone": True
+                            })
                     elif parsed_layout.trips[0].arrival_time:
                         pass_fields["auxiliaryFields"].append({
                             "key": "validity-end",
