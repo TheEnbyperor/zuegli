@@ -19,7 +19,7 @@ def metrics(request):
     for o in models.VDVTicketInstance.objects.all().values('ticket_org_id').annotate(total=Count('ticket_org_id')):
         org_id = o["ticket_org_id"]
         org_name = vdv.ticket.map_org_id(org_id)
-        out.append(f'ticket_vdv_issuer{{org_id="{org_id}", org_name="{org_name}"}} {o["total"]}')
+        out.append(f'ticket_vdv_issuer{{org_id="{org_id}", org_name="{org_name} ({org_id})"}} {o["total"]}')
 
     uic_count = models.UICTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="uic"}} {uic_count}')
@@ -28,7 +28,7 @@ def metrics(request):
         rics = o["distributor_rics"]
         org = uic.rics.get_rics(rics)
         org_name = org["full_name"] if org else "Unknown"
-        out.append(f'ticket_uic_issuer{{rics="{rics}", name="{org_name}"}} {o["total"]}')
+        out.append(f'ticket_uic_issuer{{rics="{rics}", name="{org_name} ({rics})"}} {o["total"]}')
 
     ssb_count = models.SSBTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="ssb"}} {ssb_count}')
@@ -37,7 +37,7 @@ def metrics(request):
         rics = o["distributor_rics"]
         org = uic.rics.get_rics(rics)
         org_name = org["full_name"] if org else "Unknown"
-        out.append(f'ticket_ssb_issuer{{rics="{rics}", name="{org_name}"}} {o["total"]}')
+        out.append(f'ticket_ssb_issuer{{rics="{rics}", name="{org_name} ({rics})"}} {o["total"]}')
 
     ssb1_count = models.SSB1TicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="ssb1"}} {ssb1_count}')
@@ -46,7 +46,7 @@ def metrics(request):
         rics = o["distributor_rics"]
         org = uic.rics.get_rics(rics)
         org_name = org["full_name"] if org else "Unknown"
-        out.append(f'ticket_ssb1_issuer{{rics="{rics}", name="{org_name}"}} {o["total"]}')
+        out.append(f'ticket_ssb1_issuer{{rics="{rics}", name="{org_name} ({rics})"}} {o["total"]}')
 
     rsp_count = models.RSPTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="rsp"}} {rsp_count}')
@@ -59,7 +59,7 @@ def metrics(request):
     for o in models.RSPTicketInstance.objects.all().values('issuer_id').annotate(total=Count('issuer_id')):
         issuer_id = o["issuer_id"]
         org_name = rsp.issuers.issuer_name(issuer_id)
-        out.append(f'ticket_rsp_issuer{{id="{issuer_id}", name="{org_name}"}} {o["total"]}')
+        out.append(f'ticket_rsp_issuer{{id="{issuer_id}", name="{org_name} ({issuer_id})"}} {o["total"]}')
 
     sncf_count = models.SNCFTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="sncf"}} {sncf_count}')
