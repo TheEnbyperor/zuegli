@@ -5,12 +5,15 @@
 
 {% block content %}
     <div class="govuk-width-container">
-        <a href="/" class="govuk-back-link">{% trans "Back" %}</a>
+        <a href="{% url 'index' %}" class="govuk-back-link">{% trans "Back" %}</a>
         <h1 class="govuk-heading-xl">{% trans "My Account" %}</h1>
+        <a class="govuk-button" href="{% url 'account_edit' %}">{% trans "Edit" %}</a>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>
-                <dd class="govuk-summary-list__value">{{ user.first_name }}</dd>
+                <dd class="govuk-summary-list__value">
+                    {{ user.first_name }}
+                </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Surname" %}</dt>

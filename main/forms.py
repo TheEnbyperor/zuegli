@@ -4,6 +4,15 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, Field, Fieldset
 from django.core.exceptions import ValidationError
 
+class AccountEditForm(forms.Form):
+    first_name = forms.CharField(max_length=255, required=True)
+    last_name = forms.CharField(max_length=255, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+
 
 class TicketUploadForm(forms.Form):
     ticket = forms.FileField(
