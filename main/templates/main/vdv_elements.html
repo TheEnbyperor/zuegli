@@ -188,6 +188,14 @@
                     <h2 class="govuk-summary-card__title">{% trans "Passenger data" %}</h2>
                 </div>
                 <div class="govuk-summary-card__content">
+                    <p class="govuk-body">
+                        {% url 'account_edit' as account_edit_url %}
+                        {% blocktrans trimmed %}
+                            Partially redacted name?
+                            <a href="{{ account_edit_url }}" class="govuk-link">Add your name to your account</a>
+                            to have your full name on your ticket.
+                        {% endblocktrans %}
+                    </p>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>
@@ -485,19 +493,30 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">{% trans "Passenger data" %}</dt>
                             <dd class="govuk-summary-list__value">
+                                <p class="govuk-body">
+                                    {% url 'account_edit' as account_edit_url %}
+                                    {% blocktrans trimmed %}
+                                        Partially redacted name?
+                                        <a href="{{ account_edit_url }}" class="govuk-link">Add your name to your
+                                            account</a>
+                                        to have your full name on your ticket.
+                                    {% endblocktrans %}
+                                </p>
                                 <dl class="govuk-summary-list">
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>
                                         <dd class="govuk-summary-list__value">
                                             {{ elm.passenger_data.forename }}
-                                            {% if elm.passenger_data.original_forename %}({{ elm.passenger_data.original_forename }}){% endif %}
+                                            {% if elm.passenger_data.original_forename %}(
+                                                {{ elm.passenger_data.original_forename }}){% endif %}
                                         </dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">{% trans "Surname" %}</dt>
                                         <dd class="govuk-summary-list__value">
                                             {{ elm.passenger_data.surname }}
-                                            {% if elm.passenger_data.original_surname %}({{ elm.passenger_data.original_surname }}){% endif %}
+                                            {% if elm.passenger_data.original_surname %}(
+                                                {{ elm.passenger_data.original_surname }}){% endif %}
                                         </dd>
                                     </div>
                                     {% if elm.passenger_data.date_of_birth %}
