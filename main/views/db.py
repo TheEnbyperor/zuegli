@@ -38,7 +38,7 @@ def db_account(request):
     context = {}
     r = niquests.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
         "Authorization": f"Bearer {db_token}",
-        "Accept": "application/x.db.vendo.mob.kundenkonto.v6+json",
+        "Accept": "application/x.db.vendo.mob.kundenkonto.v7+json",
         "X-Correlation-ID": secrets.token_hex(16),
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
