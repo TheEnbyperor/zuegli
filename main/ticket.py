@@ -150,9 +150,11 @@ class UICTicket:
             parser.read(self.layout)
             layout = parser.parse(self.issuing_rics())
 
-            if "deutschlandsemesterticket" in layout.document_type.lower() or \
-                "deutschlandticket" in layout.document_type.lower() or \
-                "deutschland-ticket" in layout.document_type.lower():
+            dt = layout.document_type.lower()
+            if "deutschlandsemesterticket" in dt or \
+                "deutschlandticket" in dt or \
+                "deutschland-ticket" in dt or \
+                "d-ticket" in dt:
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
 
             return models.Ticket.TYPE_FAHRKARTE

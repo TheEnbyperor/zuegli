@@ -29,8 +29,16 @@
     font-family: 'GDS Transport', sans-serif;
 }
 
-.govuk-header__container, .govuk-header--full-width-border {
-    border-bottom-color: #EC0016;
+.govuk-template--rebranded .govuk-header {
+    background-color: #c42126;
+}
+
+.govuk-template--rebranded .govuk-footer {
+    border-color: #EC0016;
+}
+
+.govuk-header .govuk-service-navigation__item {
+    border-bottom-color: #0C0C0C;
 }
 
 .paper-ticket-container {
