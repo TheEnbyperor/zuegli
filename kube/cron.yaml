@@ -425,7 +425,7 @@ metadata:
   namespace: q-personal
   labels:
     app: vdv-pkpass
-    part: avv
+    part: vrr
 spec:
   schedule: "12/15 * * * *"
   jobTemplate:
@@ -437,7 +437,7 @@ spec:
           labels:
             app: vdv-pkpass
             class: cron
-            part: avv
+            part: vrr
         spec:
           restartPolicy: OnFailure
           volumes:
@@ -455,6 +455,66 @@ spec:
               image: theenbyperor/vdv-pkpass-django:(version)
               imagePullPolicy: Always
               command: ["sh", "-c", "python3 manage.py update-vrr"]
+              volumeMounts:
+                - mountPath: "/google-creds"
+                  name: google-creds
+                - mountPath: "/certs"
+                  name: certs
+                - mountPath: "/mapkit"
+                  name: mapkit
+              envFrom:
+                - configMapRef:
+                    name: vdv-pkpass
+                - secretRef:
+                    name: vdv-pkpass-db-creds
+                  prefix: "DB_"
+                - secretRef:
+                    name: vdv-pkpass-email
+                  prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-django-secret
+                - secretRef:
+                    name: vdv-pkpass-s3
+                - secretRef:
+                    name: vdv-pkpass-nr
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vdv-pkpass-raileasy
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: raileasy
+spec:
+  schedule: "4/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+          labels:
+            app: vdv-pkpass
+            class: cron
+            part: raileasy
+        spec:
+          restartPolicy: OnFailure
+          volumes:
+            - name: certs
+              secret:
+                secretName: vdv-pkpass-certs
+            - name: mapkit
+              secret:
+                secretName: vdv-pkpass-mapkit
+            - name: google-creds
+              secret:
+                secretName: vdv-pkpass-google-creds
+          containers:
+            - name: django
+              image: theenbyperor/vdv-pkpass-django:(version)
+              imagePullPolicy: Always
+              command: ["sh", "-c", "python3 manage.py update-raileasy"]
               volumeMounts:
                 - mountPath: "/google-creds"
                   name: google-creds
