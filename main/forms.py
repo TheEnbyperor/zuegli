@@ -38,6 +38,16 @@ class EOSLoginForm(forms.Form):
         self.helper.add_input(Submit("submit", _("Login")))
 
 
+class RaileasyLoginForm(forms.Form):
+    email = forms.EmailField(label=_("Email"), required=True)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Login")))
+
+
 class DoBField(Field):
     template = "main/date_input.html"
 

@@ -65,7 +65,6 @@ def index(request):
                         except RuntimeError as e:
                             image_form.add_error("ticket", f"Error opening PDF: {e}")
                         else:
-
                             for page in pdf:
                                 img_bytes = page.get_pixmap(dpi=300).tobytes()
                                 try:
