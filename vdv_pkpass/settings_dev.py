@@ -133,6 +133,7 @@ USE_I18N = True
 LANGUAGES = [
     ("en", _("English")),
     ("de", _("German")),
+    ("nl", _("Dutch")),
 ]
 
 USE_TZ = True
