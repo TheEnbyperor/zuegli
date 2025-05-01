@@ -1,4 +1,8 @@
-# vdv-pkpass
+# Zügli
+
+Convert your barcoded train tickets into Apple/Google Wallet passes - or just look at what's encoded inside them.
+
+Available online at [zügli.app](https://xn--zgli-0ra.app).
 
 ## How to run it locally
 
