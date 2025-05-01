@@ -295,19 +295,19 @@ msgstr "Anmelden mit SaarVV"
 #, fuzzy
 #| msgid "DB Account"
 msgid "DB Regio NRW Account"
-msgstr "DB-Konto"
+msgstr "DB Region NRW Konto"
 
 #: templates/main/account/index.html:119
 #, fuzzy
 #| msgid "AVV Account"
 msgid "Vestische Account"
-msgstr "AVV-Konto"
+msgstr "Vestische-Konto"
 
 #: templates/main/account/index.html:127
 #, fuzzy
 #| msgid "Login with password"
 msgid "Login with Vestische"
-msgstr "Anmelden mit AVV"
+msgstr "Anmelden mit Vestische"
 
 #: templates/main/account/index.html:138
 #: templates/main/account/sbahn_berlin.html:44

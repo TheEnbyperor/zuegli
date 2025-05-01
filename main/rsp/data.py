@@ -85,6 +85,7 @@ class DepartureTime(enum.Enum):
     NotSet = 0
     ValidAfter = 1
     SpecificDeparture = 2
+    SuggestedDeparture = 3
 
     def __str__(self):
         if self == DepartureTime.NotSet:
@@ -93,6 +94,8 @@ class DepartureTime(enum.Enum):
             return "valid after"
         elif self == DepartureTime.SpecificDeparture:
             return "specific departure"
+        elif self == DepartureTime.SuggestedDeparture:
+            return "suggested departure"
         return None
 
 @dataclasses.dataclass

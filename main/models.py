@@ -61,6 +61,9 @@ class Account(models.Model):
     def is_sbahn_berlin_authenticated(self):
         return self.is_oauth_authenticated("sbahn_berlin")
 
+    def is_raileasy_authenticated(self):
+        return self.is_oauth_authenticated("raileasy")
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_profile(instance, created, **kwargs):
