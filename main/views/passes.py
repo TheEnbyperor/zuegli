@@ -2368,11 +2368,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if parsed_layout.passenger_name:
-                pass_fields["primaryFields"].append({
-                    "key": "passenger",
-                    "label": "passenger-label",
-                    "value": parsed_layout.passenger_name,
-                })
+                if pass_fields["primaryFields"]:
+                    pass_fields["auxiliaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": parsed_layout.passenger_name,
+                    })
+                else:
+                    pass_fields["primaryFields"].append({
+                        "key": "passenger",
+                        "label": "passenger-label",
+                        "value": parsed_layout.passenger_name,
+                    })
 
             if parsed_layout.traveller:
                 pass_fields["backFields"].append({
