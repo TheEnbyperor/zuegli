@@ -179,10 +179,8 @@ msgid "Add DB Ticket"
 msgstr "DB-ticket toevoegen"
 
 #: templates/main/account/edit.html:4 templates/main/account/edit.html:9
-#, fuzzy
-#| msgid "Account"
 msgid "Edit Account"
-msgstr "Account"
+msgstr "Account bewerken"
 
 #: templates/main/account/edit.html:8 templates/main/account/index.html:8
 msgid "Back"
@@ -198,7 +196,7 @@ msgstr "Mijn account"
 
 #: templates/main/account/index.html:10
 msgid "Edit"
-msgstr ""
+msgstr "Bewerken"
 
 #: templates/main/account/index.html:13
 #: templates/main/account/sbahn_berlin.html:17
@@ -267,22 +265,16 @@ msgid "Login with SaarVV"
 msgstr "Inloggen bij SaarVV"
 
 #: templates/main/account/index.html:106
-#, fuzzy
-#| msgid "DB Account"
 msgid "DB Regio NRW Account"
-msgstr "DB-account"
+msgstr "DB Regio NRW-account"
 
 #: templates/main/account/index.html:119
-#, fuzzy
-#| msgid "AVV Account"
 msgid "Vestische Account"
-msgstr "AVV-account"
+msgstr "Vestische-account"
 
 #: templates/main/account/index.html:127
-#, fuzzy
-#| msgid "Login with AVV"
 msgid "Login with Vestische"
-msgstr "Inloggen bij AVV"
+msgstr "Inloggen bij Vestische"
 
 #: templates/main/account/index.html:138
 #: templates/main/account/sbahn_berlin.html:44
@@ -295,7 +287,7 @@ msgstr "Abonneer op uw treinen als kalender:"
 
 #: templates/main/account/nrway_login.html:4
 msgid "DB Regio NRWay Login"
-msgstr ""
+msgstr "Inloggen bij DB Regio NRWay"
 
 #: templates/main/account/saarvv_login.html:4
 msgid "SaarVV Login"
@@ -580,11 +572,11 @@ msgstr "Barcodeversie"
 
 #: templates/main/ssb_ticket_details.html:10
 msgid "Issuer RICS"
-msgstr ""
+msgstr "Uitgevende RICS"
 
 #: templates/main/ssb_ticket_details.html:16
 msgid "Issuer"
-msgstr ""
+msgstr "Uitgever"
 
 #: templates/main/ssb_ticket_details.html:24
 #: templates/main/uic/ticket_details.html:26
@@ -623,17 +615,13 @@ msgid "Unknown signing key, can't verify ticket"
 msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
 
 #: templates/main/ssb_ticket_details.html:64
-#, fuzzy
-#| msgid "International ticket"
 msgid "Integrated reservation ticket"
-msgstr "Internationaal ticket"
+msgstr "Geïntegreerd reserveringsticker"
 
 #: templates/main/ssb_ticket_details.html:71
 #: templates/main/ssb_ticket_details.html:191
-#, fuzzy
-#| msgid "Issuing time"
 msgid "Issuing date"
-msgstr "Uitgiftetijd"
+msgstr "Uitgiftedatum"
 
 #: templates/main/ssb_ticket_details.html:75
 #: templates/main/ssb_ticket_details.html:195
@@ -664,136 +652,110 @@ msgid "No"
 msgstr "Nee"
 
 #: templates/main/ssb_ticket_details.html:85
-#, fuzzy
-#| msgid "Ticket Data"
 msgid "Ticket type"
-msgstr "Ticketdata"
+msgstr "Ticketsoort"
 
 #: templates/main/ssb_ticket_details.html:88
-#, fuzzy
-#| msgid "Reservation"
 msgid "Reservation only"
-msgstr "Reservering"
+msgstr "Alleen reservering"
 
 #: templates/main/ssb_ticket_details.html:90
-#, fuzzy
-#| msgid "Reservation"
 msgid "Reservation + ticket"
-msgstr "Reservering"
+msgstr "Reservering + ticket"
 
 #: templates/main/ssb_ticket_details.html:92
-#, fuzzy
-#| msgid "Boarding card"
 msgid "Boarding pass"
 msgstr "Boardingpass"
 
 #: templates/main/ssb_ticket_details.html:99
 #: templates/main/ssb_ticket_details.html:215
 msgid "Number of adults"
-msgstr ""
+msgstr "Aantal volwassenen"
 
 #: templates/main/ssb_ticket_details.html:103
 #: templates/main/ssb_ticket_details.html:219
 msgid "Number of children"
-msgstr ""
+msgstr "Aantal kinderen"
 
 #: templates/main/ssb_ticket_details.html:108
 #: templates/main/ssb_ticket_details.html:224
-#, fuzzy
-#| msgid "Travel ticket"
 msgid "Travel class"
-msgstr "Reisticket"
+msgstr "Reisklasse"
 
 #: templates/main/ssb_ticket_details.html:111
 #: templates/main/ssb_ticket_details.html:227
 msgid "First"
-msgstr ""
+msgstr "Eerste"
 
 #: templates/main/ssb_ticket_details.html:113
 #: templates/main/ssb_ticket_details.html:229
-#, fuzzy
-#| msgid "seconds"
 msgid "Second"
-msgstr "seconden"
+msgstr "Tweede"
 
 #: templates/main/ssb_ticket_details.html:122
 #: templates/main/ssb_ticket_details.html:246
 msgid "Station code table"
-msgstr ""
+msgstr "Stationscode-tabel"
 
 #: templates/main/ssb_ticket_details.html:127
 #: templates/main/ssb_ticket_details.html:251
-#, fuzzy
-#| msgid "Start station"
 msgid "From station"
-msgstr "Beginstation"
+msgstr "Van station"
 
 #: templates/main/ssb_ticket_details.html:133
 #: templates/main/ssb_ticket_details.html:257
-#, fuzzy
-#| msgid "Start station"
 msgid "To station"
-msgstr "Beginstation"
+msgstr "Naar station"
 
 #: templates/main/ssb_ticket_details.html:139
 msgid "Departure time"
-msgstr ""
+msgstr "Vertrektijd"
 
 #: templates/main/ssb_ticket_details.html:144
-#, fuzzy
-#| msgid "Booking number"
 msgid "Train number"
-msgstr "Boekingsnummer"
+msgstr "Treinnummer"
 
 #: templates/main/ssb_ticket_details.html:150
 msgid "Coach"
-msgstr ""
+msgstr "Rijtuig"
 
 #: templates/main/ssb_ticket_details.html:156
 msgid "Seat"
-msgstr ""
+msgstr "Stoel"
 
 #: templates/main/ssb_ticket_details.html:161
 msgid "Overbooked"
-msgstr ""
+msgstr "Overgeboekt"
 
 #: templates/main/ssb_ticket_details.html:172
 #: templates/main/ssb_ticket_details.html:264
 msgid "Information message"
-msgstr ""
+msgstr "Informatiebericht"
 
 #: templates/main/ssb_ticket_details.html:178
 #: templates/main/ssb_ticket_details.html:270
 msgid "Extra text"
-msgstr ""
+msgstr "Extra tekst"
 
 #: templates/main/ssb_ticket_details.html:184
-#, fuzzy
-#| msgid "International ticket"
 msgid "Non-reservation ticket"
-msgstr "Internationaal ticket"
+msgstr "Niet-reserveringsticket"
 
 #: templates/main/ssb_ticket_details.html:205
 msgid "Return included"
 msgstr ""
 
 #: templates/main/ssb_ticket_details.html:237
-#, fuzzy
-#| msgid "Valid"
 msgid "Valid from"
-msgstr "Geldig"
+msgstr "Geldig van"
 
 #: templates/main/ssb_ticket_details.html:241
-#, fuzzy
-#| msgid "Validity duration"
 msgid "Valid until"
-msgstr "Geldigheidsduur"
+msgstr "Geldigheid tot"
 
 #: templates/main/ssb_ticket_details.html:276
-#, fuzzy
-#| msgid "Data"
 msgid "SNCB Data"
-msgstr "Data"
+msgstr "SNCB-gegevens"
 
 #: templates/main/ssb_ticket_details.html:280
 #: templates/main/vdv_elements.html:193 templates/main/vdv_elements.html:498
@@ -803,6 +765,9 @@ msgid ""
 "link\">Add your name to your account</a> to have your full name on your "
 "ticket."
 msgstr ""
+"Naam gedeeltelijk onherkenbaar? <a href=\"%(account_edit_url)s\" class="
+"\"govuk-link\">Voeg uw naam toe aan uw account</a> om uw volledige naam"
+" op uw ticket te tonen"
 
 #: templates/main/ssb_ticket_details.html:289
 #: templates/main/vdv_ticket_details.html:38
@@ -810,10 +775,8 @@ msgid "Product"
 msgstr "Product"
 
 #: templates/main/ssb_ticket_details.html:297
-#, fuzzy
-#| msgid "Product"
 msgid "Product code"
-msgstr "Product"
+msgstr "Productcode"
 
 #: templates/main/ticket.html:4
 #, python-format
@@ -1201,12 +1164,14 @@ msgid "Gender"
 msgstr "Gender"
 
 #: templates/main/vdv_elements.html:233
-#, fuzzy, python-format
+#, python-format
 #| msgid "Spacial validity - variant %(variant)s"
 msgid ""
 "Spacial validity - variant\n"
 "                            %(variant)s"
-msgstr "Gebiedsgeldigheid - variant %(variant)s"
+msgstr ""
+"Gebiedsgeldigheid - variant\n"
+"                            %(variant)s"
 
 #: templates/main/vdv_elements.html:242 templates/main/vdv_elements.html:352
 #: templates/main/vdv_elements.html:427
@@ -1229,32 +1194,24 @@ msgid "Start station"
 msgstr "Beginstation"
 
 #: templates/main/vdv_elements.html:266
-#, fuzzy
-#| msgid "Start station"
 msgid "End stations"
-msgstr "Beginstation"
+msgstr "Eindstations"
 
 #: templates/main/vdv_elements.html:278
-#, fuzzy
-#| msgid "Tariff points"
 msgid "Origin tariff point"
-msgstr "Tariefpunten"
+msgstr "Tariefpunt begin"
 
 #: templates/main/vdv_elements.html:286
-#, fuzzy
-#| msgid "Tariff points"
 msgid "End tariff point"
-msgstr "Tariefpunten"
+msgstr "Tariefpunt eind"
 
 #: templates/main/vdv_elements.html:294
 msgid "Area"
 msgstr "Gebied"
 
 #: templates/main/vdv_elements.html:302
-#, fuzzy
-#| msgid "Tariff points"
 msgid "Via tariff points"
-msgstr "Tariefpunten"
+msgstr "Tariefpunten via"
 
 #: templates/main/vdv_elements.html:314
 msgid "Tariff points"
