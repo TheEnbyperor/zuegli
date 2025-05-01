@@ -40,6 +40,7 @@ urlpatterns = [
     path('account/nrway_login/', views.vrr.nrway_login, name='nrway_login'),
     path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
     path('account/sbahn_berlin_login/', views.sbahn_berlin.sbahn_berlin_login, name='sbahn_berlin_login'),
+    path('account/raileasy_login/', views.raileasy.raileasy_login, name='raileasy_login'),
 
     path('account/oauth/<str:provider>/login', views.oauth.oauth_login_start, name='oauth_login_start'),
     path('account/oauth/<str:provider>/logout', views.oauth.oauth_logout, name='oauth_logout'),
