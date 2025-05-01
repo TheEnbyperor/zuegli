@@ -20,6 +20,12 @@ class TripPart:
     departure_station: str
     arrival_station: str
 
+    def departure_is_date_only(self):
+        return isinstance(self.departure, datetime.date)
+
+    def arrival_is_date_only(self):
+        return isinstance(self.arrival, datetime.date)
+
 
 @dataclasses.dataclass
 class ParsedRCT2:

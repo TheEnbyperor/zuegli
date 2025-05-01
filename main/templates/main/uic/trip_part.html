@@ -1,9 +1,16 @@
 <dl class="govuk-summary-list">
     {% if trip.departure %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Departure</dt>
-            <dd class="govuk-summary-list__value">{{ trip.departure|date:"F d, Y H:i e" }}</dd>
-        </div>
+        {% if trip.departure_is_date_only %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid from</dt>
+                <dd class="govuk-summary-list__value">{{ trip.departure|date:"F d, Y" }}</dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Departure</dt>
+                <dd class="govuk-summary-list__value">{{ trip.departure|date:"F d, Y H:i e" }}</dd>
+            </div>
+        {% endif %}
     {% else %}
         {% if trip.departure_date %}
             <div class="govuk-summary-list__row">
@@ -19,10 +26,17 @@
         {% endif %}
     {% endif %}
     {% if trip.arrival %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Arrival</dt>
-            <dd class="govuk-summary-list__value">{{ trip.arrival|date:"F d, Y H:i e" }}</dd>
-        </div>
+        {% if trip.arrival_is_date_only %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Valid to</dt>
+                <dd class="govuk-summary-list__value">{{ trip.arrival|date:"F d, Y" }}</dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Arrival</dt>
+                <dd class="govuk-summary-list__value">{{ trip.arrival|date:"F d, Y H:i e" }}</dd>
+            </div>
+        {% endif %}
     {% else %}
         {% if trip.arrival_date %}
             <div class="govuk-summary-list__row">
