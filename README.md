@@ -25,6 +25,10 @@ apt install libldap2-dev libsasl2-dev slapd ldap-utils
 Using `python3.13`:
 
 ```shell
+# Fedora
+sudo yum install python3-pip python3
+
+# Debian/Ubuntu/etc
 apt install software-properties-common
 add-apt-repository ppa:deadsnakes/ppa
 apt update
@@ -47,8 +51,12 @@ pip install -r requirements.txt
 #### Compiling Barkoder
 
 ```shell
-# Dependencies
+# Dependencies for Debian/Ubuntu/etc
 apt install -y build-essential gcc cmake libgl1 libcurl4-openssl-dev pkg-config
+
+# Dependencies for Fedora
+yum install -y g++ gcc cmake openssl-devel libcurl-devel pkg-config
+
 pip install pybind11[global]
 
 # Build folder
