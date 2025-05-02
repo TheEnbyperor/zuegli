@@ -7,7 +7,7 @@ import urllib3.util
 import pymupdf
 from django.utils import timezone
 from django.conf import settings
-from . import models, apn, aztec
+from . import models, apn, aztec, ticket
 
 logger = logging.getLogger(__name__)
 retry_strategy = urllib3.util.Retry(
@@ -82,11 +82,11 @@ def update_tickets(account: "models.Account"):
             "firebaseToken": token,
             "User-Agent": "Zuegli (q@magicalcodewit.ch)"
         })
-        for ticket in r.json()["tickets"]:
-            for detail in ticket["passengerDetails"]:
-                pdf_r = session.get(detail["pdfUrl"])
+        for t in r.json()["tickets"]:
+            for d in t["passengerDetails"]:
+                pdf_r = session.get(d["pdfUrl"])
                 if not pdf_r.ok:
-                    logger.warning(f"Could not fetch {detail['pdfUrl']}")
+                    logger.warning(f"Could not fetch {d['pdfUrl']}")
                 else:
                     try:
                         pdf = pymupdf.open(stream=pdf_r.content, filetype="application/pdf")
