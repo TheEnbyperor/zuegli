@@ -242,6 +242,8 @@ DB_API_KEY = os.getenv("DB_API_KEY")
 
 SNCB_API_KEY = os.getenv("SNCB_API_KEY")
 
+RAILEASY_API_KEY = os.getenv("RAILEASY_API_KEY")
+
 try:
     with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())

@@ -312,7 +312,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "locations": [],
         "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple",
         "authenticationToken": ticket_obj.pkpass_authentication_token,
-        "semantics": {}
+        "semantics": {},
+        "associatedStoreIdentifiers": [6743959567]
     }
 
     pass_type = "generic"

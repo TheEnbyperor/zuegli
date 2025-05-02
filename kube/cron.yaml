@@ -57,6 +57,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -117,6 +121,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -177,6 +185,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -237,6 +249,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -297,6 +313,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -357,6 +377,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -417,6 +441,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -477,6 +505,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -537,6 +569,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -597,6 +633,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -653,6 +693,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -713,6 +757,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -773,6 +821,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -833,6 +885,10 @@ spec:
                     name: vdv-pkpass-s3
                 - secretRef:
                     name: vdv-pkpass-nr
+                - secretRef:
+                    name: vdv-pkpass-sncb
+                - secretRef:
+                    name: vdv-pkpass-raileasy
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
