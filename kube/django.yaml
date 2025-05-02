@@ -87,6 +87,8 @@ spec:
                 name: vdv-pkpass-nr
             - secretRef:
                 name: vdv-pkpass-sncb
+            - secretRef:
+                name: vdv-pkpass-raileasy
       containers:
         - name: gunicorn
           image: theenbyperor/vdv-pkpass-django:(version)

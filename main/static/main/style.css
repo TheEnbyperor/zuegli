@@ -31,6 +31,7 @@
 
 .govuk-template--rebranded .govuk-header {
     background-color: #c42126;
+    border: none;
 }
 
 .govuk-template--rebranded .govuk-footer {
