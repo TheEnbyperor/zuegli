@@ -26,6 +26,10 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
                             "toStationIA5" in ticket_document
                     ):
                         return True
+    elif isinstance(ticket_instance, models.RSPTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+        if isinstance(ticket_data.data, rsp.TicketData):
+            return True
 
     return False
 
