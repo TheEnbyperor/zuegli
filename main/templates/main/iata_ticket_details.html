@@ -159,7 +159,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Seat</dt>
-                        <dd class="govuk-summary-list__value">{{ leg.seat }}</dd>
+                        <dd class="govuk-summary-list__value"><code>{{ leg.seat }}</code></dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Check-in sequence</dt>
@@ -265,4 +265,22 @@
             </div>
         </div>
     {% endfor %}
+    {% if ticket.data.security %}
+        <h2 class="govuk-heading-m">Security data</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Type</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.data.security.type }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Data</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.data.security.data }}</code>
+                </dd>
+            </div>
+            {{ ticket.data.verify_signature }}
+        </dl>
+    {% endif %}
 {% endlocaltime %}

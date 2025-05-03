@@ -1,5 +1,9 @@
 import dataclasses
 import typing
+import base64
+import hashlib
+import ecdsa.util
+import ecdsa.keys
 from . import header, leg, security, util, conditional
 
 @dataclasses.dataclass
@@ -8,6 +12,7 @@ class Envelope:
     legs: typing.List[leg.Leg]
     conditional: typing.Optional[conditional.UniqueConditional]
     security: typing.Optional[security.Security]
+    signed_data: typing.Optional[bytes]
 
     @property
     def pnr(self):
@@ -37,14 +42,16 @@ class Envelope:
 
         unique_conditional = None
 
-        data = data[23:]
         security_data_parts = data.rsplit("^", 1)
         if len(security_data_parts) == 2:
             data = security_data_parts[0]
+            signed_data = data.encode("utf-8")
             security_data = security.Security.parse(security_data_parts[1])
         else:
             security_data = None
+            signed_data = None
 
+        data = data[23:]
         for i in range(number_legs):
             l_data = data[:35]
             data = data[35:]
@@ -75,4 +82,22 @@ class Envelope:
             legs=legs,
             conditional=unique_conditional,
             security=security_data,
+            signed_data=signed_data,
         )
+
+    def verify_signature(self):
+        if self.security is None:
+            raise util.IATAException("No signed data")
+
+        if self.security.type == "4":
+            sig = base64.urlsafe_b64decode(self.security.data)
+            try:
+                ecdsa.keys.VerifyingKey.from_public_key_recovery(
+                    signature=sig,
+                    data=self.signed_data,
+                    curve=ecdsa.NIST256p,
+                    hashfunc=hashlib.sha256,
+                    sigdecode=ecdsa.util.sigdecode_der
+                )
+            except Exception as e:
+                print(e)

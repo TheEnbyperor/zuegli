@@ -6,6 +6,7 @@ import pymupdf
 import io
 import typing
 import copy
+import niquests
 from PIL import Image, ImageOps
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404, reverse
@@ -15,7 +16,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.contrib import messages
 from main import forms, models, ticket, pkpass, vdv, aztec, templatetags, apn, gwallet, rsp, uic, ssb, swisspass, cal, \
-    bahnbonus
+    bahnbonus, iata
 
 
 def get_client_ip(request):
@@ -348,7 +349,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             # as a fallback
             if ticket_data.envelope.signature_key_id not in (18,):
                 issuing_rics = 1084
-
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -2067,7 +2067,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
                 if ticket_data.vor_fi.validity_end:
-                    pass_json["expirationDate"] = ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_json["expirationDate"] = ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime(
+                        "%Y-%m-%dT%H:%M:%SZ")
                     pass_fields["auxiliaryFields"].append({
                         "key": "validity-end",
                         "label": "validity-end-label",
@@ -2255,7 +2256,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             })
                         elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
                             if "expirationDate" not in pass_json:
-                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z")
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime(
+                                    "%Y-%m-%dT23:59:59Z")
                             pass_fields["secondaryFields"].append({
                                 "key": "validity-end",
                                 "label": "validity-end-label",
@@ -2313,7 +2315,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     if parsed_layout.trips[0].arrival:
                         if isinstance(parsed_layout.trips[0].arrival, datetime.datetime):
                             if "expirationDate" not in pass_json:
-                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.astimezone(
+                                    pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
                             pass_fields["auxiliaryFields"].append({
                                 "key": "validity-end",
                                 "label": "validity-end-label",
@@ -2324,7 +2327,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             })
                         elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
                             if "expirationDate" not in pass_json:
-                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT23:59:59Z")
+                                pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime(
+                                    "%Y-%m-%dT23:59:59Z")
                             pass_fields["auxiliaryFields"].append({
                                 "key": "validity-end",
                                 "label": "validity-end-label",
@@ -2604,7 +2608,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         add_pkp_img(pkp, "pass/berlin-ab.png", "thumbnail.png")
                     elif elm.area == 1202 or 1202 in elm.validity_ids:
                         add_pkp_img(pkp, "pass/berlin-abc.png", "thumbnail.png")
-                        
+
                 if elm.variant == "D":
                     validity = ", ".join(elm.tariff_point_names())
                     pass_fields["secondaryFields"].append({
@@ -4627,6 +4631,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             }
         })
 
+        if ticket_data.data.conditional:
+            if issuer := templatetags.iata.get_iata_airline_code(ticket_data.data.conditional.issuer):
+                pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": issuer["name"]
+                })
+
         if ticket_data.data.legs:
             leg = ticket_data.data.legs[0]
 
@@ -4646,27 +4658,103 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": leg.seat
             })
 
-            departure_station = templatetags.iata.get_iata_airport_code(leg.from_code)
+            pass_json["locations"] = []
+
+            departure = templatetags.iata.get_iata_airport_code(leg.from_code)
             pass_fields["primaryFields"].append({
                 "key": "from-station",
                 "label": "from-station-label",
                 "value": leg.from_code,
                 "semantics": {
                     "departureAirportCode": leg.from_code,
-                    "departureAirportName": departure_station["name"] if departure_station else None,
+                    "departureAirportName": departure["name"] if departure else None,
+                    "departureLocation": {
+                        "latitude": float(departure["latitude"]),
+                        "longitude": float(departure["longitude"]),
+                    } if departure else None,
                 }
             })
+            if departure:
+                pass_json["locations"].append({
+                    "latitude": float(departure["latitude"]),
+                    "longitude": float(departure["longitude"]),
+                    "relevantText": departure["name"]
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": departure["name"],
+                    "ll": f"{departure['latitude']},{departure['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "to-station-back",
+                    "label": "to-station-label",
+                    "value": departure["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{departure['name']}</a>",
+                })
 
-            arrival_station = templatetags.iata.get_iata_airport_code(leg.to_code)
+            arrival = templatetags.iata.get_iata_airport_code(leg.to_code)
             pass_fields["primaryFields"].append({
                 "key": "to-station",
                 "label": "to-station-label",
                 "value": leg.to_code,
                 "semantics": {
                     "destinationAirportCode": leg.to_code,
-                    "destinationAirportName": arrival_station["name"] if arrival_station else None,
+                    "destinationAirportName": arrival["name"] if arrival else None,
+                    "destinationLocation": {
+                        "latitude": float(arrival["latitude"]),
+                        "longitude": float(arrival["longitude"]),
+                    } if arrival else None,
                 }
             })
+            if arrival:
+                pass_json["locations"].append({
+                    "latitude": float(arrival["latitude"]),
+                    "longitude": float(arrival["longitude"]),
+                    "relevantText": arrival["name"]
+                })
+                maps_link = urllib.parse.urlencode({
+                    "q": departure["name"],
+                    "ll": f"{arrival['latitude']},{arrival['longitude']}"
+                })
+                pass_fields["backFields"].append({
+                    "key": "from-station-back",
+                    "label": "from-station-label",
+                    "value": arrival["name"],
+                    "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{arrival['name']}</a>",
+                })
+
+            if leg.leg_conditional and leg.leg_conditional.marketing_carrier:
+                r = niquests.get(f"https://airlabs.co/img/airline/m/{leg.leg_conditional.marketing_carrier}.png")
+                if r.ok:
+                    pkp.add_file("logo.png", r.content)
+                    have_logo = True
+                    if airline := templatetags.iata.get_iata_airline_code(leg.leg_conditional.marketing_carrier):
+                        pass_json["logoText"] = airline["name"]
+            else:
+                r = niquests.get(f"https://airlabs.co/img/airline/m/{leg.operating_carrier}.png")
+                if r.ok:
+                    pkp.add_file("logo.png", r.content)
+                    have_logo = True
+                    if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
+                        pass_json["logoText"] = airline["name"]
+
+            if leg.leg_conditional:
+                if leg.leg_conditional.selectee == iata.conditional.Selectee.TSAPre:
+                    add_pkp_img(pkp, "pass/tsa-pre.png", "footer.png")
+
+                if leg.leg_conditional.frequent_flyer_number:
+                    if airline := templatetags.iata.get_iata_airline_code(leg.leg_conditional.frequent_flyer_designator):
+                        pass_fields["backFields"].append({
+                            "key": "frequent-flyer",
+                            "label": "frequent-flyer-label",
+                            "value": f"{airline['name']}\n{leg.leg_conditional.frequent_flyer_number}",
+                        })
+                    else:
+                        pass_fields["backFields"].append({
+                            "key": "frequent-flyer",
+                            "label": "frequent-flyer-label",
+                            "value": f"{leg.leg_conditional.frequent_flyer_designator} {leg.leg_conditional.frequent_flyer_number}",
+                        })
+
     elif isinstance(ticket_instance, models.BahnBonusInstance):
         ticket_data: ticket.BahnBonusCode = ticket_instance.as_ticket()
 
@@ -4890,6 +4978,7 @@ PASS_STRINGS = {
 "group-leader-label" = "Group leader";
 "article-number-label" = "Article number";
 "telephone-number-label" = "Telephone";
+"frequent-flyer-label" = "Frequent Flyer Number";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -4956,6 +5045,7 @@ PASS_STRINGS = {
 "group-leader-label" = "Prifdeithiwr";
 "article-number-label" = "Rhif articl";
 "telephone-number-label" = "Rhif ffôn";
+"frequent-flyer-label" = "Rhif Cwsmer Aml";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -5022,6 +5112,7 @@ PASS_STRINGS = {
 "group-leader-label" = "Hauptfahrgast";
 "article-number-label" = "Artikel-nr.";
 "telephone-number-label" = "Telefonnr.";
+"frequent-flyer-label" = "Vielfliegerprogramm-nr.";
 """,
     "nl": """
 "product-label" = "Product";
@@ -5087,6 +5178,7 @@ PASS_STRINGS = {
 "group-ticket-label" = "Groepsticket";
 "group-leader-label" = "Groepsleider";
 "article-number-label" = "Artikelnummer";
+"frequent-flyer-label" = "Frequentflyerprogramma";
 """
 }
 
