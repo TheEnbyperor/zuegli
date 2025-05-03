@@ -2222,6 +2222,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
+                            pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ")
                         elif isinstance(parsed_layout.trips[0].departure, datetime.date):
                             pass_fields["secondaryFields"].append({
                                 "key": "validity-start",
@@ -2231,6 +2232,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
                                 "ignoresTimeZone": True
                             })
+                            pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z")
                     elif parsed_layout.trips[0].departure_time:
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
@@ -2254,6 +2256,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
+                            pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
                         elif isinstance(parsed_layout.trips[0].arrival, datetime.date):
                             if "expirationDate" not in pass_json:
                                 pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime(
