@@ -2369,6 +2369,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "product-label",
                     "value": parsed_layout.document_type,
                 })
+            
+            if len(parsed_layout.discount_cards):
+                pass_fields["auxiliaryFields"].append({
+                    "key": "discount",
+                    "label": "reduction-card-label",
+                    "value": ', '.join(parsed_layout.discount_cards)
+                })
 
             if parsed_layout.passenger_name:
                 if pass_fields["primaryFields"]:
