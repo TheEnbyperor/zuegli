@@ -4,7 +4,7 @@ import datetime
 import re
 from . import layout
 
-BENERAIL_VALIDITY = re.compile(r"^Valid on:(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
+BENERAIL_VALIDITY = re.compile(r"(Valid on|Geldig):(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
 
 @dataclasses.dataclass
