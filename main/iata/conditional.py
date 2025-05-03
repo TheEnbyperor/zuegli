@@ -34,6 +34,8 @@ class PassengerType(enum.Enum):
             return "Unaccompanied minor"
         elif self == PassengerType.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class CheckInSource(enum.Enum):
     Web = "W"
@@ -62,6 +64,8 @@ class CheckInSource(enum.Enum):
             return "Third party vendor"
         elif self == CheckInSource.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class BoardingPassSource(enum.Enum):
     Web = "W"
@@ -93,6 +97,8 @@ class BoardingPassSource(enum.Enum):
             return "Third party vendor"
         elif self == BoardingPassSource.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class DocumentType(enum.Enum):
     BoardingPass = "B"
@@ -106,6 +112,8 @@ class DocumentType(enum.Enum):
             return "Itinerary receipt"
         elif self == DocumentType.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class InternationalDocumentVerification(enum.Enum):
     NotRequired = "0"
@@ -122,6 +130,8 @@ class InternationalDocumentVerification(enum.Enum):
             return "Already performed"
         elif self == InternationalDocumentVerification.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class Selectee(enum.Enum):
     NotSelectee = "0"
@@ -138,7 +148,8 @@ class Selectee(enum.Enum):
             return "TSA PreCheck"
         elif self == Selectee.Unknown:
             return "Unknown"
-
+        else:
+            return ""
 
 @dataclasses.dataclass
 class UniqueConditional:
