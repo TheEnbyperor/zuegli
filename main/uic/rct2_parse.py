@@ -6,7 +6,13 @@ from . import layout
 
 BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
-BENERAIL_DISCOUNT_CARDS = {"100% KORTING NL": "100%NL", "RESEAU GRATUIT NS": "100%NL", "BAHNCARD 25": "BC25", "BAHNCARD 50": "BC50", "BAHNCARD 100": "BC100"}
+BENERAIL_DISCOUNT_CARDS = {
+    "100% KORTING NL": "100%NL",
+    "RESEAU GRATUIT NS": "100%NL",
+    "BAHNCARD 25": "BC25",
+    "BAHNCARD 50": "BC50",
+    "BAHNCARD 100": "BC100",
+    "100% KORTING BE": "100%BE"}
 
 @dataclasses.dataclass
 class TripPart:
