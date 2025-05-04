@@ -4,6 +4,11 @@ import base64
 import hashlib
 import ecdsa.util
 import ecdsa.keys
+import django.core.files.storage
+import cryptography.exceptions
+import cryptography.hazmat.primitives.serialization
+import cryptography.hazmat.primitives.asymmetric.ec
+import cryptography.hazmat.primitives.hashes
 from . import header, leg, security, util, conditional
 
 @dataclasses.dataclass
@@ -85,19 +90,31 @@ class Envelope:
             signed_data=signed_data,
         )
 
-    def verify_signature(self):
+    def verify_signature(self) -> typing.Optional[bool]:
         if self.security is None:
             raise util.IATAException("No signed data")
 
-        if self.security.type == "4":
+        if not self.conditional:
+            return None
+
+        iata_storage = django.core.files.storage.storages["iata-data"]
+
+        try:
+            with iata_storage.open(f"keys/{self.conditional.issuer}_{self.security.key_identifier}.pem", "rb") as f:
+                pk = cryptography.hazmat.primitives.serialization.load_pem_public_key(f.read())
+        except FileNotFoundError:
+            return None
+
+        try:
             sig = base64.urlsafe_b64decode(self.security.data)
-            try:
-                ecdsa.keys.VerifyingKey.from_public_key_recovery(
-                    signature=sig,
-                    data=self.signed_data,
-                    curve=ecdsa.NIST256p,
-                    hashfunc=hashlib.sha256,
-                    sigdecode=ecdsa.util.sigdecode_der
-                )
-            except Exception as e:
-                print(e)
+        except ValueError:
+            return False
+
+        try:
+            pk.verify(sig, self.signed_data, cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
+                cryptography.hazmat.primitives.hashes.SHA256(),
+            ))
+        except cryptography.exceptions.InvalidSignature:
+            return False
+
+        return True

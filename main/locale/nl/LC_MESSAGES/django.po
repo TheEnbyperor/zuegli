@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-30 09:17+0000\n"
+"POT-Creation-Date: 2025-05-04 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,96 +43,96 @@ msgstr "Uploaden"
 msgid "Email/Username"
 msgstr "Email/Gebruikersnaam"
 
-#: forms.py:33
+#: forms.py:33 forms.py:43
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: forms.py:38 templates/main/base.html:100
+#: forms.py:38 forms.py:48 templates/main/base.html:100
 #: templates/registration/magic_login.html:4
 #: templates/registration/magic_login.html:8
 msgid "Login"
 msgstr "Inloggen"
 
-#: forms.py:46
+#: forms.py:42 forms.py:87 templates/main/account/index.html:23
+msgid "Email"
+msgstr "E-mail"
+
+#: forms.py:56
 msgid "Subscription Number"
 msgstr "Abonnementsnummer"
 
-#: forms.py:47 forms.py:87 templates/main/account/index.html:19
+#: forms.py:57 forms.py:97 templates/main/account/index.html:19
 #: templates/main/account/sbahn_berlin.html:21
-#: templates/main/ssb_ticket_details.html:315
+#: templates/main/ssb_ticket_details.html:316
 #: templates/main/vdv_elements.html:208 templates/main/vdv_elements.html:515
 msgid "Surname"
 msgstr "Achternaam"
 
-#: forms.py:49
+#: forms.py:59
 msgid "Date of Birth"
 msgstr "Geboortedatum"
 
-#: forms.py:60
+#: forms.py:70
 msgid "One of surname or date of birth must be provided"
 msgstr "Achternaam of geboortedatum moet worden opgegeven"
 
-#: forms.py:62 forms.py:82 forms.py:92
+#: forms.py:72 forms.py:92 forms.py:102
 msgid "Add"
 msgstr "Toevoegen"
 
-#: forms.py:69 forms.py:70
+#: forms.py:79 forms.py:80
 msgid "Either a surname or a date of birth must be given"
 msgstr "Achternaam of geboortedatum moet worden opgegeven"
 
-#: forms.py:76
+#: forms.py:86
 msgid "Booking Reference"
 msgstr "Boekingsreferentie"
 
-#: forms.py:77 templates/main/account/index.html:23
-msgid "Email"
-msgstr "E-mail"
-
-#: forms.py:86
+#: forms.py:96
 msgid "Booking number"
 msgstr "Boekingsnummer"
 
-#: models.py:113
+#: models.py:116
 msgid "Deutschlandticket"
 msgstr "Deutschlandticket"
 
-#: models.py:114
+#: models.py:117
 msgid "Klimaticket"
 msgstr "Klimaticket"
 
-#: models.py:115
+#: models.py:118
 msgid "Bahncard"
 msgstr "Bahncard"
 
-#: models.py:116
+#: models.py:119
 msgid "Travel ticket"
 msgstr "Reisticket"
 
-#: models.py:117
+#: models.py:120
 msgid "Boarding card"
 msgstr "Boardingpass"
 
-#: models.py:118
+#: models.py:121
 msgid "Reservation"
 msgstr "Reservering"
 
-#: models.py:119
+#: models.py:122
 msgid "Interrail"
 msgstr "Interrail"
 
-#: models.py:120
+#: models.py:123
 msgid "Railcard"
 msgstr "Railcard"
 
-#: models.py:121
+#: models.py:124
 msgid "Keycard"
 msgstr "Keycard"
 
-#: models.py:122
+#: models.py:125
 msgid "BahnBonus"
 msgstr "BahnBonus"
 
-#: models.py:123
+#: models.py:126
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -208,14 +208,14 @@ msgstr "Voornaam"
 #: templates/main/account/index.html:32 templates/main/account/index.html:52
 #: templates/main/account/index.html:71 templates/main/account/index.html:84
 #: templates/main/account/index.html:97 templates/main/account/index.html:110
-#: templates/main/account/index.html:123
+#: templates/main/account/index.html:123 templates/main/account/index.html:136
 msgid "Reauthenticate"
 msgstr "Opnieuw aanmelden"
 
 #: templates/main/account/index.html:33 templates/main/account/index.html:53
 #: templates/main/account/index.html:72 templates/main/account/index.html:85
 #: templates/main/account/index.html:98 templates/main/account/index.html:111
-#: templates/main/account/index.html:124
+#: templates/main/account/index.html:124 templates/main/account/index.html:137
 msgid "Unlink"
 msgstr "Loskoppelen"
 
@@ -236,7 +236,7 @@ msgstr ""
 msgid "BahnBonus Account"
 msgstr "BahnBonus-account"
 
-#: templates/main/account/index.html:63 templates/main/account/index.html:134
+#: templates/main/account/index.html:63 templates/main/account/index.html:147
 msgid "Add ticket"
 msgstr "Ticket toevoegen"
 
@@ -276,18 +276,37 @@ msgstr "Vestische-account"
 msgid "Login with Vestische"
 msgstr "Inloggen bij Vestische"
 
-#: templates/main/account/index.html:138
+#: templates/main/account/index.html:132
+#, fuzzy
+#| msgid "My Account"
+msgid "Raileasy Account"
+msgstr "Mijn account"
+
+#: templates/main/account/index.html:140
+#: templates/main/account/raileasy_login.html:8
+#, fuzzy
+#| msgid "Login with SaarVV"
+msgid "Login with Raileasy"
+msgstr "Inloggen bij SaarVV"
+
+#: templates/main/account/index.html:151
 #: templates/main/account/sbahn_berlin.html:44
 msgid "Tickets"
 msgstr "Tickets"
 
-#: templates/main/account/index.html:141
+#: templates/main/account/index.html:154
 msgid "Subscribe to your trains as a calendar:"
 msgstr "Abonneer op uw treinen als kalender:"
 
 #: templates/main/account/nrway_login.html:4
 msgid "DB Regio NRWay Login"
 msgstr "Inloggen bij DB Regio NRWay"
+
+#: templates/main/account/raileasy_login.html:4
+#, fuzzy
+#| msgid "SaarVV Login"
+msgid "Raileasy Login"
+msgstr "Inloggen bij SaarVV"
 
 #: templates/main/account/saarvv_login.html:4
 msgid "SaarVV Login"
@@ -386,6 +405,47 @@ msgid ""
 msgstr ""
 "Gelicentieerd onder de <a href=\"https://eupl.eu\" class=\"govuk-"
 "footer__link\" target=\"_blank\">EUPL v1.2</a>."
+
+#: templates/main/iata_ticket_details.html:270
+#, fuzzy
+#| msgid "Signature key ID"
+msgid "Signature"
+msgstr "Sleutel-ID ondertekening"
+
+#: templates/main/iata_ticket_details.html:273
+#, fuzzy
+#| msgid "Identifier"
+msgid "Key identifier"
+msgstr "Identifier"
+
+#: templates/main/iata_ticket_details.html:279
+#: templates/main/ssb_ticket_details.html:34
+#: templates/main/uic/ticket_details.html:36
+msgid "Signature verification"
+msgstr "Sleutelverificatie"
+
+#: templates/main/iata_ticket_details.html:286
+#: templates/main/ssb_ticket_details.html:55
+#: templates/main/uic/ticket_details.html:57
+#: templates/main/uic/ticket_details.html:174
+msgid "Unknown signing key, can't verify ticket"
+msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
+
+#: templates/main/iata_ticket_details.html:290
+#: templates/main/ssb_ticket_details.html:37
+#: templates/main/uic/ticket_details.html:39
+#: templates/main/uic/ticket_details.html:151
+#: templates/main/uic/ticket_details.html:210
+msgid "Valid"
+msgstr "Geldig"
+
+#: templates/main/iata_ticket_details.html:295
+#: templates/main/ssb_ticket_details.html:42
+#: templates/main/uic/ticket_details.html:44
+#: templates/main/uic/ticket_details.html:156
+#: templates/main/uic/ticket_details.html:215
+msgid "Signature verification failed, this is likely a forged ticket"
+msgstr "Sleutelverificatie mislukt, dit is waarschijnlijk een vals ticket"
 
 #: templates/main/index.html:13
 msgid "Supported ticket types include:"
@@ -584,35 +644,10 @@ msgstr "Uitgever"
 msgid "Signature key ID"
 msgstr "Sleutel-ID ondertekening"
 
-#: templates/main/ssb_ticket_details.html:34
-#: templates/main/uic/ticket_details.html:36
-msgid "Signature verification"
-msgstr "Sleutelverificatie"
-
-#: templates/main/ssb_ticket_details.html:37
-#: templates/main/uic/ticket_details.html:39
-#: templates/main/uic/ticket_details.html:151
-#: templates/main/uic/ticket_details.html:210
-msgid "Valid"
-msgstr "Geldig"
-
-#: templates/main/ssb_ticket_details.html:42
-#: templates/main/uic/ticket_details.html:44
-#: templates/main/uic/ticket_details.html:156
-#: templates/main/uic/ticket_details.html:215
-msgid "Signature verification failed, this is likely a forged ticket"
-msgstr "Sleutelverificatie mislukt, dit is waarschijnlijk een vals ticket"
-
 #: templates/main/ssb_ticket_details.html:50
 #: templates/main/uic/ticket_details.html:52
 msgid "Signing key"
 msgstr "Ondertekeningssleutel"
-
-#: templates/main/ssb_ticket_details.html:55
-#: templates/main/uic/ticket_details.html:57
-#: templates/main/uic/ticket_details.html:174
-msgid "Unknown signing key, can't verify ticket"
-msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
 
 #: templates/main/ssb_ticket_details.html:64
 msgid "Integrated reservation ticket"
@@ -765,9 +800,9 @@ msgid ""
 "link\">Add your name to your account</a> to have your full name on your "
 "ticket."
 msgstr ""
-"Naam gedeeltelijk onherkenbaar? <a href=\"%(account_edit_url)s\" class="
-"\"govuk-link\">Voeg uw naam toe aan uw account</a> om uw volledige naam"
-" op uw ticket te tonen"
+"Naam gedeeltelijk onherkenbaar? <a href=\"%(account_edit_url)s\" "
+"class=\"govuk-link\">Voeg uw naam toe aan uw account</a> om uw volledige "
+"naam op uw ticket te tonen"
 
 #: templates/main/ssb_ticket_details.html:289
 #: templates/main/vdv_ticket_details.html:38
@@ -783,12 +818,12 @@ msgstr "Productcode"
 msgid "Ticket %(id)s"
 msgstr "Ticket %(id)s"
 
-#: templates/main/ticket.html:11 templates/main/ticket.html:214
-#: templates/main/ticket.html:254 templates/main/ticket.html:273
-#: templates/main/ticket.html:288 templates/main/ticket.html:302
-#: templates/main/ticket.html:318 templates/main/ticket.html:337
-#: templates/main/ticket.html:356 templates/main/ticket.html:370
-#: templates/main/ticket.html:384
+#: templates/main/ticket.html:11 templates/main/ticket.html:224
+#: templates/main/ticket.html:264 templates/main/ticket.html:283
+#: templates/main/ticket.html:298 templates/main/ticket.html:312
+#: templates/main/ticket.html:328 templates/main/ticket.html:347
+#: templates/main/ticket.html:366 templates/main/ticket.html:380
+#: templates/main/ticket.html:394
 #, python-format
 msgid "Ticket #%(id)s"
 msgstr "Ticket #%(id)s"
@@ -912,23 +947,23 @@ msgstr "Foto uploaden"
 msgid "Download your pass"
 msgstr "Uw pass downloaden"
 
-#: templates/main/ticket.html:197
+#: templates/main/ticket.html:207
 msgid "Add to Calendar"
 msgstr "Aan kalender toevoegen"
 
-#: templates/main/ticket.html:204
+#: templates/main/ticket.html:214
 msgid "Ticket details"
 msgstr "Ticketdetails"
 
-#: templates/main/ticket.html:206
+#: templates/main/ticket.html:216
 msgid "No instances found for this ticket."
 msgstr "Geen inhouden in dit ticket."
 
-#: templates/main/ticket.html:230
+#: templates/main/ticket.html:240
 msgid "This ticket is invalid"
 msgstr "Dit ticket is ongeldig"
 
-#: templates/main/ticket.html:235
+#: templates/main/ticket.html:245
 msgid ""
 "The key used to sign this ticket has been revoked due to misuse. Travelling "
 "on this ticket is likely to result in a penalty fare. More details: <a "
@@ -942,13 +977,13 @@ msgstr ""
 "dodgers-against-their-will-10280040.html\" target=\"_blank\">Engelse versie</"
 "a>."
 
-#: templates/main/ticket.html:275 templates/main/vdv_elements.html:159
+#: templates/main/ticket.html:285 templates/main/vdv_elements.html:159
 #: templates/main/vdv_ticket_details.html:133
 #: templates/main/vdv_ticket_details.html:178
 msgid "Type"
 msgstr "Soort"
 
-#: templates/main/ticket.html:304 templates/main/ticket.html:386
+#: templates/main/ticket.html:314 templates/main/ticket.html:396
 #, python-format
 msgid "sequence #%(seq)s"
 msgstr "reeks #%(seq)s"
@@ -1165,7 +1200,6 @@ msgstr "Gender"
 
 #: templates/main/vdv_elements.html:233
 #, python-format
-#| msgid "Spacial validity - variant %(variant)s"
 msgid ""
 "Spacial validity - variant\n"
 "                            %(variant)s"

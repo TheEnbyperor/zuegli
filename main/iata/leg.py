@@ -73,6 +73,8 @@ class Compartment(enum.Enum):
             return "Economy class - discounted"
         elif self == Compartment.Unknown:
             return "Unknown"
+        else:
+            return ""
 
 class PassengerStatus(enum.Enum):
     NotCheckedIn = "0"
@@ -107,6 +109,8 @@ class PassengerStatus(enum.Enum):
             return "Revalidation done"
         elif self == PassengerStatus.OriginalBoardingLineUsed:
             return "Original boarding line used"
+        else:
+            return ""
 
 
 @dataclasses.dataclass
