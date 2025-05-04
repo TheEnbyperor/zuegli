@@ -2,17 +2,26 @@ import dataclasses
 import typing
 import datetime
 import re
+import pathlib
+import json
 from . import layout
 
 BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
-BENERAIL_DISCOUNT_CARDS = {
-    "100% KORTING NL": "100%NL",
-    "RESEAU GRATUIT NS": "100%NL",
-    "BAHNCARD 25": "BC25",
-    "BAHNCARD 50": "BC50",
-    "BAHNCARD 100": "BC100",
-    "100% KORTING BE": "100%BE"}
+
+BENERAIL_DISCOUNT_CARDS = None
+ROOT_DIR = pathlib.Path(__file__).parent.parent
+
+def get_benerail_discount_cards():
+    global BENERAIL_DISCOUNT_CARDS
+
+    if BENERAIL_DISCOUNT_CARDS:
+        return BENERAIL_DISCOUNT_CARDS
+
+    with open(ROOT_DIR / "uic" / "data" / "benerail_discount_cards.json") as f:
+        BENERAIL_DISCOUNT_CARDS = json.load(f)
+
+    return BENERAIL_DISCOUNT_CARDS
 
 @dataclasses.dataclass
 class TripPart:
@@ -114,9 +123,9 @@ class RCT2Parser:
             # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">")
 
-            for discount_name, discount_code in BENERAIL_DISCOUNT_CARDS.items():
+            for discount_name, discount_code in get_benerail_discount_cards().items():
                 if discount_name in conditions_data:
-                    discount_cards.append(discount_code)       
+                    discount_cards.append(discount_code)
 
         try:
             date_of_birth = datetime.datetime.strptime(dob_text, "%d.%m.%Y").date()
