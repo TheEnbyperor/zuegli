@@ -277,17 +277,13 @@ msgid "Login with Vestische"
 msgstr "Inloggen bij Vestische"
 
 #: templates/main/account/index.html:132
-#, fuzzy
-#| msgid "My Account"
 msgid "Raileasy Account"
-msgstr "Mijn account"
+msgstr "Raileasy account"
 
 #: templates/main/account/index.html:140
 #: templates/main/account/raileasy_login.html:8
-#, fuzzy
-#| msgid "Login with SaarVV"
 msgid "Login with Raileasy"
-msgstr "Inloggen bij SaarVV"
+msgstr "Inloggen bij Raileasy"
 
 #: templates/main/account/index.html:151
 #: templates/main/account/sbahn_berlin.html:44
@@ -303,10 +299,8 @@ msgid "DB Regio NRWay Login"
 msgstr "Inloggen bij DB Regio NRWay"
 
 #: templates/main/account/raileasy_login.html:4
-#, fuzzy
-#| msgid "SaarVV Login"
 msgid "Raileasy Login"
-msgstr "Inloggen bij SaarVV"
+msgstr "Inloggen bij Raileasy"
 
 #: templates/main/account/saarvv_login.html:4
 msgid "SaarVV Login"
@@ -407,16 +401,12 @@ msgstr ""
 "footer__link\" target=\"_blank\">EUPL v1.2</a>."
 
 #: templates/main/iata_ticket_details.html:270
-#, fuzzy
-#| msgid "Signature key ID"
 msgid "Signature"
-msgstr "Sleutel-ID ondertekening"
+msgstr "Ondertekening"
 
 #: templates/main/iata_ticket_details.html:273
-#, fuzzy
-#| msgid "Identifier"
 msgid "Key identifier"
-msgstr "Identifier"
+msgstr "Sleuteldentifier"
 
 #: templates/main/iata_ticket_details.html:279
 #: templates/main/ssb_ticket_details.html:34
