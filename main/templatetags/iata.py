@@ -11,6 +11,7 @@ def get_iata_airline_code(value):
         return v
     if v := iata.codes.get_icao_airline(value):
         return v
+    return None
 
 @register.filter(name="iata_airport")
 def get_iata_airport_code(value):

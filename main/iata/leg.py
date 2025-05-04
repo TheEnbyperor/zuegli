@@ -76,6 +76,27 @@ class Compartment(enum.Enum):
         else:
             return ""
 
+    @property
+    def type_key(self):
+        if self == Compartment.Supersonic:
+            return "supersonic"
+        elif self in (Compartment.PremiumFirst, Compartment.First, Compartment.DiscountedFirst):
+            return "first-class"
+        elif self == Compartment.PremiumBusiness:
+            return "premium-business"
+        elif self in (Compartment.Business, Compartment.DiscountedBusinessD, Compartment.DiscountedBusinessI, Compartment.DiscountedBusinessZ):
+            return "business"
+        elif self == Compartment.PremiumEconomy:
+            return "premium-economy"
+        elif self in (Compartment.Economy, Compartment.DiscountedEconomyB, Compartment.DiscountedEconomyH,
+                      Compartment.DiscountedEconomyK, Compartment.DiscountedEconomyL, Compartment.DiscountedEconomyM,
+                      Compartment.DiscountedEconomyN, Compartment.DiscountedEconomyQ, Compartment.DiscountedEconomyT,
+                      Compartment.DiscountedEconomyV, Compartment.DiscountedEconomyX):
+            return "economy"
+        else:
+            return ""
+
+
 class PassengerStatus(enum.Enum):
     NotCheckedIn = "0"
     CheckedIn = "1"
