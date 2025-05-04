@@ -37,7 +37,7 @@ def get_token(account: "models.Account") -> typing.Optional[str]:
 
         data = r.json()
         oauth.token = data["id_token"]
-        oauth.token_expires_at = now + datetime.timedelta(seconds=data["expires_in"])
+        oauth.token_expires_at = now + datetime.timedelta(seconds=int(data["expires_in"]))
         oauth.refresh_token = data.get("refresh_token", None)
         oauth.refresh_token_expires_at = None
         oauth.save()
