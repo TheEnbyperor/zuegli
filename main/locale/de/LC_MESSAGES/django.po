@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-30 09:17+0000\n"
+"POT-Creation-Date: 2025-05-04 09:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,102 +41,102 @@ msgstr "Hochladen"
 msgid "Email/Username"
 msgstr "Email/Benutzername"
 
-#: forms.py:33
+#: forms.py:33 forms.py:43
 msgid "Password"
 msgstr "Passwort"
 
-#: forms.py:38 templates/main/base.html:100
+#: forms.py:38 forms.py:48 templates/main/base.html:100
 #: templates/registration/magic_login.html:4
 #: templates/registration/magic_login.html:8
 msgid "Login"
 msgstr "Anmelden"
 
-#: forms.py:46
+#: forms.py:42 forms.py:87 templates/main/account/index.html:23
+msgid "Email"
+msgstr "Email"
+
+#: forms.py:56
 #, fuzzy
 #| msgid "DB Subscriptions"
 msgid "Subscription Number"
 msgstr "DB-Abos"
 
-#: forms.py:47 forms.py:87 templates/main/account/index.html:19
+#: forms.py:57 forms.py:97 templates/main/account/index.html:19
 #: templates/main/account/sbahn_berlin.html:21
-#: templates/main/ssb_ticket_details.html:315
+#: templates/main/ssb_ticket_details.html:316
 #: templates/main/vdv_elements.html:208 templates/main/vdv_elements.html:515
 msgid "Surname"
 msgstr "Nachname"
 
-#: forms.py:49
+#: forms.py:59
 #, fuzzy
 #| msgid "Date of birth"
 msgid "Date of Birth"
 msgstr "Geburtsdatum"
 
-#: forms.py:60
+#: forms.py:70
 msgid "One of surname or date of birth must be provided"
 msgstr ""
 
-#: forms.py:62 forms.py:82 forms.py:92
+#: forms.py:72 forms.py:92 forms.py:102
 msgid "Add"
 msgstr ""
 
-#: forms.py:69 forms.py:70
+#: forms.py:79 forms.py:80
 msgid "Either a surname or a date of birth must be given"
 msgstr ""
 
-#: forms.py:76
+#: forms.py:86
 msgid "Booking Reference"
 msgstr ""
 
-#: forms.py:77 templates/main/account/index.html:23
-msgid "Email"
-msgstr ""
-
-#: forms.py:86
+#: forms.py:96
 #, fuzzy
 #| msgid "Phone number"
 msgid "Booking number"
 msgstr "Buchungsnummer"
 
-#: models.py:113
+#: models.py:116
 msgid "Deutschlandticket"
 msgstr "Deutschlandticket"
 
-#: models.py:114
+#: models.py:117
 msgid "Klimaticket"
 msgstr "Klimaticket"
 
-#: models.py:115
+#: models.py:118
 msgid "Bahncard"
 msgstr "Bahncard"
 
-#: models.py:116
+#: models.py:119
 msgid "Travel ticket"
 msgstr "Fahrkarte"
 
-#: models.py:117
+#: models.py:120
 msgid "Boarding card"
 msgstr "Bordkarte"
 
-#: models.py:118
+#: models.py:121
 msgid "Reservation"
 msgstr "Reservierung"
 
-#: models.py:119
+#: models.py:122
 msgid "Interrail"
 msgstr "Interrail"
 
-#: models.py:120
+#: models.py:123
 msgid "Railcard"
 msgstr "Railcard"
 
-#: models.py:121
+#: models.py:124
 msgid "Keycard"
 msgstr "Keycard"
 
-#: models.py:122
+#: models.py:125
 msgid "BahnBonus"
 msgstr "BahnBonus"
 
-#: models.py:123
+#: models.py:126
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -226,14 +226,14 @@ msgstr "Vorname"
 #: templates/main/account/index.html:32 templates/main/account/index.html:52
 #: templates/main/account/index.html:71 templates/main/account/index.html:84
 #: templates/main/account/index.html:97 templates/main/account/index.html:110
-#: templates/main/account/index.html:123
+#: templates/main/account/index.html:123 templates/main/account/index.html:136
 msgid "Reauthenticate"
 msgstr ""
 
 #: templates/main/account/index.html:33 templates/main/account/index.html:53
 #: templates/main/account/index.html:72 templates/main/account/index.html:85
 #: templates/main/account/index.html:98 templates/main/account/index.html:111
-#: templates/main/account/index.html:124
+#: templates/main/account/index.html:124 templates/main/account/index.html:137
 msgid "Unlink"
 msgstr "Ausmelden"
 
@@ -256,7 +256,7 @@ msgstr ""
 msgid "BahnBonus Account"
 msgstr "BahnBonus Konto"
 
-#: templates/main/account/index.html:63 templates/main/account/index.html:134
+#: templates/main/account/index.html:63 templates/main/account/index.html:147
 #, fuzzy
 msgid "Add ticket"
 msgstr "Karte hinzufügen"
@@ -309,20 +309,39 @@ msgstr "Vestische-Konto"
 msgid "Login with Vestische"
 msgstr "Anmelden mit Vestische"
 
-#: templates/main/account/index.html:138
+#: templates/main/account/index.html:132
+#, fuzzy
+#| msgid "Account"
+msgid "Raileasy Account"
+msgstr "Konto"
+
+#: templates/main/account/index.html:140
+#: templates/main/account/raileasy_login.html:8
+#, fuzzy
+#| msgid "Login with password"
+msgid "Login with Raileasy"
+msgstr "Anmelden mit SaarVV"
+
+#: templates/main/account/index.html:151
 #: templates/main/account/sbahn_berlin.html:44
 #, fuzzy
 #| msgid "Ticket %(id)s"
 msgid "Tickets"
 msgstr "Karten"
 
-#: templates/main/account/index.html:141
+#: templates/main/account/index.html:154
 msgid "Subscribe to your trains as a calendar:"
 msgstr ""
 
 #: templates/main/account/nrway_login.html:4
 msgid "DB Regio NRWay Login"
 msgstr ""
+
+#: templates/main/account/raileasy_login.html:4
+#, fuzzy
+#| msgid "SaarVV Account"
+msgid "Raileasy Login"
+msgstr "Raileasy Anmeldung"
 
 #: templates/main/account/saarvv_login.html:4
 #, fuzzy
@@ -460,6 +479,47 @@ msgid ""
 msgstr ""
 "Lizenziert unter der <a href=\"https://eupl.eu\" class=\"govuk-"
 "footer__link\" target=\"_blank\">EUPL v1.2</a>."
+
+#: templates/main/iata_ticket_details.html:270
+#, fuzzy
+#| msgid "Signature key ID"
+msgid "Signature"
+msgstr "Signatur"
+
+#: templates/main/iata_ticket_details.html:273
+#, fuzzy
+#| msgid "Identifier"
+msgid "Key identifier"
+msgstr "Schlüssel-ID"
+
+#: templates/main/iata_ticket_details.html:279
+#: templates/main/ssb_ticket_details.html:34
+#: templates/main/uic/ticket_details.html:36
+msgid "Signature verification"
+msgstr "Prüfung der Signatur"
+
+#: templates/main/iata_ticket_details.html:286
+#: templates/main/ssb_ticket_details.html:55
+#: templates/main/uic/ticket_details.html:57
+#: templates/main/uic/ticket_details.html:174
+msgid "Unknown signing key, can't verify ticket"
+msgstr "Unbekannte Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
+
+#: templates/main/iata_ticket_details.html:290
+#: templates/main/ssb_ticket_details.html:37
+#: templates/main/uic/ticket_details.html:39
+#: templates/main/uic/ticket_details.html:151
+#: templates/main/uic/ticket_details.html:210
+msgid "Valid"
+msgstr "Gültig"
+
+#: templates/main/iata_ticket_details.html:295
+#: templates/main/ssb_ticket_details.html:42
+#: templates/main/uic/ticket_details.html:44
+#: templates/main/uic/ticket_details.html:156
+#: templates/main/uic/ticket_details.html:215
+msgid "Signature verification failed, this is likely a forged ticket"
+msgstr "Die Signaturüberprüfung ist fehlgeschlagen. Dies ist wahrscheinlich ein gefälschtes Ticket."
 
 #: templates/main/index.html:13
 msgid "Supported ticket types include:"
@@ -653,39 +713,12 @@ msgstr ""
 msgid "Signature key ID"
 msgstr "Sicherheitsschlüssel-ID"
 
-#: templates/main/ssb_ticket_details.html:34
-#: templates/main/uic/ticket_details.html:36
-msgid "Signature verification"
-msgstr "Prüfung der Signatur"
-
-#: templates/main/ssb_ticket_details.html:37
-#: templates/main/uic/ticket_details.html:39
-#: templates/main/uic/ticket_details.html:151
-#: templates/main/uic/ticket_details.html:210
-msgid "Valid"
-msgstr "Gültig"
-
-#: templates/main/ssb_ticket_details.html:42
-#: templates/main/uic/ticket_details.html:44
-#: templates/main/uic/ticket_details.html:156
-#: templates/main/uic/ticket_details.html:215
-msgid "Signature verification failed, this is likely a forged ticket"
-msgstr ""
-
 #: templates/main/ssb_ticket_details.html:50
 #: templates/main/uic/ticket_details.html:52
 msgid "Signing key"
 msgstr "Sicherheitsschlüssel"
 
-#: templates/main/ssb_ticket_details.html:55
-#: templates/main/uic/ticket_details.html:57
-#: templates/main/uic/ticket_details.html:174
-msgid "Unknown signing key, can't verify ticket"
-msgstr ""
-
 #: templates/main/ssb_ticket_details.html:64
-#, fuzzy
-#| msgid "International ticket"
 msgid "Integrated reservation ticket"
 msgstr ""
 
@@ -725,8 +758,6 @@ msgid "No"
 msgstr "Nein"
 
 #: templates/main/ssb_ticket_details.html:85
-#, fuzzy
-#| msgid "Ticket %(id)s"
 msgid "Ticket type"
 msgstr ""
 
@@ -801,8 +832,6 @@ msgid "Departure time"
 msgstr ""
 
 #: templates/main/ssb_ticket_details.html:144
-#, fuzzy
-#| msgid "Phone number"
 msgid "Train number"
 msgstr ""
 
@@ -829,8 +858,6 @@ msgid "Extra text"
 msgstr ""
 
 #: templates/main/ssb_ticket_details.html:184
-#, fuzzy
-#| msgid "International ticket"
 msgid "Non-reservation ticket"
 msgstr ""
 
@@ -863,7 +890,8 @@ msgid ""
 "Partially redacted name? <a href=\"%(account_edit_url)s\" class=\"govuk-"
 "link\">Add your name to your account</a> to have your full name on your "
 "ticket."
-msgstr "Namen teilweise geschwärzt? <a href=\"%(account_edit_url)s\" class=\"govuk-"
+msgstr ""
+"Namen teilweise geschwärzt? <a href=\"%(account_edit_url)s\" class=\"govuk-"
 "link\">Fügen Sie Ihren Namen zu Ihrem Konto hinzu</a>, um Ihren Vollnamen an "
 "Ihrer Karte anzuzeigen"
 
@@ -883,12 +911,12 @@ msgstr "Produkt"
 msgid "Ticket %(id)s"
 msgstr "Karte %(id)s"
 
-#: templates/main/ticket.html:11 templates/main/ticket.html:214
-#: templates/main/ticket.html:254 templates/main/ticket.html:273
-#: templates/main/ticket.html:288 templates/main/ticket.html:302
-#: templates/main/ticket.html:318 templates/main/ticket.html:337
-#: templates/main/ticket.html:356 templates/main/ticket.html:370
-#: templates/main/ticket.html:384
+#: templates/main/ticket.html:11 templates/main/ticket.html:224
+#: templates/main/ticket.html:264 templates/main/ticket.html:283
+#: templates/main/ticket.html:298 templates/main/ticket.html:312
+#: templates/main/ticket.html:328 templates/main/ticket.html:347
+#: templates/main/ticket.html:366 templates/main/ticket.html:380
+#: templates/main/ticket.html:394
 #, python-format
 msgid "Ticket #%(id)s"
 msgstr "Karte #%(id)s"
@@ -999,24 +1027,24 @@ msgstr "Foto hochladen"
 msgid "Download your pass"
 msgstr "Laden Ihren Pass herunter"
 
-#: templates/main/ticket.html:197
+#: templates/main/ticket.html:207
 msgid "Add to Calendar"
 msgstr "Hinzufügen zu Kalendar"
 
-#: templates/main/ticket.html:204
+#: templates/main/ticket.html:214
 #, fuzzy
 msgid "Ticket details"
 msgstr "Angaben der Karte"
 
-#: templates/main/ticket.html:206
+#: templates/main/ticket.html:216
 msgid "No instances found for this ticket."
 msgstr ""
 
-#: templates/main/ticket.html:230
+#: templates/main/ticket.html:240
 msgid "This ticket is invalid"
 msgstr "Diese Karte ist ungültig"
 
-#: templates/main/ticket.html:235
+#: templates/main/ticket.html:245
 msgid ""
 "The key used to sign this ticket has been revoked due to misuse. Travelling "
 "on this ticket is likely to result in a penalty fare. More details: <a "
@@ -1025,13 +1053,13 @@ msgid ""
 "version</a>."
 msgstr ""
 
-#: templates/main/ticket.html:275 templates/main/vdv_elements.html:159
+#: templates/main/ticket.html:285 templates/main/vdv_elements.html:159
 #: templates/main/vdv_ticket_details.html:133
 #: templates/main/vdv_ticket_details.html:178
 msgid "Type"
 msgstr "Typ"
 
-#: templates/main/ticket.html:304 templates/main/ticket.html:386
+#: templates/main/ticket.html:314 templates/main/ticket.html:396
 #, python-format
 msgid "sequence #%(seq)s"
 msgstr "Laufnummer #%(seq)s"

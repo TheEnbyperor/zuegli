@@ -305,8 +305,9 @@
                                 <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>
                                 <dd class="govuk-summary-list__value">
                                     {{ ticket.data.sncb_data.forename }}
-                                    {% if ticket.data.sncb_data.original_forename %}(
-                                        {{ ticket.data.sncb_data.original_forename }}){% endif %}
+                                    {% if ticket.data.sncb_data.original_forename %}
+                                        ({{ ticket.data.sncb_data.original_forename }})
+                                    {% endif %}
                                 </dd>
                             </div>
                         {% endif %}
@@ -315,8 +316,9 @@
                                 <dt class="govuk-summary-list__key">{% trans "Surname" %}</dt>
                                 <dd class="govuk-summary-list__value">
                                     {{ ticket.data.sncb_data.surname }}
-                                    {% if ticket.data.sncb_data.original_surname %}(
-                                        {{ ticket.data.sncb_data.original_surname }}){% endif %}
+                                    {% if ticket.data.sncb_data.original_surname %}
+                                        ({{ ticket.data.sncb_data.original_surname }})
+                                    {% endif %}
                                 </dd>
                             </div>
                         {% endif %}

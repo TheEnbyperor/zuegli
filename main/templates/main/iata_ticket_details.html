@@ -1,4 +1,4 @@
-{% load tz iata %}
+{% load tz iata i18n %}
 {% localtime off %}
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
@@ -200,7 +200,8 @@
                                                     {% if org %}
                                                         {% include "main/iata_airline.html" with airline=org %}
                                                     {% else %}
-                                                        Unknown - <code>{{ leg.leg_conditional.marketing_carrier }}</code>
+                                                        Unknown -
+                                                        <code>{{ leg.leg_conditional.marketing_carrier }}</code>
                                                     {% endif %}
                                                 {% endwith %}
                                             </dd>
@@ -266,21 +267,38 @@
         </div>
     {% endfor %}
     {% if ticket.data.security %}
-        <h2 class="govuk-heading-m">Security data</h2>
+        <h2 class="govuk-heading-m">{% trans "Signature" %}</h2>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Type</dt>
+                <dt class="govuk-summary-list__key">{% trans "Key identifier" %}</dt>
                 <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.data.security.type }}</code>
+                    <code>{{ ticket.data.security.key_identifier }}</code>
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Data</dt>
+                <dt class="govuk-summary-list__key">{% trans "Signature verification" %}</dt>
                 <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.data.security.data }}</code>
+                    {% with verify=ticket.data.verify_signature %}
+                        {% if verify is None %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    {% trans "Unknown signing key, can't verify ticket" %}
+                                </strong>
+                            </div>
+                        {% elif verify %}
+                            <strong class="govuk-tag govuk-tag--green">{% trans "Valid" %}</strong>
+                        {% else %}
+                            <div class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                    {% trans "Signature verification failed, this is likely a forged ticket" %}
+                                </strong>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                 </dd>
             </div>
-            {{ ticket.data.verify_signature }}
         </dl>
     {% endif %}
 {% endlocaltime %}

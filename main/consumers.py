@@ -1,3 +1,4 @@
+import traceback
 import typing
 import base64
 import threading
@@ -251,6 +252,8 @@ class VDVConsumer(JsonWebsocketConsumer):
                     data=bytes([0xE5, i]),
                     expected_response_length=256,
                 ))
+                if not application_logbook.is_success():
+                    self.error(f"Failed to read Application Logbook {i}")
                 log_entry = vdv_nm.log.parse_log(application_logbook.data)
                 log_entries.append((log_entry, application_logbook.data))
 
@@ -259,6 +262,8 @@ class VDVConsumer(JsonWebsocketConsumer):
                 data=bytes([0xED, application_directory.key_register.data_pointer]),
                 expected_response_length=256,
             ))
+            if not key_register.is_success():
+                self.error("Failed to read Key Register")
 
             customer_infotext = self.apdu(RequestAPDU(
                 instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
@@ -374,4 +379,5 @@ class VDVConsumer(JsonWebsocketConsumer):
 
             self.done(f"{settings.EXTERNAL_URL_BASE}{card.get_absolute_url()}")
         except (vdv_nm.VDVNMException, vdv.VDVException) as e:
+            traceback.print_exc()
             self.error(str(e))

@@ -3,12 +3,12 @@ from . import util
 
 @dataclasses.dataclass
 class Security:
-    type: str
+    key_identifier: str
     data: str
 
     @classmethod
     def parse(cls, data: str) -> "Security":
-        s_type = data[0]
+        kid = data[0]
         try:
             s_len = int(data[1:3], 16)
         except ValueError as e:
@@ -18,6 +18,6 @@ class Security:
             raise util.IATAException("Not enough data")
 
         return cls(
-            type=s_type,
+            key_identifier=kid,
             data=data[3:3 + s_len],
         )
