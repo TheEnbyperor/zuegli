@@ -601,8 +601,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         pass_fields["backFields"].append({
                             "key": "return-included",
                             "label": "return-included-label",
-                            "value": "return-included-yes" if ticket_document[
-                                "returnIncluded"] else "return-included-no",
+                            "value": "yes-label" if \
+                            ticket_document["returnIncluded"] else "no-label",
                         })
 
                         if "productIdIA5" in ticket_document:
@@ -2873,7 +2873,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_fields["backFields"].append({
                 "key": "return-included",
                 "label": "return-included-label",
-                "value": "return-included-yes" if ticket_data.data.bidirectional else "return-included-no",
+                "value": "yes-label" if ticket_data.data.bidirectional else "no-label",
             })
             pass_fields["backFields"].append({
                 "key": "issuing-org",
@@ -4725,22 +4725,36 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{arrival['name']}</a>",
                 })
 
+            if c := leg.compartment.type_key:
+                pass_fields["secondaryFields"].append({
+                    "key": "compartment",
+                    "label": "class-code-label",
+                    "value": f"compartment-code-{c}-label"
+                })
+
             if leg.leg_conditional and leg.leg_conditional.marketing_carrier:
-                r = niquests.get(f"https://airlabs.co/img/airline/m/{leg.leg_conditional.marketing_carrier}.png")
-                if r.ok:
-                    pkp.add_file("logo.png", r.content)
-                    have_logo = True
-                    if airline := templatetags.iata.get_iata_airline_code(leg.leg_conditional.marketing_carrier):
-                        pass_json["logoText"] = airline["name"]
+                if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
+                    pass_json["logoText"] = airline["name"]
+                    r = niquests.get(f"https://airlabs.co/img/airline/m/{airline['iata_code']}.png")
+                    if r.ok:
+                        pkp.add_file("logo.png", r.content)
+                        have_logo = True
             else:
-                r = niquests.get(f"https://airlabs.co/img/airline/m/{leg.operating_carrier}.png")
-                if r.ok:
-                    pkp.add_file("logo.png", r.content)
-                    have_logo = True
-                    if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
-                        pass_json["logoText"] = airline["name"]
+                if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
+                    pass_json["logoText"] = airline["name"]
+                    r = niquests.get(f"https://airlabs.co/img/airline/m/{airline['iata_code']}.png")
+                    if r.ok:
+                        pkp.add_file("logo.png", r.content)
+                        have_logo = True
 
             if leg.leg_conditional:
+                if leg.leg_conditional.fast_track is not None:
+                    pass_fields["secondaryFields"].append({
+                        "key": "fast-track",
+                        "label": "fast-track-label",
+                        "value": "yes-label" if leg.leg_conditional.fast_track else "no-label"
+                    })
+
                 if leg.leg_conditional.selectee == iata.conditional.Selectee.TSAPre:
                     add_pkp_img(pkp, "pass/tsa-pre.png", "footer.png")
 
@@ -4947,8 +4961,8 @@ PASS_STRINGS = {
 "product-id-label" = "Ticket type";
 "valid-region-label" = "Validity";
 "return-included-label" = "Return included";
-"return-included-yes" = "Yes";
-"return-included-no" = "No";
+"yes-label" = "Yes";
+"no-label" = "No";
 "railcard-number" = "Railcard number";
 "departure-date-label" = "Departure date";
 "departure-time-label" = "Departure";
@@ -4982,6 +4996,13 @@ PASS_STRINGS = {
 "article-number-label" = "Article number";
 "telephone-number-label" = "Telephone";
 "frequent-flyer-label" = "Frequent Flyer Number";
+"compartment-code-supersonic-label" = "Supersonic";
+"compartment-code-first-class-label" = "First Class";
+"compartment-code-premium-business-label" = "Premium Business";
+"compartment-code-business-label" = "Business";
+"compartment-code-premium-economy-label" = "Premium Economy";
+"compartment-code-economy-label" = "Economy";
+"fast-track-label" = "Fast-track";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -5014,8 +5035,8 @@ PASS_STRINGS = {
 "product-id-label" = "Math tocyn";
 "valid-region-label" = "Dilysrwydd";
 "return-included-label" = "Gyda dychweldaith?";
-"return-included-yes" = "Iê";
-"return-included-no" = "Na";
+"yes-label" = "Iê";
+"no-label" = "Na";
 "railcard-number" = "Rhif Railcard";
 "departure-date-label" = "Dyddiad teithio";
 "departure-time-label" = "Ymadawiad";
@@ -5049,6 +5070,13 @@ PASS_STRINGS = {
 "article-number-label" = "Rhif articl";
 "telephone-number-label" = "Rhif ffôn";
 "frequent-flyer-label" = "Rhif Cwsmer Aml";
+"compartment-code-supersonic-label" = "Uwchsonig";
+"compartment-code-first-class-label" = "Dosbarth Cyntaf";
+"compartment-code-premium-business-label" = "Busnes Premiwm";
+"compartment-code-business-label" = "Busnes";
+"compartment-code-premium-economy-label" = "Economi Premiwm";
+"compartment-code-economy-label" = "Economi";
+"fast-track-label" = "Llywbr carlam";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -5081,8 +5109,8 @@ PASS_STRINGS = {
 "product-id-label" = "Tickettyp";
 "valid-region-label" = "Gültigkeit";
 "return-included-label" = "Rückfahrt inklusive";
-"return-included-yes" = "Ja";
-"return-included-no" = "Nein";
+"yes-label" = "Ja";
+"no-label" = "Nein";
 "railcard-number" = "Railcard-Nummer";
 "departure-date-label" = "Datum";
 "departure-time-label" = "Abfahrt";
@@ -5116,6 +5144,13 @@ PASS_STRINGS = {
 "article-number-label" = "Artikel-nr.";
 "telephone-number-label" = "Telefonnr.";
 "frequent-flyer-label" = "Vielfliegerprogramm-nr.";
+"compartment-code-supersonic-label" = "Überschall";
+"compartment-code-first-class-label" = "Erste-Klasse";
+"compartment-code-premium-business-label" = "Premium-Business";
+"compartment-code-business-label" = "Business";
+"compartment-code-premium-economy-label" = "Premium-Economy";
+"compartment-code-economy-label" = "Economy";
+"fast-track-label" = "Schelleinsteig";
 """,
     "nl": """
 "product-label" = "Product";
@@ -5148,8 +5183,8 @@ PASS_STRINGS = {
 "product-id-label" = "Tickettype";
 "valid-region-label" = "Geldigheid";
 "return-included-label" = "Inclusief retour";
-"return-included-yes" = "Ja";
-"return-included-no" = "Nee";
+"yes-label" = "Ja";
+"no-label" = "Nee";
 "railcard-number" = "Railcard-nummer";
 "departure-date-label" = "Vertrekdatum";
 "departure-time-label" = "Vertrek";
