@@ -2,10 +2,26 @@ import dataclasses
 import typing
 import datetime
 import re
+import pathlib
+import json
 from . import layout
 
 BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
+
+BENERAIL_DISCOUNT_CARDS = None
+ROOT_DIR = pathlib.Path(__file__).parent.parent
+
+def get_benerail_discount_cards():
+    global BENERAIL_DISCOUNT_CARDS
+
+    if BENERAIL_DISCOUNT_CARDS:
+        return BENERAIL_DISCOUNT_CARDS
+
+    with open(ROOT_DIR / "uic" / "data" / "benerail_discount_cards.json") as f:
+        BENERAIL_DISCOUNT_CARDS = json.load(f)
+
+    return BENERAIL_DISCOUNT_CARDS
 
 @dataclasses.dataclass
 class TripPart:
@@ -41,6 +57,7 @@ class ParsedRCT2:
     extra: str
     valid_region: str
     date_of_birth: typing.Optional[datetime.date]
+    discount_cards: typing.List[str]
 
 
 class RCT2Parser:
@@ -80,6 +97,7 @@ class RCT2Parser:
 
     def parse(self, issuing_rics: typing.Optional[int] = None) -> ParsedRCT2:
         trips = []
+        discount_cards = []
 
         travel_class =        self.read_area(top=6,  left=65, width=8,  height=1).strip("*- \r\n")
         document_data =       self.read_area(top=0,  left=12, width=40, height=3).strip("*- \r\n")
@@ -104,6 +122,10 @@ class RCT2Parser:
         if operator_rics in (1088, 1184):
             # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">")
+
+            for discount_name, discount_code in get_benerail_discount_cards().items():
+                if discount_name in conditions_data:
+                    discount_cards.append(discount_code)
 
         try:
             date_of_birth = datetime.datetime.strptime(dob_text, "%d.%m.%Y").date()
@@ -231,4 +253,5 @@ class RCT2Parser:
             extra=extra_data,
             valid_region=valid_region,
             date_of_birth=date_of_birth,
+            discount_cards=discount_cards,
         )
