@@ -61,6 +61,13 @@ def metrics(request):
         org_name = rsp.issuers.issuer_name(issuer_id)
         out.append(f'ticket_rsp_issuer{{id="{issuer_id}", name="{org_name} ({issuer_id})"}} {o["total"]}')
 
+    ft_count = models.FlexiTicketInstance.objects.all().count()
+    out.append(f'ticket_instance_count{{type="ft"}} {ft_count}')
+
+    for o in models.FlexiTicketInstance.objects.all().values('issuer_id').annotate(total=Count('issuer_id')):
+        issuer_id = o["issuer_id"]
+        out.append(f'ticket_rsp_issuer{{id="{issuer_id}"}} {o["total"]}')
+
     sncf_count = models.SNCFTicketInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="sncf"}} {sncf_count}')
 
