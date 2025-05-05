@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from . import ticket as t
 from . import vdv_nm
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket
 
 
 def make_pass_token():
@@ -342,6 +342,33 @@ class RSPTicketInstance(models.Model):
             issuer_id=self.issuer_id,
             raw_ticket=raw_ticket,
             data=data
+        )
+
+
+class FlexiTicketInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ft_instances", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    issuer_id = models.CharField(max_length=2, verbose_name="Issuer ID", db_index=True)
+    barcode_data = models.BinaryField()
+    decoded_data = models.JSONField()
+
+    class Meta:
+        verbose_name = "Flexi-ticket"
+
+    def __str__(self):
+        return f"{self.issuer_id} - {self.barcode_hash}"
+
+    def as_ticket(self) -> t.FlexiTicket:
+        raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"])
+        raw_extra_data = base64.b64decode(self.decoded_data["raw_extra_data"]) if self.decoded_data.get("raw_extra_data") else None
+        ticket_data = flexi_ticket.Data.parse(raw_ticket)
+        extra_data = flexi_ticket.Data.parse(raw_extra_data) if raw_extra_data else None
+        return t.FlexiTicket(
+            issuer_id=self.issuer_id,
+            ticket_data=ticket_data,
+            extra_data=extra_data,
+            raw_ticket=raw_ticket,
+            raw_extra_data=raw_extra_data
         )
 
 

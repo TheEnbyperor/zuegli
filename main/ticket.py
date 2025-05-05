@@ -10,7 +10,7 @@ import enum
 import binascii
 import ber_tlv.tlv
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus, flexi_ticket
 
 
 class TicketError(Exception):
@@ -437,6 +437,39 @@ class RSPTicket:
 
 
 @dataclasses.dataclass
+class FlexiTicket:
+    issuer_id: str
+    ticket_data: flexi_ticket.Data
+    raw_ticket: bytes
+    extra_data: typing.Optional[flexi_ticket.Data] = None
+    raw_extra_data: typing.Optional[bytes] = None
+
+    @property
+    def ticket_type(self) -> str:
+        return "FT"
+
+    @staticmethod
+    def type() -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"ft")
+        hd.update(self.issuer_id.encode("utf-8"))
+        hd.update(self.ticket_data.E_TICKET_NUMBER.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+    @property
+    def raw_ticket_hex(self):
+        return ":".join(f"{b:02x}" for b in self.raw_ticket)
+
+    @property
+    def raw_extra_data_hex(self):
+        return ":".join(f"{b:02x}" for b in self.raw_extra_data)
+
+
+@dataclasses.dataclass
 class SNCFTicket:
     raw_ticket: bytes
     data: sncf.SNCFTicket
@@ -445,7 +478,8 @@ class SNCFTicket:
     def ticket_type(self) -> str:
         return "SNCF"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
@@ -465,7 +499,8 @@ class ELBTicket:
     def ticket_type(self) -> str:
         return "ELB"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
@@ -525,7 +560,8 @@ class SSB1Ticket:
     def ticket_type(self) -> str:
         return "SSB1"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
@@ -546,7 +582,8 @@ class HZPPTicket:
     def ticket_type(self) -> str:
         return "HZPP"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
@@ -566,7 +603,8 @@ class SwissPassTicket:
     def ticket_type(self) -> str:
         return "SwissPass"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_FAHRKARTE
 
     def pk(self) -> str:
@@ -586,7 +624,8 @@ class IATATicket:
     def ticket_type(self) -> str:
         return "IATA"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_BORDKARTE
 
     def pk(self) -> str:
@@ -608,7 +647,8 @@ class BahnBonusCode:
     def ticket_type(self) -> str:
         return "BahnBonus"
 
-    def type(self) -> str:
+    @staticmethod
+    def type() -> str:
         return models.Ticket.TYPE_BAHNBONUS
 
     def pk(self) -> str:
@@ -1174,6 +1214,76 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     )
 
 
+def parse_ticket_flexi_ticket(ticket_bytes: bytes) -> FlexiTicket:
+    pki_store = flexi_ticket.get_pki_store()
+
+    try:
+        ticket_envelope = flexi_ticket.Envelope.parse(ticket_bytes)
+    except flexi_ticket.FTException:
+        raise TicketError(
+            title="This doesn't look like a valid flexi-ticket",
+            message="You may have scanned something that is not a flexi-ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    if ticket_envelope.issuer_id not in pki_store.certificates:
+        raise TicketError(
+            title="Unknown ticket issuer",
+            message=f"We don't have any keys for the flexi-ticket issuer {ticket_envelope.issuer_id} - we can't decode this ticket",
+        )
+
+    ticket_payload = None
+    for cert in pki_store.certificates[ticket_envelope.issuer_id]:
+        try:
+            ticket_payload = ticket_envelope.decrypt_with_cert(cert)
+        except flexi_ticket.FTException:
+            raise TicketError(
+                title="Unable to decrypt flexi-ticket",
+                message="Its likely the signature over this ticket has been forged - the ticket is invalid.",
+                exception=traceback.format_exc()
+            )
+        if ticket_payload:
+            break
+
+    if not ticket_payload:
+        raise TicketError(
+            title="Unable to decrypt flexi-ticket",
+            message="None of the issuer's public keys match the flexi-ticket",
+        )
+
+    try:
+        ticket_data = flexi_ticket.Data.parse(ticket_payload.data)
+    except flexi_ticket.FTException:
+        raise TicketError(
+            title="This doesn't look like a valid flex-ticket",
+            message="You may have scanned something that is not a flexi-ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    if ticket_payload.extra_data:
+        try:
+            extra_data = flexi_ticket.Data.parse(ticket_payload.extra_data)
+        except flexi_ticket.FTException:
+            raise TicketError(
+                title="This doesn't look like a valid flex-ticket",
+                message="You may have scanned something that is not a flexi-ticket, the ticket is corrupted, or there "
+                        "is a bug in this program.",
+                exception=traceback.format_exc()
+            )
+    else:
+        extra_data = None
+
+    return FlexiTicket(
+        issuer_id=ticket_envelope.issuer_id,
+        ticket_data=ticket_data,
+        extra_data=extra_data,
+        raw_ticket=ticket_payload.data,
+        raw_extra_data=ticket_payload.extra_data,
+    )
+
+
 def parse_ticket_sncf(ticket_bytes: bytes) -> SNCFTicket:
     try:
         data = sncf.SNCFTicket.parse(ticket_bytes)
@@ -1333,6 +1443,7 @@ def parse_ticket(
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
+    FlexiTicket,
 ]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
@@ -1366,6 +1477,9 @@ def parse_ticket(
 
     if ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)
+
+    if ticket_bytes[:2] == b"FT":
+        return parse_ticket_flexi_ticket(ticket_bytes)
 
     if ticket_bytes[:2] == b"B1":
         return parse_ticket_hzpp(ticket_bytes)
@@ -1501,6 +1615,19 @@ def create_ticket_obj(
                 "validity_end": validity_end,
                 "decoded_data": {
                     "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
+                }
+            }
+        )
+    elif isinstance(ticket_data, FlexiTicket):
+        _, created = models.FlexiTicketInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            issuer_id=ticket_data.issuer_id,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+                "decoded_data": {
+                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
+                    "raw_extra_data": base64.b64encode(ticket_data.raw_extra_data).decode("ascii") if ticket_data.raw_extra_data else None,
                 }
             }
         )
