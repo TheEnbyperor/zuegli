@@ -1,9 +1,12 @@
 import json
 import base64
 import binascii
+from django.contrib import messages
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 from .. import ticket, aztec
+from . import passes
 
 
 @csrf_exempt
@@ -63,7 +66,7 @@ def upload_aztec_img(request):
         }), status=422, content_type="application/json")
 
     scan_speed = request.POST.get("scan_speed", "slow")
-    if scan_speed not in [ "slow", "normal", "fast" ]:
+    if scan_speed not in ("slow", "normal", "fast"):
         return HttpResponse(json.dumps({
             "title": "Bad setting",
             "message": "Scan speed can only be one of 'slow', 'normal' or 'fast'"
@@ -90,3 +93,25 @@ def upload_aztec_img(request):
         "ticket_id": ticket_obj.id,
         "access_token": ticket_obj.pkpass_authentication_token
     }), content_type="application/json")
+
+
+@csrf_exempt
+def share_target(request):
+    if "barcode" not in request.FILES:
+        return redirect("index")
+
+    try:
+        barcode_data = aztec.decode(request.FILES["barcode"].read(), scan_speed="slow")
+    except aztec.AztecError as e:
+        messages.error(request, f"Unable to decode barcode: {e}")
+        return redirect("index")
+
+    ticket_id, error = passes.process_tickets(request, [barcode_data])
+    if error:
+        messages.error(request, f"{error.title} {error.message}")
+        return redirect("index")
+
+    if ticket_id:
+        return redirect("ticket", pk=ticket_id)
+
+    return HttpResponse("")

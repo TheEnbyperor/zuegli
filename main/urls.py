@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('api/upload', views.api.upload_aztec),
     path('api/upload_image', views.api.upload_aztec_img),
+    path('api/share_target/', views.api.share_target),
 
     path('account/', views.account.index, name='account'),
     path('account/edit/', views.account.edit, name='account_edit'),
@@ -55,5 +56,6 @@ urlpatterns = [
     path('metrics', views.metrics.metrics, name='metrics'),
 
     path('robots.txt', views.util.robots, name='robots'),
+    path('manifest.json', views.util.manifest, name='manifest'),
     path('.well-known/apple-app-site-association', views.util.apple_app_site_association, name='apple-app-site-association'),
 ]
