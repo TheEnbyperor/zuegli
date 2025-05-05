@@ -49,6 +49,9 @@ def manifest(request):
                 "files": [{
                     "name": "barcode",
                     "accept": ["image/*"]
+                }, {
+                    "name": "pdf",
+                    "accept": ["application/pdf"]
                 }]
             }
         }
