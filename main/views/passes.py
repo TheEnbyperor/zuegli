@@ -28,10 +28,61 @@ def get_client_ip(request):
     return ip
 
 
+def process_tickets(request, tickets):
+    if tickets:
+        ticket_ids = []
+        errors = []
+        for tb in tickets:
+            try:
+                ticket_data = ticket.parse_ticket(
+                    tb, request.user.account if request.user.is_authenticated else None
+                )
+            except ticket.TicketError as e:
+                errors.append({
+                    "title": e.title,
+                    "message": e.message,
+                    "exception": e.exception,
+                    "ticket_contents": tb.hex()
+                })
+            else:
+                ticket_pk = ticket_data.pk()
+                defaults = {
+                    "ticket_type": ticket_data.type(),
+                    "last_updated": timezone.now(),
+                }
+                if request.user.is_authenticated:
+                    defaults["account"] = request.user.account
+                ticket_obj, ticket_created = models.Ticket.objects.update_or_create(id=ticket_pk, defaults=defaults)
+                request.session["ticket_updated"] = True
+                request.session["ticket_created"] = ticket_created
+                ticket.create_ticket_obj(ticket_obj, tb, ticket_data)
+                apn.notify_ticket(ticket_obj)
+                gwallet.sync_ticket(ticket_obj)
+                ticket_ids.append(ticket_obj.id)
+
+                headers = dict(request.headers)
+                headers.pop("Cookie", None)
+                headers.pop("Authorization", None)
+                models.AccessLogEntry.objects.create(
+                    ticket=ticket_obj,
+                    action=models.AccessLogEntry.ACTION_UPLOAD,
+                    remote_ip=get_client_ip(request),
+                    headers=headers,
+                    account=request.user.account if request.user.is_authenticated else None,
+                )
+
+        if ticket_ids:
+            if len(ticket_ids) > 1:
+                messages.info(request, f"{len(ticket_ids) - 1} other tickets have been added to your account")
+            return ticket_ids[0], None
+        elif errors:
+            return None, errors[0]
+
+    return None, None
+
 def index(request):
     ticket_bytes = None
     tickets = []
-    error = None
 
     if request.method == "POST":
         if request.POST.get("type") == "scan":
@@ -83,54 +134,9 @@ def index(request):
     if not tickets and ticket_bytes:
         tickets = [ticket_bytes]
 
-    if tickets:
-        ticket_ids = []
-        errors = []
-        for tb in tickets:
-            try:
-                ticket_data = ticket.parse_ticket(
-                    tb, request.user.account if request.user.is_authenticated else None
-                )
-            except ticket.TicketError as e:
-                errors.append({
-                    "title": e.title,
-                    "message": e.message,
-                    "exception": e.exception,
-                    "ticket_contents": ticket_bytes.hex()
-                })
-            else:
-                ticket_pk = ticket_data.pk()
-                defaults = {
-                    "ticket_type": ticket_data.type(),
-                    "last_updated": timezone.now(),
-                }
-                if request.user.is_authenticated:
-                    defaults["account"] = request.user.account
-                ticket_obj, ticket_created = models.Ticket.objects.update_or_create(id=ticket_pk, defaults=defaults)
-                request.session["ticket_updated"] = True
-                request.session["ticket_created"] = ticket_created
-                ticket.create_ticket_obj(ticket_obj, ticket_bytes, ticket_data)
-                apn.notify_ticket(ticket_obj)
-                gwallet.sync_ticket(ticket_obj)
-                ticket_ids.append(ticket_obj.id)
-
-                headers = dict(request.headers)
-                headers.pop("Cookie", None)
-                headers.pop("Authorization", None)
-                models.AccessLogEntry.objects.create(
-                    ticket=ticket_obj,
-                    action=models.AccessLogEntry.ACTION_UPLOAD,
-                    remote_ip=get_client_ip(request),
-                    headers=headers,
-                    account=request.user.account if request.user.is_authenticated else None,
-                )
-
-        if ticket_ids:
-            if len(ticket_ids) > 1:
-                messages.info(request, f"{len(ticket_ids) - 1} other tickets have been added to your account")
-            return redirect('ticket', pk=ticket_ids[0])
-        elif errors:
-            error = errors[0]
+    ticket_id, error = process_tickets(request, tickets)
+    if ticket_id:
+        return redirect('ticket', pk=ticket_id)
 
     return render(request, "main/index.html", {
         "image_form": image_form,
