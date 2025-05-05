@@ -1,6 +1,7 @@
 import json
 import base64
 import binascii
+import pymupdf
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -97,21 +98,42 @@ def upload_aztec_img(request):
 
 @csrf_exempt
 def share_target(request):
-    if "barcode" not in request.FILES:
+    if "barcode" in request.FILES:
+        try:
+            barcode_data = aztec.decode(request.FILES["barcode"].read(), scan_speed="slow")
+        except aztec.AztecError as e:
+            messages.error(request, f"Unable to decode barcode: {e}")
+            return redirect("index")
+
+        tickets = [barcode_data]
+    elif "pdf" in request.FILES:
+        try:
+            pdf = pymupdf.open(stream=request.FILES["pdf"].read(), filetype="application/pdf")
+        except RuntimeError as e:
+            messages.error(request, f"Error opening PDF: {e}")
+            return redirect("index")
+
+        tickets = []
+        for page in pdf:
+            img_bytes = page.get_pixmap(dpi=300).tobytes()
+            try:
+                ticket_bytes = aztec.decode(img_bytes, scan_speed="slow")
+                tickets.append(ticket_bytes)
+            except aztec.AztecError:
+                continue
+
+        if not tickets:
+            messages.error(request, "Failed to find any Aztec codes in the PDF")
+    else:
         return redirect("index")
 
-    try:
-        barcode_data = aztec.decode(request.FILES["barcode"].read(), scan_speed="slow")
-    except aztec.AztecError as e:
-        messages.error(request, f"Unable to decode barcode: {e}")
-        return redirect("index")
-
-    ticket_id, error = passes.process_tickets(request, [barcode_data])
+    ticket_id, error = passes.process_tickets(request, tickets)
     if error:
         messages.error(request, f"{error.title} {error.message}")
         return redirect("index")
 
     if ticket_id:
         return redirect("ticket", pk=ticket_id)
+    else:
+        return redirect("index")
 
-    return HttpResponse("")
