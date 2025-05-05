@@ -4,6 +4,7 @@ import binascii
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .. import ticket, aztec
+from . import passes
 
 
 @csrf_exempt
@@ -85,6 +86,9 @@ def upload_aztec_img(request):
             "message": e.message,
             "exception": e.exception,
         }), status=422, content_type="application/json")
+
+    if request.META.get('HTTP_ACCEPT') == 'application/vnd.apple.pkpass':
+        return HttpResponse(passes.make_pkpass_file(ticket_obj), content_type="application/vnd.apple.pkpass")
 
     return HttpResponse(json.dumps({
         "ticket_id": ticket_obj.id,
