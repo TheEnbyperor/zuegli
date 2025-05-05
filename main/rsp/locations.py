@@ -36,13 +36,19 @@ def get_nlc_data() -> typing.Dict[str, typing.Any]:
 
 
 def get_station_by_nlc(code: str) -> typing.Optional[dict]:
+    if len(code) <= 4:
+        lcode = f"{code}00"
+    else:
+        lcode = code
+
     if i := get_nlc_data().get(code):
+        if c := get_corpus_data()["NLC"].get(lcode):
+            l = get_corpus_data()["locations"][c]
+            if "3ALPHA" in l:
+                i["3ALPHA"] = l["3ALPHA"]
         return i
 
-    if len(code) <= 4:
-        code = f"{code}00"
-
-    if i := get_corpus_data()["NLC"].get(code):
+    if i := get_corpus_data()["NLC"].get(lcode):
         return get_corpus_data()["locations"][i]
 
     return None

@@ -532,7 +532,13 @@
                     {% if data.purchase_data.restriction %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Restriction</dt>
-                            <dd class="govuk-summary-list__value"><code>{{ data.purchase_data.restriction }}</code></dd>
+                            <dd class="govuk-summary-list__value">
+                                {% if data.purchase_data.restriction|length == 2 %}
+                                    <a href="https://www.nationalrail.co.uk/ticket-types/validity/{{ data.purchase_data.restriction }}/" target="_blank"><code>{{ data.purchase_data.restriction }}</code></a>
+                                {% else %}
+                                    <code>{{ data.purchase_data.restriction }}</code>
+                                {% endif %}
+                            </dd>
                         </div>
                     {% endif %}
                     {% if data.purchase_data.purchase_reference %}

@@ -468,6 +468,13 @@ class FlexiTicket:
     def raw_extra_data_hex(self):
         return ":".join(f"{b:02x}" for b in self.raw_extra_data)
 
+    @property
+    def issuer_name(self):
+        if self.issuer_id == "M0":
+            return "Massachusetts Bay Transportation Authority"
+        else:
+            return None
+
 
 @dataclasses.dataclass
 class SNCFTicket:
@@ -1253,7 +1260,7 @@ def parse_ticket_flexi_ticket(ticket_bytes: bytes) -> FlexiTicket:
         )
 
     try:
-        ticket_data = flexi_ticket.Data.parse(ticket_payload.data)
+        ticket_data = flexi_ticket.Data.parse(ticket_payload.data, ticket_envelope.issuer_id)
     except flexi_ticket.FTException:
         raise TicketError(
             title="This doesn't look like a valid flex-ticket",
@@ -1264,7 +1271,7 @@ def parse_ticket_flexi_ticket(ticket_bytes: bytes) -> FlexiTicket:
 
     if ticket_payload.extra_data:
         try:
-            extra_data = flexi_ticket.Data.parse(ticket_payload.extra_data)
+            extra_data = flexi_ticket.Data.parse(ticket_payload.extra_data, ticket_envelope.issuer_id)
         except flexi_ticket.FTException:
             raise TicketError(
                 title="This doesn't look like a valid flex-ticket",
