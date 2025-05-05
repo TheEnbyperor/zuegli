@@ -1,0 +1,21 @@
+<h2 class="govuk-heading-m">Envelope Data</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Issuer</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.issuer_id }}</code></dd>
+    </div>
+</dl>
+
+<h2 class="govuk-heading-m">Ticket Data</h2>
+<pre>{{ ticket.ticket_data|pprint }}</pre>
+
+<h2 class="govuk-heading-m">Raw Ticket</h2>
+<p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>
+
+{% if ticket.extra_data %}
+    <h2 class="govuk-heading-m">Extra Data</h2>
+    <pre>{{ ticket.extra_data|pprint }}</pre>
+
+    <h2 class="govuk-heading-m">Raw Extra Data</h2>
+    <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_extra_data_hex }}</code></p>
+{% endif %}

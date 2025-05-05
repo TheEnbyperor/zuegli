@@ -1,0 +1,2 @@
+class FTException(Exception):
+    pass
