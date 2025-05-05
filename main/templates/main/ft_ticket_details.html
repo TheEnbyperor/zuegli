@@ -1,21 +1,159 @@
-<h2 class="govuk-heading-m">Envelope Data</h2>
-<dl class="govuk-summary-list">
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Issuer</dt>
-        <dd class="govuk-summary-list__value"><code>{{ ticket.issuer_id }}</code></dd>
-    </div>
-</dl>
+{% load i18n tz rics %}
+{% localtime off %}
+    <h2 class="govuk-heading-m">Envelope Data</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.issuer_name %}
+                    {{ ticket.issuer_name }} (<code>{{ ticket.issuer_id }}</code>)
+                {% else %}
+                    <code>{{ ticket.issuer_id }}</code>
+                {% endif %}
+            </dd>
+        </div>
+    </dl>
 
-<h2 class="govuk-heading-m">Ticket Data</h2>
-<pre>{{ ticket.ticket_data|pprint }}</pre>
+    <h2 class="govuk-heading-m">Ticket Data</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Ticket ID</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.E_TICKET_NUMBER }}</code>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">App ID</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.UNIQUE_USER_ID }}</code>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Validity</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">From</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_START_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Until</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_EXPIRY_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Activation duration</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.ticket_data.ACTIVATION_DURATION_MINS }} {% trans "minutes" %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Permitted uses</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.uses_permitted_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Origin station</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.FROM_STATION_NUMBER }}</code>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Destination station</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.TO_STATION_NUMBER }}</code>
+            </dd>
+        </div>
+        {% if ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Usage period specification</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY|as_hex }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Price</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.price_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product ID</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.PRODUCT_ID_STRING }}</code>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Customer product reference</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.CUSTOMER_PRODUCT_REFERENCE_STRING }}</code>
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Media channel</dt>
+            <dd class="govuk-summary-list__value">
+                <code>{{ ticket.ticket_data.MEDIA_CHANNEL }}</code>
+            </dd>
+        </div>
+    </dl>
 
-<h2 class="govuk-heading-m">Raw Ticket</h2>
-<p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Raw data</span>
+        </summary>
+        <div class="govuk-details__text">
+            <pre>{{ ticket.ticket_data|pprint }}</pre>
+            <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>
+        </div>
+    </details>
 
-{% if ticket.extra_data %}
-    <h2 class="govuk-heading-m">Extra Data</h2>
-    <pre>{{ ticket.extra_data|pprint }}</pre>
+    {% if ticket.extra_data %}
+        <h2 class="govuk-heading-m">Device Data</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Schema version</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.extra_data.SCHEMA_VERSION }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Activation start</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.extra_data.ACTIVATION_START_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+            </div>
+            {% if ticket.extra_data.USE_PERIOD_EXPIRY_UTC_DATE_TIME %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Usage period expiry</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.extra_data.USE_PERIOD_EXPIRY_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Device time</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.extra_data.DEVICE_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Selected for validation</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if ticket.extra_data.SELECTED_FOR_VALIDATION %}
+                        <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                    {% else %}
+                        <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Uses</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.extra_data.USES_COUNT }}</dd>
+            </div>
+        </dl>
 
-    <h2 class="govuk-heading-m">Raw Extra Data</h2>
-    <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_extra_data_hex }}</code></p>
-{% endif %}
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Raw data</span>
+            </summary>
+            <div class="govuk-details__text">
+                <pre>{{ ticket.extra_data|pprint }}</pre>
+                <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_extra_data_hex }}</code></p>
+            </div>
+        </details>
+    {% endif %}
+{% endlocaltime %}

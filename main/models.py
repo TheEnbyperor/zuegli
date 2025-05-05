@@ -361,8 +361,8 @@ class FlexiTicketInstance(models.Model):
     def as_ticket(self) -> t.FlexiTicket:
         raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"])
         raw_extra_data = base64.b64decode(self.decoded_data["raw_extra_data"]) if self.decoded_data.get("raw_extra_data") else None
-        ticket_data = flexi_ticket.Data.parse(raw_ticket)
-        extra_data = flexi_ticket.Data.parse(raw_extra_data) if raw_extra_data else None
+        ticket_data = flexi_ticket.Data.parse(raw_ticket, self.issuer_id)
+        extra_data = flexi_ticket.Data.parse(raw_extra_data, self.issuer_id) if raw_extra_data else None
         return t.FlexiTicket(
             issuer_id=self.issuer_id,
             ticket_data=ticket_data,

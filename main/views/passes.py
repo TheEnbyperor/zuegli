@@ -296,6 +296,7 @@ def ticket_pkpass(request, pk):
 def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = None):
     pkp = pkpass.PKPass()
     have_logo = False
+    have_icon = False
 
     pass_json = {
         "formatVersion": 1,
@@ -2724,6 +2725,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         pass_json["organizationName"] = ticket_data.issuer_name()
         pass_json["backgroundColor"] = "#fff6e9"
 
+        add_pkp_img(pkp, "pass/logo-nr.png", "icon.png")
+        have_icon = True
+
         if isinstance(ticket_data.data, rsp.TicketData):
             validity_start = ticket_data.data.validity_start_time()
             validity_end = ticket_data.data.validity_end_time()
@@ -3192,6 +3196,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
             have_logo = True
+
     elif isinstance(ticket_instance, models.SNCFTicketInstance):
         ticket_data: ticket.SNCFTicket = ticket_instance.as_ticket()
 
@@ -4870,7 +4875,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
     if not have_logo:
         add_pkp_img(pkp, "pass/logo.png", "logo.png")
 
-    add_pkp_img(pkp, "pass/icon.png", "icon.png")
+    if not have_icon:
+        add_pkp_img(pkp, "pass/icon.png", "icon.png")
 
     if ticket_obj.ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
         add_pkp_img(pkp, "pass/logo-dt.png", "thumbnail.png")

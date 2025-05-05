@@ -1,29 +1,39 @@
 import dataclasses
 import datetime
-import enum
-import bitstring
 import pytz
 import typing
 import decimal
 from . import util
+from django.utils.translation import gettext_lazy as _
 
 
-def as_int(content: bytes) -> int:
+ISSUER_TIMEZONES = {
+    "M0": pytz.timezone("America/New_York"),
+}
+
+
+def as_int(content: bytes, _) -> int:
     return int.from_bytes(content, byteorder="big", signed=False)
 
 
-def as_bool(content: bytes) -> bool:
+def as_bool(content: bytes, _) -> bool:
     if len(content) != 1:
         raise util.FTException("Boolean payload must be exactly 1 byte")
     return content[0] != 0
 
 
-def as_string(content: bytes) -> str:
+def as_string(content: bytes, _) -> str:
     return content.decode("utf-8")
 
-def as_datetime(content: bytes) -> datetime.datetime:
-    v = as_int(content) / 1000
-    return datetime.datetime.fromtimestamp(v, pytz.utc)
+
+def as_datetime(content: bytes, issuer_id: str) -> datetime.datetime:
+    v = as_int(content, issuer_id) / 1000
+    dt = datetime.datetime.fromtimestamp(v, pytz.utc)
+    return dt.astimezone(ISSUER_TIMEZONES.get(issuer_id, pytz.utc))
+
+
+def as_currency(content: bytes, issuer_id: str) -> decimal.Decimal:
+    return decimal.Decimal(as_int(content, issuer_id)) / decimal.Decimal(100)
 
 ELEMENT_KEYS = {
     1: ("SCHEMA_VERSION", as_int),
@@ -41,7 +51,7 @@ ELEMENT_KEYS = {
     21: ("NUM_RIDERS_SERVER_ENCODED", None),
     23: ("NUM_TICKETS_IN_PURCHASED_PRODUCT", as_int),
     24: ("USES_PERMITTED", as_int),
-    25: ("PRICE", as_int),
+    25: ("PRICE", as_currency),
     26: ("CARDHOLDER_NAME", as_string),
     27: ("CARD_LAST_FOUR_DIGITS", as_string),
     28: ("EMAIL_ADDRESS", as_string),
@@ -78,11 +88,10 @@ class Element:
         else:
             return "UNKNOWN"
 
-    @property
-    def decoded_value(self):
+    def decoded_value(self, issuer_id: str):
         if self.cid in ELEMENT_KEYS:
             if d := ELEMENT_KEYS[self.cid][1]:
-                return d(self.value)
+                return d(self.value, issuer_id)
             return self.value
         else:
             return self.value
@@ -154,11 +163,11 @@ class Data:
         return elements
 
     @classmethod
-    def parse(cls, data: bytes):
+    def parse(cls, data: bytes, issuer_id: str):
         data = cls.decode_all(data)
         items = {}
         for e in data:
-            items[e.key] = e.decoded_value
+            items[e.key] = e.decoded_value(issuer_id)
         return cls(items)
 
     def __getattr__(self, item):
@@ -166,3 +175,18 @@ class Data:
             return self._items[item]
         else:
             raise AttributeError(item)
+
+    def activation_duration(self) -> typing.Optional[datetime.timedelta]:
+        if "ACTIVATION_DURATION_MINS" in self._items:
+            return datetime.timedelta(minutes=self._items["ACTIVATION_DURATION_MINS"])
+        else:
+            return None
+
+    def price_str(self) -> str:
+        return f"${self.PRICE:.2f}"
+
+    def uses_permitted_str(self):
+        if self.USES_PERMITTED == 255:
+            return _("Unlimited")
+        else:
+            return str(self.USES_PERMITTED)
