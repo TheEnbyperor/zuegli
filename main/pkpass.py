@@ -21,7 +21,7 @@ import cryptography.hazmat.primitives.serialization.pkcs7
 import niquests
 from django.conf import settings
 
-TSP_URL = "https://eid-dd.ria.ee/ts"
+TSP_URL = "http://timestamp.apple.com/ts01"
 
 class PKPass:
     def __init__(self):
