@@ -1,0 +1,143 @@
+{% load rics tz %}
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        {% if passage.referenceNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ passage.referenceNum }}</code></dd>
+            </div>
+        {% endif %}
+        {% if passage.referenceIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference</dt>
+                <dd class="govuk-summary-list__value"><code>{{ passage.referenceIA5 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if passage.productIdNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ passage.productIdNum }}</code></dd>
+            </div>
+        {% endif %}
+        {% if passage.productIdIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ passage.productIdIA5 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if passage.productName %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product name</dt>
+                <dd class="govuk-summary-list__value">{{ passage.productNAme }}</dd>
+            </div>
+        {% endif %}
+        {% if passage.productOwnerNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product Owner</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with org=passage.productOwnerNum|rics %}
+                        {% if org %}
+                            {% include 'main/rics.html' with org=org %}
+                        {% else %}
+                            <code>{{ passage.productOwnerNum }}</code>
+                        {% endif %}
+                    {% endwith %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if passage.productOwnerIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Product Owner</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ passage.productOwnerIA5 }}
+                </dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid from</dt>
+            <dd class="govuk-summary-list__value">
+                {{ passage|rics_valid_from:flex.issuing_time|date:"F d, Y H:i:s e" }}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Valid until</dt>
+            <dd class="govuk-summary-list__value">
+                {{ passage|rics_valid_until:flex.issuing_time|date:"F d, Y H:i:s e" }}
+            </dd>
+        </div>
+        {% if passage.stationNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Station numbers</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list--bullet">
+                        {% for n in passage.stationNum %}
+                            <li>{{ n }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if passage.stationNameUTF8 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Station names</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list--bullet">
+                        {% for n in passage.stationNameUTF8 %}
+                            <li>{{ n }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if passage.areaCodeNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Station area numbers</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list--bullet">
+                        {% for a in passage.areaCodeNum %}
+                            <li>{{ a }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if passage.areaNameUTF8 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Station areas</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list--bullet">
+                        {% for a in passage.areaNameUTF8 %}
+                            <li>{{ a }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        {% endif %}
+        {% if passage.numberOfDaysValid %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Number of days valid</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ passage.numberOfDaysValid }}
+                </dd>
+            </div>
+        {% endif %}
+        {% include "main/uic/extension.html" with obj=passage %}
+        {% if passage.stationNum %}
+            {% for n in passage.stationNum %}
+                {% with station=n|get_station:ticket %}
+                    {% if station %}
+                        <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Station #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            {% include "main/uic/station.html" with station=station %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endfor %}
+        {% endif %}
+    </dl>
+{% endlocaltime %}

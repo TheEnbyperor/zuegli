@@ -1,0 +1,6 @@
+{% load rics %}
+{% if obj.extension %}
+    {% for ext in obj.extension %}
+        {% include "main/uic/extension_.html" with extension=ext %}
+    {% endfor %}
+{% endif %}
