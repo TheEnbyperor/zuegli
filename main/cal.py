@@ -10,7 +10,7 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         if ticket_data.flex:
-            if len(ticket_data.flex.data["transportDocument"]) >= 1:
+            if len(ticket_data.flex.data.get("transportDocument", [])) >= 1:
                 ticket_document = next(map(
                     lambda d: d["ticket"][1],
                     filter(
