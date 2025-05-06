@@ -208,169 +208,169 @@
                             </div>
                         {% endif %}
                         {% include "main/uic/extension.html" with obj=flex.data.controlDetail %}
-                        {% if flex.data.controlDetail.identificationByCardReference %}
-                            <div class="govuk-summary-list__row">
-                                {% for card in flex.data.controlDetail.identificationByCardReference %}
-                                    <div class="govuk-summary-card">
-                                        <div class="govuk-summary-card__title-wrapper">
-                                            <h2 class="govuk-summary-card__title">
-                                                Identification customer card #{{ forloop.counter }}
-                                            </h2>
-                                        </div>
-                                        <div class="govuk-summary-card__content">
-                                            <dl class="govuk-summary-list">
-                                                {% if card.cardIdNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.cardIdNum }}</dd>
-                                                    </div>
-                                                {% elif card.cardIdIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.cardIdIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if card.leadingCardIdNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID prefix</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.leadingCardIdNum }}</dd>
-                                                    </div>
-                                                {% elif card.leadingCardIdIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID prefix</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.leadingCardIdIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if card.trailingCardIdNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID suffix</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.trailingCardIdNum }}</dd>
-                                                    </div>
-                                                {% elif card.trailingCardIdIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card ID suffix</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.trailingCardIdIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if card.cardName %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card name</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.cardName }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if card.cardType %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card type</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.cardType }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if ticket.cardIssuerNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card issuer RICS</dt>
-                                                        <dd class="govuk-summary-list__value">
-                                                            <code>{{ card.cardIssuerNum }}</code>
-                                                        </dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if card.cardIssuerIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Card issuer ID</dt>
-                                                        <dd class="govuk-summary-list__value">{{ card.cardIssuerIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% with org=card.cardIssuerNum|rics %}
-                                                    {% if org %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Card issuer</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {% include 'main/rics.html' with org=org %}
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            </dl>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        {% if flex.data.controlDetail.includedTickets %}
-                            <div class="govuk-summary-list__row">
-                                {% for ticket in flex.data.controlDetail.includedTickets %}
-                                    <div class="govuk-summary-card">
-                                        <div class="govuk-summary-card__title-wrapper">
-                                            <h2 class="govuk-summary-card__title">
-                                                Linked ticket #{{ forloop.counter }}
-                                            </h2>
-                                        </div>
-                                        <div class="govuk-summary-card__content">
-                                            <dl class="govuk-summary-list">
-                                                <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Link mode</dt>
-                                                    <dd class="govuk-summary-list__value">
-                                                        <code>{{ ticket.linkMode }}</code>
-                                                    </dd>
-                                                </div>
-                                                <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Ticket type</dt>
-                                                    <dd class="govuk-summary-list__value">
-                                                        <code>{{ ticket.ticketType }}</code>
-                                                    </dd>
-                                                </div>
-                                                {% if ticket.referenceNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Reference</dt>
-                                                        <dd class="govuk-summary-list__value">{{ ticket.referenceNum }}</dd>
-                                                    </div>
-                                                {% elif ticket.referenceIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Reference</dt>
-                                                        <dd class="govuk-summary-list__value">{{ ticket.referenceIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if ticket.issuerName %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Issuer name</dt>
-                                                        <dd class="govuk-summary-list__value">{{ ticket.issuerName }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if ticket.issuerPNR %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Issuer PNR</dt>
-                                                        <dd class="govuk-summary-list__value">{{ ticket.issuerPNR }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if ticket.productOwnerNum %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Product owner RICS</dt>
-                                                        <dd class="govuk-summary-list__value">
-                                                            <code>{{ ticket.productOwnerNum }}</code>
-                                                        </dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% if ticket.productOwnerIA5 %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Product owner ID</dt>
-                                                        <dd class="govuk-summary-list__value">{{ ticket.productOwnerIA5 }}</dd>
-                                                    </div>
-                                                {% endif %}
-                                                {% with org=ticket.productOwnerNum|rics %}
-                                                    {% if org %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Product owner</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {% include 'main/rics.html' with org=org %}
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            </dl>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                     </dl>
+                    {% if flex.data.controlDetail.identificationByCardReference %}
+                        <div class="govuk-summary-list__row">
+                            {% for card in flex.data.controlDetail.identificationByCardReference %}
+                                <div class="govuk-summary-card">
+                                    <div class="govuk-summary-card__title-wrapper">
+                                        <h2 class="govuk-summary-card__title">
+                                            Identification customer card #{{ forloop.counter }}
+                                        </h2>
+                                    </div>
+                                    <div class="govuk-summary-card__content">
+                                        <dl class="govuk-summary-list">
+                                            {% if card.cardIdNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.cardIdNum }}</dd>
+                                                </div>
+                                            {% elif card.cardIdIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.cardIdIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if card.leadingCardIdNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID prefix</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.leadingCardIdNum }}</dd>
+                                                </div>
+                                            {% elif card.leadingCardIdIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID prefix</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.leadingCardIdIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if card.trailingCardIdNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID suffix</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.trailingCardIdNum }}</dd>
+                                                </div>
+                                            {% elif card.trailingCardIdIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card ID suffix</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.trailingCardIdIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if card.cardName %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card name</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.cardName }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if card.cardType %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card type</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.cardType }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if ticket.cardIssuerNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card issuer RICS</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ card.cardIssuerNum }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if card.cardIssuerIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Card issuer ID</dt>
+                                                    <dd class="govuk-summary-list__value">{{ card.cardIssuerIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% with org=card.cardIssuerNum|rics %}
+                                                {% if org %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Card issuer</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% include 'main/rics.html' with org=org %}
+                                                        </dd>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </dl>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if flex.data.controlDetail.includedTickets %}
+                        <div class="govuk-summary-list__row">
+                            {% for ticket in flex.data.controlDetail.includedTickets %}
+                                <div class="govuk-summary-card">
+                                    <div class="govuk-summary-card__title-wrapper">
+                                        <h2 class="govuk-summary-card__title">
+                                            Linked ticket #{{ forloop.counter }}
+                                        </h2>
+                                    </div>
+                                    <div class="govuk-summary-card__content">
+                                        <dl class="govuk-summary-list">
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Link mode</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ ticket.linkMode }}</code>
+                                                </dd>
+                                            </div>
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Ticket type</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ ticket.ticketType }}</code>
+                                                </dd>
+                                            </div>
+                                            {% if ticket.referenceNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Reference</dt>
+                                                    <dd class="govuk-summary-list__value">{{ ticket.referenceNum }}</dd>
+                                                </div>
+                                            {% elif ticket.referenceIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Reference</dt>
+                                                    <dd class="govuk-summary-list__value">{{ ticket.referenceIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if ticket.issuerName %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Issuer name</dt>
+                                                    <dd class="govuk-summary-list__value">{{ ticket.issuerName }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if ticket.issuerPNR %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Issuer PNR</dt>
+                                                    <dd class="govuk-summary-list__value">{{ ticket.issuerPNR }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if ticket.productOwnerNum %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Product owner RICS</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ ticket.productOwnerNum }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                            {% if ticket.productOwnerIA5 %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Product owner ID</dt>
+                                                    <dd class="govuk-summary-list__value">{{ ticket.productOwnerIA5 }}</dd>
+                                                </div>
+                                            {% endif %}
+                                            {% with org=ticket.productOwnerNum|rics %}
+                                                {% if org %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Product owner</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% include 'main/rics.html' with org=org %}
+                                                        </dd>
+                                                    </div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </dl>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </dd>
             </div>
         {% endif %}
@@ -426,6 +426,8 @@
                                     <h2 class="govuk-summary-card__title">Pass</h2>
                                 {% elif doc.ticket.0 == "customerCard" %}
                                     <h2 class="govuk-summary-card__title">Customer card</h2>
+                                {% elif doc.ticket.0 == "stationPassage" %}
+                                    <h2 class="govuk-summary-card__title">Station passage</h2>
                                 {% else %}
                                     <h2 class="govuk-summary-card__title">Document <code>{{ doc.ticket.0 }}</code></h2>
                                 {% endif %}
@@ -439,6 +441,8 @@
                                     {% include "main/uic/pass.html" with pass=doc.ticket.1 %}
                                 {% elif doc.ticket.0 == "reservation" %}
                                     {% include "main/uic/reservation.html" with res=doc.ticket.1 %}
+                                {% elif doc.ticket.0 == "stationPassage" %}
+                                    {% include "main/uic/station_passage.html" with res=doc.ticket.1 %}
                                 {% else %}
                                     <pre>{{ doc.ticket.1|pprint }}</pre>
                                 {% endif %}

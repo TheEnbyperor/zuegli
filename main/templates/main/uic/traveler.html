@@ -96,59 +96,59 @@
             </dd>
         </div>
     {% endif %}
-    {% if traveler.status %}
-        <div class="govuk-summary-list__row">
-            {% for status in traveler.status %}
-                <div class="govuk-summary-card">
-                    <div class="govuk-summary-card__title-wrapper">
-                        <h2 class="govuk-summary-card__title">
-                            Customer status #{{ forloop.counter }}
-                        </h2>
-                    </div>
-                    <div class="govuk-summary-card__content">
-                        <dl class="govuk-summary-list">
-                            {% if status.customerStatus %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Status</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        <code>{{ status.customerStatus }}</code>
-                                    </dd>
-                                </div>
-                            {% endif %}
-                            {% if status.customerStatusDescr %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Status</dt>
-                                    <dd class="govuk-summary-list__value">{{ status.customerStatusDescr }}</dd>
-                                </div>
-                            {% endif %}
-                            {% if status.statusProviderNum %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Status provider RICS</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        <code>{{ status.statusProviderNum }}</code>
-                                    </dd>
-                                </div>
-                            {% endif %}
-                            {% if status.statusProviderIA5 %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Status provider ID</dt>
-                                    <dd class="govuk-summary-list__value">{{ status.statusProviderIA5 }}</dd>
-                                </div>
-                            {% endif %}
-                            {% with org=status.statusProviderNum|rics %}
-                                {% if org %}
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Status provider</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {% include 'main/rics.html' with org=org %}
-                                        </dd>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        </dl>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 </dl>
+{% if traveler.status %}
+    <div class="govuk-summary-list__row">
+        {% for status in traveler.status %}
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Customer status #{{ forloop.counter }}
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        {% if status.customerStatus %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ status.customerStatus }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if status.customerStatusDescr %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status</dt>
+                                <dd class="govuk-summary-list__value">{{ status.customerStatusDescr }}</dd>
+                            </div>
+                        {% endif %}
+                        {% if status.statusProviderNum %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status provider RICS</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ status.statusProviderNum }}</code>
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if status.statusProviderIA5 %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Status provider ID</dt>
+                                <dd class="govuk-summary-list__value">{{ status.statusProviderIA5 }}</dd>
+                            </div>
+                        {% endif %}
+                        {% with org=status.statusProviderNum|rics %}
+                            {% if org %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Status provider</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% include 'main/rics.html' with org=org %}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </dl>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
