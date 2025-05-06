@@ -442,7 +442,7 @@
                                 {% elif doc.ticket.0 == "reservation" %}
                                     {% include "main/uic/reservation.html" with res=doc.ticket.1 %}
                                 {% elif doc.ticket.0 == "stationPassage" %}
-                                    {% include "main/uic/station_passage.html" with res=doc.ticket.1 %}
+                                    {% include "main/uic/station_passage.html" with passage=doc.ticket.1 %}
                                 {% else %}
                                     <pre>{{ doc.ticket.1|pprint }}</pre>
                                 {% endif %}
