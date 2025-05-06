@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-from .. import ticket, aztec
+from .. import ticket, aztec, models
 from . import passes
 
 
@@ -39,6 +39,17 @@ def upload_aztec(request):
             "message": e.message,
             "exception": e.exception,
         }), status=422, content_type="application/json")
+
+    headers = dict(request.headers)
+    headers.pop("Cookie", None)
+    headers.pop("Authorization", None)
+    models.AccessLogEntry.objects.create(
+        ticket=ticket_obj,
+        action=models.AccessLogEntry.ACTION_UPLOAD,
+        remote_ip=passes.get_client_ip(request),
+        headers=headers,
+        account=request.user.account if request.user.is_authenticated else None,
+    )
 
     return HttpResponse(json.dumps({
         "ticket_id": ticket_obj.id,
@@ -89,6 +100,17 @@ def upload_aztec_img(request):
             "message": e.message,
             "exception": e.exception,
         }), status=422, content_type="application/json")
+
+    headers = dict(request.headers)
+    headers.pop("Cookie", None)
+    headers.pop("Authorization", None)
+    models.AccessLogEntry.objects.create(
+        ticket=ticket_obj,
+        action=models.AccessLogEntry.ACTION_UPLOAD,
+        remote_ip=passes.get_client_ip(request),
+        headers=headers,
+        account=request.user.account if request.user.is_authenticated else None,
+    )
 
     if 'application/vnd.apple.pkpass' in request.META.get('HTTP_ACCEPT'):
         # we can safely be naive about whether one/more pkpasses are returned
