@@ -87,8 +87,10 @@ def upload_aztec_img(request):
             "exception": e.exception,
         }), status=422, content_type="application/json")
 
-    if request.META.get('HTTP_ACCEPT') == 'application/vnd.apple.pkpass':
-        return HttpResponse(passes.make_pkpass_file(ticket_obj), content_type="application/vnd.apple.pkpass")
+    if 'application/vnd.apple.pkpass' in request.META.get('HTTP_ACCEPT'):
+        # we can safely be naive about whether one/more pkpasses are returned
+        # pkpassess will always be accepted by the client regardless
+        return passes.make_pkpass(ticket_obj)
 
     return HttpResponse(json.dumps({
         "ticket_id": ticket_obj.id,
