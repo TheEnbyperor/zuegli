@@ -86,7 +86,7 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data = ticket_instance.as_ticket()
         if ticket_data.flex:
-            if len(ticket_data.flex.data["transportDocument"]) >= 1:
+            if len(ticket_data.flex.data.get("transportDocument", [])) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
                 if document_type == "openTicket":
                     if (
