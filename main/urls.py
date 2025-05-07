@@ -21,8 +21,11 @@ urlpatterns = [
     path('api/upload_image', views.api.upload_aztec_img),
     path('api/share_target/', views.api.share_target),
 
+    path('account/login/', views.account.login, name='account_login'),
+
     path('account/', views.account.index, name='account'),
     path('account/edit/', views.account.edit, name='account_edit'),
+    path('account/set_password/', views.account.set_password, name='account_set_password'),
 
     path('account/db/add_ticket/', views.db.db_add_ticket, name='db_add_ticket'),
     path('account/db_abo/', views.db_abo.view_db_abo, name='db_abo'),

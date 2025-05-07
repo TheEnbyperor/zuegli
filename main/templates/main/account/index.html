@@ -8,6 +8,7 @@
         <a href="{% url 'index' %}" class="govuk-back-link">{% trans "Back" %}</a>
         <h1 class="govuk-heading-xl">{% trans "My Account" %}</h1>
         <a class="govuk-button" href="{% url 'account_edit' %}">{% trans "Edit" %}</a>
+        <a class="govuk-button" href="{% url 'account_set_password' %}">{% trans "New password" %}</a>
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Forename" %}</dt>

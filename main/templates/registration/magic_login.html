@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-{% load crispy_forms_gds i18n %}
+{% load crispy_forms_tags crispy_forms_gds i18n %}
 
 {% block title %}{% trans "Login" %}{% endblock title %}
 
@@ -9,20 +9,23 @@
         <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
               method="post">
             {% csrf_token %}
-            <div class="govuk-form-group">
-                <label class="govuk-label govuk-label--m" for="email">
-                    {{ login_form.email.label }}
-                </label>
-              {% crispy_gds_field login_form.email %}
+            <div class="govuk-form-group{% if login_form.email.errors %} govuk-form-group--error{% endif %}">
+                <label class="govuk-label govuk-label--m" for="id_email">{% trans "Email" %}</label>
+                {% if login_form.email.errors %}
+                    <p class="govuk-error-message">
+                        {% for error in login_form.email.errors %}
+                            {{ error }}
+                            {% if not forloop.last %}<br/>{% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% crispy_gds_field login_form.email %}
             </div>
             <button type="submit" class="govuk-button govuk-button--start">{% trans "Send login email" %}</button>
         </form>
-        {% if require_signup %}
-            <p class="govuk-body-lead">
-                {% trans "Don't have an account?" %}
-                <a href="{% url 'magiclink:signup' %}" class="govuk-link govuk-link--no-visited-state">{% trans "Sign up here" %}</a>
-            </p>
-        {% endif %}
-        <a href="{% url 'admin:login' %}" class="govuk-button govuk-button--secondary">{% trans "Login with password" %}</a>
+        <p class="govuk-body-lead">
+            {% trans "Don't have an account?" %}
+            <a href="{% url 'magiclink:signup' %}" class="govuk-link govuk-link--no-visited-state">{% trans "Sign up here" %}</a>
+        </p>
     </div>
 {% endblock %}

@@ -3,11 +3,30 @@ from django.utils.translation import gettext_lazy as _
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, Field, Fieldset
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import SetPasswordForm as _SetPasswordForm
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label=_("Email"), required=True)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput, required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Login")))
+
 
 class AccountEditForm(forms.Form):
     first_name = forms.CharField(max_length=255, required=True)
     last_name = forms.CharField(max_length=255, required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+
+
+class SetPasswordForm(_SetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()

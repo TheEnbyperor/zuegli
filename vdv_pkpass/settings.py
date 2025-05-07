@@ -312,7 +312,7 @@ GWALLET_CONF = {
 
 AZTEC_JAR_PATH = BASE_DIR / "aztec-1.0.jar"
 
-LOGIN_URL = "magiclink:login"
+LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "account"
 LOGOUT_REDIRECT_URL = "index"
 
