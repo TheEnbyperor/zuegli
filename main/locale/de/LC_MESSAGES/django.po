@@ -235,7 +235,7 @@ msgstr ""
 #: templates/main/account/index.html:98 templates/main/account/index.html:111
 #: templates/main/account/index.html:124 templates/main/account/index.html:137
 msgid "Unlink"
-msgstr "Ausmelden"
+msgstr "Trennen"
 
 #: templates/main/account/index.html:36 templates/main/account/index.html:56
 #: templates/main/account/index.html:114
@@ -403,7 +403,7 @@ msgstr "Start"
 
 #: templates/main/base.html:93
 msgid "Logout"
-msgstr "Ausmelden"
+msgstr "Abmelden"
 
 #: templates/main/base.html:118
 msgid "Account home"
