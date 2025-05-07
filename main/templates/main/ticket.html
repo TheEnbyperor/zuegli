@@ -1,18 +1,26 @@
 {% extends "main/base.html" %}
 {% load static tz i18n %}
 
-{% block title %}{% blocktrans with id=ticket.public_id %}Ticket {{ id }}{% endblocktrans %}{% endblock title %}
+{% block title %}{% if ticket.label %}{{ ticket.label }}{% else %}{% blocktrans with id=ticket.public_id %}Ticket {{ id }}{% endblocktrans %}{% endif %}{% endblock title %}
 
 {% block content %}
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds-from-desktop">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
-                    {% blocktrans with id=ticket.public_id %}Ticket #{{ id }}{% endblocktrans %}
-                    <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
+                    {% if ticket.label %}
+                        {{ ticket.label }}
+                        <span class="govuk-caption-xl">#{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}</span>
+                    {% else %}
+                        {% blocktrans with id=ticket.public_id %}Ticket #{{ id }}{% endblocktrans %}
+                        <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
+                    {% endif %}
                 </h1>
             </div>
             <div class="govuk-grid-column-one-third-from-desktop">
+                <a href="{% url 'edit_ticket' ticket.id %}" class="govuk-button">
+                    {% trans "Edit name" %}
+                </a>
                 <a href="{% url 'delete_ticket' ticket.id %}" class="govuk-button govuk-button--warning">
                     {% trans "Delete" %}
                 </a>

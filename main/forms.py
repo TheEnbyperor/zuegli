@@ -33,6 +33,15 @@ class SetPasswordForm(_SetPasswordForm):
         self.helper.add_input(Submit("submit", _("Save")))
 
 
+class TicketEditForm(forms.Form):
+    name = forms.CharField(max_length=255, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+
+
 class TicketUploadForm(forms.Form):
     ticket = forms.FileField(
         label=_("Your ticket"),

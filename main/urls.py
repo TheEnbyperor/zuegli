@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.passes.index, name='index'),
     path('ticket/<str:pk>/', views.passes.view_ticket, name='ticket'),
+    path('ticket/<str:pk>/edit/', views.passes.edit_ticket, name='edit_ticket'),
     path('ticket/<str:pk>/delete/', views.passes.delete_ticket, name='delete_ticket'),
     path('ticket/<str:pk>/pkpass/', views.passes.ticket_pkpass, name='ticket_pkpass'),
     path('ticket/<str:pk>/ics/', views.ical.download_ics, name='ticket_ics'),

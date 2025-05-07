@@ -158,7 +158,13 @@
             <ul class="govuk-list govuk-list--spaced">
                 {% for ticket in tickets.all %}
                     <li>
-                        <a href="{% url 'ticket' ticket.pk %}" class="govuk-link">#{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}</a>
+                        <a href="{% url 'ticket' ticket.pk %}" class="govuk-link">
+                            {% if ticket.label %}
+                                {{ ticket.label }} (#{{ ticket.public_id }})
+                            {% else %}
+                                #{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}
+                            {% endif %}
+                        </a>
                     </li>
                 {% endfor %}
             </ul>

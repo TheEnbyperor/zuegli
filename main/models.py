@@ -139,6 +139,7 @@ class Ticket(models.Model):
         "AccountOAuth", on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets", verbose_name="OAuth Account", db_index=True
     )
     photos = models.JSONField(default=dict, blank=True)
+    label = models.CharField(max_length=255, null=True, blank=True, verbose_name="Label")
 
     def __str__(self):
         return f"{self.get_ticket_type_display()} - {self.id}"

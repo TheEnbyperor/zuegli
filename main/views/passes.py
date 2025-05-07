@@ -215,6 +215,39 @@ def view_ticket(request, pk):
     })
 
 
+def edit_ticket(request, pk):
+    ticket_obj = get_object_or_404(models.Ticket, id=pk)
+
+    can_edit = not ticket_obj.account or (
+            request.user.is_authenticated and ticket_obj.account == request.user.account
+    )
+    if not can_edit:
+        return render(request, "main/ticket_edit.html", {
+            "ticket": ticket_obj,
+            "can_edit": False,
+        })
+
+    if request.method == "POST":
+        form = forms.TicketEditForm(request.POST, initial={
+            "name": ticket_obj.label,
+        })
+
+        if form.is_valid():
+            ticket_obj.label = form.cleaned_data["name"]
+            ticket_obj.save()
+            return redirect("ticket", ticket_obj.pk)
+    else:
+        form = forms.TicketEditForm(initial={
+            "name": ticket_obj.label,
+        })
+
+    return render(request, "main/ticket_edit.html", {
+        "ticket": ticket_obj,
+        "form": form,
+        "can_edit": True
+    })
+
+
 def delete_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
 

@@ -55,6 +55,7 @@ def set_password(request):
         "form": form,
     })
 
+
 def login(request):
     if request.user.is_authenticated:
         return redirect("account")
