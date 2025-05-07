@@ -5,6 +5,7 @@
 /vdv-certs
 /rsp-data
 /iata-data
+/ft-data
 /venv
 /db.sqlite3
 /yarn.lock

@@ -2,11 +2,7 @@ import dataclasses
 import base26
 import hashlib
 import typing
-import cryptography.hazmat.primitives.cmac
-import cryptography.hazmat.primitives.ciphers
-import cryptography.hazmat.primitives.ciphers.algorithms
-import cryptography.hazmat.primitives.ciphers.modes
-from . import util, pki
+from . import util, pki, crypto
 
 @dataclasses.dataclass
 class Data:
@@ -85,7 +81,7 @@ class Envelope:
             if start < 0 or start + 32 > len(payload):
                 raise util.FTException("Payload too short to extract AES key")
             aes_key = payload[start:start + 32]
-            extra = aes_decrypt(aes_key, extra[1:])
+            extra = crypto.aes_decrypt(aes_key, extra[1:])
         else:
             extra = None
 
@@ -93,31 +89,3 @@ class Envelope:
             data=data,
             extra_data=extra
         )
-
-def aes_decrypt(key: bytes, ciphertext: bytes) -> bytes:
-    iv = bytes([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    cipher = cryptography.hazmat.primitives.ciphers.Cipher(
-        cryptography.hazmat.primitives.ciphers.algorithms.AES(key),
-        cryptography.hazmat.primitives.ciphers.modes.CFB(iv)
-    )
-    decrypt = cipher.decryptor()
-    buf = decrypt.update(ciphertext) + decrypt.finalize()
-
-    if len(buf) < 12:
-        raise util.FTException("Ciphertext too short")
-    tag = buf[-8:]
-    msg_plus_len = buf[:-8]
-
-    cmac = cryptography.hazmat.primitives.cmac.CMAC(
-        cryptography.hazmat.primitives.ciphers.algorithms.AES(key)
-    )
-    cmac.update(msg_plus_len)
-    expected_tag = cmac.finalize()[:8]
-    if expected_tag != tag:
-        raise util.FTException("CMAC verification failed")
-
-    length = int.from_bytes(msg_plus_len[0:4], 'big')
-    max_data = len(msg_plus_len) - 4
-    if length < 0 or length > max_data:
-        raise util.FTException(f"Invalid plaintext length: {length}")
-    return msg_plus_len[4:4 + length]

@@ -475,6 +475,13 @@ class FlexiTicket:
         else:
             return None
 
+    @property
+    def brand_id(self):
+        if self.issuer_id == "M0":
+            return "MBTA"
+        else:
+            return None
+
 
 @dataclasses.dataclass
 class SNCFTicket:
