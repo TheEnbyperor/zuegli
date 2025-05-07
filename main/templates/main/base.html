@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         {% if user.is_authenticated %}
-                            <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' %} govuk-service-navigation__item--active{% endif %}">
+                            <li class="govuk-service-navigation__item{% if url_name == 'account' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' or url_name == 'account_edit' or url_name == 'account_set_password' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link" href="{% url 'account' %}">
                                     {% trans "Account" %}
                                 </a>
@@ -98,7 +98,7 @@
                         {% else %}
                             <li class="govuk-service-navigation__item{% if url_name == 'login' %} govuk-service-navigation__item--active{% endif %}">
                                 <a class="govuk-service-navigation__link"
-                                   href="{% url 'magiclink:login' %}?next={{ request.path }}">
+                                   href="{% url 'account_login' %}?next={{ request.path }}">
                                     {% trans "Login" %}
                                 </a>
                             </li>
@@ -106,7 +106,7 @@
                     </ul>
                 </nav>
             </div>
-            {% if url_name == 'account' or url_name == 'account_edit' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' %}
+            {% if url_name == 'account' or url_name == 'account_edit' or url_name == 'db_account' or url_name == 'db_abo' or url_name == 'new_db_abo' or url_name == 'saarvv_account' or url_name == 'sbahn_berlin_account' or url_name == 'db_add_ticket' or url_name == 'sncb_add_ticket' or url_name == 'avv_account' or url_name == 'account_set_password' %}
                 <div class="govuk-service-navigation__container">
                     <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
                         <button type="button"

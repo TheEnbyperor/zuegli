@@ -288,7 +288,7 @@ STORAGES = {
     },
 }
 
-LOGIN_URL = "magiclink:login"
+LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "account"
 LOGOUT_REDIRECT_URL = "index"
 

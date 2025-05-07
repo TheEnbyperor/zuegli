@@ -9,17 +9,10 @@
         <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
               method="post">
             {% csrf_token %}
-            <div class="govuk-form-group{% if login_form.email.errors %} govuk-form-group--error{% endif %}">
-                <label class="govuk-label govuk-label--m" for="id_email">{% trans "Email" %}</label>
-                {% if login_form.email.errors %}
-                    <p class="govuk-error-message">
-                        {% for error in login_form.email.errors %}
-                            {{ error }}
-                            {% if not forloop.last %}<br/>{% endif %}
-                        {% endfor %}
-                    </p>
-                {% endif %}
-                {% crispy_gds_field login_form.email %}
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--m" for="email">{% trans "Email" %}
+                </label>
+                <input type="email" name="email" class="govuk-input" required="" id="email">
             </div>
             <button type="submit" class="govuk-button govuk-button--start">{% trans "Send login email" %}</button>
         </form>
@@ -27,5 +20,10 @@
             {% trans "Don't have an account?" %}
             <a href="{% url 'magiclink:signup' %}" class="govuk-link govuk-link--no-visited-state">{% trans "Sign up here" %}</a>
         </p>
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <h2 class="govuk-heading-l">{% trans "Login with password" %}</h2>
+        {% crispy login_form %}
     </div>
 {% endblock %}
