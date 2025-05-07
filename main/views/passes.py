@@ -344,7 +344,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "teamIdentifier": settings.PKPASS_CONF["team_id"],
         "serialNumber": ticket_obj.pk,
         "groupingIdentifier": ticket_obj.pk,
-        "description": ticket_obj.get_ticket_type_display(),
+        "description": ticket_obj.label if ticket_obj.label else ticket_obj.get_ticket_type_display(),
         "backgroundColor": "rgb(255, 255, 255)",
         "suppressStripShine": True,
         "suppressHeaderDarkening": True,
