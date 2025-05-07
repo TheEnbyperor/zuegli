@@ -916,7 +916,8 @@ msgstr "Dies scheint als eine DB-Karte sein."
 msgid ""
 "<a href=\"%(url)s\">Link your DB account</a> or <a href=\"%(url)s\">add your "
 "DB subscription</a> to have it automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Verknüpfen Sie Ihr DB-Konto</a>, damit es "
+msgstr "<a href=\"%(url)s\">Verknüpfen Sie Ihr DB-Konto</a>, oder "
+"<a href=\"%(url)s\">fügen Sie Ihr DB-Abo hinzu</a>, damit es "
 "automatisch im Hintergrund aktualisiert wird."
 
 #: templates/main/ticket.html:124
@@ -925,8 +926,8 @@ msgid ""
 "<a href=\"%(url)s\">Login to your account</a> and link your DB account or "
 "add your DB subscription to have it automatically refresh in the background."
 msgstr "<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und "
-"verknüpfen Sie Ihr DB-Konto, damit es automatisch im Hintergrund "
-"aktualisiert wird."
+"verknüpfen Sie Ihr DB-Konto oder fügen Sie Ihr DB-Abonnement hinzu, "
+"damit es automatisch im Hintergrund aktualisiert wird."
 
 #: templates/main/ticket.html:134
 msgid "Photos"
