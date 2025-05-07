@@ -280,6 +280,12 @@ STORAGES = {
             "location": BASE_DIR / "iata-data",
         }
     },
+    "ft-data": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "ft-data",
+        }
+    },
 }
 
 LOGIN_URL = "magiclink:login"

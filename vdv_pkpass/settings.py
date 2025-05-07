@@ -225,6 +225,19 @@ STORAGES = {
             )
         }
     },
+    "ft-data": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": "ft-data",
+            "client_config": botocore.config.Config(
+                retries={"max_attempts": 10},
+                connect_timeout=10,
+                max_pool_connections=50,
+                request_checksum_calculation="when_required",
+                response_checksum_validation="when_required",
+            )
+        }
+    },
 }
 
 PKPASS_CERTIFICATE_LOCATION = os.getenv("PKPASS_CERTIFICATE_LOCATION")
