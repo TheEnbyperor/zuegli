@@ -207,10 +207,8 @@ msgid "Edit"
 msgstr "Bewerken"
 
 #: templates/main/account/index.html:11
-#, fuzzy
-#| msgid "Password"
 msgid "New password"
-msgstr "Wachtwoord"
+msgstr "Nieuw wachtwoord"
 
 #: templates/main/account/index.html:14
 #: templates/main/account/sbahn_berlin.html:17
@@ -339,10 +337,8 @@ msgstr "Inloggen bij S-Bahn Berlin"
 
 #: templates/main/account/set_password.html:4
 #: templates/main/account/set_password.html:9
-#, fuzzy
-#| msgid "Password"
 msgid "Set Password"
-msgstr "Wachtwoord"
+msgstr "Wachtwoord instellen"
 
 #: templates/main/account/sncb_ticket.html:4
 msgid "Add SNCB/NMBS Ticket"
@@ -846,10 +842,8 @@ msgid "Ticket #%(id)s"
 msgstr "Ticket #%(id)s"
 
 #: templates/main/ticket.html:22
-#, fuzzy
-#| msgid "Edit"
 msgid "Edit name"
-msgstr "Bewerken"
+msgstr "Naam bewerken"
 
 #: templates/main/ticket.html:25 templates/main/ticket_delete.html:25
 msgid "Delete"
@@ -1012,10 +1006,8 @@ msgid "sequence #%(seq)s"
 msgstr "reeks #%(seq)s"
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
-#, fuzzy
-#| msgid "Travel ticket"
 msgid "Delete ticket"
-msgstr "Reisticket"
+msgstr "Ticket verwijderen"
 
 #: templates/main/ticket_delete.html:14
 msgid "Are you sure you want to delete this ticket?"
@@ -1030,10 +1022,8 @@ msgid "You don't have permission to delete this ticket."
 msgstr ""
 
 #: templates/main/ticket_edit.html:4 templates/main/ticket_edit.html:9
-#, fuzzy
-#| msgid "Add ticket"
 msgid "Edit ticket"
-msgstr "Ticket toevoegen"
+msgstr "Ticket bewerken"
 
 #: templates/main/ticket_edit.html:16
 msgid "You don't have permission to edit this ticket."
