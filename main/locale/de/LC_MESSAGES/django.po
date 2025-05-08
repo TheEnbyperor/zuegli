@@ -841,7 +841,7 @@ msgstr "Karte #%(id)s"
 
 #: templates/main/ticket.html:27
 msgid "Edit name"
-msgstr "Namen bearbeiten"
+msgstr "Name bearbeiten"
 
 #: templates/main/ticket.html:30 templates/main/ticket_delete.html:25
 msgid "Delete"
