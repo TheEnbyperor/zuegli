@@ -25,7 +25,7 @@ msgstr ""
 
 #: flexi_ticket/data.py:190
 msgid "Unlimited"
-msgstr ""
+msgstr "Onbeperkt"
 
 #: forms.py:10 forms.py:70 forms.py:115 templates/main/account/index.html:24
 #: templates/registration/login.html:13
@@ -346,7 +346,7 @@ msgstr "NMBS-ticket toevoegen"
 
 #: templates/main/account/vestische_login.html:4
 msgid "Vestische Login"
-msgstr ""
+msgstr "Inloggen bij Vestische"
 
 #: templates/main/base.html:18 templates/main/base.html:22
 #: templates/main/index.html:10
@@ -380,11 +380,11 @@ msgstr "Accountpagina"
 
 #: templates/main/base.html:169
 msgid "Zügli can be added to your home screen."
-msgstr ""
+msgstr "Zügli kan aan uw thuisscherm worden toegevoegd."
 
 #: templates/main/base.html:172
 msgid "Install"
-msgstr ""
+msgstr "Installeren"
 
 #: templates/main/base.html:209
 msgid ""
@@ -427,7 +427,7 @@ msgstr ""
 
 #: templates/main/ft_ticket_details.html:49
 msgid "minutes"
-msgstr ""
+msgstr "minuten"
 
 #: templates/main/ft_ticket_details.html:236
 #: templates/main/ssb_ticket_details.html:78
@@ -799,7 +799,7 @@ msgstr "Niet-reserveringsticket"
 
 #: templates/main/ssb_ticket_details.html:205
 msgid "Return included"
-msgstr ""
+msgstr "Inclusief retour"
 
 #: templates/main/ssb_ticket_details.html:237
 msgid "Valid from"
@@ -835,12 +835,12 @@ msgid "Product code"
 msgstr "Productcode"
 
 #: templates/main/ticket.html:4
-#, fuzzy, python-format
-#| msgid "Ticket %(id)s"
 msgid ""
 "Ticket\n"
 "    %(id)s"
-msgstr "Ticket %(id)s"
+msgstr ""
+"Ticket\n"
+"    %(id)s"
 
 #: templates/main/ticket.html:18 templates/main/ticket.html:278
 #: templates/main/ticket.html:297 templates/main/ticket.html:328
@@ -987,16 +987,12 @@ msgstr "Geen inhouden in dit ticket."
 
 #: templates/main/ticket.html:237 templates/main/ticket.html:312
 #: templates/main/ticket.html:397 templates/main/ticket.html:412
-#, fuzzy, python-format
-#| msgid ""
-#| "Spacial validity - variant\n"
-#| "                            %(variant)s"
 msgid ""
 "Ticket #\n"
 "                                        %(id)s"
 msgstr ""
-"Gebiedsgeldigheid - variant\n"
-"                            %(variant)s"
+"Ticket #\n"
+"                                        %(id)s"
 
 #: templates/main/ticket.html:254
 msgid "This ticket is invalid"
@@ -1028,6 +1024,8 @@ msgid ""
 "sequence #\n"
 "                                        %(seq)s"
 msgstr ""
+"reeks #\n"
+"                                        %(seq)s"
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
 msgid "Delete ticket"
@@ -1035,19 +1033,19 @@ msgstr "Ticket verwijderen"
 
 #: templates/main/ticket_delete.html:14
 msgid "Are you sure you want to delete this ticket?"
-msgstr ""
+msgstr "Wilt u dit ticket echt verwijderen?"
 
 #: templates/main/ticket_delete.html:21
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleren"
 
 #: templates/main/ticket_delete.html:31
 msgid "You don't have permission to delete this ticket."
-msgstr ""
+msgstr "U heeft geen toestemming om dit ticket te verwijderen."
 
 #: templates/main/ticket_delete.html:35 templates/main/ticket_edit.html:20
 msgid "Go back"
-msgstr ""
+msgstr "Terug"
 
 #: templates/main/ticket_edit.html:4 templates/main/ticket_edit.html:9
 msgid "Edit ticket"
@@ -1055,7 +1053,7 @@ msgstr "Ticket bewerken"
 
 #: templates/main/ticket_edit.html:16
 msgid "You don't have permission to edit this ticket."
-msgstr ""
+msgstr "U heeft geen toestemming om dit ticket te bewerken."
 
 #: templates/main/uic/ticket_details.html:12
 msgid "Signing RICS"
@@ -1523,11 +1521,11 @@ msgstr "Aanmelden"
 
 #: views/account.py:49
 msgid "Your password has been updated"
-msgstr ""
+msgstr "Uw account is geüpdatet"
 
 #: views/account.py:78
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Ongeldige gebruikersnaam of wachtwoord"
 
 #, python-format
 #~ msgid "sequence #%(seq)s"
