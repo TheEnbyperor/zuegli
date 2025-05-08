@@ -9,32 +9,37 @@ ROOT_DIR = pathlib.Path(__file__).parent.parent
 sys.path.append(str(ROOT_DIR))
 django.setup()
 
-from main.rsp.gen import fare_locations_ref_data_v1_3
+from main.rsp.gen import ticket_types_ref_data_v1_2
 
 xml_parser = xsdata.formats.dataclass.parsers.XmlParser()
 
 
 def main():
-    with open(ROOT_DIR / "data" / "FareLocationsRefData_v1.3.xml") as f:
+    with open(ROOT_DIR / "data" / "TicketTypesRefData_v1.2.xml") as f:
         d = f.read()
 
-    data = xml_parser.from_string(d, fare_locations_ref_data_v1_3.FareLocationsReferenceData)
+    data = xml_parser.from_string(d, ticket_types_ref_data_v1_2.TicketTypesReferenceData)
     out = {}
-    for loc in data.fare_location:
-        if loc.ojpdisplay_name:
-            out[loc.nlc] = {
-                "NLCDESC": loc.ojpdisplay_name,
+    for fare in data.ticket_type:
+        if fare.ojpdisplay_name:
+            out[fare.code] = {
+                "name": fare.ojpdisplay_name,
             }
-        elif loc.rspdisplay_name:
-            out[loc.nlc] = {
-                "NLCDESC": loc.rspdisplay_name,
+        elif fare.rspdisplay_name:
+            out[fare.code] = {
+                "name": fare.rspdisplay_name,
             }
-        elif loc.name:
-            out[loc.nlc] = {
-                "NLCDESC": loc.name
+        elif fare.name:
+            out[fare.code] = {
+                "name": fare.name,
             }
 
-    with open(ROOT_DIR / "rsp-data" / "nlc.json", "w") as f:
+        if fare.ojpadvice_message:
+            out[fare.code]["advise"] = fare.ojpadvice_message
+        elif fare.rspadvice:
+            out[fare.code]["advise"] = fare.rspadvice
+
+    with open(ROOT_DIR / "rsp-data" / "ticket-types.json", "w") as f:
         json.dump(out, f)
 
 

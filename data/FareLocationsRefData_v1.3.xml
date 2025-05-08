@@ -12024,7 +12024,7 @@
 		<Nlc>3232</Nlc>
 		<Name>BRISTOL AIRPORT</Name>
 		<OJPEnabled>true</OJPEnabled>
-		<OJPDisplayName>Bristol Airport</OJPDisplayName>
+		<OJPDisplayName>Bristol Airport by Bus</OJPDisplayName>
 		<RSPDisplayName>Bristol Airport</RSPDisplayName>
 		<AttendedTIS>true</AttendedTIS>
 		<UnattendedTIS>true</UnattendedTIS>
@@ -29503,8 +29503,8 @@
 	<FareLocation>
 		<Nlc>9238</Nlc>
 		<Name>OKEHAMPTON INTER</Name>
-		<OJPEnabled>false</OJPEnabled>
-		<OJPDisplayName />
+		<OJPEnabled>true</OJPEnabled>
+		<OJPDisplayName>Okehampton Interchange</OJPDisplayName>
 		<RSPDisplayName />
 		<AttendedTIS>true</AttendedTIS>
 		<UnattendedTIS>true</UnattendedTIS>
@@ -33504,8 +33504,8 @@
 		<Nlc>G810</Nlc>
 		<Name>NNETWORK ONE DAY</Name>
 		<OJPEnabled>true</OJPEnabled>
-		<OJPDisplayName>Centro One Day</OJPDisplayName>
-		<RSPDisplayName />
+		<OJPDisplayName>nNetwork One Day</OJPDisplayName>
+		<RSPDisplayName>nNetwork One Day</RSPDisplayName>
 		<AttendedTIS>true</AttendedTIS>
 		<UnattendedTIS>false</UnattendedTIS>
 		<UsedByWct>false</UsedByWct>
@@ -47262,9 +47262,9 @@
 	</FareLocation>
 	<FareLocation>
 		<Nlc>L101</Nlc>
-		<Name>TWEEDBANK</Name>
-		<OJPEnabled>false</OJPEnabled>
-		<OJPDisplayName />
+		<Name>TWEEDBANK 2</Name>
+		<OJPEnabled>true</OJPEnabled>
+		<OJPDisplayName>Tweedbank 2</OJPDisplayName>
 		<RSPDisplayName />
 		<AttendedTIS>true</AttendedTIS>
 		<UnattendedTIS>true</UnattendedTIS>
@@ -54481,6 +54481,16 @@
 		<UsedByWct>false</UsedByWct>
 	</FareLocation>
 	<FareLocation>
+		<Nlc>Q580</Nlc>
+		<Name />
+		<OJPEnabled>false</OJPEnabled>
+		<OJPDisplayName />
+		<RSPDisplayName />
+		<AttendedTIS>true</AttendedTIS>
+		<UnattendedTIS>true</UnattendedTIS>
+		<UsedByWct>false</UsedByWct>
+	</FareLocation>
+	<FareLocation>
 		<Nlc>Q586</Nlc>
 		<Name />
 		<OJPEnabled>false</OJPEnabled>
@@ -60482,6 +60492,36 @@
 	</FareLocation>
 	<FareLocation>
 		<Nlc>QD63</Nlc>
+		<Name />
+		<OJPEnabled>false</OJPEnabled>
+		<OJPDisplayName />
+		<RSPDisplayName />
+		<AttendedTIS>true</AttendedTIS>
+		<UnattendedTIS>true</UnattendedTIS>
+		<UsedByWct>false</UsedByWct>
+	</FareLocation>
+	<FareLocation>
+		<Nlc>QD64</Nlc>
+		<Name />
+		<OJPEnabled>false</OJPEnabled>
+		<OJPDisplayName />
+		<RSPDisplayName />
+		<AttendedTIS>true</AttendedTIS>
+		<UnattendedTIS>true</UnattendedTIS>
+		<UsedByWct>false</UsedByWct>
+	</FareLocation>
+	<FareLocation>
+		<Nlc>QD65</Nlc>
+		<Name />
+		<OJPEnabled>false</OJPEnabled>
+		<OJPDisplayName />
+		<RSPDisplayName />
+		<AttendedTIS>true</AttendedTIS>
+		<UnattendedTIS>true</UnattendedTIS>
+		<UsedByWct>false</UsedByWct>
+	</FareLocation>
+	<FareLocation>
+		<Nlc>QD66</Nlc>
 		<Name />
 		<OJPEnabled>false</OJPEnabled>
 		<OJPDisplayName />
@@ -71913,6 +71953,16 @@
 	<FareLocation>
 		<Nlc>Z041</Nlc>
 		<Name>DUTY TRVL LORAM</Name>
+		<OJPEnabled>false</OJPEnabled>
+		<OJPDisplayName />
+		<RSPDisplayName />
+		<AttendedTIS>true</AttendedTIS>
+		<UnattendedTIS>true</UnattendedTIS>
+		<UsedByWct>false</UsedByWct>
+	</FareLocation>
+	<FareLocation>
+		<Nlc>Z042</Nlc>
+		<Name>WEST MIDS Z1-5</Name>
 		<OJPEnabled>false</OJPEnabled>
 		<OJPDisplayName />
 		<RSPDisplayName />

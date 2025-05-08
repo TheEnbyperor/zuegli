@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from xsdata.models.datatype import XmlDate
 
@@ -16,7 +16,7 @@ class PersonNameStructure:
     namespace and supersedes it.
     """
 
-    person_name_title: List[str] = field(
+    person_name_title: list[str] = field(
         default_factory=list,
         metadata={
             "name": "PersonNameTitle",
@@ -27,7 +27,7 @@ class PersonNameStructure:
             "pattern": r'[A-Za-z0-9\s~!"@#$%&\'\(\)\*\+,\-\./:;<=>\?\[\\\]_\{\}\^£€]*',
         },
     )
-    person_given_name: List[str] = field(
+    person_given_name: list[str] = field(
         default_factory=list,
         metadata={
             "name": "PersonGivenName",
@@ -50,7 +50,7 @@ class PersonNameStructure:
             "pattern": r'[A-Za-z0-9\s~!"@#$%&\'\(\)\*\+,\-\./:;<=>\?\[\\\]_\{\}\^£€]*',
         },
     )
-    person_name_suffix: List[str] = field(
+    person_name_suffix: list[str] = field(
         default_factory=list,
         metadata={
             "name": "PersonNameSuffix",

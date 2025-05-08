@@ -149,6 +149,7 @@ from main.rsp.gen.nre_toc_v4_0 import (
     TrainOperatingCompanyList,
     TrainOperatingCompanyStructure,
 )
+from main.rsp.gen.ticket_types_ref_data_v1_2 import TicketTypesReferenceData
 
 __all__ = [
     "AonrangeStructure",
@@ -282,4 +283,5 @@ __all__ = [
     "TrainOperatingCompany",
     "TrainOperatingCompanyList",
     "TrainOperatingCompanyStructure",
+    "TicketTypesReferenceData",
 ]

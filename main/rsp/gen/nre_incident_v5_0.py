@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional
 
 from xsdata.models.datatype import XmlDateTime
 
@@ -122,7 +122,7 @@ class AffectsStructure:
             incident.
         """
 
-        affected_operator: List[AffectedOperatorStructure] = field(
+        affected_operator: list[AffectedOperatorStructure] = field(
             default_factory=list,
             metadata={
                 "name": "AffectedOperator",
@@ -245,7 +245,7 @@ class PtIncidentStructure:
             "namespace": "http://nationalrail.co.uk/xml/incident",
         },
     )
-    validity_period: List[HalfOpenTimestampRangeStructure] = field(
+    validity_period: list[HalfOpenTimestampRangeStructure] = field(
         default_factory=list,
         metadata={
             "name": "ValidityPeriod",
@@ -330,7 +330,7 @@ class PtIncidentStructure:
         :ivar info_link: Hyperlink description
         """
 
-        info_link: List[InfoLinkStructure] = field(
+        info_link: list[InfoLinkStructure] = field(
             default_factory=list,
             metadata={
                 "name": "InfoLink",
@@ -360,7 +360,7 @@ class Incidents:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/incident"
 
-    pt_incident: List[PtIncident] = field(
+    pt_incident: list[PtIncident] = field(
         default_factory=list,
         metadata={
             "name": "PtIncident",

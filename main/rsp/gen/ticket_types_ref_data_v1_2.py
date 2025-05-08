@@ -4,11 +4,11 @@ from typing import Optional
 
 
 @dataclass
-class FareLocationsReferenceData:
-    fare_location: list["FareLocationsReferenceData.FareLocation"] = field(
+class TicketTypesReferenceData:
+    ticket_type: list["TicketTypesReferenceData.TicketType"] = field(
         default_factory=list,
         metadata={
-            "name": "FareLocation",
+            "name": "TicketType",
             "type": "Element",
             "namespace": "",
         },
@@ -22,15 +22,15 @@ class FareLocationsReferenceData:
     )
 
     @dataclass
-    class FareLocation:
-        nlc: Optional[str] = field(
+    class TicketType:
+        code: Optional[str] = field(
             default=None,
             metadata={
-                "name": "Nlc",
+                "name": "Code",
                 "type": "Element",
                 "namespace": "",
                 "required": True,
-                "max_length": 4,
+                "max_length": 3,
             },
         )
         name: Optional[str] = field(
@@ -60,10 +60,29 @@ class FareLocationsReferenceData:
                 "required": True,
             },
         )
+        ojpadvice_message: Optional[str] = field(
+            default=None,
+            metadata={
+                "name": "OJPAdviceMessage",
+                "type": "Element",
+                "namespace": "",
+                "required": True,
+            },
+        )
         rspdisplay_name: Optional[str] = field(
             default=None,
             metadata={
                 "name": "RSPDisplayName",
+                "type": "Element",
+                "namespace": "",
+                "required": True,
+                "max_length": 255,
+            },
+        )
+        rspadvice: Optional[str] = field(
+            default=None,
+            metadata={
+                "name": "RSPAdvice",
                 "type": "Element",
                 "namespace": "",
                 "required": True,
@@ -83,15 +102,6 @@ class FareLocationsReferenceData:
             default=None,
             metadata={
                 "name": "UnattendedTIS",
-                "type": "Element",
-                "namespace": "",
-                "required": True,
-            },
-        )
-        used_by_wct: Optional[bool] = field(
-            default=None,
-            metadata={
-                "name": "UsedByWct",
                 "type": "Element",
                 "namespace": "",
                 "required": True,

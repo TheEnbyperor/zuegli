@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional
 
 from main.rsp.gen.bs7666_v2_0 import BsaddressStructure
 
@@ -8,7 +8,7 @@ __NAMESPACE__ = "http://www.govtalk.gov.uk/people/AddressAndPersonalDetails"
 
 @dataclass
 class InternationalAddressStructure:
-    int_address_line: List[str] = field(
+    int_address_line: list[str] = field(
         default_factory=list,
         metadata={
             "name": "IntAddressLine",
@@ -21,7 +21,7 @@ class InternationalAddressStructure:
             "pattern": r'[A-Za-z0-9\s~!"@#$%&\'\(\)\*\+,\-\./:;<=>\?\[\\\]_\{\}\^£€]*',
         },
     )
-    country: List[str] = field(
+    country: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Country",
@@ -35,7 +35,7 @@ class InternationalAddressStructure:
             "sequence": 1,
         },
     )
-    international_post_code: List[str] = field(
+    international_post_code: list[str] = field(
         default_factory=list,
         metadata={
             "name": "InternationalPostCode",
@@ -56,7 +56,7 @@ class UkpostalAddressStructure:
     class Meta:
         name = "UKPostalAddressStructure"
 
-    line: List[str] = field(
+    line: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Line",
@@ -89,7 +89,7 @@ class UkaddressStructure:
     class Meta:
         name = "UKAddressStructure"
 
-    bs7666_address: List[BsaddressStructure] = field(
+    bs7666_address: list[BsaddressStructure] = field(
         default_factory=list,
         metadata={
             "name": "BS7666Address",
