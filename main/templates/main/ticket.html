@@ -1,23 +1,28 @@
 {% extends "main/base.html" %}
 {% load static tz i18n %}
 
-{% block title %}{% if ticket.label %}{{ ticket.label }}{% else %}{% blocktrans with id=ticket.public_id %}Ticket {{ id }}{% endblocktrans %}{% endif %}{% endblock title %}
+{% block title %}{% if ticket.label %}{{ ticket.label }}{% else %}{% blocktrans with id=ticket.public_id %}Ticket
+    {{ id }}{% endblocktrans %}{% endif %}{% endblock title %}
 
 {% block content %}
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds-from-desktop">
+            <div class="govuk-grid-column-one-half-from-desktop">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
                     {% if ticket.label %}
                         {{ ticket.label }}
+                        <img src="{% static 'main/sf-share.svg' %}" alt="Share"
+                             style="height: 1.7rem; vertical-align: baseline; display: inline;" id="share-button">
                         <span class="govuk-caption-xl">#{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}</span>
                     {% else %}
                         {% blocktrans with id=ticket.public_id %}Ticket #{{ id }}{% endblocktrans %}
+                        <img src="{% static 'main/sf-share.svg' %}" alt="Share"
+                             style="height: 1.7rem; vertical-align: baseline; display: none;" id="share-button">
                         <span class="govuk-caption-xl">{{ ticket.get_ticket_type_display }}</span>
                     {% endif %}
                 </h1>
             </div>
-            <div class="govuk-grid-column-one-third-from-desktop">
+            <div class="govuk-grid-column-one-half-from-desktop">
                 <a href="{% url 'edit_ticket' ticket.id %}" class="govuk-button">
                     {% trans "Edit name" %}
                 </a>
@@ -229,7 +234,8 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #
+                                        {{ id }}{% endblocktrans %}
                                 </span>
                                 <span>{{ instance.validity_start|date:"F d, Y H:i:s e" }} - {{ instance.validity_end|date:"F d, Y H:i:s e" }}</span>
                             </summary>
@@ -303,7 +309,8 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket_data.E_TICKET_NUMBER %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.ticket_data.E_TICKET_NUMBER %}Ticket #
+                                        {{ id }}{% endblocktrans %}
                                 </span>
                                 - {{ instance.issuer_id }}
                             </summary>
@@ -334,7 +341,8 @@
                                 <span class="govuk-details__summary-text">
                                     {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
                                     -
-                                    {% blocktrans with seq=ticket_obj.data.sequence_number %}sequence #{{ seq }}{% endblocktrans %}
+                                    {% blocktrans with seq=ticket_obj.data.sequence_number %}sequence #
+                                        {{ seq }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -386,7 +394,8 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #
+                                        {{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -400,7 +409,8 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}Ticket #
+                                        {{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -416,7 +426,8 @@
                                 <span class="govuk-details__summary-text">
                                     {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
                                     -
-                                    {% blocktrans with seq=ticket_obj.data.sequence %}sequence #{{ seq }}{% endblocktrans %}
+                                    {% blocktrans with seq=ticket_obj.data.sequence %}sequence #
+                                        {{ seq }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -440,5 +451,37 @@
             {% endlocaltime %}
         {% endif %}
     </div>
+    <script>
+        const sharedData = {
+            title: "{% if ticket.label %}{{ ticket.label }} (#{{ ticket.public_id }}){% else %}#{{ ticket.public_id }} - {{ ticket.get_ticket_type_display }}{% endif %}",
+            url: "{{ ticket_url }}"
+        };
 
+        function canBrowserShareData(data) {
+            if (!navigator.share || !navigator.canShare) {
+                return false;
+            }
+
+            return navigator.canShare(data);
+        }
+
+        async function shareData(data) {
+            try {
+                await navigator.share(data);
+            } catch (e) {
+                console.error(`Error sharing: ${e}`);
+            }
+        }
+
+        window.addEventListener("load", function () {
+            const shareButton = document.getElementById("share-button");
+
+            if (canBrowserShareData(sharedData)) {
+                shareButton.style.display = "inline-block";
+                shareButton.addEventListener("click", function () {
+                    shareData(sharedData);
+                });
+            }
+        })
+    </script>
 {% endblock content %}
