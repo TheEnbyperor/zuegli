@@ -6,6 +6,9 @@ import pathlib
 import json
 from . import layout
 
+EXTRA_DATA_YEAR = re.compile(r"^(?:Gültig: )?(?P<y>\d{4})$")
+EXTRA_DATA_VALIDITY_1 = re.compile(r"^(?P<s>\d{2}.\d{2}.\d{4}) TO (?P<e>\d{2}.\d{2}.\d{4})$")
+EXTRA_DATA_VALIDITY_2 = re.compile(r"^Gueltig von (?P<s>\d{2}.\d{2}.\d{4}) bis (?P<e>\d{2}.\d{2}.\d{4})$")
 BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
 
@@ -37,10 +40,10 @@ class TripPart:
     arrival_station: str
 
     def departure_is_date_only(self):
-        return isinstance(self.departure, datetime.date)
+        return isinstance(self.departure, datetime.date) and not isinstance(self.departure, datetime.datetime)
 
     def arrival_is_date_only(self):
-        return isinstance(self.arrival, datetime.date)
+        return isinstance(self.arrival, datetime.date) and not isinstance(self.arrival, datetime.datetime)
 
 
 @dataclasses.dataclass
@@ -132,7 +135,7 @@ class RCT2Parser:
         except ValueError:
             date_of_birth = None
 
-        if issuing_rics in (60, 1084, 1174, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143):
+        if issuing_rics in (60, 1084, 1174, 3453, 5211, 3153, 3243, 3818, 3591, 3348, 3076, 5143, 3135):
             passenger_name = re.sub(r"\s+", " ", traveller_data.split("\n")[0])
         else:
             passenger_name = None
@@ -181,33 +184,44 @@ class RCT2Parser:
             arrival_date = arrival_date.strip("*-> \r\n")
             arrival_time = arrival_time.strip("*-> \r\n")
 
-            if not departure_dt:
-                try:
-                    departure_dt = datetime.datetime.strptime(f"{extra_data} {departure_date} {departure_time}", "%Y %d.%m %H.%M")
-                except ValueError:
+            if m := EXTRA_DATA_YEAR.fullmatch(extra_data):
+                y = m.group("y")
+                if not departure_dt:
                     try:
-                        departure_dt = datetime.datetime.strptime(f"{extra_data} {departure_date} {departure_time}", "%Y %d.%m %H:%M")
+                        departure_dt = datetime.datetime.strptime(f"{y} {departure_date} {departure_time}", "%Y %d.%m %H.%M")
                     except ValueError:
-                        pass
+                        try:
+                            departure_dt = datetime.datetime.strptime(f"{y} {departure_date} {departure_time}", "%Y %d.%m %H:%M")
+                        except ValueError:
+                            pass
 
-            if not arrival_dt:
-                try:
-                    arrival_dt = datetime.datetime.strptime(f"{extra_data} {arrival_date} {arrival_time}", "%Y %d.%m %H.%M")
-                except ValueError:
+                if not arrival_dt:
                     try:
-                        arrival_dt = datetime.datetime.strptime(f"{extra_data} {arrival_date} {arrival_time}","%Y %d.%m %H:%M")
+                        arrival_dt = datetime.datetime.strptime(f"{y} {arrival_date} {arrival_time}", "%Y %d.%m %H.%M")
                     except ValueError:
-                        pass
+                        try:
+                            arrival_dt = datetime.datetime.strptime(f"{y} {arrival_date} {arrival_time}","%Y %d.%m %H:%M")
+                        except ValueError:
+                            pass
 
             if not departure_dt or not arrival_dt:
-                p = extra_data.split("TO", 2)
-                if len(p) == 2:
-                    day_from, day_to = p
+                if m := EXTRA_DATA_VALIDITY_1.fullmatch(extra_data):
+                    day_from = m.group("s")
+                    day_to = m.group("e")
+                elif m := EXTRA_DATA_VALIDITY_2.fullmatch(extra_data):
+                    day_from = m.group("s")
+                    day_to = m.group("e")
+                else:
+                    day_from = None
+                    day_to = None
+
+                if day_from:
                     if not departure_dt:
                         try:
                             departure_dt = datetime.datetime.strptime(f"{day_from} {departure_time}", "%d.%m.%Y %H:%M")
                         except ValueError:
                             pass
+                if day_to:
                     if not arrival_dt:
                         try:
                             arrival_dt = datetime.datetime.strptime(f"{day_to} {arrival_time}", "%d.%m.%Y %H:%M")
