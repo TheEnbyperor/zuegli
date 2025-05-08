@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from xsdata.models.datatype import XmlDate, XmlDateTime, XmlTime
 
@@ -19,7 +19,7 @@ class AnnotationContent:
     Currently only allows paragraphs with optional URLs.
     """
 
-    note: List[str] = field(
+    note: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Note",
@@ -36,7 +36,7 @@ class AtocListStructure:
     An list of toc codes.
     """
 
-    toc_ref: List[str] = field(
+    toc_ref: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TocRef",
@@ -266,7 +266,7 @@ class StationGroupListStructure:
     A list of station groups.
     """
 
-    station_group_ref: List[str] = field(
+    station_group_ref: list[str] = field(
         default_factory=list,
         metadata={
             "name": "StationGroupRef",
@@ -283,7 +283,7 @@ class StationListStructure:
     A list of stations.
     """
 
-    station_ref: List[str] = field(
+    station_ref: list[str] = field(
         default_factory=list,
         metadata={
             "name": "StationRef",
@@ -347,7 +347,7 @@ class TravelcardsStructure:
         station lies.
     """
 
-    travelcard_zone: List[str] = field(
+    travelcard_zone: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TravelcardZone",
@@ -394,7 +394,7 @@ class DailyOpeningHoursStructure:
             "namespace": "http://nationalrail.co.uk/xml/common",
         },
     )
-    open_period: List[ClosedTimeRangeStructure] = field(
+    open_period: list[ClosedTimeRangeStructure] = field(
         default_factory=list,
         metadata={
             "name": "OpenPeriod",
@@ -593,7 +593,7 @@ class ContactDetailsStructure(AnnotatedStructure):
 
     @dataclass
     class AlternatePublicTelephoneNumbers:
-        telephone_number: List[TelephoneNumberStructure] = field(
+        telephone_number: list[TelephoneNumberStructure] = field(
             default_factory=list,
             metadata={
                 "name": "TelephoneNumber",
@@ -605,7 +605,7 @@ class ContactDetailsStructure(AnnotatedStructure):
 
     @dataclass
     class AlternateInternalTelephoneNumbers:
-        telephone_number: List[TelephoneNumberStructure] = field(
+        telephone_number: list[TelephoneNumberStructure] = field(
             default_factory=list,
             metadata={
                 "name": "TelephoneNumber",
@@ -624,7 +624,7 @@ class CrsCodeListStructure(AnnotatedStructure):
     :ivar crs_code: Refers to another station by CRS code.
     """
 
-    crs_code: List[str] = field(
+    crs_code: list[str] = field(
         default_factory=list,
         metadata={
             "name": "CrsCode",
@@ -780,7 +780,7 @@ class OpeningHoursStructure(AnnotatedStructure):
         provides the opening hours for a particular range of days.
     """
 
-    day_and_time_availability: List[DayAndTimeAvailabilityStructure] = field(
+    day_and_time_availability: list[DayAndTimeAvailabilityStructure] = field(
         default_factory=list,
         metadata={
             "name": "DayAndTimeAvailability",

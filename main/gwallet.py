@@ -1288,7 +1288,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 obj["ticketLegs"][0]["fareName"] = {
                     "defaultValue": {
                         "language": "en",
-                        "value": ticket_type.ticket_type_name
+                        "value": ticket_type["name"]
                     }
                 }
 

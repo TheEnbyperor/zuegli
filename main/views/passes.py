@@ -475,8 +475,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         validity_end = templatetags.rics.rics_valid_until(ticket_document, issued_at)
 
                         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-                        if ticket_obj.ticket_type != ticket_obj.TYPE_DEUTCHLANDTICKET:
-                            pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                         if "validRegion" in ticket_document:
                             train_links = list(map(
@@ -2773,7 +2771,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             validity_start = ticket_data.data.validity_start_time()
             validity_end = ticket_data.data.validity_end_time()
 
+            show_time = False
             if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture:
+                show_time = True
+            elif ticket_data.data.depart_time == rsp.data.DepartureTime.NotSet and validity_start.time() != datetime.time(0, 0, 0):
+                show_time = True
+
+            if show_time:
                 pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_fields = {
@@ -2783,7 +2787,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "departure-time-label",
                     "value": validity_start.isoformat(),
                     "dateStyle": "PKDateStyleShort",
-                    "timeStyle": "PKDateStyleShort" if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture else "PKDateStyleNone",
+                    "timeStyle": "PKDateStyleShort" if show_time else "PKDateStyleNone",
                     "ignoresTimeZone": True,
                 }],
                 "primaryFields": [],
@@ -3077,63 +3081,65 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 pass_fields["secondaryFields"].append({
                     "key": "product",
                     "label": "product-label",
-                    "value": ticket_type.ticket_type_name,
+                    "value": ticket_type["name"],
                 })
-                if ticket_type.validity:
-                    if ticket_type.validity.day_outward:
+
+            if ticket_conditions := rsp.ticket_data.get_ticket_conditions(ticket_data.data.fare_label):
+                if ticket_conditions.validity:
+                    if ticket_conditions.validity.day_outward:
                         pass_fields["backFields"].append({
                             "key": "product-validity-outward-date",
                             "label": "product-validity-outward-date-label",
-                            "attributedValue": format_text(ticket_type.validity.day_outward),
+                            "attributedValue": format_text(ticket_conditions.validity.day_outward),
                         })
-                    if ticket_type.validity.time_outward:
+                    if ticket_conditions.validity.time_outward:
                         pass_fields["backFields"].append({
                             "key": "product-validity-outward-time",
                             "label": "product-validity-outward-time-label",
-                            "attributedValue": format_text(ticket_type.validity.time_outward),
+                            "attributedValue": format_text(ticket_conditions.validity.time_outward),
                         })
-                    if ticket_type.validity.day_return:
+                    if ticket_conditions.validity.day_return:
                         pass_fields["backFields"].append({
                             "key": "product-validity-return-date",
                             "label": "product-validity-return-date-label",
-                            "attributedValue": format_text(ticket_type.validity.day_return),
+                            "attributedValue": format_text(ticket_conditions.validity.day_return),
                         })
-                    if ticket_type.validity.time_return:
+                    if ticket_conditions.validity.time_return:
                         pass_fields["backFields"].append({
                             "key": "product-validity-return-time",
                             "label": "product-validity-return-time-label",
-                            "attributedValue": format_text(ticket_type.validity.time_return),
+                            "attributedValue": format_text(ticket_conditions.validity.time_return),
                         })
-                if ticket_type.break_of_journey:
-                    if ticket_type.break_of_journey.outward_note:
+                if ticket_conditions.break_of_journey:
+                    if ticket_conditions.break_of_journey.outward_note:
                         pass_fields["backFields"].append({
                             "key": "product-break-of-journey-outward",
                             "label": "product-break-of-journey-outward-label",
-                            "attributedValue": format_text(ticket_type.break_of_journey.outward_note),
+                            "attributedValue": format_text(ticket_conditions.break_of_journey.outward_note),
                         })
-                    if ticket_type.break_of_journey.return_note:
+                    if ticket_conditions.break_of_journey.return_note:
                         pass_fields["backFields"].append({
                             "key": "product-break-of-journey-return",
                             "label": "product-break-of-journey-return-label",
-                            "attributedValue": format_text(ticket_type.break_of_journey.return_note),
+                            "attributedValue": format_text(ticket_conditions.break_of_journey.return_note),
                         })
-                if ticket_type.conditions:
+                if ticket_conditions.conditions:
                     pass_fields["backFields"].append({
                         "key": "product-conditions",
                         "label": "product-conditions-label",
-                        "attributedValue": format_text(ticket_type.conditions),
+                        "attributedValue": format_text(ticket_conditions.conditions),
                     })
-                if ticket_type.changes_to_travel_plans:
+                if ticket_conditions.changes_to_travel_plans:
                     pass_fields["backFields"].append({
                         "key": "product-changes",
                         "label": "product-changes-label",
-                        "attributedValue": format_text(ticket_type.changes_to_travel_plans),
+                        "attributedValue": format_text(ticket_conditions.changes_to_travel_plans),
                     })
-                if ticket_type.refunds:
+                if ticket_conditions.refunds:
                     pass_fields["backFields"].append({
                         "key": "product-refunds",
                         "label": "product-refunds-label",
-                        "attributedValue": format_text(ticket_type.refunds),
+                        "attributedValue": format_text(ticket_conditions.refunds),
                     })
 
             if not have_logo:
@@ -3143,6 +3149,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 else:
                     add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
                     have_logo = True
+
+            if ticket_data.issuer_id in RSP_ORG_BG:
+                pass_json["backgroundColor"] = RSP_ORG_BG[ticket_data.issuer_id]
+            if ticket_data.issuer_id in RSP_ORG_FG:
+                pass_json["foregroundColor"] = RSP_ORG_FG[ticket_data.issuer_id]
+            if ticket_data.issuer_id in RSP_ORG_FG_SECONDARY:
+                pass_json["labelColor"] = RSP_ORG_FG_SECONDARY[ticket_data.issuer_id]
 
         elif isinstance(ticket_data.data, rsp.RailcardData):
             validity_start = ticket_data.data.validity_start_time()
@@ -5475,6 +5488,20 @@ RSP_ORG_LOGO = {
     "TT": "pass/logo-tt.png",
     "CS": "pass/logo-cs.png",
     "RE": "pass/logo-re.png",
+    "R5": "pass/logo-re.png",
+    "ZS": "pass/logo-sf.png",
+}
+
+RSP_ORG_BG = {
+    "ZS": "#040309",
+}
+
+RSP_ORG_FG = {
+    "ZS": "#ffffff",
+}
+
+RSP_ORG_FG_SECONDARY = {
+    "ZS": "#00d973",
 }
 
 BC_STRIP_IMG = {

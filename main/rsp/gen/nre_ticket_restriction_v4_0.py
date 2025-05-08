@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 __NAMESPACE__ = "http://nationalrail.co.uk/xml/ticketrestriction"
 
@@ -242,7 +242,7 @@ class TicketRestrictionStructure:
         :ivar restriction: Restriction's details
         """
 
-        restriction: List[RestrictionStructure] = field(
+        restriction: list[RestrictionStructure] = field(
             default_factory=list,
             metadata={
                 "name": "Restriction",
@@ -274,7 +274,7 @@ class TicketRestrictions:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/ticketrestriction"
 
-    ticket_restriction: List[TicketRestriction] = field(
+    ticket_restriction: list[TicketRestriction] = field(
         default_factory=list,
         metadata={
             "name": "TicketRestriction",

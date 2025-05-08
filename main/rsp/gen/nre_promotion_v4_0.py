@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from main.rsp.gen.nre_common_v5_0 import (
     AtocListStructure,
@@ -63,7 +63,7 @@ class DiscountDetail:
             "namespace": "http://nationalrail.co.uk/xml/promotion",
         },
     )
-    ticket_type_code: List[str] = field(
+    ticket_type_code: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TicketTypeCode",
@@ -136,7 +136,7 @@ class LinkAndDetailsStructure:
     A stucture containing details and a Uri.
     """
 
-    uri: List[str] = field(
+    uri: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Uri",
@@ -160,7 +160,7 @@ class LinkStructure:
     A list of station groups.
     """
 
-    uri: List[str] = field(
+    uri: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Uri",
@@ -177,7 +177,7 @@ class NearestStationStructure:
     A list of stations.
     """
 
-    crs_code: List[str] = field(
+    crs_code: list[str] = field(
         default_factory=list,
         metadata={
             "name": "CrsCode",
@@ -244,7 +244,7 @@ class PromoApplicableTocsStructure:
             "namespace": "http://nationalrail.co.uk/xml/promotion",
         },
     )
-    toc_ref: List[str] = field(
+    toc_ref: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TocRef",
@@ -370,7 +370,7 @@ class ViewableByEnumeration(Enum):
 
 @dataclass
 class DiscountsAvailableStructure:
-    discount_detail: List[DiscountDetail] = field(
+    discount_detail: list[DiscountDetail] = field(
         default_factory=list,
         metadata={
             "name": "DiscountDetail",
@@ -463,7 +463,7 @@ class PromotionRailCardListStructure:
     A structure containing a list of railcards and applicability option values.
     """
 
-    promotion_rail_card: List[PromotionRailCardStructure] = field(
+    promotion_rail_card: list[PromotionRailCardStructure] = field(
         default_factory=list,
         metadata={
             "name": "PromotionRailCard",
@@ -476,7 +476,7 @@ class PromotionRailCardListStructure:
 
 @dataclass
 class ExceptionsStructure:
-    exception: List[FlowStructure] = field(
+    exception: list[FlowStructure] = field(
         default_factory=list,
         metadata={
             "name": "Exception",
@@ -489,7 +489,7 @@ class ExceptionsStructure:
 
 @dataclass
 class FlowsStructure:
-    flow: List[FlowStructure] = field(
+    flow: list[FlowStructure] = field(
         default_factory=list,
         metadata={
             "name": "Flow",
@@ -594,7 +594,7 @@ class ProductTypeStructure:
 
 @dataclass
 class ProductPricesStructure:
-    product_type: List[ProductTypeStructure] = field(
+    product_type: list[ProductTypeStructure] = field(
         default_factory=list,
         metadata={
             "name": "ProductType",
@@ -803,7 +803,7 @@ class PromotionStructure:
             "namespace": "http://nationalrail.co.uk/xml/promotion",
         },
     )
-    region: List[BbcRegionEnumeration] = field(
+    region: list[BbcRegionEnumeration] = field(
         default_factory=list,
         metadata={
             "name": "Region",
@@ -1123,7 +1123,7 @@ class PromotionList:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/promotion"
 
-    promotion: List[Promotion] = field(
+    promotion: list[Promotion] = field(
         default_factory=list,
         metadata={
             "name": "Promotion",

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from main.rsp.gen.nre_common_v5_0 import (
     AnnotatedStructure,
@@ -55,7 +55,7 @@ class AlternativeIdentifiersStructure:
             one of these per station.
         """
 
-        tiploc: List[str] = field(
+        tiploc: list[str] = field(
             default_factory=list,
             metadata={
                 "name": "Tiploc",
@@ -171,7 +171,7 @@ class ChargesStructure:
 
 @dataclass
 class PenaltyFaresStructure:
-    train_operator: List[str] = field(
+    train_operator: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TrainOperator",
@@ -283,7 +283,7 @@ class TicketPickupStructure:
 
 @dataclass
 class TrainOperatingCompaniesStructure:
-    toc_ref: List[str] = field(
+    toc_ref: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TocRef",
@@ -427,7 +427,7 @@ class CycleStorageStructure:
             "namespace": "http://nationalrail.co.uk/xml/station",
         },
     )
-    type_value: List[str] = field(
+    type_value: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Type",
@@ -588,7 +588,7 @@ class InformationSystemsStructure:
         kiosk?
     """
 
-    information_available_from_staff: List[str] = field(
+    information_available_from_staff: list[str] = field(
         default_factory=list,
         metadata={
             "name": "InformationAvailableFromStaff",
@@ -604,7 +604,7 @@ class InformationSystemsStructure:
             "namespace": "http://nationalrail.co.uk/xml/station",
         },
     )
-    cis: List[Cisenumeration] = field(
+    cis: list[Cisenumeration] = field(
         default_factory=list,
         metadata={
             "name": "CIS",
@@ -676,7 +676,7 @@ class RailReplacementStructure(AnnotatedStructure):
         local area.
     """
 
-    rail_replacement_map: List[str] = field(
+    rail_replacement_map: list[str] = field(
         default_factory=list,
         metadata={
             "name": "RailReplacementMap",
@@ -941,7 +941,7 @@ class InterchangeStructure:
             "required": True,
         },
     )
-    car_park: List[CarParkStructure] = field(
+    car_park: list[CarParkStructure] = field(
         default_factory=list,
         metadata={
             "name": "CarPark",
@@ -1403,7 +1403,7 @@ class StationList:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/station"
 
-    station: List[Station] = field(
+    station: list[Station] = field(
         default_factory=list,
         metadata={
             "name": "Station",

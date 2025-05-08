@@ -5,6 +5,7 @@ import xsdata.formats.dataclass.parsers
 from . import gen
 
 TICKET_TYPES = None
+TICKET_CONDITIONS = None
 TICKET_RESTRICTIONS = None
 STATIONS = None
 DISCOUNTS = None
@@ -24,6 +25,18 @@ def get_ticket_types():
         TICKET_TYPES = json.loads(f.read())
 
     return TICKET_TYPES
+
+def get_ticket_conditions_data():
+    global TICKET_CONDITIONS
+
+    if TICKET_CONDITIONS:
+        return TICKET_CONDITIONS
+
+    rsp_storage = django.core.files.storage.storages["rsp-data"]
+    with rsp_storage.open("ticket-conditions.json", "r") as f:
+        TICKET_CONDITIONS = json.loads(f.read())
+
+    return TICKET_CONDITIONS
 
 def get_ticket_restrictions():
     global TICKET_RESTRICTIONS
@@ -85,12 +98,16 @@ def get_tocs():
 
     return TOCS
 
-
-def get_ticket_type(code: str) -> typing.Optional[gen.nre_ticket_v4_0.TicketTypeDescription]:
+def get_ticket_type(code: str) -> typing.Optional[dict]:
     ticket_types = get_ticket_types()
+    return ticket_types.get(code)
 
-    if i := ticket_types["type_codes"].get(code):
-        d = ticket_types["data"]["TicketTypeDescription"][i]
+
+def get_ticket_conditions(code: str) -> typing.Optional[gen.nre_ticket_v4_0.TicketTypeDescription]:
+    ticket_conditions = get_ticket_conditions_data()
+
+    if i := ticket_conditions["type_codes"].get(code):
+        d = ticket_conditions["data"]["TicketTypeDescription"][i]
         return parser.decode(d, gen.nre_ticket_v4_0.TicketTypeDescription)
 
 

@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import List, Optional
+from typing import Optional
 
 
 @dataclass
 class FareLocationsReferenceData:
-    fare_location: List["FareLocationsReferenceData.FareLocation"] = field(
+    fare_location: list["FareLocationsReferenceData.FareLocation"] = field(
         default_factory=list,
         metadata={
             "name": "FareLocation",

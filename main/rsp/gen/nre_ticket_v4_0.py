@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from main.rsp.gen.nre_common_v5_0 import AtocListStructure
 
@@ -207,7 +207,7 @@ class TicketTypeDescriptionStructure:
             "pattern": r"[A-Z0-9]{32}",
         },
     )
-    ticket_type_code: List[str] = field(
+    ticket_type_code: list[str] = field(
         default_factory=list,
         metadata={
             "name": "TicketTypeCode",
@@ -382,7 +382,7 @@ class TicketTypeDescriptionList:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/ticket"
 
-    ticket_type_description: List[TicketTypeDescription] = field(
+    ticket_type_description: list[TicketTypeDescription] = field(
         default_factory=list,
         metadata={
             "name": "TicketTypeDescription",

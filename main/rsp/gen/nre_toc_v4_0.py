@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional
 
 from xsdata.models.datatype import XmlDate
 
@@ -311,7 +311,7 @@ class TrainOperatingCompanyList:
     class Meta:
         namespace = "http://nationalrail.co.uk/xml/toc"
 
-    train_operating_company: List[TrainOperatingCompany] = field(
+    train_operating_company: list[TrainOperatingCompany] = field(
         default_factory=list,
         metadata={
             "name": "TrainOperatingCompany",

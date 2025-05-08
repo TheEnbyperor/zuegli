@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional
 
 __NAMESPACE__ = "http://nationalrail.co.uk/xml/serviceindicator"
 
@@ -90,7 +90,7 @@ class NationalServiceIndicatorStructure:
             "namespace": "http://nationalrail.co.uk/xml/serviceindicator",
         },
     )
-    service_group: List[NsiserviceGroupStructure] = field(
+    service_group: list[NsiserviceGroupStructure] = field(
         default_factory=list,
         metadata={
             "name": "ServiceGroup",
@@ -126,7 +126,7 @@ class NationalServiceIndicatorStructure:
 
 @dataclass
 class NationalServiceIndicatorListStructure:
-    toc: List[NationalServiceIndicatorStructure] = field(
+    toc: list[NationalServiceIndicatorStructure] = field(
         default_factory=list,
         metadata={
             "name": "TOC",

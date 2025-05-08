@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from xsdata.models.datatype import XmlDate
 
@@ -216,7 +216,7 @@ class Aonstructure:
             "namespace": "http://www.govtalk.gov.uk/people/bs7666",
         },
     )
-    description: List[str] = field(
+    description: list[str] = field(
         default_factory=list,
         metadata={
             "name": "Description",
@@ -263,7 +263,7 @@ class BlpupolygonStructure:
             "namespace": "http://www.govtalk.gov.uk/people/bs7666",
         },
     )
-    vertices: List[CoordinateStructure] = field(
+    vertices: list[CoordinateStructure] = field(
         default_factory=list,
         metadata={
             "name": "Vertices",
@@ -349,7 +349,7 @@ class ElementaryStreetUnitStructure:
             "min_inclusive": Decimal("0"),
         },
     )
-    intermediate_coord: List[CoordinateStructure] = field(
+    intermediate_coord: list[CoordinateStructure] = field(
         default_factory=list,
         metadata={
             "name": "IntermediateCoord",
@@ -381,7 +381,7 @@ class StreetDescriptiveIdentifierStructure:
             "required": True,
         },
     )
-    town: List[Town] = field(
+    town: list[Town] = field(
         default_factory=list,
         metadata={
             "name": "Town",
@@ -390,7 +390,7 @@ class StreetDescriptiveIdentifierStructure:
             "max_occurs": 2,
         },
     )
-    administrative_area: List[AdministrativeArea] = field(
+    administrative_area: list[AdministrativeArea] = field(
         default_factory=list,
         metadata={
             "name": "AdministrativeArea",
@@ -471,7 +471,7 @@ class BlpuextentStructure:
             "required": True,
         },
     )
-    extent_definition: List[BlpupolygonStructure] = field(
+    extent_definition: list[BlpupolygonStructure] = field(
         default_factory=list,
         metadata={
             "name": "ExtentDefinition",
@@ -547,7 +547,7 @@ class BsaddressStructure:
             "required": True,
         },
     )
-    town: List[Town] = field(
+    town: list[Town] = field(
         default_factory=list,
         metadata={
             "name": "Town",
@@ -556,7 +556,7 @@ class BsaddressStructure:
             "max_occurs": 2,
         },
     )
-    administrative_area: List[AdministrativeArea] = field(
+    administrative_area: list[AdministrativeArea] = field(
         default_factory=list,
         metadata={
             "name": "AdministrativeArea",
@@ -714,7 +714,7 @@ class StreetStructure:
 
     @dataclass
     class StreetCrossReferences:
-        unique_street_reference_numbers: List[int] = field(
+        unique_street_reference_numbers: list[int] = field(
             default_factory=list,
             metadata={
                 "name": "UniqueStreetReferenceNumbers",
@@ -725,7 +725,7 @@ class StreetStructure:
                 "tokens": True,
             },
         )
-        elementary_street_unit: List[ElementaryStreetUnitStructure] = field(
+        elementary_street_unit: list[ElementaryStreetUnitStructure] = field(
             default_factory=list,
             metadata={
                 "name": "ElementaryStreetUnit",
@@ -1012,7 +1012,7 @@ class BasicLandAndPropertyUnitStructure:
             "required": True,
         },
     )
-    land_and_property_identifier: List[LandAndPropertyIdentifierStructure] = (
+    land_and_property_identifier: list[LandAndPropertyIdentifierStructure] = (
         field(
             default_factory=list,
             metadata={
@@ -1023,7 +1023,7 @@ class BasicLandAndPropertyUnitStructure:
             },
         )
     )
-    provenance: List[ProvenanceStructure] = field(
+    provenance: list[ProvenanceStructure] = field(
         default_factory=list,
         metadata={
             "name": "Provenance",

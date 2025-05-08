@@ -137,7 +137,7 @@ class Command(BaseCommand):
                 if line[0] != 84:  # T
                     continue
                 toc_id = line[1:3].decode("ascii")
-                toc_name = line[3:33].decode("ascii")
+                toc_name = line[3:33].decode("ascii").strip()
                 tocs[toc_id] = {
                     "name": toc_name,
                 }
@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
         data = xml_parser.from_string(r.text, main.rsp.gen.nre_ticket_v4_0.TicketTypeDescriptionList)
 
-        with storage.open("ticket-types.json", "w") as f:
+        with storage.open("ticket-conditions.json", "w") as f:
             type_codes = {}
             for i, t in enumerate(data.ticket_type_description):
                 for code in t.ticket_type_code:
