@@ -7,7 +7,7 @@
 {% block content %}
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-half-from-desktop">
+            <div class="govuk-grid-column-two-thirds-from-desktop">
                 <h1 class="govuk-heading-xl govuk-!-margin-bottom-3">
                     {% if ticket.label %}
                         {{ ticket.label }}
@@ -22,7 +22,7 @@
                     {% endif %}
                 </h1>
             </div>
-            <div class="govuk-grid-column-one-half-from-desktop">
+            <div class="govuk-grid-column-one-third-from-desktop">
                 <a href="{% url 'edit_ticket' ticket.id %}" class="govuk-button">
                     {% trans "Edit name" %}
                 </a>
