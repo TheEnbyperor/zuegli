@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="format-detection" content="telephone=no">
 
-    <link rel="manifest" href="{% url 'manifest' %}" />
+    <link rel="manifest" href="{% url 'manifest' %}"/>
 
     <link href='{% static "govuk/govuk-frontend-5.10.0.min.css" %}' rel="stylesheet">
     <link href='{% static "main/style.css" %}' rel="stylesheet">
@@ -46,7 +46,8 @@
                 {% get_available_languages as LANGUAGES %}
                 {% get_language_info_list for LANGUAGES as languages %}
                 <nav class="govuk-service-navigation__wrapper" data-module="govuk-service-navigation">
-                    <button type="button" class="govuk-service-navigation__toggle button-link govuk-js-service-navigation-toggle"
+                    <button type="button"
+                            class="govuk-service-navigation__toggle button-link govuk-js-service-navigation-toggle"
                             aria-controls="languages-list" hidden>
                         {% trans "Language" %}
                     </button>
@@ -161,6 +162,18 @@
         </div>
     </div>
 {% endwith %}
+<div class="govuk-width-container" id="pwa-install" style="display: none;">
+    <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content"
+           style="display: flex; align-items: center; justify-content: space-between;">
+            {% trans "Zügli can be added to your home screen." %}
+            <button class="govuk-button govuk-!-margin-bottom-0 govuk-!-font-size-16" style="width: auto;"
+                    id="pwa-install-button">
+                {% trans "Install" %}
+            </button>
+        </p>
+    </div>
+</div>
 <main class="govuk-main-wrapper" id="content" role="main">
     {% if messages %}
         <div class="govuk-width-container">
@@ -265,6 +278,26 @@
             });
         }
     }
+</script>
+<script>
+    let installPrompt = null;
+    const pwaInstall = document.querySelector("#pwa-install");
+    const pwaInstallButton = document.querySelector("#pwa-install-button");
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        installPrompt = event;
+        pwaInstall.style.display = "block";
+    });
+
+    pwaInstallButton.addEventListener("click", async () => {
+        if (!installPrompt) {
+            return;
+        }
+        await installPrompt.prompt();
+        installPrompt = null;
+        pwaInstall.style.display = "none";
+    });
 </script>
 </body>
 </html>

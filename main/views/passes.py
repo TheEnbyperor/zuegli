@@ -146,6 +146,7 @@ def index(request):
 
 def view_ticket(request, pk):
     ticket_obj = get_object_or_404(models.Ticket, id=pk)
+    ticket_url = f"{settings.EXTERNAL_URL_BASE}{reverse('ticket', args=[ticket_obj.id])}"
     gwallet_url = gwallet.create_jwt_link(ticket_obj)
 
     is_saarvv = False
@@ -201,6 +202,7 @@ def view_ticket(request, pk):
 
     return render(request, "main/ticket.html", {
         "ticket": ticket_obj,
+        "ticket_url": ticket_url,
         "ticket_updated": request.session.pop("ticket_updated", False),
         "ticket_created": request.session.pop("ticket_created", False),
         "gwallet_url": gwallet_url,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-07 17:15+0000\n"
+"POT-Creation-Date: 2025-05-08 11:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,14 +31,14 @@ msgstr "Email"
 msgid "Password"
 msgstr "Passwort"
 
-#: forms.py:16 forms.py:66 forms.py:76 templates/main/base.html:102
+#: forms.py:16 forms.py:66 forms.py:76 templates/main/base.html:103
 #: templates/registration/login.html:4 templates/registration/login.html:8
 #: templates/registration/magic_login.html:4
 #: templates/registration/magic_login.html:8
 msgid "Login"
 msgstr "Anmelden"
 
-#: forms.py:26 forms.py:33 forms.py:42 templates/main/ticket.html:165
+#: forms.py:26 forms.py:33 forms.py:42 templates/main/ticket.html:170
 msgid "Save"
 msgstr "Speichern"
 
@@ -142,7 +142,7 @@ msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
 #: templates/main/account/avv.html:4 templates/main/account/index.html:81
-#: templates/main/base.html:153
+#: templates/main/base.html:154
 msgid "AVV Account"
 msgstr "AVV-Konto"
 
@@ -155,11 +155,11 @@ msgid "BahnBonus Login"
 msgstr "BahnBonus"
 
 #: templates/main/account/db.html:4 templates/main/account/index.html:28
-#: templates/main/base.html:127
+#: templates/main/base.html:128
 msgid "DB Account"
 msgstr "DB-Konto"
 
-#: templates/main/account/db_abo.html:4 templates/main/base.html:133
+#: templates/main/account/db_abo.html:4 templates/main/base.html:134
 msgid "DB Subscriptions"
 msgstr "DB-Abos"
 
@@ -188,7 +188,7 @@ msgstr "Konto bearbeiten"
 msgid "Back"
 msgstr "Zurück"
 
-#: templates/main/account/index.html:4 templates/main/base.html:89
+#: templates/main/account/index.html:4 templates/main/base.html:90
 msgid "Account"
 msgstr "Konto"
 
@@ -246,7 +246,7 @@ msgstr "Karte hinzufügen"
 
 #: templates/main/account/index.html:68
 #: templates/main/account/sbahn_berlin.html:4
-#: templates/main/account/sbahn_berlin.html:8 templates/main/base.html:146
+#: templates/main/account/sbahn_berlin.html:8 templates/main/base.html:147
 msgid "S-Bahn Berlin Account"
 msgstr "S-Bahn Berlin Konto"
 
@@ -259,7 +259,7 @@ msgid "Login with AVV"
 msgstr "Anmelden mit AVV"
 
 #: templates/main/account/index.html:94 templates/main/account/saarvv.html:4
-#: templates/main/base.html:139
+#: templates/main/base.html:140
 msgid "SaarVV Account"
 msgstr "SaarVV-Konto"
 
@@ -346,32 +346,40 @@ msgid "Turn your public transport tickets into an Apple/Google Wallet passes."
 msgstr ""
 "Verwandeln Sie Ihre Fahrkarten für Öffis in Apple- und Google-Walletpässe."
 
-#: templates/main/base.html:51 templates/main/uic/ticket_details.html:303
+#: templates/main/base.html:52 templates/main/uic/ticket_details.html:303
 msgid "Language"
 msgstr "Sprache"
 
-#: templates/main/base.html:72
+#: templates/main/base.html:73
 #, python-format
 msgid "Hi %(name)s!"
 msgstr "Moin %(name)s!"
 
-#: templates/main/base.html:78 templates/main/base.html:115
+#: templates/main/base.html:79 templates/main/base.html:116
 msgid "Menu"
 msgstr "Menü"
 
-#: templates/main/base.html:83 templates/main/index.html:4
+#: templates/main/base.html:84 templates/main/index.html:4
 msgid "Home"
 msgstr "Start"
 
-#: templates/main/base.html:95
+#: templates/main/base.html:96
 msgid "Logout"
 msgstr "Abmelden"
 
-#: templates/main/base.html:120
+#: templates/main/base.html:121
 msgid "Account home"
 msgstr "Kontostart"
 
-#: templates/main/base.html:196
+#: templates/main/base.html:169
+msgid "Zügli can be added to your home screen."
+msgstr "Zügli kann zu Ihrem Home-Bildschirm hinzugefügt werden."
+
+#: templates/main/base.html:172
+msgid "Install"
+msgstr "Installieren"
+
+#: templates/main/base.html:209
 msgid ""
 "Not affiliated with the Verband Deutscher Verkehrsunternehmen (VDV), Union "
 "Internationale des Chemins de fer (UIC), Rail Delivery Group (RDG), or any "
@@ -381,7 +389,7 @@ msgstr ""
 "Internationale des Chemins de fer (UIC), dem Rail Delivery Group (RDG), und "
 "keines ihrer jeweiligen Mitglieder."
 
-#: templates/main/base.html:203
+#: templates/main/base.html:216
 msgid ""
 "<a class=\"govuk-footer__link\" href=\"https://github.com/alphagov/govuk-"
 "frontend\" target=\"_blank\">GOV.UK Design System</a> used under license."
@@ -389,7 +397,8 @@ msgstr ""
 "<a class=\"govuk-footer__link\" href=\"https://github.com/alphagov/govuk-"
 "frontend\" target=\"_blank\">GOV.UK Design System</a> unter Lizenz verwendet."
 
-#: templates/main/base.html:211
+#: templates/main/base.html:224
+#, python-format
 msgid ""
 "Running version <a href=\"https://github.com/theenbyperor/vdv-pkpass\" "
 "class=\"govuk-footer__link\" target=\"_blank\">%(git_hash)s</a>."
@@ -397,11 +406,11 @@ msgstr ""
 "Ausführungsversion <a href=\"https://github.com/theenbyperor/vdv-pkpass\" "
 "class=\"govuk-footer__link\" target=\"_blank\">%(git_hash)s</a>."
 
-#: templates/main/base.html:217
+#: templates/main/base.html:230
 msgid "Development build."
 msgstr "Entwicklungsversion."
 
-#: templates/main/base.html:221
+#: templates/main/base.html:234
 msgid ""
 "Licensed under the <a href=\"https://eupl.eu\" class=\"govuk-footer__link\" "
 "target=\"_blank\">EUPL v1.2</a>."
@@ -815,41 +824,42 @@ msgid "Product code"
 msgstr "Produkt"
 
 #: templates/main/ticket.html:4
-#, python-format
-msgid "Ticket %(id)s"
+#, fuzzy, python-format
+#| msgid "Ticket %(id)s"
+msgid ""
+"Ticket\n"
+"    %(id)s"
 msgstr "Karte %(id)s"
 
-#: templates/main/ticket.html:15 templates/main/ticket.html:232
-#: templates/main/ticket.html:272 templates/main/ticket.html:291
-#: templates/main/ticket.html:306 templates/main/ticket.html:321
-#: templates/main/ticket.html:335 templates/main/ticket.html:351
-#: templates/main/ticket.html:370 templates/main/ticket.html:389
-#: templates/main/ticket.html:403 templates/main/ticket.html:417
+#: templates/main/ticket.html:18 templates/main/ticket.html:278
+#: templates/main/ticket.html:297 templates/main/ticket.html:328
+#: templates/main/ticket.html:342 templates/main/ticket.html:359
+#: templates/main/ticket.html:378 templates/main/ticket.html:427
 #, python-format
 msgid "Ticket #%(id)s"
 msgstr "Karte #%(id)s"
 
-#: templates/main/ticket.html:22
+#: templates/main/ticket.html:27
 msgid "Edit name"
 msgstr "Namen bearbeiten"
 
-#: templates/main/ticket.html:25 templates/main/ticket_delete.html:25
+#: templates/main/ticket.html:30 templates/main/ticket_delete.html:25
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/main/ticket.html:30
+#: templates/main/ticket.html:35
 msgid "Quote the above ticket number when asking for help."
 msgstr "Geben Sie die obere Nummer an, wenn Sie um Hilfe bitten."
 
-#: templates/main/ticket.html:38
+#: templates/main/ticket.html:43
 msgid "Ticket created"
 msgstr "Karte erstellt"
 
-#: templates/main/ticket.html:40
+#: templates/main/ticket.html:45
 msgid "Ticket updated"
 msgstr "Karte aktualisiert"
 
-#: templates/main/ticket.html:47
+#: templates/main/ticket.html:52
 msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
@@ -857,7 +867,7 @@ msgstr ""
 "Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um es zu "
 "Ihre Apple- und Google-Wallet-Pässe hinzufügen."
 
-#: templates/main/ticket.html:52
+#: templates/main/ticket.html:57
 msgid ""
 "Your ticket has been updated; it has been sent to your Apple and Google "
 "devices in the background."
@@ -865,107 +875,123 @@ msgstr ""
 "Deine Karte wurde aktualisiert; es wurde im Hintergrund an Ihre Apple- und "
 "Google-Geräte gesendet."
 
-#: templates/main/ticket.html:67
+#: templates/main/ticket.html:72
 msgid "This appears to be a SaarVV ticket."
 msgstr "Dies scheint als eine SaarVV-Karte sein."
 
-#: templates/main/ticket.html:70
+#: templates/main/ticket.html:75
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Link your SaarVV account</a> to have it automatically "
 "refresh in the background."
-msgstr "<a href=\"%(url)s\">Verknüpfen Sie Ihr SaarVV-Konto</a>, damit es "
+msgstr ""
+"<a href=\"%(url)s\">Verknüpfen Sie Ihr SaarVV-Konto</a>, damit es "
 "automatisch im Hintergrund aktualisiert wird."
 
-#: templates/main/ticket.html:76
+#: templates/main/ticket.html:81
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Login to your account</a> and link your SaarVV account "
 "to have it automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und "
-"verknüpfen Sie Ihr SaarVV-Konto, damit es automatisch im Hintergrund "
-"aktualisiert wird."
+msgstr ""
+"<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und verknüpfen "
+"Sie Ihr SaarVV-Konto, damit es automatisch im Hintergrund aktualisiert wird."
 
-#: templates/main/ticket.html:90
+#: templates/main/ticket.html:95
 msgid "This appears to be an S-Bahn Berlin ticket."
 msgstr "Dies scheint als eine S-Bahn Berlin Karte sein."
 
-#: templates/main/ticket.html:93
+#: templates/main/ticket.html:98
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Link your S-Bahn Berlin account</a> to have it "
 "automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Verknüpfen Sie Ihr S-Bahn Berlin Konto</a>, damit es "
+msgstr ""
+"<a href=\"%(url)s\">Verknüpfen Sie Ihr S-Bahn Berlin Konto</a>, damit es "
 "automatisch im Hintergrund aktualisiert wird."
 
-#: templates/main/ticket.html:99
+#: templates/main/ticket.html:104
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Login to your account</a> and link your S-Bahn Berlin "
 "account to have it automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und "
-"verknüpfen Sie Ihr S-Bahn Berlin Konto, damit es automatisch im Hintergrund "
+msgstr ""
+"<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und verknüpfen "
+"Sie Ihr S-Bahn Berlin Konto, damit es automatisch im Hintergrund "
 "aktualisiert wird."
 
-#: templates/main/ticket.html:113
+#: templates/main/ticket.html:118
 msgid "This appears to be a Deutsche Bahn ticket."
 msgstr "Dies scheint als eine DB-Karte sein."
 
-#: templates/main/ticket.html:117
+#: templates/main/ticket.html:122
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Link your DB account</a> or <a href=\"%(url)s\">add your "
 "DB subscription</a> to have it automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Verknüpfen Sie Ihr DB-Konto</a>, oder "
-"<a href=\"%(url)s\">fügen Sie Ihr DB-Abo hinzu</a>, damit es "
-"automatisch im Hintergrund aktualisiert wird."
+msgstr ""
+"<a href=\"%(url)s\">Verknüpfen Sie Ihr DB-Konto</a>, oder <a "
+"href=\"%(url)s\">fügen Sie Ihr DB-Abo hinzu</a>, damit es automatisch im "
+"Hintergrund aktualisiert wird."
 
-#: templates/main/ticket.html:124
+#: templates/main/ticket.html:129
 #, python-format
 msgid ""
 "<a href=\"%(url)s\">Login to your account</a> and link your DB account or "
 "add your DB subscription to have it automatically refresh in the background."
-msgstr "<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und "
-"verknüpfen Sie Ihr DB-Konto oder fügen Sie Ihr DB-Abonnement hinzu, "
-"damit es automatisch im Hintergrund aktualisiert wird."
+msgstr ""
+"<a href=\"%(url)s\">Melden Sie sich bei Ihrem Konto an</a> und verknüpfen "
+"Sie Ihr DB-Konto oder fügen Sie Ihr DB-Abonnement hinzu, damit es "
+"automatisch im Hintergrund aktualisiert wird."
 
-#: templates/main/ticket.html:134
+#: templates/main/ticket.html:139
 msgid "Photos"
 msgstr "Fotos"
 
-#: templates/main/ticket.html:136
+#: templates/main/ticket.html:141
 msgid "Your pass requires passport style photos. Please upload them below."
 msgstr ""
 
-#: templates/main/ticket.html:143
+#: templates/main/ticket.html:148
 msgid "Current photo"
 msgstr "Aktueles Foto"
 
-#: templates/main/ticket.html:160
+#: templates/main/ticket.html:165
 msgid "Upload photo"
 msgstr "Foto hochladen"
 
-#: templates/main/ticket.html:173
+#: templates/main/ticket.html:178
 msgid "Download your pass"
 msgstr "Laden Ihren Pass herunter"
 
-#: templates/main/ticket.html:215
+#: templates/main/ticket.html:220
 msgid "Add to Calendar"
 msgstr "Hinzufügen zu Kalendar"
 
-#: templates/main/ticket.html:222
+#: templates/main/ticket.html:227
 msgid "Ticket details"
 msgstr "Angaben der Karte"
 
-#: templates/main/ticket.html:224
+#: templates/main/ticket.html:229
 msgid "No instances found for this ticket."
 msgstr ""
 
-#: templates/main/ticket.html:248
+#: templates/main/ticket.html:237 templates/main/ticket.html:312
+#: templates/main/ticket.html:397 templates/main/ticket.html:412
+#, fuzzy, python-format
+#| msgid ""
+#| "Spacial validity - variant\n"
+#| "                            %(variant)s"
+msgid ""
+"Ticket #\n"
+"                                        %(id)s"
+msgstr "Gültigkeitsraum - variante %(variant)s"
+
+#: templates/main/ticket.html:254
 msgid "This ticket is invalid"
 msgstr "Diese Karte ist ungültig"
 
-#: templates/main/ticket.html:253
+#: templates/main/ticket.html:259
 msgid ""
 "The key used to sign this ticket has been revoked due to misuse. Travelling "
 "on this ticket is likely to result in a penalty fare. More details: <a "
@@ -974,16 +1000,18 @@ msgid ""
 "version</a>."
 msgstr ""
 
-#: templates/main/ticket.html:293 templates/main/vdv_elements.html:159
+#: templates/main/ticket.html:299 templates/main/vdv_elements.html:159
 #: templates/main/vdv_ticket_details.html:133
 #: templates/main/vdv_ticket_details.html:178
 msgid "Type"
 msgstr "Typ"
 
-#: templates/main/ticket.html:337 templates/main/ticket.html:419
+#: templates/main/ticket.html:344 templates/main/ticket.html:429
 #, python-format
-msgid "sequence #%(seq)s"
-msgstr "Laufnummer #%(seq)s"
+msgid ""
+"sequence #\n"
+"                                        %(seq)s"
+msgstr ""
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
 msgid "Delete ticket"
@@ -1000,6 +1028,10 @@ msgstr "Abbrechen"
 #: templates/main/ticket_delete.html:31
 msgid "You don't have permission to delete this ticket."
 msgstr "Sie haben keine Berechtigung, dieses Ticket zu löschen."
+
+#: templates/main/ticket_delete.html:35 templates/main/ticket_edit.html:20
+msgid "Go back"
+msgstr "Züruck"
 
 #: templates/main/ticket_edit.html:4 templates/main/ticket_edit.html:9
 msgid "Edit ticket"
@@ -1478,3 +1510,7 @@ msgstr "Ihr Passwort wurde aktualisiert"
 #: views/account.py:78
 msgid "Invalid username or password"
 msgstr "Ungültiger Benutzername oder Passwort"
+
+#, python-format
+#~ msgid "sequence #%(seq)s"
+#~ msgstr "Laufnummer #%(seq)s"
