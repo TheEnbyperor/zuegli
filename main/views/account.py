@@ -46,6 +46,8 @@ def set_password(request):
 
         if form.is_valid():
             request.user.set_password(form.cleaned_data["new_password1"])
+            request.user.save()
+            django.contrib.auth.update_session_auth_hash(request, request.user)
             messages.info(request, _("Your password has been updated"))
             return redirect("account")
     else:
