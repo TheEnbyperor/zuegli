@@ -39,3 +39,5 @@ daphne
 uvicorn[standard]
 asn1crypto
 ecdsa
+idna
+urllib3

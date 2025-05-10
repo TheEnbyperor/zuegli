@@ -1,12 +1,15 @@
 import datetime
 import json
-import urllib.parse
+import urllib
+
 import pytz
 import pymupdf
 import io
 import typing
 import copy
 import niquests
+import idna
+import urllib3.util
 from PIL import Image, ImageOps
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404, reverse
@@ -26,6 +29,13 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def idna_encode_url(url: str):
+    parts = urllib3.util.parse_url(url)
+    host = idna.encode(parts.host).decode()
+    new_url = urllib3.util.Url(parts.scheme, parts.auth, host, parts.port, parts.path, parts.query, parts.fragment)
+    return new_url.url
 
 
 def process_tickets(request, tickets):
@@ -353,7 +363,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "labelColor": "rgb(75, 75, 75)",
         "foregroundColor": "rgb(0, 0, 0)",
         "locations": [],
-        "webServiceURL": f"{settings.EXTERNAL_URL_BASE}/api/apple",
+        "webServiceURL": idna_encode_url(f"{settings.EXTERNAL_URL_BASE}/api/apple"),
         "authenticationToken": ticket_obj.pkpass_authentication_token,
         "semantics": {},
         "associatedStoreIdentifiers": [6743959567]
@@ -4910,13 +4920,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "key": "view-link",
         "label": "more-info-label",
         "value": "",
-        "attributedValue": f"<a href=\"{settings.EXTERNAL_URL_BASE}{ticket_url}\">View ticket</a>",
+        "attributedValue": f"<a href=\"{idna_encode_url(settings.EXTERNAL_URL_BASE)}{ticket_url}\">View ticket</a>",
     })
     return_pass_fields["backFields"].append({
         "key": "view-link",
         "label": "more-info-label",
         "value": "",
-        "attributedValue": f"<a href=\"{settings.EXTERNAL_URL_BASE}{ticket_url}\">View ticket</a>",
+        "attributedValue": f"<a href=\"{idna_encode_url(settings.EXTERNAL_URL_BASE)}{ticket_url}\">View ticket</a>",
     })
 
     pass_json[pass_type] = pass_fields
