@@ -9,7 +9,7 @@ from . import layout
 EXTRA_DATA_YEAR = re.compile(r"^(?:Gültig: )?(?P<y>\d{4})$")
 EXTRA_DATA_VALIDITY_1 = re.compile(r"^(?P<s>\d{2}.\d{2}.\d{4}) TO (?P<e>\d{2}.\d{2}.\d{4})$")
 EXTRA_DATA_VALIDITY_2 = re.compile(r"^Gueltig von (?P<s>\d{2}.\d{2}.\d{4}) bis (?P<e>\d{2}.\d{2}.\d{4})$")
-BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
+BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:|Gyldig:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
 
 BENERAIL_DISCOUNT_CARDS = None
