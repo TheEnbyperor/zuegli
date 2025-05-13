@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-08 11:31+0000\n"
+"POT-Creation-Date: 2025-05-13 15:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr "Inloggen"
 msgid "Save"
 msgstr "Opslaan"
 
-#: forms.py:47 templates/main/index.html:112
+#: forms.py:47 templates/main/index.html:113
 msgid "Your ticket"
 msgstr "Uw ticket"
 
@@ -349,8 +349,7 @@ msgid "Vestische Login"
 msgstr "Inloggen bij Vestische"
 
 #: templates/main/base.html:18 templates/main/base.html:22
-#: templates/main/index.html:10
-msgid "Turn your public transport tickets into an Apple/Google Wallet passes."
+msgid "Turn your public transport tickets into an Apple/Google Wallet pass."
 msgstr "Maak van uw OV-kaartjes Apple/Google Wallet-kaarten."
 
 #: templates/main/base.html:52 templates/main/uic/ticket_details.html:303
@@ -490,6 +489,10 @@ msgstr "Geldig"
 msgid "Signature verification failed, this is likely a forged ticket"
 msgstr "Sleutelverificatie mislukt, dit is waarschijnlijk een vals ticket"
 
+#: templates/main/index.html:10
+msgid "Turn your public transport tickets into Apple/Google Wallet passes."
+msgstr "Maak van uw OV-kaartjes Apple/Google Wallet-kaarten."
+
 #: templates/main/index.html:13
 msgid "Supported ticket types include:"
 msgstr "Ondersteunde tickettypes zijn o.a.:"
@@ -539,7 +542,13 @@ msgstr "IATA Barcoded Boarding Pass"
 msgid "BahnBonus vouchers and lounge access codes"
 msgstr "BahnBonus vouchers en lounge toegangspassen"
 
-#: templates/main/index.html:28
+#: templates/main/index.html:26
+#, fuzzy
+#| msgid "Tickets"
+msgid "MBTA mTickets"
+msgstr "Tickets"
+
+#: templates/main/index.html:29
 msgid ""
 "If you want your tickets to automatically update when they are renewed you "
 "can create an account and add the subscription. Currently, DB, SaarVV, S-"
@@ -549,19 +558,19 @@ msgstr ""
 "tickets zich automatisch vernieuwen. Op dit moment zijn, DB, SaarVV, S-Bahn "
 "Berlin en AVV (Aken) ondersteund."
 
-#: templates/main/index.html:43
+#: templates/main/index.html:44
 msgid "Full exception"
 msgstr "Volledige systeemuitzondering"
 
-#: templates/main/index.html:52
+#: templates/main/index.html:53
 msgid "Ticket contents; please send this when asking for support:"
 msgstr "Ticketinhoud: stuur dit alstublieft door bij vragen:"
 
-#: templates/main/index.html:65
+#: templates/main/index.html:66
 msgid "JavaScript is required to scan tickets"
 msgstr "JavaScript is vereist om tickets te scannen"
 
-#: templates/main/index.html:69
+#: templates/main/index.html:70
 msgid ""
 "JavaScript is required to scan tickets in your browser. You can still upload "
 "a picture of your ticket to have it processed server-side."
@@ -569,11 +578,11 @@ msgstr ""
 "JavaScript is vereist om tickets in uw browser te scannen. U kunt alsnog een "
 "foto van uw ticket uploaden om deze aan de serverkant te laten verwerken."
 
-#: templates/main/index.html:80
+#: templates/main/index.html:81
 msgid "Scan your ticket"
 msgstr "Uw ticket scannen"
 
-#: templates/main/index.html:98
+#: templates/main/index.html:99
 msgid ""
 "If you're having trouble scanning your ticket uploading a picture/screenshot "
 "of your ticket usually works better. The decoder on the server is better "
@@ -583,53 +592,53 @@ msgstr ""
 "of schermadruk vaak beter. De lezer op de server is beter dan die  in uw "
 "browser."
 
-#: templates/main/index.html:104
+#: templates/main/index.html:105
 msgid "Upload a picture or a PDF instead"
 msgstr "Upload een foto of PDF in plaats daarvan"
 
-#: templates/main/index.html:107
+#: templates/main/index.html:108
 msgid "Paste your ticket as hex/text"
 msgstr "Plak ticket als hexadecimaalwaarde/tekst"
 
-#: templates/main/index.html:115
+#: templates/main/index.html:116
 msgid "Submit"
 msgstr "Verzenden"
 
-#: templates/main/index.html:120
+#: templates/main/index.html:121
 msgid "Have your ticket on a Smartcard?"
 msgstr "Heeft u uw ticket op een Smartcard?"
 
-#: templates/main/index.html:122
+#: templates/main/index.html:123
 msgid "VDV-KA (German) Smartcards can also be read, click below to start."
 msgstr ""
 "Duitse VDV-KA Smartcards kunnen ook gelezen worden, klik hieronder om te "
 "starten."
 
-#: templates/main/index.html:127
+#: templates/main/index.html:128
 msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
 msgstr ""
 "Het is op dit moment niet mogelijk om Smartcard-tickets naar passen om te "
 "zetten."
 
-#: templates/main/index.html:133
+#: templates/main/index.html:134
 msgid "Read your Smartcard"
 msgstr "Uw Smartcard lezen"
 
-#: templates/main/index.html:142
+#: templates/main/index.html:143
 msgid "Not working?"
 msgstr "Werkt het niet?"
 
-#: templates/main/index.html:144
+#: templates/main/index.html:145
 msgid "Get in touch with a picture of your ticket and I'll see what I can do."
 msgstr ""
 "Neem contact op met een foto van uw ticket en ik zal kijken wat ik kan doen."
 
-#: templates/main/index.html:152
+#: templates/main/index.html:153
 msgid "Privacy"
 msgstr "Privacy"
 
-#: templates/main/index.html:154
+#: templates/main/index.html:155
 msgid ""
 "Your ticket barcode will be stored to allow automatic updates to "
 "subscription tickets. Tickets commonly include your name and date of birth - "
@@ -642,11 +651,11 @@ msgstr ""
 "niet verwerkt. Ticket data kan door een mens doorgelicht worden als u om "
 "hulp vraagt."
 
-#: templates/main/index.html:163
+#: templates/main/index.html:164
 msgid "API"
 msgstr "API"
 
-#: templates/main/index.html:165
+#: templates/main/index.html:166
 msgid ""
 "You can send scanned Aztec barcode contents to this service's API and "
 "retrieve PKPass files from it."
@@ -654,7 +663,7 @@ msgstr ""
 "U kunt inhoud van Aztecbarcodes naar de API van deze dienst sturen en PKPass-"
 "bestanden ophalen."
 
-#: templates/main/index.html:171
+#: templates/main/index.html:172
 msgid "API details"
 msgstr "API-details"
 
@@ -835,6 +844,7 @@ msgid "Product code"
 msgstr "Productcode"
 
 #: templates/main/ticket.html:4
+#, python-format
 msgid ""
 "Ticket\n"
 "    %(id)s"
@@ -987,6 +997,7 @@ msgstr "Geen inhouden in dit ticket."
 
 #: templates/main/ticket.html:237 templates/main/ticket.html:312
 #: templates/main/ticket.html:397 templates/main/ticket.html:412
+#, python-format
 msgid ""
 "Ticket #\n"
 "                                        %(id)s"
@@ -1519,11 +1530,11 @@ msgstr "Inloglink verstuurd"
 msgid "Signup"
 msgstr "Aanmelden"
 
-#: views/account.py:49
+#: views/account.py:51
 msgid "Your password has been updated"
 msgstr "Uw account is geüpdatet"
 
-#: views/account.py:78
+#: views/account.py:80
 msgid "Invalid username or password"
 msgstr "Ongeldige gebruikersnaam of wachtwoord"
 
