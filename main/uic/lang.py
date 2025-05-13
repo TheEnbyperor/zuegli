@@ -21,12 +21,18 @@ class TicketLanguage:
         if primary_code in LANGUAGES:
             primary = LANGUAGES[primary_code]
         else:
-            primary = LANGUAGES["DE"]
+            primary = None
 
         if secondary_code and secondary_code != primary_code and secondary_code in LANGUAGES:
             secondary = LANGUAGES[secondary_code]
         else:
             secondary = None
+
+        if secondary and not primary:
+            primary = secondary
+            secondary = None
+        elif not secondary and not primary:
+            primary = LANGUAGES["DE"]
 
         return cls(
             primary_language=primary,
@@ -114,5 +120,12 @@ LANGUAGES = {
         from_label="Fra",
         to_label="Efter",
         class_label="Kl.",
+    ),
+    "SK": Language(
+        date_label="Dátum",
+        time_label="Čas",
+        from_label="Z",
+        to_label="Do",
+        class_label="Tr.",
     ),
 }
