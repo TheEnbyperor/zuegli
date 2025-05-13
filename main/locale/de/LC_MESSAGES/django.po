@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-08 11:31+0000\n"
+"POT-Creation-Date: 2025-05-13 15:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr "Anmelden"
 msgid "Save"
 msgstr "Speichern"
 
-#: forms.py:47 templates/main/index.html:112
+#: forms.py:47 templates/main/index.html:113
 msgid "Your ticket"
 msgstr "Ihre Karte"
 
@@ -234,7 +234,9 @@ msgstr "Anmelden mit DB"
 msgid ""
 "Logging in with DB isn't required for subscription tickets, or adding "
 "tickets via booking number."
-msgstr "Anmelden via DB ist nicht nötig für Abo Tickets oder zum hinzufügen von Tickets via Buchungsnummer."
+msgstr ""
+"Anmelden via DB ist nicht nötig für Abo Tickets oder zum hinzufügen von "
+"Tickets via Buchungsnummer."
 
 #: templates/main/account/index.html:48
 msgid "BahnBonus Account"
@@ -341,8 +343,7 @@ msgid "Vestische Login"
 msgstr "Vestische Anmeldung"
 
 #: templates/main/base.html:18 templates/main/base.html:22
-#: templates/main/index.html:10
-msgid "Turn your public transport tickets into an Apple/Google Wallet passes."
+msgid "Turn your public transport tickets into an Apple/Google Wallet pass."
 msgstr ""
 "Erstellen Sie Apple- und Google-Walletpässe für Ihre Fahrkarten für Öffis."
 
@@ -385,9 +386,9 @@ msgid ""
 "Internationale des Chemins de fer (UIC), Rail Delivery Group (RDG), or any "
 "of their respective members."
 msgstr ""
-"Nicht verbunden mit dem Verband Deutscher Verkehrsunternehmen (VDV), der Union "
-"Internationale des Chemins de fer (UIC), dem Rail Delivery Group (RDG), und "
-"keines ihrer jeweiligen Mitglieder."
+"Nicht verbunden mit dem Verband Deutscher Verkehrsunternehmen (VDV), der "
+"Union Internationale des Chemins de fer (UIC), dem Rail Delivery Group "
+"(RDG), und keines ihrer jeweiligen Mitglieder."
 
 #: templates/main/base.html:216
 msgid ""
@@ -485,6 +486,11 @@ msgstr ""
 "Die Signaturüberprüfung ist fehlgeschlagen. Dies ist wahrscheinlich ein "
 "gefälschtes Ticket."
 
+#: templates/main/index.html:10
+msgid "Turn your public transport tickets into Apple/Google Wallet passes."
+msgstr ""
+"Erstellen Sie Apple- und Google-Walletpässe für Ihre Fahrkarten für Öffis."
+
 #: templates/main/index.html:13
 msgid "Supported ticket types include:"
 msgstr "Dieser Dienst unterstützt:"
@@ -533,7 +539,13 @@ msgstr "IATA Barcode Bordkarte"
 msgid "BahnBonus vouchers and lounge access codes"
 msgstr "BahnBonus Gutscheine und Lounge Zugangscodes"
 
-#: templates/main/index.html:28
+#: templates/main/index.html:26
+#, fuzzy
+#| msgid "Tickets"
+msgid "MBTA mTickets"
+msgstr "Karten"
+
+#: templates/main/index.html:29
 msgid ""
 "If you want your tickets to automatically update when they are renewed you "
 "can create an account and add the subscription. Currently, DB, SaarVV, S-"
@@ -543,83 +555,85 @@ msgstr ""
 "werden, können Sie ein Konto erstellen und das Abo hinzufügen. Derzeit "
 "werden DB, SaarVV, S-Bahn Berlin, und AVV (Aachen) unterstützt."
 
-#: templates/main/index.html:43
+#: templates/main/index.html:44
 msgid "Full exception"
 msgstr "Vollständiger Fehler"
 
-#: templates/main/index.html:52
+#: templates/main/index.html:53
 msgid "Ticket contents; please send this when asking for support:"
 msgstr "Inhalt des Tickets; Bitte bei Support-Anfragen angeben:"
 
-#: templates/main/index.html:65
+#: templates/main/index.html:66
 msgid "JavaScript is required to scan tickets"
 msgstr "Sie müssen JavaScript aktiviert haben um Tickets zu scannen."
 
-#: templates/main/index.html:69
+#: templates/main/index.html:70
 msgid ""
 "JavaScript is required to scan tickets in your browser. You can still upload "
 "a picture of your ticket to have it processed server-side."
-msgstr "Es wird JavaScript benötigt um Tickets direkt im Browser zu scanen. Sie können jedoch ein Bild des Tickets hochladen und wir verarbeiten das Ticket wird auf dem Server verarbeitet."
+msgstr ""
+"Es wird JavaScript benötigt um Tickets direkt im Browser zu scanen. Sie "
+"können jedoch ein Bild des Tickets hochladen und wir verarbeiten das Ticket "
+"wird auf dem Server verarbeitet."
 
-#: templates/main/index.html:80
+#: templates/main/index.html:81
 msgid "Scan your ticket"
 msgstr "Scannen Sie Ihre Fahrkarte"
 
-#: templates/main/index.html:98
+#: templates/main/index.html:99
 msgid ""
 "If you're having trouble scanning your ticket uploading a picture/screenshot "
 "of your ticket usually works better. The decoder on the server is better "
 "than the one in your browser."
 msgstr ""
 "Wenn Sie Probleme beim Einscannen Ihres Barcodes haben, laden Sie bitte  ein "
-"Bild hoch, das klappt meist besser. Der Decoder auf dem Server ist besser als "
-"der in Ihrem Browser."
+"Bild hoch, das klappt meist besser. Der Decoder auf dem Server ist besser "
+"als der in Ihrem Browser."
 
-#: templates/main/index.html:104
+#: templates/main/index.html:105
 msgid "Upload a picture or a PDF instead"
 msgstr "Laden Sie stattdessen ein Bild oder ein PDF hoch"
 
-#: templates/main/index.html:107
+#: templates/main/index.html:108
 msgid "Paste your ticket as hex/text"
 msgstr "Setzen Sie Ihre Karte als Text oder Hex ein"
 
-#: templates/main/index.html:115
+#: templates/main/index.html:116
 msgid "Submit"
 msgstr "Schicken"
 
-#: templates/main/index.html:120
+#: templates/main/index.html:121
 msgid "Have your ticket on a Smartcard?"
 msgstr "Ist Ihr Ticket auf einer Chipkarte?"
 
-#: templates/main/index.html:122
+#: templates/main/index.html:123
 msgid "VDV-KA (German) Smartcards can also be read, click below to start."
 msgstr ""
 "VDV-KA Chipkarten können auch gelesen werden, klicken Sie unten zum Starten."
 
-#: templates/main/index.html:127
+#: templates/main/index.html:128
 msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
 msgstr "Momentan, es ist nicht möglich, Karten aus Chipkarten umwandeln."
 
-#: templates/main/index.html:133
+#: templates/main/index.html:134
 msgid "Read your Smartcard"
 msgstr "Lesen Sie Ihre Chipkarte ein"
 
-#: templates/main/index.html:142
+#: templates/main/index.html:143
 msgid "Not working?"
 msgstr "Probleme?"
 
-#: templates/main/index.html:144
+#: templates/main/index.html:145
 msgid "Get in touch with a picture of your ticket and I'll see what I can do."
 msgstr ""
-"Schicken Sie mir ein Foto Ihrer Karte und ich werde sehen, was ich "
-"tun kann."
+"Schicken Sie mir ein Foto Ihrer Karte und ich werde sehen, was ich tun kann."
 
-#: templates/main/index.html:152
+#: templates/main/index.html:153
 msgid "Privacy"
 msgstr "Datenschutz"
 
-#: templates/main/index.html:154
+#: templates/main/index.html:155
 msgid ""
 "Your ticket barcode will be stored to allow automatic updates to "
 "subscription tickets. Tickets commonly include your name and date of birth - "
@@ -627,15 +641,15 @@ msgid ""
 "may be inspected by a human if you ask for help."
 msgstr ""
 "Ihr Karte-Barcode wird gespeichert, um automatische Aktualisierungen Ihrer "
-"Abo-Karten zu ermöglichen. Karten enthalten üblicherweise Ihren Namen und Ihr "
-"Geburtsdatum – diese Informationen werden nur zur Erstellung des Passes "
+"Abo-Karten zu ermöglichen. Karten enthalten üblicherweise Ihren Namen und "
+"Ihr Geburtsdatum – diese Informationen werden nur zur Erstellung des Passes "
 "gespeichert. Auf Anfrage können wir Ihre Kartedaten einsehen."
 
-#: templates/main/index.html:163
+#: templates/main/index.html:164
 msgid "API"
 msgstr "API"
 
-#: templates/main/index.html:165
+#: templates/main/index.html:166
 msgid ""
 "You can send scanned Aztec barcode contents to this service's API and "
 "retrieve PKPass files from it."
@@ -643,7 +657,7 @@ msgstr ""
 "Sie können gescannte Aztec-Barcode-Inhalte an die API dieses Dienstes senden "
 "und PKPass-Dateien von dort abrufen."
 
-#: templates/main/index.html:171
+#: templates/main/index.html:172
 msgid "API details"
 msgstr "API-Infos"
 
@@ -849,7 +863,8 @@ msgstr "Löschen"
 
 #: templates/main/ticket.html:35
 msgid "Quote the above ticket number when asking for help."
-msgstr "Geben Sie die oben genannte Ticket-Nummer an, wenn Sie um Hilfe bitten."
+msgstr ""
+"Geben Sie die oben genannte Ticket-Nummer an, wenn Sie um Hilfe bitten."
 
 #: templates/main/ticket.html:43
 msgid "Ticket created"
@@ -864,8 +879,8 @@ msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
 msgstr ""
-"Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn zu "
-"Ihren Apple- und Google-Wallet-Pässe hinzufügen."
+"Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
+"zu Ihren Apple- und Google-Wallet-Pässe hinzufügen."
 
 #: templates/main/ticket.html:57
 msgid ""
@@ -950,7 +965,9 @@ msgstr "Fotos"
 
 #: templates/main/ticket.html:141
 msgid "Your pass requires passport style photos. Please upload them below."
-msgstr "Für Ihren Ausweis werden Pass-Fotos benötigt. Bitte laden Sie diese hier hoch."
+msgstr ""
+"Für Ihren Ausweis werden Pass-Fotos benötigt. Bitte laden Sie diese hier "
+"hoch."
 
 #: templates/main/ticket.html:148
 msgid "Current photo"
@@ -998,10 +1015,12 @@ msgid ""
 "href=\"https://www.heise.de/en/news/Beware-of-invalid-Germany-tickets-fare-"
 "dodgers-against-their-will-10280040.html\" target=\"_blank\">English "
 "version</a>."
-msgstr "Der Signaturschlüssel dieses Tickets wurde wegen Misbrauch zurückgerufen. "
-"Das Fahren mit diesem Ticket führt vermutlich zu einer Strafe. Mehr Infos:: <a "
-"href=\"https://www.heise.de/news/Vorsicht-vor-ungueltigen-Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html\" target=\"_blank\">Deutsche "
-"Version</a>."
+msgstr ""
+"Der Signaturschlüssel dieses Tickets wurde wegen Misbrauch zurückgerufen. "
+"Das Fahren mit diesem Ticket führt vermutlich zu einer Strafe. Mehr Infos:: "
+"<a href=\"https://www.heise.de/news/Vorsicht-vor-ungueltigen-"
+"Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html\" "
+"target=\"_blank\">Deutsche Version</a>."
 
 #: templates/main/ticket.html:299 templates/main/vdv_elements.html:159
 #: templates/main/vdv_ticket_details.html:133
@@ -1014,7 +1033,8 @@ msgstr "Typ"
 msgid ""
 "sequence #\n"
 "                                        %(seq)s"
-msgstr "Sequenz #\n"
+msgstr ""
+"Sequenz #\n"
 "                                        %(seq)s"
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
@@ -1507,11 +1527,11 @@ msgstr "Anmeldelink wurde gesendet"
 msgid "Signup"
 msgstr "Registrierung"
 
-#: views/account.py:49
+#: views/account.py:51
 msgid "Your password has been updated"
 msgstr "Ihr Passwort wurde aktualisiert"
 
-#: views/account.py:78
+#: views/account.py:80
 msgid "Invalid username or password"
 msgstr "Ungültiger Benutzername oder Passwort"
 
