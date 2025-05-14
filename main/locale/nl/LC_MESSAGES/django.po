@@ -543,10 +543,8 @@ msgid "BahnBonus vouchers and lounge access codes"
 msgstr "BahnBonus vouchers en lounge toegangspassen"
 
 #: templates/main/index.html:26
-#, fuzzy
-#| msgid "Tickets"
 msgid "MBTA mTickets"
-msgstr "Tickets"
+msgstr "MBTA mTickets"
 
 #: templates/main/index.html:29
 msgid ""
