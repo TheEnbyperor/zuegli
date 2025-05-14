@@ -4,10 +4,6 @@ import hashlib
 import typing
 from . import util, pki, crypto
 
-@dataclasses.dataclass
-class Data:
-    data: bytes
-    extra_data: typing.Optional[bytes] = None
 
 @dataclasses.dataclass
 class Envelope:
@@ -37,7 +33,7 @@ class Envelope:
             payload=payload,
         )
 
-    def decrypt_with_cert(self, cert: pki.Certificate) -> typing.Optional[Data]:
+    def decrypt_with_cert(self, cert: pki.Certificate) -> typing.Optional[bytes]:
         payload = self.payload[:128]
         h = int.from_bytes(payload, 'big')
         m = pow(h, cert.exponent, cert.modulus)
@@ -73,19 +69,13 @@ class Envelope:
         if hashlib.sha256(data).digest()[:8] != message_hash:
             raise util.FTException("Invalid message integrity hash")
 
+        return data
+
+    def decrypt_extra_data(self) -> typing.Optional[bytes]:
         if extra := self.payload[128:]:
             if extra[0] & 3 != 1 or (extra[0] >> 2) & 3 != 1:
                 raise util.FTException("Invalid extra data")
 
-            start = len(payload) // 2 - 16
-            if start < 0 or start + 32 > len(payload):
-                raise util.FTException("Payload too short to extract AES key")
-            aes_key = payload[start:start + 32]
-            extra = crypto.aes_decrypt(aes_key, extra[1:])
+            return crypto.aes_decrypt(self.payload[48:80], extra[1:])
         else:
-            extra = None
-
-        return Data(
-            data=data,
-            extra_data=extra
-        )
+            return None

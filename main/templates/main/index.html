@@ -241,21 +241,30 @@ Pass Contents</code></pre>
                         videoContainer.style.display = "none";
 
                         if (result.barcodeTypeName === "QR") {
-                            const canvas = document.createElement("canvas");
-                            canvas.width = result.capturedFrame.width;
-                            canvas.height = result.capturedFrame.height;
-                            const ctx = canvas.getContext("2d");
-                            ctx.putImageData(result.capturedFrame, 0, 0);
-                            const dataURL = canvas.toDataURL("image/png");
+                            if (result.binaryData.every(function (n) {
+                                return n >= 0x20 && n < 0x7f;
+                            })) {
+                                submitResult(result);
+                            } else {
+                                const canvas = document.createElement("canvas");
+                                canvas.width = result.capturedFrame.width;
+                                canvas.height = result.capturedFrame.height;
+                                const ctx = canvas.getContext("2d");
+                                ctx.putImageData(result.capturedFrame, 0, 0);
+                                const dataURL = canvas.toDataURL("image/png");
 
-                            Barkoder.setEncodingCharacterSet(Barkoder.constants.EncodingCharacterSet.BINARY);
-                            Barkoder.scanImage(dataURL, function (newResult) {
-                                if (newResult.resultsCount) {
-                                    submitResult(newResult);
-                                } else {
+                                Barkoder.setEncodingCharacterSet(Barkoder.constants.EncodingCharacterSet.BINARY);
+                                Barkoder.scanImage(dataURL, function (newResult) {
+                                    if (newResult.resultsCount) {
+                                        submitResult(newResult);
+                                    } else {
+                                        submitResult(result);
+                                    }
+                                }, function (err) {
+                                    console.log(err);
                                     submitResult(result);
-                                }
-                            });
+                                });
+                            }
                         } else {
                             submitResult(result);
                         }

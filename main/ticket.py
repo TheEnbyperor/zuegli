@@ -439,8 +439,8 @@ class RSPTicket:
 @dataclasses.dataclass
 class FlexiTicket:
     issuer_id: str
-    ticket_data: flexi_ticket.Data
-    raw_ticket: bytes
+    ticket_data: typing.Optional[flexi_ticket.Data] = None
+    raw_ticket: typing.Optional[bytes] = None
     extra_data: typing.Optional[flexi_ticket.Data] = None
     raw_extra_data: typing.Optional[bytes] = None
 
@@ -457,7 +457,10 @@ class FlexiTicket:
 
         hd.update(b"ft")
         hd.update(self.issuer_id.encode("utf-8"))
-        hd.update(self.ticket_data.E_TICKET_NUMBER.encode("utf-8"))
+        if self.ticket_data:
+            hd.update(self.ticket_data.E_TICKET_NUMBER.encode("utf-8"))
+        elif self.extra_data:
+            hd.update(int(self.extra_data.ACTIVATION_START_UTC_DATE_TIME.timestamp()).to_bytes(8, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
     @property
@@ -472,6 +475,10 @@ class FlexiTicket:
     def issuer_name(self):
         if self.issuer_id == "M0":
             return "Massachusetts Bay Transportation Authority"
+        elif self.issuer_id == "MA":
+            return "New York Metropolitan Transportation Authority"
+        elif self.issuer_id == "RP":
+            return "Denver Regional Transportation District"
         else:
             return None
 
@@ -479,6 +486,10 @@ class FlexiTicket:
     def brand_id(self):
         if self.issuer_id == "M0":
             return "MBTA"
+        elif self.issuer_id == "MA":
+            return "MTA"
+        elif self.issuer_id == "RP":
+            return "RTDDENVER"
         else:
             return None
 
@@ -1241,44 +1252,45 @@ def parse_ticket_flexi_ticket(ticket_bytes: bytes) -> FlexiTicket:
             exception=traceback.format_exc()
         )
 
-    if ticket_envelope.issuer_id not in pki_store.certificates:
-        raise TicketError(
-            title="Unknown ticket issuer",
-            message=f"We don't have any keys for the flexi-ticket issuer {ticket_envelope.issuer_id} - we can't decode this ticket",
-        )
-
     ticket_payload = None
-    for cert in pki_store.certificates[ticket_envelope.issuer_id]:
-        try:
-            ticket_payload = ticket_envelope.decrypt_with_cert(cert)
-        except flexi_ticket.FTException:
-            raise TicketError(
-                title="Unable to decrypt flexi-ticket",
-                message="Its likely the signature over this ticket has been forged - the ticket is invalid.",
-                exception=traceback.format_exc()
-            )
-        if ticket_payload:
-            break
-
-    if not ticket_payload:
-        raise TicketError(
-            title="Unable to decrypt flexi-ticket",
-            message="None of the issuer's public keys match the flexi-ticket",
-        )
+    if ticket_envelope.issuer_id in pki_store.certificates:
+        for cert in pki_store.certificates[ticket_envelope.issuer_id]:
+            try:
+                ticket_payload = ticket_envelope.decrypt_with_cert(cert)
+            except flexi_ticket.FTException:
+                raise TicketError(
+                    title="Unable to decrypt flexi-ticket",
+                    message="Its likely the signature over this ticket has been forged - the ticket is invalid.",
+                    exception=traceback.format_exc()
+                )
+            if ticket_payload:
+                break
 
     try:
-        ticket_data = flexi_ticket.Data.parse(ticket_payload.data, ticket_envelope.issuer_id)
+        ticket_extra_data = ticket_envelope.decrypt_extra_data()
     except flexi_ticket.FTException:
         raise TicketError(
-            title="This doesn't look like a valid flex-ticket",
-            message="You may have scanned something that is not a flexi-ticket, the ticket is corrupted, or there "
-                    "is a bug in this program.",
+            title="Unable to decrypt flexi-ticket",
+            message="The additional data for this ticket cannot be read - the ticket is invalid.",
             exception=traceback.format_exc()
         )
 
-    if ticket_payload.extra_data:
+    if ticket_payload:
         try:
-            extra_data = flexi_ticket.Data.parse(ticket_payload.extra_data, ticket_envelope.issuer_id)
+            ticket_data = flexi_ticket.Data.parse(ticket_payload, ticket_envelope.issuer_id)
+        except flexi_ticket.FTException:
+            raise TicketError(
+                title="This doesn't look like a valid flex-ticket",
+                message="You may have scanned something that is not a flexi-ticket, the ticket is corrupted, or there "
+                        "is a bug in this program.",
+                exception=traceback.format_exc()
+            )
+    else:
+        ticket_data = None
+
+    if ticket_extra_data:
+        try:
+            extra_data = flexi_ticket.Data.parse(ticket_extra_data, ticket_envelope.issuer_id)
         except flexi_ticket.FTException:
             raise TicketError(
                 title="This doesn't look like a valid flex-ticket",
@@ -1293,8 +1305,8 @@ def parse_ticket_flexi_ticket(ticket_bytes: bytes) -> FlexiTicket:
         issuer_id=ticket_envelope.issuer_id,
         ticket_data=ticket_data,
         extra_data=extra_data,
-        raw_ticket=ticket_payload.data,
-        raw_extra_data=ticket_payload.extra_data,
+        raw_ticket=ticket_payload,
+        raw_extra_data=ticket_extra_data,
     )
 
 
@@ -1640,7 +1652,7 @@ def create_ticket_obj(
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
                 "decoded_data": {
-                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
+                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii") if ticket_data.raw_ticket else None,
                     "raw_extra_data": base64.b64encode(ticket_data.raw_extra_data).decode("ascii") if ticket_data.raw_extra_data else None,
                 }
             }
