@@ -479,6 +479,8 @@ class FlexiTicket:
             return "New York Metropolitan Transportation Authority"
         elif self.issuer_id == "RP":
             return "Denver Regional Transportation District"
+        elif self.issuer_id == "ML":
+            return "Metrolink"
         else:
             return None
 
@@ -490,6 +492,8 @@ class FlexiTicket:
             return "MTA"
         elif self.issuer_id == "RP":
             return "RTDDENVER"
+        elif self.issuer_id == "ML":
+            return "ML"
         else:
             return None
 
