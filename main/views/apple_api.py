@@ -26,33 +26,37 @@ def get_ticket(serial_number) -> typing.Optional[typing.Tuple["models.Ticket", s
         return None
 
 
-def check_pass_auth(f):
-    def wrapper(request, *, pass_type_id, serial_number, **kwargs):
-        if "Authorization" not in request.headers:
-            return HttpResponse(status=401)
-
-        auth_header = request.headers["Authorization"]
-        if not auth_header.startswith("ApplePass "):
-            return HttpResponse(status=401)
-
-        auth_token = auth_header[10:]
-
-        if pass_type_id != settings.PKPASS_CONF["pass_type"]:
-            return HttpResponse(status=404)
-
-        if d := get_ticket(serial_number):
-            ticket_obj, ticket_part = d
-            if not ticket_obj:
-                return HttpResponse(status=404)
-
-            if ticket_obj.pkpass_authentication_token != auth_token:
+def check_pass_auth(want_auth_type: str = "ApplePass"):
+    def decorator(f):
+        def wrapper(request, *, pass_type_id, serial_number, **kwargs):
+            if "Authorization" not in request.headers:
                 return HttpResponse(status=401)
 
-            return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
-        else:
-            return HttpResponse(status=404)
+            auth_header = request.headers["Authorization"]
+            auth_header = auth_header.split(" ")
+            if len(auth_header) != 2:
+                return HttpResponse(status=401)
+            auth_type, auth_token = auth_header
+            if auth_type != want_auth_type:
+                return HttpResponse(status=401)
 
-    return wrapper
+            if pass_type_id != settings.PKPASS_CONF["pass_type"]:
+                return HttpResponse(status=404)
+
+            if d := get_ticket(serial_number):
+                ticket_obj, ticket_part = d
+                if not ticket_obj:
+                    return HttpResponse(status=404)
+
+                if ticket_obj.pkpass_authentication_token != auth_token:
+                    return HttpResponse(status=401)
+
+                return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
+            else:
+                return HttpResponse(status=404)
+
+        return wrapper
+    return decorator
 
 
 def ticket_updated_date(_request, pass_type_id, serial_number):
@@ -72,7 +76,10 @@ def pass_status(request, device_id, pass_type_id):
     try:
         device_obj = models.AppleDevice.objects.get(device_id=device_id)
     except models.AppleDevice.DoesNotExist:
-        return HttpResponse(status=204)
+        try:
+            device_obj = models.AttidoDevice.objects.get(device_id=device_id)
+        except models.AttidoDevice.DoesNotExist:
+            return HttpResponse(status=204)
 
     if pass_type_id != settings.PKPASS_CONF["pass_type"]:
         return HttpResponse(status=204)
@@ -101,7 +108,7 @@ def pass_status(request, device_id, pass_type_id):
 
 
 @csrf_exempt
-@check_pass_auth
+@check_pass_auth()
 def registration(request, device_id, ticket_obj, ticket_part):
     if request.method == "POST":
         if request.content_type != "application/json":
@@ -147,10 +154,47 @@ def registration(request, device_id, ticket_obj, ticket_part):
     else:
         return HttpResponse(status=405)
 
+@csrf_exempt
+@check_pass_auth("AttidoPass")
+def registration_attido(request, device_id, ticket_obj, ticket_part):
+    if request.method == "POST":
+        if request.content_type != "application/json":
+            return HttpResponse(status=415)
+
+        try:
+            data = json.loads(request.body)
+        except ValueError:
+            return HttpResponse(status=400)
+
+        if "pushToken" not in data or not data["pushToken"] or not isinstance(data["pushToken"], str):
+            return HttpResponse(status=400)
+        if "pushServiceUrl" not in data or not data["pushServiceUrl"] or not isinstance(data["pushServiceUrl"], str):
+            return HttpResponse(status=400)
+
+        device_obj, _ = models.AttidoDevice.objects.update_or_create(
+            device_id=device_id,
+            defaults={
+                "push_token": data["pushToken"],
+                "push_service_url": data["pushServiceUrl"],
+            }
+        )
+        created, _ = models.AttidoRegistration.objects.update_or_create(
+            device=device_obj,
+            ticket=ticket_obj,
+            ticket_part=ticket_part,
+        )
+
+        if created:
+            return HttpResponse(status=201)
+        else:
+            return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=405)
+
 
 @csrf_exempt
 @condition(last_modified_func=ticket_updated_date)
-@check_pass_auth
+@check_pass_auth()
 def pass_document(request, ticket_obj, ticket_part):
     headers = dict(request.headers)
     headers.pop("Cookie", None)
