@@ -4573,7 +4573,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_fields["auxiliaryFields"].append({
                 "key": "route",
                 "label": "route-label",
-                "value": ticket_data.data.ticket.ticket_data.trip_data.route
+                "value": ", ".join(ticket_data.data.ticket.ticket_data.trip_data.route)
             })
 
         if ticket_data.data.ticket.ticket_data.trip_data.travel_class:
