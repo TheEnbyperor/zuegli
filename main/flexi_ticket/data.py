@@ -9,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 ISSUER_TIMEZONES = {
     "M0": pytz.timezone("America/New_York"),
+    "MA": pytz.timezone("America/New_York"),
+    "RP": pytz.timezone("America/Denver"),
 }
 
 

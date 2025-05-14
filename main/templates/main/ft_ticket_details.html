@@ -15,196 +15,205 @@
     </dl>
 
     <h2 class="govuk-heading-m">Ticket Data</h2>
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Ticket ID</dt>
-            <dd class="govuk-summary-list__value">
-                <code>{{ ticket.ticket_data.E_TICKET_NUMBER }}</code>
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">App ID</dt>
-            <dd class="govuk-summary-list__value">
-                <code>{{ ticket.ticket_data.UNIQUE_USER_ID }}</code>
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Validity</dt>
-            <dd class="govuk-summary-list__value">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">From</dt>
-                        <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_START_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Until</dt>
-                        <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_EXPIRY_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
-                    </div>
-                </dl>
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Activation duration</dt>
-            <dd class="govuk-summary-list__value">
-                {{ ticket.ticket_data.ACTIVATION_DURATION_MINS }} {% trans "minutes" %}
-            </dd>
-        </div>
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Permitted uses</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.uses_permitted_str }}</dd>
-        </div>
-        {% if ticket.ticket_data.FROM_STATION_NUMBER %}
-            {% with station=ticket.ticket_data.FROM_STATION_NUMBER|ft_station:ticket.brand_id %}
-                {% if station %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Origin station</dt>
-                        <dd class="govuk-summary-list__value">
-
-                            <dl class="govuk-summary-list">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Name</dt>
-                                    <dd class="govuk-summary-list__value">{{ station.name }}</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Location</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.lat }},{{ station.lon }}">
-                                            <code>{{ station.lat }}, {{ station.lon }}</code>
-                                        </a>
-                                    </dd>
-                                </div>
-                            </dl>
-                        </dd>
-                    </div>
-                {% else %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Origin station ID</dt>
-                        <dd class="govuk-summary-list__value">
-                            <code>{{ ticket.ticket_data.FROM_STATION_NUMBER }}</code>
-                        </dd>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
-        {% if ticket.ticket_data.TO_STATION_NUMBER %}
-            {% with station=ticket.ticket_data.TO_STATION_NUMBER|ft_station:ticket.brand_id %}
-                {% if station %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Destination station</dt>
-                        <dd class="govuk-summary-list__value">
-
-                            <dl class="govuk-summary-list">
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Name</dt>
-                                    <dd class="govuk-summary-list__value">{{ station.name }}</dd>
-                                </div>
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Location</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.lat }},{{ station.lon }}">
-                                            <code>{{ station.lat }}, {{ station.lon }}</code>
-                                        </a>
-                                    </dd>
-                                </div>
-                            </dl>
-                        </dd>
-                    </div>
-                {% else %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Destination station ID</dt>
-                        <dd class="govuk-summary-list__value">
-                            <code>{{ ticket.ticket_data.TO_STATION_NUMBER }}</code>
-                        </dd>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
-        {% if ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY %}
+    {% if ticket.ticket_data %}
+        <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Usage period specification</dt>
+                <dt class="govuk-summary-list__key">Ticket ID</dt>
                 <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY|as_hex }}</code>
+                    <code>{{ ticket.ticket_data.E_TICKET_NUMBER }}</code>
                 </dd>
             </div>
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Price</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.price_str }}</dd>
-        </div>
-        {% if ticket.ticket_data.PARENT_PRODUCT_ID_STRING %}
-            {% with product=ticket.ticket_data.PARENT_PRODUCT_ID_STRING|ft_ticket_product:ticket.brand_id %}
-                {% if product %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Product</dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ product.name }}
-                        </dd>
-                    </div>
-                {% else %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Product ID</dt>
-                        <dd class="govuk-summary-list__value">
-                            <code>{{ ticket.ticket_data.PARENT_PRODUCT_ID_STRING }}</code>
-                        </dd>
-                    </div>
-                {% endif %}
-            {% endwith %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Child product ID</dt>
+                <dt class="govuk-summary-list__key">App ID</dt>
                 <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.ticket_data.PRODUCT_ID_STRING }}</code>
+                    <code>{{ ticket.ticket_data.UNIQUE_USER_ID }}</code>
                 </dd>
             </div>
-        {% else %}
-            {% with product=ticket.ticket_data.PRODUCT_ID_STRING|ft_ticket_product:ticket.brand_id %}
-                {% if product %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Product</dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ product.name }}
-                        </dd>
-                    </div>
-                {% else %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Product ID</dt>
-                        <dd class="govuk-summary-list__value">
-                            <code>{{ ticket.ticket_data.PRODUCT_ID_STRING }}</code>
-                        </dd>
-                    </div>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Customer product reference</dt>
-            <dd class="govuk-summary-list__value">
-                <code>{{ ticket.ticket_data.CUSTOMER_PRODUCT_REFERENCE_STRING }}</code>
-            </dd>
-        </div>
-        {% if ticket.ticket_data.NUM_TICKETS_IN_PURCHASED_PRODUCT %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Number of tickets in product</dt>
+                <dt class="govuk-summary-list__key">Validity</dt>
                 <dd class="govuk-summary-list__value">
-                    {{ ticket.ticket_data.NUM_TICKETS_IN_PURCHASED_PRODUCT }}
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">From</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_START_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Until</dt>
+                            <dd class="govuk-summary-list__value">{{ ticket.ticket_data.VALIDITY_EXPIRY_UTC_DATE_TIME|date:"F d, Y H:i:s e" }}</dd>
+                        </div>
+                    </dl>
                 </dd>
             </div>
-        {% endif %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Media channel</dt>
-            <dd class="govuk-summary-list__value">
-                <code>{{ ticket.ticket_data.MEDIA_CHANNEL }}</code>
-            </dd>
-        </div>
-    </dl>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Activation duration</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ ticket.ticket_data.ACTIVATION_DURATION_MINS }} {% trans "minutes" %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Permitted uses</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.ticket_data.uses_permitted_str }}</dd>
+            </div>
+            {% if ticket.ticket_data.FROM_STATION_NUMBER %}
+                {% with station=ticket.ticket_data.FROM_STATION_NUMBER|ft_station:ticket.brand_id %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station</dt>
+                            <dd class="govuk-summary-list__value">
 
-    <details class="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">Raw data</span>
-        </summary>
-        <div class="govuk-details__text">
-            <pre>{{ ticket.ticket_data|pprint }}</pre>
-            <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Name</dt>
+                                        <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Location</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.lat }},{{ station.lon }}">
+                                                <code>{{ station.lat }}, {{ station.lon }}</code>
+                                            </a>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Origin station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.ticket_data.FROM_STATION_NUMBER }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            {% if ticket.ticket_data.TO_STATION_NUMBER %}
+                {% with station=ticket.ticket_data.TO_STATION_NUMBER|ft_station:ticket.brand_id %}
+                    {% if station %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station</dt>
+                            <dd class="govuk-summary-list__value">
+
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Name</dt>
+                                        <dd class="govuk-summary-list__value">{{ station.name }}</dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Location</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <a href="https://maps.apple.com/?q={{ station.name|urlencode }}&ll={{ station.lat }},{{ station.lon }}">
+                                                <code>{{ station.lat }}, {{ station.lon }}</code>
+                                            </a>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Destination station ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.ticket_data.TO_STATION_NUMBER }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            {% if ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Usage period specification</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.ticket_data.USE_PERIOD_SPECIFICATION_BYTE_ARRAY|as_hex }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Price</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.ticket_data.price_str }}</dd>
+            </div>
+            {% if ticket.ticket_data.PARENT_PRODUCT_ID_STRING %}
+                {% with product=ticket.ticket_data.PARENT_PRODUCT_ID_STRING|ft_ticket_product:ticket.brand_id %}
+                    {% if product %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Product</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ product.name }}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Product ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.ticket_data.PARENT_PRODUCT_ID_STRING }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Child product ID</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.ticket_data.PRODUCT_ID_STRING }}</code>
+                    </dd>
+                </div>
+            {% else %}
+                {% with product=ticket.ticket_data.PRODUCT_ID_STRING|ft_ticket_product:ticket.brand_id %}
+                    {% if product %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Product</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ product.name }}
+                            </dd>
+                        </div>
+                    {% else %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Product ID</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ ticket.ticket_data.PRODUCT_ID_STRING }}</code>
+                            </dd>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Customer product reference</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.ticket_data.CUSTOMER_PRODUCT_REFERENCE_STRING }}</code>
+                </dd>
+            </div>
+            {% if ticket.ticket_data.NUM_TICKETS_IN_PURCHASED_PRODUCT %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Number of tickets in product</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.ticket_data.NUM_TICKETS_IN_PURCHASED_PRODUCT }}
+                    </dd>
+                </div>
+            {% endif %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Media channel</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.ticket_data.MEDIA_CHANNEL }}</code>
+                </dd>
+            </div>
+        </dl>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Raw data</span>
+            </summary>
+            <div class="govuk-details__text">
+                <pre>{{ ticket.ticket_data|pprint }}</pre>
+                <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_hex }}</code></p>
+            </div>
+        </details>
+    {% else %}
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                {% trans "Unknown signing key, can't read main ticket body" %}
+            </strong>
         </div>
-    </details>
+    {% endif %}
 
     {% if ticket.extra_data %}
         <h2 class="govuk-heading-m">Device Data</h2>
