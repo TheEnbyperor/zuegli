@@ -83,6 +83,16 @@ class AppleRegistrationInline(admin.StackedInline):
     ]
 
 
+class AttidoRegistrationInline(admin.StackedInline):
+    extra = 0
+    model = models.AttidoRegistration
+    readonly_fields = [
+        "device",
+        "ticket",
+        "ticket_part"
+    ]
+
+
 class AccessLogInline(admin.StackedInline):
     extra = 0
     model = models.AccessLogEntry
@@ -125,6 +135,7 @@ class TicketAdmin(admin.ModelAdmin):
         IATATicketInstanceInline,
         BahnBonusInstanceInline,
         AppleRegistrationInline,
+        AttidoRegistrationInline,
         AccessLogInline,
     ]
     view_on_site = True
@@ -174,6 +185,18 @@ class AppleDeviceAdmin(admin.ModelAdmin):
     ]
     inlines = [
         AppleRegistrationInline,
+    ]
+
+
+@admin.register(models.AttidoDevice)
+class AttidoDeviceAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        "device_id",
+        "push_token",
+        "push_service_url"
+    ]
+    inlines = [
+        AttidoRegistrationInline,
     ]
 
 

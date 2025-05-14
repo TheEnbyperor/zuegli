@@ -571,6 +571,33 @@ class AppleRegistration(models.Model):
         ]
 
 
+class AttidoDevice(models.Model):
+    device_id = models.CharField(max_length=255, primary_key=True, verbose_name="Device ID")
+    push_token = models.CharField(max_length=255, verbose_name="Push token")
+    push_service_url = models.CharField(max_length=255, verbose_name="Push service url")
+
+    def __str__(self):
+        return self.device_id
+
+    def accounts(self):
+        accounts = []
+        for reg in self.registrations.all():
+            if reg.ticket.account_id:
+                accounts.append(reg.ticket.account_id)
+        return accounts
+
+
+class AttidoRegistration(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="attido_registrations", db_index=True)
+    device = models.ForeignKey(AttidoDevice, on_delete=models.CASCADE, related_name="registrations", db_index=True)
+    ticket_part = models.CharField(max_length=255, verbose_name="Ticket part", blank=True, null=True)
+
+    class Meta:
+        unique_together = [
+            ["ticket", "device", "ticket_part"],
+        ]
+
+
 class DBSubscription(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="subscriptions", db_index=True)
     device_token = models.CharField(max_length=255, verbose_name="Device token", unique=True)

@@ -15,9 +15,19 @@ def notify_device(device: "models.AppleDevice"):
     r.raise_for_status()
 
 
+def notify_attido_device(device: "models.AttidoDevice"):
+    r = niquests.post(f"{device.push_service_url}/v1/pushUpdate", json={
+        "passTypeID": settings.PKPASS_CONF["pass_type"],
+        "pushToken": device.push_token,
+    })
+    r.raise_for_status()
+
+
 def notify_ticket(ticket: "models.Ticket"):
     for registration in ticket.apple_registrations.all():
         notify_device(registration.device)
+    for registration in ticket.attido_registrations.all():
+        notify_attido_device(registration.device)
 
 
 def notify_ticket_if_renewed(ticket: "models.Ticket"):
