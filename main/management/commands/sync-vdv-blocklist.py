@@ -3,6 +3,7 @@ import niquests
 import datetime
 import sqlite3
 import tempfile
+import itertools
 from main import models
 
 BLOCKLIST_VERSION_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/version.txt"
@@ -11,6 +12,15 @@ BLOCKLIST_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/blacklis
 
 class Command(BaseCommand):
     help = "Pull latest "
+
+    @staticmethod
+    def map_item_type(item_type):
+        if item_type == "A":
+            return models.VDVBlocklistItem.ITEM_NUTZERMEDIUM
+        elif item_type == "B":
+            return models.VDVBlocklistItem.ITEM_BERECHTIGUNG
+        else:
+            raise ValueError(f"Unknown item type {item_type}")
 
     def handle(self, *args, **options):
         blocklist_meta = models.VDVBlocklistMeta.get_solo()
@@ -48,34 +58,23 @@ class Command(BaseCommand):
 
         cursor.execute("SELECT type, orgId, number, instanceNum, lockMode FROM blacklist")
         processed = 0
-        for row in cursor.fetchall():
-            item_type, kvp_org_id, number, instance_num, lock_mode = row
-
-            if item_type == "A":
-                item_type = models.VDVBlocklistItem.ITEM_NUTZERMEDIUM
-            elif item_type == "B":
-                item_type = models.VDVBlocklistItem.ITEM_BERECHTIGUNG
-            else:
-                print(f"Unknown item type {item_type}")
-                return
-
-            if models.VDVBlocklistItem.objects.filter(
-                    item_type=item_type, kvp_org_id=kvp_org_id, item_id=number, instance_counter=instance_num
-            ).count() > 0:
-                continue
-
-            blacklist_item, _ = models.VDVBlocklistItem.objects.get_or_create(
-                item_type=item_type,
-                kvp_org_id=kvp_org_id,
-                item_id=number,
+        next_print = 250
+        batch_size = 2500
+        while batch := cursor.fetchmany(batch_size):
+            objs = models.VDVBlocklistItem.objects.bulk_create(
+                [
+                    models.VDVBlocklistItem(
+                        item_type=self.map_item_type(row[0]),
+                        kvp_org_id=row[1],
+                        item_id=row[2],
+                        instance_counter=row[3],
+                        lock_mode=row[4],
+                    ) for row in batch
+                ], batch_size=batch_size, ignore_conflicts=True
             )
-            if blacklist_item.instance_counter < instance_num:
-                blacklist_item.instance_counter = instance_num
-                blacklist_item.lock_mode = lock_mode
-                blacklist_item.save()
-
-            processed += 1
-            if processed % 250 == 0:
+            processed += len(objs)
+            if processed >= next_print:
+                next_print += 250
                 print(f"Processed {processed} of {total} items", flush=True)
 
         print(f"Processed {processed} of {total} items", flush=True)
