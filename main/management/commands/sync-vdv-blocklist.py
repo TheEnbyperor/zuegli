@@ -41,7 +41,13 @@ class Command(BaseCommand):
         db = sqlite3.connect(db_file.name)
 
         cursor = db.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM blacklist")
+        res = cursor.fetchone()
+        total = res[0]
+
         cursor.execute("SELECT type, orgId, number, instanceNum, lockMode FROM blacklist")
+        processed = 0
         for row in cursor.fetchall():
             item_type, kvp_org_id, number, instance_num, lock_mode = row
 
@@ -67,6 +73,12 @@ class Command(BaseCommand):
                 blacklist_item.instance_counter = instance_num
                 blacklist_item.lock_mode = lock_mode
                 blacklist_item.save()
+
+            processed += 1
+            if processed % 250 == 0:
+                print(f"Processed {processed} of {total} items", flush=True)
+
+        print(f"Processed {processed} of {total} items", flush=True)
 
         blocklist_meta.current_version = latest_blocklist_version
         blocklist_meta.save()
