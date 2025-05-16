@@ -11,6 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from solo.models import SingletonModel
 from . import ticket as t
 from . import vdv_nm
 from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket
@@ -702,3 +703,44 @@ class VDVSmartcardLog(models.Model):
 
     def as_log(self) -> vdv_nm.log.LogEntry:
         return vdv_nm.log.parse_log(bytes(self.log_entry))
+
+
+class VDVBlocklistMeta(SingletonModel):
+    current_version = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"VDV Blocklist - {self.current_version.isoformat()}"
+
+    class Meta:
+        verbose_name = "VDV Blocklist Meta"
+
+class VDVBlocklistItem(models.Model):
+    ITEM_NUTZERMEDIUM = "nm"
+    ITEM_BERECHTIGUNG = "ber"
+
+    LOCK_MODE_UNKNOWN = 0
+    LOCK_MODE_LOCK = 1
+    LOCK_MODE_UNLOCK = 2
+
+    ITEM_TYPES = (
+        (ITEM_NUTZERMEDIUM, "Nutzermedium"),
+        (ITEM_BERECHTIGUNG, "Berechtigung"),
+    )
+
+    LOCK_MODES = (
+        (LOCK_MODE_UNKNOWN, "Unknown"),
+        (LOCK_MODE_LOCK, "Lock"),
+        (LOCK_MODE_UNLOCK, "Unlock"),
+    )
+
+    item_type = models.CharField(max_length=10, choices=ITEM_TYPES)
+    kvp_org_id = models.PositiveIntegerField()
+    item_id = models.PositiveIntegerField()
+    instance_counter = models.PositiveIntegerField(default=0)
+    lock_mode = models.PositiveIntegerField(blank=True, default=0, choices=LOCK_MODES)
+
+    class Meta:
+        verbose_name = "VDV Blocklist Item"
+        verbose_name_plural = "VDV Blocklist Items"
+        unique_together = [("item_type", "kvp_org_id", "item_id")]
+        index_together = [("item_type", "kvp_org_id", "item_id")]

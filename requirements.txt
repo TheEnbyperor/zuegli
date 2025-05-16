@@ -41,3 +41,4 @@ asn1crypto
 ecdsa
 idna
 urllib3
+django-solo

@@ -1216,7 +1216,7 @@ msgstr "Weiterer Fahrgast #1"
 
 #: templates/main/vdv_elements.html:69 templates/main/vdv_elements.html:102
 msgid "Count"
-msgstr "Konto"
+msgstr "Anzahl"
 
 #: templates/main/vdv_elements.html:80
 msgid "Additional Traveler #2"

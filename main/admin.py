@@ -4,7 +4,7 @@ from django.urls import path
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.admin.utils import unquote
-from django.conf import settings
+from solo.admin import SingletonModelAdmin
 from . import models, apn, gwallet
 
 
@@ -293,3 +293,9 @@ class VDVSmartcardAdmin(admin.ModelAdmin):
     inlines = [
         VDVSmartcardLogAdmin
     ]
+
+admin.site.register(models.VDVBlocklistMeta, SingletonModelAdmin)
+
+@admin.register(models.VDVBlocklistItem)
+class VDVBlocklistItemAdmin(admin.ModelAdmin):
+    pass
