@@ -298,4 +298,14 @@ admin.site.register(models.VDVBlocklistMeta, SingletonModelAdmin)
 
 @admin.register(models.VDVBlocklistItem)
 class VDVBlocklistItemAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        "id",
+        "item_type",
+        "kvp_org_id",
+        "item_id",
+        "lock_mode"
+    ]
+    list_filter = [
+        "item_type",
+        "lock_mode"
+    ]
