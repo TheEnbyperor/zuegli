@@ -709,7 +709,7 @@ class VDVBlocklistMeta(SingletonModel):
     current_version = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"VDV Blocklist - {self.current_version.isoformat()}"
+        return f"VDV Blocklist - {self.current_version.isoformat() if self.current_version else None}"
 
     class Meta:
         verbose_name = "VDV Blocklist Meta"
@@ -742,5 +742,8 @@ class VDVBlocklistItem(models.Model):
     class Meta:
         verbose_name = "VDV Blocklist Item"
         verbose_name_plural = "VDV Blocklist Items"
-        unique_together = [("item_type", "kvp_org_id", "item_id")]
-        index_together = [("item_type", "kvp_org_id", "item_id")]
+        unique_together = [("item_type", "kvp_org_id", "item_id", "instance_counter")]
+        index_together = [("item_type", "kvp_org_id", "item_id", "instance_counter")]
+
+    def __str__(self):
+        return f"Blocklist Item {self.get_item_type_display()} KVP {self.kvp_org_id} Item {self.item_id} #{self.instance_counter} - {self.get_lock_mode_display()}"
