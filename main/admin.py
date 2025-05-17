@@ -303,6 +303,7 @@ class VDVBlocklistItemAdmin(admin.ModelAdmin):
         "item_type",
         "kvp_org_id",
         "item_id",
+        "instance_counter",
         "lock_mode"
     ]
     list_filter = [
