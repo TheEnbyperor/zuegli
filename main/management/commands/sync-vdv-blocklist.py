@@ -29,7 +29,7 @@ class Command(BaseCommand):
             "User-Agent": "Zuegli (q@magicalcodewit.ch)",
         })
         r.raise_for_status()
-        latest_blocklist_version = datetime.datetime.fromisoformat(r.text)
+        latest_blocklist_version = datetime.datetime.fromisoformat(r.text).astimezone(datetime.timezone.utc)
 
         if blocklist_meta.current_version and blocklist_meta.current_version >= latest_blocklist_version:
             print("Blocklist already up to date")
