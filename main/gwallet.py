@@ -816,12 +816,19 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         obj["hexBackgroundColor"] = "#ffffff"
         obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
 
-        barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
-        obj["barcode"] = {
-            "type": "AZTEC",
-            "alternateText": str(ticket_data.ticket.ticket_id),
-            "value": bytes(barcode_data).decode("iso-8859-1"),
-        }
+        if ticket_data.is_revoked():
+            obj["state"] = "COMPLETED"
+            obj["barcode"] = {
+                "type": "TEXT_ONLY",
+                "value": f"VOID - #{ticket_data.ticket.ticket_id}"
+            }
+        else:
+            barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
+            obj["barcode"] = {
+                "type": "AZTEC",
+                "alternateText": str(ticket_data.ticket.ticket_id),
+                "value": bytes(barcode_data).decode("iso-8859-1"),
+            }
 
         if ticket_data.ticket.product_org_id == 3000:
             obj["cardTitle"] = {

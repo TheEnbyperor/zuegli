@@ -11,6 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         generic_class = main.gwallet.client.genericclass()
         transit_class = main.gwallet.client.transitclass()
+        # flight_class = main.gwallet.client.flightclass()
 
         generic_class.update(
             resourceId=f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['railcard_pass_class']}",
@@ -317,6 +318,7 @@ class Command(BaseCommand):
                 "multipleDevicesAndHoldersAllowedStatus": "MULTIPLE_HOLDERS",
             }
         ).execute()
+
         transit_class.update(
             resourceId=f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}",
             body={

@@ -142,6 +142,11 @@ class Ticket(models.Model):
     photos = models.JSONField(default=dict, blank=True)
     label = models.CharField(max_length=255, null=True, blank=True, verbose_name="Label")
 
+    class Meta:
+        permissions = [
+            ("view_revocation", "View the revocation status of tickets"),
+        ]
+
     def __str__(self):
         return f"{self.get_ticket_type_display()} - {self.id}"
 
@@ -234,6 +239,7 @@ class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     ticket_org_id = models.PositiveIntegerField(verbose_name="Organization ID", db_index=True)
+    ticket_num = models.PositiveIntegerField(verbose_name="Ticket ID", db_index=True)
     validity_start = models.DateTimeField()
     validity_end = models.DateTimeField()
     barcode_data = models.BinaryField()
@@ -241,6 +247,7 @@ class VDVTicketInstance(models.Model):
 
     class Meta:
         ordering = ["-validity_start"]
+        index_together = [("ticket_org_id", "ticket_num")]
         verbose_name = "VDV ticket"
 
     def __str__(self):
@@ -734,16 +741,20 @@ class VDVBlocklistItem(models.Model):
     )
 
     item_type = models.CharField(max_length=10, choices=ITEM_TYPES)
-    kvp_org_id = models.PositiveIntegerField()
+    org_id = models.PositiveIntegerField()
     item_id = models.PositiveIntegerField()
     instance_counter = models.PositiveIntegerField(default=0)
     lock_mode = models.PositiveIntegerField(blank=True, default=0, choices=LOCK_MODES)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "VDV Blocklist Item"
         verbose_name_plural = "VDV Blocklist Items"
-        unique_together = [("item_type", "kvp_org_id", "item_id", "instance_counter")]
-        index_together = [("item_type", "kvp_org_id", "item_id", "instance_counter")]
+        unique_together = [("item_type", "org_id", "item_id", "instance_counter")]
+        index_together = [
+            ("item_type", "org_id", "item_id", "instance_counter"),
+            ("item_type", "org_id", "item_id"),
+        ]
 
     def __str__(self):
-        return f"Blocklist Item {self.get_item_type_display()} KVP {self.kvp_org_id} Item {self.item_id} #{self.instance_counter} - {self.get_lock_mode_display()}"
+        return f"Blocklist Item {self.get_item_type_display()} Org {self.org_id} Item {self.item_id} #{self.instance_counter} - {self.get_lock_mode_display()}"

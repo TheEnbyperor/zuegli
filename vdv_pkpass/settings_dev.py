@@ -245,6 +245,7 @@ GWALLET_CONF = {
     "railcard_pass_class": "pass.ch.magicalcodewit.vdv.railcard",
     "train_ticket_pass_class": "pass.ch.magicalcodewit.vdv.ticket",
     "train_pass_class": "pass.ch.magicalcodewit.vdv.train",
+    "flight_pass_class": "pass.ch.magicalcodewit.vdv.flight",
     "bahncard_pass_class": "pass.ch.magicalcodewit.vdv.bahncard",
 }
 
