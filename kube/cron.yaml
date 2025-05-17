@@ -963,7 +963,7 @@ metadata:
     app: vdv-pkpass
     part: ft-data
 spec:
-  schedule: "0 4 * * *"
+  schedule: "15 * * * *"
   jobTemplate:
     spec:
       template:
