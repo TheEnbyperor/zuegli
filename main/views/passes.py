@@ -2565,6 +2565,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         issued_at = ticket_data.ticket.transaction_time.as_datetime()
 
         pass_json["expirationDate"] = validity_end.isoformat()
+        pass_json["voided"] = ticket_data.is_revoked()
         pass_fields = {
             "headerFields": [],
             "primaryFields": [],
@@ -4809,19 +4810,23 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if leg.leg_conditional and leg.leg_conditional.marketing_carrier:
-                if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
-                    pass_json["logoText"] = airline["name"]
-                    r = niquests.get(f"https://airlabs.co/img/airline/m/{airline['iata_code']}.png")
-                    if r.ok:
-                        pkp.add_file("logo.png", r.content)
-                        have_logo = True
+                airline = templatetags.iata.get_iata_airline_code(leg.operating_carrier)
             else:
-                if airline := templatetags.iata.get_iata_airline_code(leg.operating_carrier):
-                    pass_json["logoText"] = airline["name"]
-                    r = niquests.get(f"https://airlabs.co/img/airline/m/{airline['iata_code']}.png")
-                    if r.ok:
-                        pkp.add_file("logo.png", r.content)
-                        have_logo = True
+                airline = templatetags.iata.get_iata_airline_code(leg.operating_carrier)
+
+            if airline:
+                pass_json["logoText"] = airline["name"]
+                r = niquests.get(f"https://airlabs.co/img/airline/m/{airline['iata_code']}.png")
+                if r.ok:
+                    pkp.add_file("logo.png", r.content)
+                    have_logo = True
+
+                if airline["iata_code"] in IATA_BG:
+                    pass_json["backgroundColor"] = IATA_BG[airline["iata_code"]]
+                if airline["iata_code"] in IATA_FG:
+                    pass_json["foregroundColor"] = IATA_FG[airline["iata_code"]]
+                if airline["iata_code"] in IATA_FG_SECONDARY:
+                    pass_json["labelColor"] = IATA_FG_SECONDARY[airline["iata_code"]]
 
             if leg.leg_conditional:
                 if leg.leg_conditional.fast_track is not None:
@@ -5512,6 +5517,18 @@ RSP_ORG_FG = {
 
 RSP_ORG_FG_SECONDARY = {
     "ZS": "#00d973",
+}
+
+IATA_BG = {
+    "FR": "#173c8a"
+}
+
+IATA_FG = {
+    "FR": "#ffffff"
+}
+
+IATA_FG_SECONDARY = {
+    "FR": "#f1ca33"
 }
 
 BC_STRIP_IMG = {

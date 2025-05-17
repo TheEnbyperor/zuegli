@@ -301,7 +301,7 @@ class VDVBlocklistItemAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "item_type",
-        "kvp_org_id",
+        "org_id",
         "item_id",
         "instance_counter",
         "lock_mode"
@@ -310,3 +310,4 @@ class VDVBlocklistItemAdmin(admin.ModelAdmin):
         "item_type",
         "lock_mode"
     ]
+    search_fields = ["item_id"]
