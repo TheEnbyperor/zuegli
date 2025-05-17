@@ -87,7 +87,7 @@ def metrics(request):
     out.append(f'ticket_instance_count{{type="banhbonus"}} {bahnbonus_count}')
 
     vdv_blocklist_meta = models.VDVBlocklistMeta.get_solo()
-    out.append(f'vdv_blocklist_current_version {vdv_blocklist_meta.current_version.isoformat()}')
+    out.append(f'vdv_blocklist_current_version {vdv_blocklist_meta.current_version.timestamp()}')
 
     vdv_nm_block_count = models.VDVBlocklistItem.objects.filter(item_type=models.VDVBlocklistItem.ITEM_NUTZERMEDIUM).count()
     out.append(f'vdv_block_count{{type="nm"}} {vdv_nm_block_count}')
