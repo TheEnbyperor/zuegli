@@ -740,9 +740,9 @@ class VDVBlocklistItem(models.Model):
         (LOCK_MODE_UNLOCK, "Unlock"),
     )
 
-    item_type = models.CharField(max_length=10, choices=ITEM_TYPES)
-    org_id = models.PositiveIntegerField()
-    item_id = models.PositiveIntegerField()
+    item_type = models.CharField(max_length=10, choices=ITEM_TYPES, db_index=True)
+    org_id = models.PositiveIntegerField(db_index=True)
+    item_id = models.PositiveIntegerField(db_index=True)
     instance_counter = models.PositiveIntegerField(default=0)
     lock_mode = models.PositiveIntegerField(blank=True, default=0, choices=LOCK_MODES)
     timestamp = models.DateTimeField(auto_now_add=True)

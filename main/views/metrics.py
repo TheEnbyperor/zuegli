@@ -86,4 +86,17 @@ def metrics(request):
     bahnbonus_count = models.BahnBonusInstance.objects.all().count()
     out.append(f'ticket_instance_count{{type="banhbonus"}} {bahnbonus_count}')
 
+    vdv_blocklist_meta = models.VDVBlocklistMeta.get_solo()
+    out.append(f'vdv_blocklist_current_version {vdv_blocklist_meta.current_version.isoformat()}')
+
+    vdv_nm_block_count = models.VDVBlocklistItem.objects.filter(item_type=models.VDVBlocklistItem.ITEM_NUTZERMEDIUM).count()
+    out.append(f'vdv_block_count{{type="nm"}} {vdv_nm_block_count}')
+    vdv_ber_block_count = models.VDVBlocklistItem.objects.filter(item_type=models.VDVBlocklistItem.ITEM_BERECHTIGUNG).count()
+    out.append(f'vdv_block_count{{type="ber"}} {vdv_ber_block_count}')
+
+    for o in models.VDVBlocklistItem.objects.all().values('org_id').annotate(total=Count('org_id')):
+        org_id = o["org_id"]
+        org_name = vdv.ticket.map_org_id(org_id)
+        out.append(f'vdv_block_issuer{{org_id="{org_id}", org_name="{org_name} ({org_id})"}} {o["total"]}')
+
     return HttpResponse("\n".join(out), content_type="text/plain;charset=UTF-8")

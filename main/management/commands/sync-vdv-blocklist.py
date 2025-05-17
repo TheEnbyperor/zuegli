@@ -96,7 +96,7 @@ class Command(BaseCommand):
                 next_print += 250
                 print(f"Processed {processed} of {total} items - {new_entries_count} new", flush=True)
 
-        print(f"Processed {processed} of {total} items", flush=True)
+        print(f"Processed {processed} of {total} items - {new_entries_count} new", flush=True)
 
         blocklist_meta.current_version = latest_blocklist_version
         blocklist_meta.save()
