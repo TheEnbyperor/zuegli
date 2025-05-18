@@ -3085,10 +3085,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": "\n".join(tocs)
                     })
 
-            if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
-                def format_text(text):
-                    return text.replace("</p>", "\n\n").replace('title=""', "").strip()
+            def format_text(text):
+                return text.replace("</p>", "\n\n").replace('title=""', "").strip()
 
+            if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
                 pass_fields["secondaryFields"].append({
                     "key": "product",
                     "label": "product-label",

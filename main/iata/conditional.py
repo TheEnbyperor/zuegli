@@ -239,14 +239,14 @@ class UniqueConditional:
 @dataclasses.dataclass
 class LegConditional:
     airline_numeric_code: int
-    document_serial: str
+    document_serial: typing.Optional[str]
     selectee: Selectee
     international_document_verification: InternationalDocumentVerification
-    marketing_carrier: str
-    frequent_flyer_designator: str
-    frequent_flyer_number: str
-    industry_discount: str
-    free_baggage_allowance: str
+    marketing_carrier: typing.Optional[str]
+    frequent_flyer_designator: typing.Optional[str]
+    frequent_flyer_number: typing.Optional[str]
+    industry_discount: typing.Optional[str]
+    free_baggage_allowance: typing.Optional[str]
     fast_track: typing.Optional[bool]
 
     @classmethod
@@ -286,13 +286,13 @@ class LegConditional:
 
         return cls(
             airline_numeric_code=airline_numeric_code,
-            document_serial=data[3:13],
-            selectee=Selectee(data[13]),
-            international_document_verification=InternationalDocumentVerification(data[14]),
-            marketing_carrier=data[15:18].rstrip(),
-            frequent_flyer_designator=data[18:21].rstrip(),
-            frequent_flyer_number=data[21:37].rstrip(),
+            document_serial=data[3:13] if len(data) >= 13 else None,
+            selectee=Selectee(data[13]) if len(data) > 13 else Selectee.Unknown,
+            international_document_verification=InternationalDocumentVerification(data[14]) if len(data) > 14 else InternationalDocumentVerification.Unknown,
+            marketing_carrier=data[15:18].rstrip() if len(data) >= 18 else None,
+            frequent_flyer_designator=data[18:21].rstrip() if len(data) >= 21 else None,
+            frequent_flyer_number=data[21:37].rstrip() if len(data) >= 37 else None,
             industry_discount=data[37].rstrip() if len(data) > 37 else "",
-            free_baggage_allowance=data[38:41].rstrip() if len(data) > 41 else "",
+            free_baggage_allowance=data[38:41].rstrip() if len(data) >= 41 else None,
             fast_track=fast_track,
         ), airline_data
