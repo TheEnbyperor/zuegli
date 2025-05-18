@@ -1583,6 +1583,7 @@ def create_ticket_obj(
             defaults={
                 "ticket": ticket_obj,
                 "ticket_org_id": ticket_data.ticket.ticket_org_id,
+                "ticket_num": ticket_data.ticket.ticket_id,
                 "validity_start": ticket_data.ticket.validity_start.as_datetime(),
                 "validity_end": ticket_data.ticket.validity_end.as_datetime(),
                 "barcode_data": ticket_bytes,
