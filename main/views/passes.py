@@ -2875,6 +2875,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["backFields"].append({
                         "key": "from-station-back",
                         "label": "from-station-label",
+                        "value": from_station.name,
                         "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station.name}</a>",
                     })
                 elif from_station := rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc):
@@ -2916,6 +2917,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     pass_fields["backFields"].append({
                         "key": "to-station-back",
                         "label": "to-station-label",
+                        "value": to_station.name,
                         "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station.name}</a>",
                     })
                 elif to_station := rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc):
@@ -3086,7 +3088,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     })
 
             def format_text(text):
-                return text.replace("</p>", "\n\n").replace('title=""', "").strip()
+                return text.replace("<p>", "").replace("</p>", "\n\n").replace('title=""', "").strip()
 
             if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
                 pass_fields["secondaryFields"].append({
@@ -3101,24 +3103,28 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         pass_fields["backFields"].append({
                             "key": "product-validity-outward-date",
                             "label": "product-validity-outward-date-label",
+                            "value": "",
                             "attributedValue": format_text(ticket_conditions.validity.day_outward),
                         })
                     if ticket_conditions.validity.time_outward:
                         pass_fields["backFields"].append({
                             "key": "product-validity-outward-time",
                             "label": "product-validity-outward-time-label",
+                            "value": "",
                             "attributedValue": format_text(ticket_conditions.validity.time_outward),
                         })
                     if ticket_conditions.validity.day_return:
                         pass_fields["backFields"].append({
                             "key": "product-validity-return-date",
                             "label": "product-validity-return-date-label",
+                            "value": "",
                             "attributedValue": format_text(ticket_conditions.validity.day_return),
                         })
                     if ticket_conditions.validity.time_return:
                         pass_fields["backFields"].append({
                             "key": "product-validity-return-time",
                             "label": "product-validity-return-time-label",
+                            "value": "",
                             "attributedValue": format_text(ticket_conditions.validity.time_return),
                         })
                 if ticket_conditions.break_of_journey:
