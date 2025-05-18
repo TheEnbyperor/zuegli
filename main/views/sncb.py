@@ -48,8 +48,7 @@ def sncb_add_ticket(request):
                             continue
 
                         try:
-                            ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=request.user.account)
-                            ticket_obj.save()
+                            ticket.update_from_barcode(barcode_data, account=request.user.account)
                         except ticket.TicketError as e:
                             messages.warning(request, f"Error decoding barcode ticket: {e} - ticket segment skipped")
                             continue

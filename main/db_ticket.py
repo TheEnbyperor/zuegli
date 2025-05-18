@@ -36,8 +36,7 @@ def update_from_img_elm(barcode_elm, account):
         return None
 
     try:
-        ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
-        ticket_obj.save()
+        ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=account)
         return ticket_obj
     except ticket.TicketError as e:
         logger.error("Error decoding barcode ticket: %s", e)

@@ -101,7 +101,7 @@ def update_tickets(account: "models.Account"):
                                 continue
 
                             try:
-                                ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
+                                ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=account)
                                 ticket_obj.oauth_account = oauth_token
                                 ticket_obj.save()
                             except ticket.TicketError as e:
