@@ -343,6 +343,8 @@ class RSPTicketInstance(models.Model):
             data = rsp.RailcardData.parse(raw_ticket)
         elif self.ticket_type == "06":
             data = rsp.TicketData.parse(raw_ticket)
+        elif self.ticket_type == "11":
+            data = rsp.Type11.parse(raw_ticket)
         else:
             raise NotImplementedError()
         return t.RSPTicket(
