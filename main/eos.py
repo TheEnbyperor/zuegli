@@ -168,7 +168,7 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
             barcode_data = aztec.decode(barcode_img)
 
             try:
-                ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
+                ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=account)
                 ticket_obj.oauth_account = account_token
                 ticket_obj.save()
             except ticket.TicketError as e:

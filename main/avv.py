@@ -80,8 +80,8 @@ def update_avv_tickets(account: "models.Account"):
 
             barcode_data = bytes.fromhex(e["signedStaticEntitlementWithSecurity"])
             try:
-                ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
-                ticket_obj.avv_account = account
+                ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=account)
+                ticket_obj.oauth_account = account_oauth
                 ticket_obj.save()
                 logger.info(f"Updated ticket {eid} for account {account}")
             except ticket.TicketError as e:

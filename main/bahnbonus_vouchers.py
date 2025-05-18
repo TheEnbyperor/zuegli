@@ -50,8 +50,7 @@ def update_all():
                 aztec_code = aztec_code["aztecCode"]["payload"].encode("utf-8")
 
                 try:
-                    ticket_obj = ticket.update_from_subscription_barcode(aztec_code, account=account)
-                    ticket_obj.save()
+                    ticket.update_from_barcode(aztec_code, account=account)
                 except ticket.TicketError as e:
                     logger.error("Error decoding barcode: %s", e)
                     continue

@@ -83,7 +83,7 @@ def update_abo_tickets(abo: "models.DBSubscription"):
             continue
 
         try:
-            ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=abo.account)
+            ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=abo.account)
             ticket_obj.db_subscription = abo
             ticket_obj.save()
         except ticket.TicketError as e:

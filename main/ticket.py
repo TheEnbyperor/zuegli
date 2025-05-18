@@ -1743,9 +1743,9 @@ def create_ticket_obj(
     return created
 
 
-def update_from_subscription_barcode(
+def update_from_barcode(
         barcode_data: bytes, account: typing.Optional["models.Account"]
-) -> "models.Ticket":
+) -> typing.Tuple["models.Ticket", bool]:
     decoded_ticket = parse_ticket(barcode_data, account=account)
 
     should_update = False
@@ -1778,4 +1778,4 @@ def update_from_subscription_barcode(
     if created:
         email.send_new_ticket_email(ticket_obj)
 
-    return ticket_obj
+    return ticket_obj, created

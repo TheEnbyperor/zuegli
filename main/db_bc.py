@@ -44,8 +44,7 @@ def update_all():
             bb_status = r.json()
 
             barcode_data = f"{bahnbonus.products.BAHNBONUS};{bb_status['loyaltyNumber']}".encode("utf-8")
-            ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=account)
-            ticket_obj.save()
+            ticket.update_from_barcode(barcode_data, account=account)
 
         try:
             r = niquests.get(f"https://app.vendo.noncd.db.de/mob/emobilebahncards", headers={

@@ -32,7 +32,7 @@ def upload_aztec(request):
         return HttpResponse(status=400)
 
     try:
-        ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=None)
+        ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=None)
     except ticket.TicketError as e:
         return HttpResponse(json.dumps({
             "title": e.title,
@@ -93,7 +93,7 @@ def upload_aztec_img(request):
         }), status=422, content_type="application/json")
 
     try:
-        ticket_obj = ticket.update_from_subscription_barcode(barcode_data, account=None)
+        ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=None)
     except ticket.TicketError as e:
         return HttpResponse(json.dumps({
             "title": e.title,

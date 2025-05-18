@@ -44,7 +44,7 @@ def process_tickets(request, tickets):
         errors = []
         for tb in tickets:
             try:
-                ticket_data = ticket.parse_ticket(
+                ticket_obj, ticket_created = ticket.update_from_barcode(
                     tb, request.user.account if request.user.is_authenticated else None
                 )
             except ticket.TicketError as e:
@@ -55,19 +55,8 @@ def process_tickets(request, tickets):
                     "ticket_contents": tb.hex()
                 })
             else:
-                ticket_pk = ticket_data.pk()
-                defaults = {
-                    "ticket_type": ticket_data.type(),
-                    "last_updated": timezone.now(),
-                }
-                if request.user.is_authenticated:
-                    defaults["account"] = request.user.account
-                ticket_obj, ticket_created = models.Ticket.objects.update_or_create(id=ticket_pk, defaults=defaults)
                 request.session["ticket_updated"] = True
                 request.session["ticket_created"] = ticket_created
-                ticket.create_ticket_obj(ticket_obj, tb, ticket_data)
-                apn.notify_ticket(ticket_obj)
-                gwallet.sync_ticket(ticket_obj)
                 ticket_ids.append(ticket_obj.id)
 
                 headers = dict(request.headers)
