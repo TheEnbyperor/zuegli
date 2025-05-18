@@ -16,6 +16,8 @@
 
 {% if ticket.rsp_type == "06" %}
     {% include "main/rsp/ticket.html" with data=ticket.data %}
+{% elif ticket.rsp_type == "11" %}
+    {% include "main/rsp/ticket_11.html" with data=ticket.data %}
 {% elif ticket.rsp_type == "08" %}
     {% include "main/rsp/railcard.html" with data=ticket.data %}
 {% endif %}

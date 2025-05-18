@@ -55,6 +55,8 @@ def metrics(request):
     out.append(f'ticket_rsp_count{{type="06"}} {rsp_06_count}')
     rsp_08_count = models.RSPTicketInstance.objects.filter(ticket_type="08").count()
     out.append(f'ticket_rsp_count{{type="08"}} {rsp_08_count}')
+    rsp_11_count = models.RSPTicketInstance.objects.filter(ticket_type="11").count()
+    out.append(f'ticket_rsp_count{{type="11"}} {rsp_11_count}')
 
     for o in models.RSPTicketInstance.objects.all().values('issuer_id').annotate(total=Count('issuer_id')):
         issuer_id = o["issuer_id"]

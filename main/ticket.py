@@ -401,7 +401,7 @@ class RSPTicket:
     issuer_id: str
     ticket_ref: str
     raw_ticket: bytes
-    data: typing.Union[rsp.RailcardData, rsp.TicketData]
+    data: typing.Union[rsp.RailcardData, rsp.TicketData, rsp.Type11]
 
     @property
     def ticket_type(self) -> str:
@@ -411,6 +411,8 @@ class RSPTicket:
         if self.rsp_type == "08":
             return models.Ticket.TYPE_RAILCARD
         elif self.rsp_type == "06":
+            return models.Ticket.TYPE_FAHRKARTE
+        elif self.rsp_type == "11":
             return models.Ticket.TYPE_FAHRKARTE
         else:
             return models.Ticket.TYPE_UNKNOWN
@@ -436,6 +438,8 @@ class RSPTicket:
             return "Railcard"
         elif self.rsp_type == "06":
             return "Ticket"
+        elif self.rsp_type == "11":
+            return "Ticket (small)"
         else:
             return "Unknown"
 
@@ -1227,22 +1231,22 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
             message="None of the issuer's public keys match the RSP ticket",
         )
 
-    if ticket_envelope.ticket_type == "08":
-        data = rsp.RailcardData.parse(ticket_payload)
-    elif ticket_envelope.ticket_type == "06":
-        try:
+    try:
+        if ticket_envelope.ticket_type == "08":
+            data = rsp.RailcardData.parse(ticket_payload)
+        elif ticket_envelope.ticket_type == "06":
             data = rsp.TicketData.parse(ticket_payload)
-        except rsp.RSPException:
+        else:
             raise TicketError(
-                title="This doesn't look like a valid RSP ticket",
-                message="You may have scanned something that is not a RSP ticket, the ticket is corrupted, or there "
-                        "is a bug in this program.",
-                exception=traceback.format_exc()
+                title="Unsupported RSP ticket type",
+                message=f"We don't know how to parse type {ticket_envelope.ticket_type} tickets",
             )
-    else:
+    except rsp.RSPException:
         raise TicketError(
-            title="Unsupported RSP ticket type",
-            message=f"We don't know how to parse type {ticket_envelope.ticket_type} tickets",
+            title="This doesn't look like a valid RSP ticket",
+            message="You may have scanned something that is not a RSP ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
         )
 
     return RSPTicket(
@@ -1250,6 +1254,26 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
         ticket_ref=ticket_envelope.ticket_ref,
         issuer_id=ticket_envelope.issuer_id,
         raw_ticket=ticket_payload,
+        data=data
+    )
+
+
+def parse_ticket_rsp_11(ticket_bytes: bytes) -> RSPTicket:
+    try:
+        data = rsp.Type11.parse(ticket_bytes)
+    except rsp.RSPException:
+        raise TicketError(
+            title="This doesn't look like a valid RSP ticket",
+            message="You may have scanned something that is not a RSP ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return RSPTicket(
+        rsp_type=data.barcode_type,
+        ticket_ref=data.ticket_ref,
+        issuer_id=data.issuer_id,
+        raw_ticket=ticket_bytes,
         data=data
     )
 
@@ -1533,6 +1557,9 @@ def parse_ticket(
 
     if ticket_bytes[0] == 0x0a:
         return parse_ticket_swiss_pass(ticket_bytes)
+
+    if len(ticket_bytes) == 42:
+        return parse_ticket_rsp_11(ticket_bytes)
 
     if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
         return UICTicket.from_dosipas(ticket_bytes, dosipas, context)

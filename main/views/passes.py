@@ -2767,6 +2767,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         add_pkp_img(pkp, "pass/logo-nr.png", "icon.png")
         have_icon = True
 
+        def format_text(text):
+            return text.replace("<p>", "").replace("</p>", "\n\n").replace('title=""', "").strip()
+
         if isinstance(ticket_data.data, rsp.TicketData):
             validity_start = ticket_data.data.validity_start_time()
             validity_end = ticket_data.data.validity_end_time()
@@ -3076,9 +3079,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": "\n".join(tocs)
                     })
 
-            def format_text(text):
-                return text.replace("<p>", "").replace("</p>", "\n\n").replace('title=""', "").strip()
-
             if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.fare_label):
                 pass_fields["secondaryFields"].append({
                     "key": "product",
@@ -3087,6 +3087,215 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_conditions := rsp.ticket_data.get_ticket_conditions(ticket_data.data.fare_label):
+                if ticket_conditions.validity:
+                    if ticket_conditions.validity.day_outward:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-outward-date",
+                            "label": "product-validity-outward-date-label",
+                            "value": "",
+                            "attributedValue": format_text(ticket_conditions.validity.day_outward),
+                        })
+                    if ticket_conditions.validity.time_outward:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-outward-time",
+                            "label": "product-validity-outward-time-label",
+                            "value": "",
+                            "attributedValue": format_text(ticket_conditions.validity.time_outward),
+                        })
+                    if ticket_conditions.validity.day_return:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-return-date",
+                            "label": "product-validity-return-date-label",
+                            "value": "",
+                            "attributedValue": format_text(ticket_conditions.validity.day_return),
+                        })
+                    if ticket_conditions.validity.time_return:
+                        pass_fields["backFields"].append({
+                            "key": "product-validity-return-time",
+                            "label": "product-validity-return-time-label",
+                            "value": "",
+                            "attributedValue": format_text(ticket_conditions.validity.time_return),
+                        })
+                if ticket_conditions.break_of_journey:
+                    if ticket_conditions.break_of_journey.outward_note:
+                        pass_fields["backFields"].append({
+                            "key": "product-break-of-journey-outward",
+                            "label": "product-break-of-journey-outward-label",
+                            "attributedValue": format_text(ticket_conditions.break_of_journey.outward_note),
+                        })
+                    if ticket_conditions.break_of_journey.return_note:
+                        pass_fields["backFields"].append({
+                            "key": "product-break-of-journey-return",
+                            "label": "product-break-of-journey-return-label",
+                            "attributedValue": format_text(ticket_conditions.break_of_journey.return_note),
+                        })
+                if ticket_conditions.conditions:
+                    pass_fields["backFields"].append({
+                        "key": "product-conditions",
+                        "label": "product-conditions-label",
+                        "attributedValue": format_text(ticket_conditions.conditions),
+                    })
+                if ticket_conditions.changes_to_travel_plans:
+                    pass_fields["backFields"].append({
+                        "key": "product-changes",
+                        "label": "product-changes-label",
+                        "attributedValue": format_text(ticket_conditions.changes_to_travel_plans),
+                    })
+                if ticket_conditions.refunds:
+                    pass_fields["backFields"].append({
+                        "key": "product-refunds",
+                        "label": "product-refunds-label",
+                        "attributedValue": format_text(ticket_conditions.refunds),
+                    })
+
+            if not have_logo:
+                if ticket_data.issuer_id in RSP_ORG_LOGO:
+                    add_pkp_img(pkp, RSP_ORG_LOGO[ticket_data.issuer_id], "logo.png")
+                    have_logo = True
+                else:
+                    add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
+                    have_logo = True
+
+            if ticket_data.issuer_id in RSP_ORG_BG:
+                pass_json["backgroundColor"] = RSP_ORG_BG[ticket_data.issuer_id]
+            if ticket_data.issuer_id in RSP_ORG_FG:
+                pass_json["foregroundColor"] = RSP_ORG_FG[ticket_data.issuer_id]
+            if ticket_data.issuer_id in RSP_ORG_FG_SECONDARY:
+                pass_json["labelColor"] = RSP_ORG_FG_SECONDARY[ticket_data.issuer_id]
+
+        elif isinstance(ticket_data.data, rsp.Type11):
+            validity_start = ticket_data.data.validity_start_time()
+            validity_end = ticket_data.data.validity_end_time()
+
+            pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+            pass_fields = {
+                "transitType": "PKTransitTypeTrain",
+                "headerFields": [{
+                    "key": "departure-time",
+                    "label": "departure-time-label",
+                    "value": validity_start.isoformat(),
+                    "dateStyle": "PKDateStyleShort",
+                    "timeStyle": "PKDateStyleNone",
+                    "ignoresTimeZone": True,
+                }],
+                "primaryFields": [],
+                "auxiliaryFields": [{
+                    "key": "travel-class",
+                    "label": "class-code-label",
+                    "value": "class-code-second-label" if ticket_data.data.standard_class else "class-code-first-label",
+                }],
+                "secondaryFields": [],
+                "backFields": [],
+            }
+
+            if ticket_data.data.ticket_type == "PBD":
+                to_station = rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc)
+                pass_fields["primaryFields"].append({
+                    "key": "product",
+                    "label": "product-label",
+                    "value": to_station["NLCDESC"],
+                })
+                add_pkp_img(pkp, "pass/plusbus.png", "thumbnail.png")
+            else:
+                pass_type = "boardingPass"
+                if from_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.origin_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": from_station.crs_code,
+                        "semantics": {
+                            "departureLocation": {
+                                "latitude": float(from_station.latitude),
+                                "longitude": float(from_station.longitude),
+                            },
+                            "departureStationName": from_station.name,
+                        }
+                    })
+                    maps_link = urllib.parse.urlencode({
+                        "q": from_station.name,
+                        "ll": f"{from_station.latitude},{from_station.longitude}"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "from-station-back",
+                        "label": "from-station-label",
+                        "value": from_station.name,
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{from_station.name}</a>",
+                    })
+                elif from_station := rsp.locations.get_station_by_nlc(ticket_data.data.origin_nlc):
+                    if "3ALPHA" in from_station:
+                        name = from_station["3ALPHA"]
+                    else:
+                        name = from_station["NLCDESC"]
+                    pass_fields["primaryFields"].append({
+                        "key": "from-station",
+                        "label": "from-station-label",
+                        "value": name,
+                        "semantics": {
+                            "departureStationName": from_station["NLCDESC"]
+                        }
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "from-station-back",
+                        "label": "from-station-label",
+                        "value": from_station["NLCDESC"]
+                    })
+
+                if to_station := rsp.ticket_data.get_station_by_nlc(ticket_data.data.destination_nlc):
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": to_station.crs_code,
+                        "semantics": {
+                            "departureLocation": {
+                                "latitude": float(to_station.latitude),
+                                "longitude": float(to_station.longitude),
+                            },
+                            "departureStationName": to_station.name,
+                        }
+                    })
+                    maps_link = urllib.parse.urlencode({
+                        "q": to_station.name,
+                        "ll": f"{to_station.latitude},{to_station.longitude}"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "to-station-back",
+                        "label": "to-station-label",
+                        "value": to_station.name,
+                        "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{to_station.name}</a>",
+                    })
+                elif to_station := rsp.locations.get_station_by_nlc(ticket_data.data.destination_nlc):
+                    if "3ALPHA" in to_station:
+                        name = to_station["3ALPHA"]
+                    else:
+                        name = to_station["NLCDESC"]
+                    pass_fields["primaryFields"].append({
+                        "key": "to-station",
+                        "label": "to-station-label",
+                        "value": name,
+                        "semantics": {
+                            "departureStationName": to_station["NLCDESC"]
+                        }
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "to-station-back",
+                        "label": "to-station-label",
+                        "value": to_station["NLCDESC"]
+                    })
+
+            pass_fields["backFields"].append({
+                "key": "issuing-org",
+                "label": "issuing-organisation-label",
+                "value": ticket_data.issuer_name(),
+            })
+
+            if ticket_type := rsp.ticket_data.get_ticket_type(ticket_data.data.ticket_type):
+                pass_fields["auxiliaryFields"].append({
+                    "key": "product",
+                    "label": "product-label",
+                    "value": ticket_type["name"],
+                })
+
+            if ticket_conditions := rsp.ticket_data.get_ticket_conditions(ticket_data.data.ticket_type):
                 if ticket_conditions.validity:
                     if ticket_conditions.validity.day_outward:
                         pass_fields["backFields"].append({

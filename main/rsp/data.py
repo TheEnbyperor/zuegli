@@ -30,6 +30,13 @@ class BitStream:
 
         return out.decode("ascii").strip()
 
+    def read_string7(self, start: int, end: int) -> str:
+        out = bytearray()
+        for i in range(start, end, 7):
+            out.append(self.data[i:i+7].uint)
+
+        return out.decode("ascii").strip()
+
     def read_int(self, start: int, end: int) -> int:
         return self.data[start:end].uint
 
