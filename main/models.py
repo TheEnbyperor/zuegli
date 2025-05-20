@@ -581,6 +581,32 @@ class AppleRegistration(models.Model):
         ]
 
 
+class AndroidPassDevice(models.Model):
+    device_id = models.CharField(max_length=255, primary_key=True, verbose_name="Device ID")
+    push_token = models.CharField(max_length=255, verbose_name="Push token")
+
+    def __str__(self):
+        return self.device_id
+
+    def accounts(self):
+        accounts = []
+        for reg in self.registrations.all():
+            if reg.ticket.account_id:
+                accounts.append(reg.ticket.account_id)
+        return accounts
+
+
+class AndroidPassRegistration(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="android_pass_registrations", db_index=True)
+    device = models.ForeignKey(AndroidPassDevice, on_delete=models.CASCADE, related_name="registrations", db_index=True)
+    ticket_part = models.CharField(max_length=255, verbose_name="Ticket part", blank=True, null=True)
+
+    class Meta:
+        unique_together = [
+            ["ticket", "device", "ticket_part"],
+        ]
+
+
 class AttidoDevice(models.Model):
     device_id = models.CharField(max_length=255, primary_key=True, verbose_name="Device ID")
     push_token = models.CharField(max_length=255, verbose_name="Push token")

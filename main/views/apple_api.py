@@ -26,7 +26,7 @@ def get_ticket(serial_number) -> typing.Optional[typing.Tuple["models.Ticket", s
         return None
 
 
-def check_pass_auth(want_auth_type: str = "ApplePass"):
+def check_pass_auth(want_auth_type: typing.Union[str, typing.List[str]] = "ApplePass"):
     def decorator(f):
         def wrapper(request, *, pass_type_id, serial_number, **kwargs):
             if "Authorization" not in request.headers:
@@ -37,7 +37,13 @@ def check_pass_auth(want_auth_type: str = "ApplePass"):
             if len(auth_header) != 2:
                 return HttpResponse(status=401)
             auth_type, auth_token = auth_header
-            if auth_type != want_auth_type:
+            if isinstance(want_auth_type, str):
+                if auth_type != want_auth_type:
+                    return HttpResponse(status=401)
+            elif isinstance(want_auth_type, list):
+                if auth_type not in want_auth_type:
+                    return HttpResponse(status=401)
+            else:
                 return HttpResponse(status=401)
 
             if pass_type_id != settings.PKPASS_CONF["pass_type"]:
@@ -51,7 +57,7 @@ def check_pass_auth(want_auth_type: str = "ApplePass"):
                 if ticket_obj.pkpass_authentication_token != auth_token:
                     return HttpResponse(status=401)
 
-                return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, **kwargs)
+                return f(request, ticket_obj=ticket_obj, ticket_part=ticket_part, auth_type=auth_type, **kwargs)
             else:
                 return HttpResponse(status=404)
 
@@ -108,8 +114,8 @@ def pass_status(request, device_id, pass_type_id):
 
 
 @csrf_exempt
-@check_pass_auth()
-def registration(request, device_id, ticket_obj, ticket_part):
+@check_pass_auth(want_auth_type=["ApplePass", "AndroidPass"])
+def registration(request, device_id, ticket_obj, ticket_part, auth_type):
     if request.method == "POST":
         if request.content_type != "application/json":
             return HttpResponse(status=415)
@@ -122,17 +128,30 @@ def registration(request, device_id, ticket_obj, ticket_part):
         if "pushToken" not in data or not data["pushToken"] or not isinstance(data["pushToken"], str):
             return HttpResponse(status=400)
 
-        device_obj, _ = models.AppleDevice.objects.update_or_create(
-            device_id=device_id,
-            defaults={
-                "push_token": data["pushToken"],
-            }
-        )
-        models.AppleRegistration.objects.update_or_create(
-            device=device_obj,
-            ticket=ticket_obj,
-            ticket_part=ticket_part,
-        )
+        if auth_type == "ApplePass":
+            device_obj, _ = models.AppleDevice.objects.update_or_create(
+                device_id=device_id,
+                defaults={
+                    "push_token": data["pushToken"],
+                }
+            )
+            models.AppleRegistration.objects.update_or_create(
+                device=device_obj,
+                ticket=ticket_obj,
+                ticket_part=ticket_part,
+            )
+        elif auth_type == "AndroidPass":
+            device_obj, _ = models.AndroidPassDevice.objects.update_or_create(
+                device_id=device_id,
+                defaults={
+                    "push_token": data["pushToken"],
+                }
+            )
+            models.AndroidPassRegistration.objects.update_or_create(
+                device=device_obj,
+                ticket=ticket_obj,
+                ticket_part=ticket_part,
+            )
 
         return HttpResponse(status=200)
     elif request.method == "DELETE":
@@ -194,8 +213,8 @@ def registration_attido(request, device_id, ticket_obj, ticket_part):
 
 @csrf_exempt
 @condition(last_modified_func=ticket_updated_date)
-@check_pass_auth()
-def pass_document(request, ticket_obj, ticket_part):
+@check_pass_auth(want_auth_type=["ApplePass", "AndroidPass"])
+def pass_document(request, ticket_obj, ticket_part, auth_type):
     headers = dict(request.headers)
     headers.pop("Cookie", None)
     headers.pop("Authorization", None)
