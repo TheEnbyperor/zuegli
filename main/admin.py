@@ -83,6 +83,16 @@ class AppleRegistrationInline(admin.StackedInline):
     ]
 
 
+class AndroidPassRegistrationInline(admin.StackedInline):
+    extra = 0
+    model = models.AndroidPassRegistration
+    readonly_fields = [
+        "device",
+        "ticket",
+        "ticket_part"
+    ]
+
+
 class AttidoRegistrationInline(admin.StackedInline):
     extra = 0
     model = models.AttidoRegistration
@@ -135,6 +145,7 @@ class TicketAdmin(admin.ModelAdmin):
         IATATicketInstanceInline,
         BahnBonusInstanceInline,
         AppleRegistrationInline,
+        AndroidPassRegistrationInline,
         AttidoRegistrationInline,
         AccessLogInline,
     ]
@@ -185,6 +196,17 @@ class AppleDeviceAdmin(admin.ModelAdmin):
     ]
     inlines = [
         AppleRegistrationInline,
+    ]
+
+
+@admin.register(models.AndroidPassDevice)
+class AndroidPassDeviceAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        "device_id",
+        "push_token",
+    ]
+    inlines = [
+        AndroidPassRegistrationInline,
     ]
 
 

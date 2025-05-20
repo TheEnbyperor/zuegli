@@ -198,6 +198,13 @@ except FileNotFoundError:
     RAILEASY_API_KEY = None
 
 try:
+    with open(BASE_DIR / "priv" / "wallet-passes.json") as f:
+        d = json.load(f)
+        WALLET_PASSES_API_KEY = d["key"]
+except FileNotFoundError:
+    WALLET_PASSES_API_KEY = None
+
+try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
 except FileNotFoundError:
