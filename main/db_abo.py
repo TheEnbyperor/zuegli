@@ -1,31 +1,44 @@
 import base64
 import json
-import niquests
+import niquests.adapters
 import datetime
-import logging
 import bs4
+import urllib3.util
+from celery import shared_task
+from celery.utils.log import get_task_logger
 from django.utils import timezone
-
 from . import models, aztec, ticket, apn
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
+retry_strategy = urllib3.util.Retry(
+    total=10,
+    status_forcelist=[429, 500, 502, 503, 504],
+)
+adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
+session = niquests.Session()
+session.mount("https://", adapter)
 
 
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
 def update_all():
     now = timezone.now()
     for abo in models.DBSubscription.objects.all():
         if abo.refresh_at <= now:
-            update_abo_tickets(abo)
+            update_abo_tickets.delay(abo.pk)
         else:
-            logging.info(f"Not updating DB subscription {abo.device_token} - not due for refresh")
-
-        if abo.pk:
-            for t in abo.tickets.all():
-                apn.notify_ticket_if_renewed(t)
+            logger.info(f"Not updating DB subscription {abo.device_token} - not due for refresh")
 
 
-def update_abo_tickets(abo: "models.DBSubscription"):
-    r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/refreshmultiple", json={
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def update_abo_tickets(abo_id):
+    abo = models.DBSubscription.objects.get(pk=abo_id)
+    r = session.post("https://dig-aboprod.noncd.db.de/aboticket/refreshmultiple", json={
         "aboTicketCheckRequestList": [{
             "deviceToken": abo.device_token,
         }]
@@ -90,4 +103,7 @@ def update_abo_tickets(abo: "models.DBSubscription"):
             logger.error("Error decoding barcode ticket: %s", e)
             continue
 
-    logging.info(f"Successfully updated DB subscription {abo.device_token}")
+    logger.info(f"Successfully updated DB subscription {abo.device_token}")
+
+    for t in abo.tickets.all():
+        apn.notify_ticket_if_renewed.delay(t.pk)

@@ -88,8 +88,8 @@ class Command(BaseCommand):
                 print(f"Force updating ticket {ticket.public_id()}")
                 ticket.last_updated = timezone.now()
                 ticket.save()
-                apn.notify_ticket(ticket)
-                gwallet.sync_ticket(ticket)
+                apn.notify_ticket.delay(ticket.pk)
+                gwallet.sync_ticket.delay(ticket.pk)
 
             processed += len(batch)
             if processed >= next_print:

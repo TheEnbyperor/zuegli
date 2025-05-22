@@ -122,7 +122,7 @@ class RCT2Parser:
         except ValueError:
             operator_rics = 0
 
-        if operator_rics in (1088, 1184):
+        if operator_rics in (1088, 1184, 1084):
             # BeNeRail (NSI and SNCB/NMBS International) uses square brackets in the via-string where chevrons should be used
             valid_region = valid_region.replace("[", "<").replace("]", ">").replace("%", "*")
 

@@ -1799,10 +1799,10 @@ def update_from_barcode(
 
     if should_update:
         if not created:
-            apn.notify_ticket(ticket_obj)
-        gwallet.sync_ticket(ticket_obj)
+            apn.notify_ticket.delay(ticket_obj.pk)
+        gwallet.sync_ticket.delay(ticket_obj.pk)
 
     if created:
-        email.send_new_ticket_email(ticket_obj)
+        email.send_new_ticket_email.delay(ticket_obj.pk)
 
     return ticket_obj, created

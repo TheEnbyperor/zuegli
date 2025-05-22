@@ -52,6 +52,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -117,6 +120,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -184,6 +190,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -249,6 +258,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -316,6 +328,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -381,6 +396,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -448,6 +466,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -513,6 +534,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -580,6 +604,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -646,6 +673,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -707,6 +737,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -774,6 +807,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -839,6 +875,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
@@ -906,6 +945,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -972,6 +1014,9 @@ spec:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
                 - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
+                - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:
                     name: vdv-pkpass-s3
@@ -1037,6 +1082,9 @@ spec:
                 - secretRef:
                     name: vdv-pkpass-email
                   prefix: "EMAIL_"
+                - secretRef:
+                    name: vdv-pkpass-celery
+                  prefix: "CELERY_"
                 - secretRef:
                     name: vdv-pkpass-django-secret
                 - secretRef:

@@ -196,8 +196,8 @@ def view_ticket(request, pk):
                         file_name = default_storage.save(file.name, file)
                         ticket_obj.photos[pi] = file_name
                         ticket_obj.save()
-                        apn.notify_ticket(ticket_obj)
-                        gwallet.sync_ticket(ticket_obj)
+                        apn.notify_ticket.delay(ticket_obj.pk)
+                        gwallet.sync_ticket.delay(ticket_obj.pk)
 
     return render(request, "main/ticket.html", {
         "ticket": ticket_obj,
