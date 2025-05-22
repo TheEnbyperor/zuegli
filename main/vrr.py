@@ -44,7 +44,7 @@ def update_all():
             if not account.is_oauth_authenticated(provider_id):
                 continue
 
-            update_vrr_tickets.delay(account.pk. provider_id)
+            update_vrr_tickets.delay(account.pk, provider_id)
 
 
 @shared_task(
