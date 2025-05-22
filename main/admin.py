@@ -177,8 +177,8 @@ class TicketAdmin(admin.ModelAdmin):
 
         ticket.last_updated = timezone.now()
         ticket.save()
-        apn.notify_ticket(ticket)
-        gwallet.sync_ticket(ticket)
+        apn.notify_ticket.delay(ticket.pk)
+        gwallet.sync_ticket.delay(ticket.pk)
 
         messages.add_message(request, messages.INFO, "Update sent to Apple and Google")
 

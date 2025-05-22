@@ -1,10 +1,17 @@
 from django.core import mail
 from django.template.loader import render_to_string
 from django.conf import settings
+from celery import shared_task
 from . import models, gwallet
 from .views import passes
 
-def send_new_ticket_email(ticket: "models.Ticket"):
+
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def send_new_ticket_email(ticket_id):
+    ticket = models.Ticket.objects.get(pk=ticket_id)
     if not ticket.account:
         return
 

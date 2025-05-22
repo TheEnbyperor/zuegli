@@ -1,18 +1,21 @@
 import base64
-import niquests
 import niquests.exceptions
 import niquests.adapters
-import logging
 import bs4
 import secrets
 import urllib3.util
-from . import models, aztec, ticket, oauth
+from celery import shared_task
+from celery.utils.log import get_task_logger
+from . import models, aztec, ticket, oauth, apn
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
 retry_strategy = urllib3.util.Retry(
     total=10,
     status_forcelist=[429, 500, 502, 503, 504],
 )
+adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
+session = niquests.Session()
+session.mount("https://", adapter)
 
 
 def update_from_img_elm(barcode_elm, account):
@@ -43,87 +46,99 @@ def update_from_img_elm(barcode_elm, account):
         return None
 
 
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
 def update_all():
-    adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    session = niquests.Session()
-    session.mount("https://", adapter)
-
     for account in models.Account.objects.all():
         if not account.is_db_authenticated():
             continue
 
-        db_token = oauth.get_token(account, "db")
-        if not db_token:
-            logger.error(f"Failed to get access token for account {account}")
-            continue
+        update_account.delay(account.pk)
 
-        account_oauth = models.AccountOAuth.objects.get(account=account, provider="db")
-        account_id = account_oauth.extra_data["account_id"]
 
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def update_account(account_id):
+    account = models.Account.objects.get(pk=account_id)
+    db_token = oauth.get_token(account, "db")
+    if not db_token:
+        logger.error(f"Failed to get access token for account {account}")
+        return
+
+    account_oauth = models.AccountOAuth.objects.get(account=account, provider="db")
+    account_id = account_oauth.extra_data["account_id"]
+
+    try:
+        r = session.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
+            "Authorization": f"Bearer {db_token}",
+            "Accept": "application/x.db.vendo.mob.kundenkonto.v7+json",
+            "X-Correlation-ID": secrets.token_hex(16),
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+        })
+        if not r.ok:
+            logger.error(f"Failed to get profiles for account {account_id} - {r.text}")
+            return
+    except niquests.exceptions.RequestException as e:
+        logger.error(f"Failed to get profiles for account {account_id}: {e}")
+        return
+
+    account_data = r.json()
+    for profile in account_data["kundenprofile"]:
+        profile_id = profile["id"]
         try:
-            r = session.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
+            r = session.get("https://app.vendo.noncd.db.de/mob/reisenuebersicht", params={
+                "kundenprofilId": profile_id,
+            }, headers={
                 "Authorization": f"Bearer {db_token}",
-                "Accept": "application/x.db.vendo.mob.kundenkonto.v7+json",
+                "Accept": "application/x.db.vendo.mob.reisenuebersicht.v5+json",
                 "X-Correlation-ID": secrets.token_hex(16),
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             })
             if not r.ok:
-                logger.error(f"Failed to get profiles for account {account_id} - {r.text}")
+                logger.error(f"Failed to get bookings for profile {profile_id} - {r.text}")
                 continue
         except niquests.exceptions.RequestException as e:
-            logger.error(f"Failed to get profiles for account {account_id}: {e}")
+            logger.error(f"Failed to get bookings for profile {profile_id}: {e}")
             continue
 
-        account_data = r.json()
-        for profile in account_data["kundenprofile"]:
-            profile_id = profile["id"]
-            try:
-                r = session.get("https://app.vendo.noncd.db.de/mob/reisenuebersicht", params={
-                    "kundenprofilId": profile_id,
-                }, headers={
-                    "Authorization": f"Bearer {db_token}",
-                    "Accept": "application/x.db.vendo.mob.reisenuebersicht.v5+json",
-                    "X-Correlation-ID": secrets.token_hex(16),
-                    "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-                })
-                if not r.ok:
-                    logger.error(f"Failed to get bookings for profile {profile_id} - {r.text}")
+        profile_data = r.json()
+        for auftrag in profile_data["auftragsIndizes"]:
+            auftragsnummer = auftrag["auftragsnummer"]
+            for kundenwunsch_id in auftrag["kundenwunschIds"]:
+                try:
+                    r = session.get(f"https://app.vendo.noncd.db.de/mob/auftrag/{auftragsnummer}/kundenwunsch/{kundenwunsch_id}", headers={
+                        "Authorization": f"Bearer {db_token}",
+                        "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
+                        "X-Correlation-ID": secrets.token_hex(16),
+                        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+                    })
+                    if not r.ok:
+                        logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {r.text}")
+                        continue
+                except niquests.exceptions.RequestException as e:
+                    logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {e}")
                     continue
-            except niquests.exceptions.RequestException as e:
-                logger.error(f"Failed to get bookings for profile {profile_id}: {e}")
-                continue
 
-            profile_data = r.json()
-            for auftrag in profile_data["auftragsIndizes"]:
-                auftragsnummer = auftrag["auftragsnummer"]
-                for kundenwunsch_id in auftrag["kundenwunschIds"]:
-                    try:
-                        r = session.get(f"https://app.vendo.noncd.db.de/mob/auftrag/{auftragsnummer}/kundenwunsch/{kundenwunsch_id}", headers={
-                            "Authorization": f"Bearer {db_token}",
-                            "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
-                            "X-Correlation-ID": secrets.token_hex(16),
-                            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-                        })
-                        if not r.ok:
-                            logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {r.text}")
-                            continue
-                    except niquests.exceptions.RequestException as e:
-                        logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {e}")
-                        continue
+                ticket_data = r.json()
+                if not ticket_data.get("ticket"):
+                    continue
 
-                    ticket_data = r.json()
-                    if not ticket_data.get("ticket"):
-                        continue
+                ticket_data = base64.urlsafe_b64decode(ticket_data["ticket"]["ticket"] + '==')
+                ticket_layout = bs4.BeautifulSoup(ticket_data, 'html.parser')
+                barcode_elm = ticket_layout.find("img", attrs={
+                    "id": "ticketbarcode"
+                }, recursive=True)
+                if not barcode_elm:
+                    logger.error(f"Could not find barcode element - account {account}")
+                    continue
 
-                    ticket_data = base64.urlsafe_b64decode(ticket_data["ticket"]["ticket"] + '==')
-                    ticket_layout = bs4.BeautifulSoup(ticket_data, 'html.parser')
-                    barcode_elm = ticket_layout.find("img", attrs={
-                        "id": "ticketbarcode"
-                    }, recursive=True)
-                    if not barcode_elm:
-                        logger.error(f"Could not find barcode element - account {account}")
-                        continue
+                logger.info(f"Found barcode element - ticket ID {auftragsnummer}")
 
-                    logger.info(f"Found barcode element - ticket ID {auftragsnummer}")
+                update_from_img_elm(barcode_elm, account)
 
-                    update_from_img_elm(barcode_elm, account)
+    for t in account_oauth.tickets.all():
+        apn.notify_ticket_if_renewed(t)

@@ -2,29 +2,38 @@ import datetime
 import niquests
 import niquests.exceptions
 import niquests.adapters
-import logging
 import urllib3.util
 from django.utils import timezone
-from . import models, ticket, views, oauth
+from celery import shared_task
+from celery.utils.log import get_task_logger
+from . import models, ticket, views, oauth, apn
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
 retry_strategy = urllib3.util.Retry(
     total=10,
     status_forcelist=[429, 500, 502, 503, 504],
 )
 
 
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
 def update_all():
     adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
     session = niquests.Session()
     session.mount("https://", adapter)
 
-
     for account in models.Account.objects.all():
-        update_avv_tickets(account)
+        update_avv_tickets.delay(account.pk)
 
 
-def update_avv_tickets(account: "models.Account"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def update_avv_tickets(account_id):
+    account = models.Account.objects.get(pk=account_id)
     client_token = views.avv.get_avv_client_token()
 
     if not account.is_avv_authenticated():
@@ -87,3 +96,6 @@ def update_avv_tickets(account: "models.Account"):
             except ticket.TicketError as e:
                 logger.error("Error decoding barcode ticket: %s", e)
                 continue
+
+    for t in account_oauth.tickets.all():
+        apn.notify_ticket_if_renewed(t)

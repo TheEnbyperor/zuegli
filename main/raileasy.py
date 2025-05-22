@@ -1,19 +1,23 @@
 import typing
-import niquests
 import niquests.adapters
 import datetime
-import logging
 import urllib3.util
 import pymupdf
 from django.utils import timezone
 from django.conf import settings
+from celery import shared_task
+from celery.utils.log import get_task_logger
 from . import models, apn, aztec, ticket
 
-logger = logging.getLogger(__name__)
+logger = get_task_logger(__name__)
 retry_strategy = urllib3.util.Retry(
     total=10,
     status_forcelist=[429, 500, 502, 503, 504],
 )
+adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
+session = niquests.Session()
+session.mount("https://", adapter)
+
 
 def get_token(account: "models.Account") -> typing.Optional[str]:
     now = timezone.now()
@@ -24,14 +28,14 @@ def get_token(account: "models.Account") -> typing.Optional[str]:
     if oauth.token and oauth.token_expires_at and oauth.token_expires_at > now - datetime.timedelta(minutes=3):
         return oauth.token
     elif oauth.refresh_token:
-        r = niquests.post("https://securetoken.googleapis.com/v1/token", params={
-                "key": settings.RAILEASY_API_KEY,
-            }, data={
-                "grant_type": "refresh_token",
-                "refresh_token": oauth.refresh_token,
-            }, headers={
-                "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-            })
+        r = session.post("https://securetoken.googleapis.com/v1/token", params={
+            "key": settings.RAILEASY_API_KEY,
+        }, data={
+            "grant_type": "refresh_token",
+            "refresh_token": oauth.refresh_token,
+        }, headers={
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)"
+        })
         if not r.ok:
             return None
 
@@ -46,19 +50,24 @@ def get_token(account: "models.Account") -> typing.Optional[str]:
     return None
 
 
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
 def update_all():
     for oauth in models.AccountOAuth.objects.filter(provider="raileasy", token__isnull=False):
-        update_tickets(oauth.account)
+        update_tickets.delay(oauth.account_id)
 
         for t in oauth.tickets.all():
-            apn.notify_ticket_if_renewed(t)
+            apn.notify_ticket_if_renewed.delay(t.pk)
 
 
-def update_tickets(account: "models.Account"):
-    adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    session = niquests.Session()
-    session.mount("https://", adapter)
-
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def update_tickets(account_id):
+    account = models.Account.objects.get(pk=account_id)
     logger.info(f"Updating Raileasy {account}")
 
     token = get_token(account)

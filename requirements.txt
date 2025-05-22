@@ -42,3 +42,4 @@ ecdsa
 idna
 urllib3
 django-solo
+celery

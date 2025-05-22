@@ -6,21 +6,29 @@ import google.auth.crypt
 import google.auth.jwt
 import urllib.parse
 import pytz
-import logging
 import decimal
 from django.conf import settings
 from django.templatetags.static import static
 from django.shortcuts import reverse
+from celery import shared_task
+from celery.utils.log import get_task_logger
 from . import models, rsp, templatetags, vdv, ssb, uic
 
-logger = logging.getLogger(__name__)
+
+logger = get_task_logger(__name__)
 client = None
 if settings.GOOGLE_CREDS:
     client = googleapiclient.discovery.build("walletobjects", "v1", credentials=settings.GOOGLE_CREDS)
 
 
-def sync_ticket(ticket: "models.Ticket"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def sync_ticket(ticket_id):
+    ticket = models.Ticket.objects.get(id=ticket_id)
     if not client:
+        logger.error("Can't update Google Wallet ticket - no credentials provided")
         return
     object_id = f"{settings.GWALLET_CONF['issuer_id']}.{ticket.pk.replace('=', '')}"
     data, obj_type = make_ticket_obj(ticket, object_id)
@@ -40,6 +48,7 @@ def sync_ticket(ticket: "models.Ticket"):
                     client.transitobject().insert(body=data).execute()
             except googleapiclient.errors.HttpError as e:
                 logger.error(f"Failed to create Google pass object: {e}")
+                raise e
     else:
         try:
             if obj_type == "generic":
@@ -48,6 +57,7 @@ def sync_ticket(ticket: "models.Ticket"):
                 client.transitobject().update(resourceId=object_id, body=data).execute()
         except googleapiclient.errors.HttpError as e:
             logger.error(f"Failed to update Google pass object: {e}")
+            raise e
 
 
 def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:

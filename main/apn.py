@@ -1,9 +1,16 @@
 import niquests
 from django.conf import settings
 from django.utils import timezone
+from celery import shared_task
 from . import models, gwallet
 
-def notify_device(device: "models.AppleDevice"):
+
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def notify_device(device_id):
+    device = models.AppleDevice.objects.get(pk=device_id)
     r = niquests.post(f"https://api.push.apple.com/3/device/{device.push_token}", headers={
         "apns-push-type": "alert",
         "apns-priority": "10"
@@ -15,7 +22,12 @@ def notify_device(device: "models.AppleDevice"):
     r.raise_for_status()
 
 
-def notify_android_pass_device(device: "models.AndroidPassDevice"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def notify_android_pass_device(device_id):
+    device = models.AndroidPassDevice.objects.get(pk=device_id)
     r = niquests.post("https://walletpasses.appspot.com/api/v1/push", json={
         "passTypeIdentifier": settings.PKPASS_CONF["pass_type"],
         "pushTokens": [device.push_token],
@@ -26,24 +38,38 @@ def notify_android_pass_device(device: "models.AndroidPassDevice"):
     r.raise_for_status()
 
 
-def notify_attido_device(device: "models.AttidoDevice"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def notify_attido_device(device_id):
+    device = models.AttidoDevice.objects.get(pk=device_id)
     r = niquests.post(f"{device.push_service_url}/v1/pushUpdate", json={
         "passTypeID": settings.PKPASS_CONF["pass_type"],
         "pushToken": device.push_token,
     })
     r.raise_for_status()
 
-
-def notify_ticket(ticket: "models.Ticket"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def notify_ticket(ticket_id):
+    ticket = models.Ticket.objects.get(id=ticket_id)
     for registration in ticket.apple_registrations.all():
-        notify_device(registration.device)
+        notify_device.delay(registration.device_id)
     for registration in ticket.android_pass_registrations.all():
-        notify_android_pass_device(registration.device)
+        notify_android_pass_device.delay(registration.device_id)
     for registration in ticket.attido_registrations.all():
-        notify_attido_device(registration.device)
+        notify_attido_device.delay(registration.device_id)
 
 
-def notify_ticket_if_renewed(ticket: "models.Ticket"):
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def notify_ticket_if_renewed(ticket_id):
+    ticket = models.Ticket.objects.get(id=ticket_id)
     now = timezone.now()
     current_ticket_valid_from = None
     uic_tickets = ticket.uic_instances.filter(validity_start__lt=now).order_by("-validity_end")
@@ -58,5 +84,5 @@ def notify_ticket_if_renewed(ticket: "models.Ticket"):
         if current_ticket_valid_from > ticket.last_updated:
             ticket.last_updated = now
             ticket.save()
-            notify_ticket(ticket)
-            gwallet.sync_ticket(ticket)
+            notify_ticket.delay(ticket.pk)
+            gwallet.sync_ticket.delay(ticket.pk)
