@@ -10,7 +10,7 @@ def update_all():
         update_saarvv_tickets.delay(oauth.account_id)
 
         for t in oauth.tickets.all():
-            apn.notify_ticket_if_renewed(t)
+            apn.notify_ticket_if_renewed.delay(t.pk)
 
 
 @shared_task(
