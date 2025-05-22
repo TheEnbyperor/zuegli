@@ -25,6 +25,9 @@ def update_all():
     session.mount("https://", adapter)
 
     for account in models.Account.objects.all():
+        if not account.is_avv_authenticated():
+            continue
+
         update_avv_tickets.delay(account.pk)
 
 
@@ -35,9 +38,6 @@ def update_all():
 def update_avv_tickets(account_id):
     account = models.Account.objects.get(pk=account_id)
     client_token = views.avv.get_avv_client_token()
-
-    if not account.is_avv_authenticated():
-        return
 
     avv_token = oauth.get_token(account, "avv")
     if not avv_token:
