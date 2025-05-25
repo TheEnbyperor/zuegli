@@ -36,7 +36,7 @@ def raileasy_login(request):
                         "refresh_token": auth_data["refreshToken"],
                     }
                 )
-                raileasy.update_tickets(request.user.account)
+                raileasy.update_tickets.delay(request.user.account.pk)
                 return redirect("account")
     else:
         form = forms.RaileasyLoginForm()

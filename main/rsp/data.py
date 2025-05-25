@@ -227,7 +227,7 @@ class TicketData:
             bidirectional=d.read_bool(372),
             carnet_count=d.read_int(373, 379),
             limited_duration_code=d.read_int(379, 383),
-            sub_utn=d.read_bool(383),
+            sub_utn=not d.read_bool(383),
             # 384 read above
             print_free_use=d.read_bool(385),
             # 386-390 read above
