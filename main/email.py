@@ -11,7 +11,10 @@ from .views import passes
     ignore_result=True
 )
 def send_new_ticket_email(ticket_id):
-    ticket = models.Ticket.objects.get(pk=ticket_id)
+    try:
+        ticket = models.Ticket.objects.get(pk=ticket_id)
+    except models.Ticket.DoesNotExist:
+        return
     if not ticket.account:
         return
 

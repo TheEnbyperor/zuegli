@@ -26,7 +26,10 @@ if settings.GOOGLE_CREDS:
     ignore_result=True
 )
 def sync_ticket(ticket_id):
-    ticket = models.Ticket.objects.get(id=ticket_id)
+    try:
+        ticket = models.Ticket.objects.get(id=ticket_id)
+    except models.Ticket.DoesNotExist:
+        return
     if not client:
         logger.error("Can't update Google Wallet ticket - no credentials provided")
         return
