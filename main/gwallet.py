@@ -212,14 +212,14 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         },
         "cardTitle": {
             "defaultValue": {
-                "language": "de",
-                "value": ""
+                "language": "en",
+                "value": "Zügli"
             }
         },
         "header": {
             "defaultValue": {
                 "language": "en",
-                "value": ""
+                "value": "Unknown"
             }
         }
     }
@@ -467,7 +467,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         obj["ticketLegs"][0]["carriage"] = train_number
 
                     if "productIdIA5" in document:
-                        if "header" in obj or ticket_type == "transit":
+                        if obj["header"]["defaultValue"]["value"] or ticket_type == "transit":
                             obj["textModulesData"].append({
                                 "id": "product-id",
                                 "localizedHeader": {
@@ -548,12 +548,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     obj["genericType"] = "GENERIC_LOYALTY_CARD"
                     obj["classId"] = \
                         f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
-                    obj["header"] = {
-                        "defaultValue": {
-                            "language": "en",
-                            "value": ""
-                        }
-                    }
 
                     validity_start = templatetags.rics.rics_valid_from_date(document)
                     validity_end = templatetags.rics.rics_valid_until_date(document)
