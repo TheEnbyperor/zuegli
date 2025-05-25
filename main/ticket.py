@@ -294,6 +294,9 @@ class UICTicket:
         if self.envelope:
             return self.envelope.issuer_rics
 
+        if self.dosipas_envelope:
+            return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderNum"]
+
         return 0
 
     def distributor(self):
