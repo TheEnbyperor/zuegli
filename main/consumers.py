@@ -1,3 +1,4 @@
+import secrets
 import traceback
 import typing
 import base64
@@ -6,6 +7,7 @@ import queue
 import datetime
 import urllib.parse
 import Crypto.Hash.TupleHash128
+import ber_tlv.tlv
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.conf import settings
 from . import vdv_nm
@@ -58,7 +60,7 @@ class ResponseAPDU:
         self.data = data
 
     def __str__(self):
-        return (f"ResponseAPDU(data={self.data.hex().upper()}), "
+        return (f"ResponseAPDU(data={self.data.hex().upper()}, "
                 f"sw1={self.sw1:02x}, sw2={self.sw2:02x})")
 
     def __repr__(self):
@@ -194,6 +196,19 @@ class VDVConsumer(JsonWebsocketConsumer):
             )
             self.response_ready.set()
 
+    def get_entitlement(self, data_pointer: int):
+        sam_challenge = secrets.token_bytes(8)
+        data = ber_tlv.tlv.Tlv.build({
+            0x80: sam_challenge,
+        })
+        resp = self.apdu(RequestAPDU(
+            instruction_class=0x80, instruction=0x54, p1=0x00, p2=data_pointer,
+            data=data, expected_response_length=256,
+        ))
+        if not resp.is_success():
+            return None
+        return vdv_nm.get_entitlement.GetEntitlement.parse(resp.data, sam_challenge)
+
     def run(self):
         try:
             self.message("Reading card metadata...")
@@ -226,26 +241,27 @@ class VDVConsumer(JsonWebsocketConsumer):
             card_id = base64.b32hexencode(hd.digest()).decode("utf-8")
 
             self.message("Reading data files...")
-            application_data = self.apdu(RequestAPDU(
+            application_data_data = self.apdu(RequestAPDU(
                 instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
                 data=bytes([0xEE, application_directory.application_data.data_pointer]),
                 expected_response_length=256,
             ))
-            if not application_data.is_success():
+            if not application_data_data:
                 self.error("Failed to read Application Data")
                 return
+            vdv_nm.application_data.ApplicationData.parse(application_data_data.data)
 
-            application_info_text = self.apdu(RequestAPDU(
+            application_info_text_data = self.apdu(RequestAPDU(
                 instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
                 data=bytes([0xC7, application_directory.application_data.data_pointer]),
                 expected_response_length=256,
             ))
-            if not application_info_text.is_success():
+            if not application_info_text_data.is_success():
                 self.error("Failed to read Application Info Text")
-            application_info_text = vdv_nm.info_text.InfoText.parse(application_info_text.data)
+
+            application_info_text = vdv_nm.info_text.InfoText.parse(application_info_text_data.data)
 
             log_entries = []
-
             for i in range(1, application_directory.application_logbook.sequence_number + 1):
                 application_logbook = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
@@ -265,6 +281,8 @@ class VDVConsumer(JsonWebsocketConsumer):
             if not key_register.is_success():
                 self.error("Failed to read Key Register")
 
+            vdv_nm.key_register.KeyRegister.parse(key_register.data)
+
             customer_infotext = self.apdu(RequestAPDU(
                 instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
                 data=bytes([0xC7, application_directory.customer_data.data_pointer]),
@@ -275,6 +293,7 @@ class VDVConsumer(JsonWebsocketConsumer):
             customer_infotext = vdv_nm.info_text.InfoText.parse(customer_infotext.data)
 
             self.message("Reading travel authorizations...")
+            authorizations = []
             for auth in application_directory.authorizations:
                 authorization = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
@@ -283,7 +302,7 @@ class VDVConsumer(JsonWebsocketConsumer):
                 ))
                 if not authorization.is_success():
                     self.error("Failed to read Authorization Data")
-                authorization = vdv_nm.authorization.Authorization.parse(authorization.data)
+                vdv_nm.authorization.Authorization.parse(authorization.data)
 
                 authorization_infotext = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
@@ -293,6 +312,8 @@ class VDVConsumer(JsonWebsocketConsumer):
                 if not authorization_infotext.is_success():
                     self.error("Failed to read Authorization Info Text")
                 authorization_infotext = vdv_nm.info_text.InfoText.parse(authorization_infotext.data)
+
+                authorizations.append((authorization.data, authorization_infotext.text))
 
             self.message("Reading public keys...")
 
@@ -345,6 +366,8 @@ class VDVConsumer(JsonWebsocketConsumer):
             application_pk = vdv.Certificate.parse(application_pk_bytes)
             vdv.CertificateData.parse(application_pk)
 
+            print()
+
             self.message("Saving...")
 
             d = {
@@ -356,7 +379,7 @@ class VDVConsumer(JsonWebsocketConsumer):
                 "application_directory": application_directory_data.data,
                 "ca_cert": ca_pk_bytes,
                 "application_cert": application_pk_bytes,
-                "application_data": application_data.data,
+                "application_data": application_data_data.data,
                 "application_info_text": application_info_text.text,
                 "key_register": key_register.data,
                 "customer_info_text": customer_infotext.text,
@@ -376,6 +399,9 @@ class VDVConsumer(JsonWebsocketConsumer):
                         "log_entry": data
                     }
                 )
+
+            for data, info_text in authorizations:
+                pass
 
             self.done(f"{settings.EXTERNAL_URL_BASE}{card.get_absolute_url()}")
         except (vdv_nm.VDVNMException, vdv.VDVException) as e:

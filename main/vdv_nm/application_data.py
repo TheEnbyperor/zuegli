@@ -1,6 +1,7 @@
 import dataclasses
 import ber_tlv.tlv
 from .util import VDVNMException
+from . import log
 
 
 @dataclasses.dataclass
@@ -10,6 +11,7 @@ class ApplicationData:
     auth_key_version: int
     issuing_transaction_sam_sequence_number: int
     issuing_transaction_sam_id: int
+    issuance: log.ApplicationIssue
 
     @classmethod
     def parse(cls, data: bytes) -> "ApplicationData":
@@ -44,10 +46,18 @@ class ApplicationData:
             raise VDVNMException("Missing issuing application")
         issuing_application = issuing_application[1]
 
+        issuing_general_data = next(filter(lambda t: t[0] == 0x89, issuing_application), None)
+        if not issuing_general_data:
+            raise VDVNMException("Missing issuance general transaction data")
+        issuing_general = log.GeneralData.parse(issuing_general_data[1])
+
+        issuance = log.ApplicationIssue.parse(issuing_general, issuing_application)
+
         return cls(
             pv_key_version=key_version[0],
             kvp_key_version=key_version[1],
             auth_key_version=key_version[2],
             issuing_transaction_sam_sequence_number=int.from_bytes(issuing_transaction[0:4], "big"),
             issuing_transaction_sam_id=int.from_bytes(issuing_transaction[4:7], "big"),
+            issuance=issuance,
         )

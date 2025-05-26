@@ -1,5 +1,5 @@
 import dataclasses
-from . import fci, application_directory, application_data
+from . import fci, application_directory, application_data, key_register
 from .. import vdv
 
 PKI_STORE = None
@@ -12,6 +12,7 @@ class Card:
     application_data: application_data.ApplicationData
     ca_cert: vdv.Certificate
     application_cert: vdv.Certificate
+    key_register: key_register.KeyRegister
 
     def root_ca_data(self):
         pki_store = vdv.get_pki_store()

@@ -720,7 +720,9 @@ class VDVSmartcard(models.Model):
             application_data=vdv_nm.application_data.ApplicationData.parse(bytes(self.application_data)),
             ca_cert=vdv.Certificate.parse(bytes(self.ca_cert)),
             application_cert=vdv.Certificate.parse(bytes(self.application_cert)),
+            key_register=vdv_nm.key_register.KeyRegister.parse(bytes(self.key_register)),
         )
+
 
 class VDVSmartcardLog(models.Model):
     smartcard = models.ForeignKey(VDVSmartcard, on_delete=models.CASCADE, related_name="logs", db_index=True)
