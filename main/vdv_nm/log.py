@@ -112,6 +112,9 @@ class GeneralData:
 
 
 class LogEntry(abc.ABC):
+    def type(self):
+        raise NotImplementedError()
+
     def type_name(self):
         raise NotImplementedError()
 
@@ -202,14 +205,55 @@ class ApplicationBlock(LogEntry):
 @dataclasses.dataclass
 class ApplicationIssue(LogEntry):
     general: GeneralData
+    application_sam_sequence_number: int
+    application_log_sequence_number: int
+    application_instance_number: int
+    application_instance_org_id: int
+    old_status: int
+    new_status: int
+    application_synchronisation_number: int
+    control_mac: bytes
+    control_key_version: int
+
+    def type(self):
+        return "application-issue"
 
     def type_name(self):
         return "Application issue"
 
+    def application_instance_org_name(self):
+        return vdv.ticket.map_org_id(self.application_instance_org_id)
+
+    def application_instance_org_name_opt(self):
+        return vdv.ticket.map_org_id(self.application_instance_org_id, True)
+
     @classmethod
     def parse(cls, general: GeneralData, data):
+        app_sam_seq = next(filter(lambda t: t[0] == 0x9b, data), None)
+        if not app_sam_seq:
+            raise VDVNMException("Missing application SAM sequence number")
+        app_sam_seq = app_sam_seq[1]
+        if len(app_sam_seq) != 4:
+            raise VDVNMException("Invalid application SAM sequence number")
+
+        status_change = next(filter(lambda t: t[0] == 0x8e, data), None)
+        if not status_change:
+            raise VDVNMException("Missing status change")
+        status_change = status_change[1]
+        if len(status_change) != 20:
+            raise VDVNMException("Invalid status change")
+
         return cls(
             general=general,
+            application_sam_sequence_number=int.from_bytes(app_sam_seq, "big"),
+            application_log_sequence_number=int.from_bytes(status_change[0:2], "big"),
+            application_instance_number=int.from_bytes(status_change[2:6], "big"),
+            application_instance_org_id=int.from_bytes(status_change[6:8], "big"),
+            old_status=status_change[8],
+            new_status=status_change[9],
+            application_synchronisation_number=status_change[10],
+            control_mac=status_change[11:19],
+            control_key_version=status_change[19],
         )
 
 

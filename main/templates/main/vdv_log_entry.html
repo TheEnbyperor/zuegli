@@ -1,0 +1,233 @@
+{% load rics %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            Entry #{{ log.general.sequence_number }}
+        </h2>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Type</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ log.type_name }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">SAM sequence number</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ log.general.sam_sequence_number }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">SAM ID</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ log.general.sam_id }}
+                </dd>
+            </div>
+            {% with org_name=log.general.operator_org_name_opt %}
+                {% if org_name %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Operator organisation</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ org_name }} (<code>{{ log.general.operator_org_id }}</code>)
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Operator organisation ID</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ log.general.operator_org_id }}</code></dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Timestamp</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ log.general.timestamp.as_datetime|date:"F d, Y H:i:s e" }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Terminal</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list govuk-summary-list--no-border">
+                        {% with type_name=log.general.terminal_type_name_opt %}
+                            {% if type_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ type_name }}
+                                        (<code>{{ log.general.terminal_type }}</code>)
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type Code</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ log.general.terminal_type }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Number</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ log.general.terminal_number }}</code>
+                            </dd>
+                        </div>
+                        {% with org_name=log.general.terminal_org_name_opt %}
+                            {% if org_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Owner</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ org_name }}
+                                        (<code>{{ log.general.terminal_org_id }}</code>)
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Owner ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ log.general.terminal_org_id }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </dl>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Location</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list govuk-summary-list--no-border">
+                        {% with type_name=log.general.location_type_name_opt %}
+                            {% if type_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ type_name }}
+                                        (<code>{{ log.general.location_type }}</code>)
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type Code</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ log.general.location_type }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Number</dt>
+                            <dd class="govuk-summary-list__value">
+                                <code>{{ log.general.location_number }}</code>
+                            </dd>
+                        </div>
+                        {% with org_name=log.general.location_org_name_opt %}
+                            {% if org_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Owner</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ org_name }}
+                                        (<code>{{ log.general.location_org_id }}</code>)
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Owner ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ log.general.location_org_id }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </dl>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Transaction type</dt>
+                <dd class="govuk-summary-list__value">
+                    {{ log.general.transaction_type }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Entry details</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if log.type == "application-issue" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Application SAM sequence number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.application_sam_sequence_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Application log sequence number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.application_log_sequence_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Application instance number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.application_instance_number }}
+                                </dd>
+                            </div>
+                            {% with org_name=log.application_instance_org_name_opt %}
+                                {% if org_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Application instance organisation</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ org_name }}
+                                            (<code>{{ log.application_instance_org_id }}</code>)
+                                        </dd>
+                                    </div>
+                                {% else %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Application instance organisation ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ log.application_instance_org_id }}</code>
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Old status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.old_status }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">New status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.new_status }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Application synchronisation number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.application_synchronisation_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control MAC</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_mac|as_hex }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control key version</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_key_version }}
+                                </dd>
+                            </div>
+                        </dl>
+                    {% else %}
+                        Unknown entry type
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>

@@ -2,7 +2,9 @@ from . import fci
 from . import card
 from . import application_directory
 from . import application_data
+from . import key_register
 from . import authorization
 from . import info_text
 from . import log
+from . import get_entitlement
 from .util import VDVNMException

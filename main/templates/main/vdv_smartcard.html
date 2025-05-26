@@ -186,125 +186,129 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Authorizations</dt>
                         <dd class="govuk-summary-list__value">
-                            {% for auth in card.application_directory.authorizations %}
-                                <div class="govuk-summary-card">
-                                    <div class="govuk-summary-card__title-wrapper">
-                                        <h2 class="govuk-summary-card__title">
-                                            Authorization #{{ forloop.counter }}
-                                        </h2>
-                                    </div>
-                                    <div class="govuk-summary-card__content">
-                                        <dl class="govuk-summary-list">
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Data File Pointer</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ auth.data_pointer }}
-                                                </dd>
-                                            </div>
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">ID</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ auth.authorization_id }}
-                                                </dd>
-                                            </div>
-                                            {% with org_name=auth.authorization_org_name_opt %}
-                                                {% if org_name %}
+                            {% if card.application_directory.authorizations %}
+                                {% for auth in card.application_directory.authorizations %}
+                                    <div class="govuk-summary-card">
+                                        <div class="govuk-summary-card__title-wrapper">
+                                            <h2 class="govuk-summary-card__title">
+                                                Authorization #{{ forloop.counter }}
+                                            </h2>
+                                        </div>
+                                        <div class="govuk-summary-card__content">
+                                            <dl class="govuk-summary-list">
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Data File Pointer</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ auth.data_pointer }}
+                                                    </dd>
+                                                </div>
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">ID</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ auth.authorization_id }}
+                                                    </dd>
+                                                </div>
+                                                {% with org_name=auth.authorization_org_name_opt %}
+                                                    {% if org_name %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Organisation</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                {{ org_name }}
+                                                                (<code>{{ auth.authorization_org_id }}</code>)
+                                                            </dd>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                                            <dd class="govuk-summary-list__value">
+                                                                <code>{{ auth.authorization_org_id }}</code>
+                                                            </dd>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endwith %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Product</dt>
+                                                    <dd class="govuk-summary-list__value">
+
+                                                        <dl class="govuk-summary-list">
+                                                            {% with product_name=auth.product_name_opt %}
+                                                                {% if product_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Name</dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {{ product_name }}
+                                                                            (<code>{{ auth.product_id }}</code>)
+                                                                        </dd>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Number</dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            <code>{{ auth.product_id }}</code>
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                            {% with org_name=auth.product_org_name_opt %}
+                                                                {% if org_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">
+                                                                            Organisation
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {{ org_name }}
+                                                                            (<code>{{ auth.product_org_id }}</code>)
+                                                                        </dd>
+                                                                    </div>
+                                                                {% else %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">
+                                                                            Organisation ID
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            <code>{{ auth.product_org_id }}</code>
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                        </dl>
+                                                    </dd>
+                                                </div>
+                                                {% if auth.valid_from %}
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Organisation</dt>
+                                                        <dt class="govuk-summary-list__key">Valid from</dt>
                                                         <dd class="govuk-summary-list__value">
-                                                            {{ org_name }}
-                                                            (<code>{{ auth.authorization_org_id }}</code>)
-                                                        </dd>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key">Organisation ID</dt>
-                                                        <dd class="govuk-summary-list__value">
-                                                            <code>{{ auth.authorization_org_id }}</code>
+                                                            {{ auth.valid_from.as_datetime|date:"F d, Y H:i:s e" }}
                                                         </dd>
                                                     </div>
                                                 {% endif %}
-                                            {% endwith %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Product</dt>
-                                                <dd class="govuk-summary-list__value">
-
-                                                    <dl class="govuk-summary-list">
-                                                        {% with product_name=auth.product_name_opt %}
-                                                            {% if product_name %}
-                                                                <div class="govuk-summary-list__row">
-                                                                    <dt class="govuk-summary-list__key">Name</dt>
-                                                                    <dd class="govuk-summary-list__value">
-                                                                        {{ product_name }}
-                                                                        (<code>{{ auth.product_id }}</code>)
-                                                                    </dd>
-                                                                </div>
-                                                            {% else %}
-                                                                <div class="govuk-summary-list__row">
-                                                                    <dt class="govuk-summary-list__key">Number</dt>
-                                                                    <dd class="govuk-summary-list__value">
-                                                                        <code>{{ auth.product_id }}</code>
-                                                                    </dd>
-                                                                </div>
-                                                            {% endif %}
-                                                        {% endwith %}
-                                                        {% with org_name=auth.product_org_name_opt %}
-                                                            {% if org_name %}
-                                                                <div class="govuk-summary-list__row">
-                                                                    <dt class="govuk-summary-list__key">
-                                                                        Organisation
-                                                                    </dt>
-                                                                    <dd class="govuk-summary-list__value">
-                                                                        {{ org_name }}
-                                                                        (<code>{{ auth.product_org_id }}</code>)
-                                                                    </dd>
-                                                                </div>
-                                                            {% else %}
-                                                                <div class="govuk-summary-list__row">
-                                                                    <dt class="govuk-summary-list__key">
-                                                                        Organisation ID
-                                                                    </dt>
-                                                                    <dd class="govuk-summary-list__value">
-                                                                        <code>{{ auth.product_org_id }}</code>
-                                                                    </dd>
-                                                                </div>
-                                                            {% endif %}
-                                                        {% endwith %}
-                                                    </dl>
-                                                </dd>
-                                            </div>
-                                            {% if auth.valid_from %}
+                                                {% if auth.valid_to %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">Valid until</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {{ auth.valid_to.as_datetime|date:"F d, Y H:i:s e" }}
+                                                        </dd>
+                                                    </div>
+                                                {% endif %}
                                                 <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Valid from</dt>
+                                                    <dt class="govuk-summary-list__key">Status</dt>
                                                     <dd class="govuk-summary-list__value">
-                                                        {{ auth.valid_from.as_datetime|date:"F d, Y H:i:s e" }}
+                                                        {{ auth.status }}
                                                     </dd>
                                                 </div>
-                                            {% endif %}
-                                            {% if auth.valid_to %}
                                                 <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Valid until</dt>
+                                                    <dt class="govuk-summary-list__key">Synchronization number</dt>
                                                     <dd class="govuk-summary-list__value">
-                                                        {{ auth.valid_to.as_datetime|date:"F d, Y H:i:s e" }}
+                                                        {{ auth.synchronization_number }}
                                                     </dd>
                                                 </div>
-                                            {% endif %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Status</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ auth.status }}
-                                                </dd>
-                                            </div>
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Synchronization number</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ auth.synchronization_number }}
-                                                </dd>
-                                            </div>
-                                        </dl>
+                                            </dl>
+                                        </div>
                                     </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                No authorizations
+                            {% endif %}
                         </dd>
                     </div>
                 </dl>
@@ -342,6 +346,12 @@
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Issuance</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/vdv_log_entry.html" with log=card.application_data.issuance %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Info text</dt>
                         <dd class="govuk-summary-list__value">
                             {{ smartcard.application_info_text }}
@@ -362,162 +372,52 @@
                 <h2 class="govuk-heading-m">Logbook</h2>
                 {% for log in smartcard.logs.all %}
                     {% with log=log.as_log %}
-                        <div class="govuk-summary-card">
-                            <div class="govuk-summary-card__title-wrapper">
-                                <h2 class="govuk-summary-card__title">
-                                    Entry #{{ log.general.sequence_number }}
-                                </h2>
-                            </div>
-                            <div class="govuk-summary-card__content">
-                                <dl class="govuk-summary-list">
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Type</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ log.type_name }}
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">SAM sequence number</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ log.general.sam_sequence_number }}
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">SAM ID</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ log.general.sam_id }}
-                                        </dd>
-                                    </div>
-                                    {% with org_name=log.general.operator_org_name_opt %}
-                                        {% if org_name %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Operator organisation</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ org_name }} (<code>{{ log.general.operator_org_id }}</code>)
-                                                </dd>
-                                            </div>
-                                        {% else %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Operator organisation ID</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    <code>{{ log.general.operator_org_id }}</code></dd>
-                                            </div>
-                                        {% endif %}
-                                    {% endwith %}
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Timestamp</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ log.general.timestamp.as_datetime|date:"F d, Y H:i:s e" }}
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Terminal</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                                                {% with type_name=log.general.terminal_type_name_opt %}
-                                                    {% if type_name %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Type</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {{ type_name }}
-                                                                (<code>{{ log.general.terminal_type }}</code>)
-                                                            </dd>
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Type Code</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                <code>{{ log.general.terminal_type }}</code>
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                                <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Number</dt>
-                                                    <dd class="govuk-summary-list__value">
-                                                        <code>{{ log.general.terminal_number }}</code>
-                                                    </dd>
-                                                </div>
-                                                {% with org_name=log.general.terminal_org_name_opt %}
-                                                    {% if org_name %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Owner</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {{ org_name }}
-                                                                (<code>{{ log.general.terminal_org_id }}</code>)
-                                                            </dd>
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Owner ID</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                <code>{{ log.general.terminal_org_id }}</code>
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            </dl>
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Location</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            <dl class="govuk-summary-list govuk-summary-list--no-border">
-                                                {% with type_name=log.general.location_type_name_opt %}
-                                                    {% if type_name %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Type</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {{ type_name }}
-                                                                (<code>{{ log.general.location_type }}</code>)
-                                                            </dd>
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Type Code</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                <code>{{ log.general.location_type }}</code>
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                                <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">Number</dt>
-                                                    <dd class="govuk-summary-list__value">
-                                                        <code>{{ log.general.location_number }}</code>
-                                                    </dd>
-                                                </div>
-                                                {% with org_name=log.general.location_org_name_opt %}
-                                                    {% if org_name %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Owner</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                {{ org_name }}
-                                                                (<code>{{ log.general.location_org_id }}</code>)
-                                                            </dd>
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key">Owner ID</dt>
-                                                            <dd class="govuk-summary-list__value">
-                                                                <code>{{ log.general.location_org_id }}</code>
-                                                            </dd>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            </dl>
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">Transaction type</dt>
-                                        <dd class="govuk-summary-list__value">
-                                            {{ log.general.transaction_type }}
-                                        </dd>
-                                    </div>
-                                </dl>
-                            </div>
-                        </div>
+                        {% include "main/vdv_log_entry.html" %}
                     {% endwith %}
+                {% endfor %}
+
+                <h2 class="govuk-heading-m">Key Register</h2>
+                {% for key in card.key_register.keys %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Key #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Key ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ key.key_id_hex }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Key Version</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ key.key_version }}
+                                    </dd>
+                                </div>
+                                {% with org_name=key.org_name_opt %}
+                                    {% if org_name %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Organisation</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ org_name }} (<code>{{ key.org_id }}</code>)
+                                            </dd>
+                                        </div>
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ key.org_id }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
+                            </dl>
+                        </div>
+                    </div>
                 {% endfor %}
 
                 <h2 class="govuk-heading-m">Certificate chain</h2>
