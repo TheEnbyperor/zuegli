@@ -366,8 +366,6 @@ class VDVConsumer(JsonWebsocketConsumer):
             application_pk = vdv.Certificate.parse(application_pk_bytes)
             vdv.CertificateData.parse(application_pk)
 
-            print()
-
             self.message("Saving...")
 
             d = {
