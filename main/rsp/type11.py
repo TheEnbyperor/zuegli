@@ -16,8 +16,8 @@ class Type11:
     start_date: datetime.datetime
     standard_class: bool
     child_ticket: bool
-    coupon_type: data.CouponType
-    route_flag: str
+    return_ticket: bool
+    route_restrictions: bool
     mandatory_manual_check: bool
     non_revenue: bool
 
@@ -84,11 +84,6 @@ class Type11:
         except ValueError:
             raise util.RSPException("Not a type 11 barcode, invalid start date")
 
-        try:
-            coupon_type = int(coupon_type)
-        except ValueError:
-            raise util.RSPException("Not a type 11 barcode, invalid coupon type")
-
         return Type11(
             barcode_type=barcode_type,
             spec_version=version,
@@ -101,8 +96,8 @@ class Type11:
             start_date=start_date,
             standard_class=standard_class == "1",
             child_ticket=child_ticket == "1",
-            coupon_type=data.CouponType(coupon_type),
-            route_flag=route_flag,
+            return_ticket=coupon_type == "1",
+            route_restrictions=route_flag == "1",
             mandatory_manual_check=mandatory_manual_check == "1",
             non_revenue=non_revenue_ticket == "1",
         )
