@@ -46,9 +46,23 @@
         </dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Coupon type</dt>
+        <dt class="govuk-summary-list__key">Return ticket</dt>
         <dd class="govuk-summary-list__value">
-            {{ data.coupon_type }}
+            {% if data.return_ticket %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Route restrictions</dt>
+        <dd class="govuk-summary-list__value">
+            {% if data.route_restrictions %}
+                <strong class="govuk-tag govuk-tag--green">Yes</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">No</strong>
+            {% endif %}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
