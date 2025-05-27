@@ -295,14 +295,14 @@ class VDVConsumer(JsonWebsocketConsumer):
             self.message("Reading travel authorizations...")
             authorizations = []
             for auth in application_directory.authorizations:
-                authorization = self.apdu(RequestAPDU(
+                authorization_data = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
                     data=bytes([0xEA, auth.data_pointer]),
                     expected_response_length=256,
                 ))
-                if not authorization.is_success():
+                if not authorization_data.is_success():
                     self.error("Failed to read Authorization Data")
-                vdv_nm.authorization.Authorization.parse(authorization.data)
+                vdv_nm.authorization.Authorization.parse(authorization_data.data)
 
                 authorization_infotext = self.apdu(RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
@@ -311,9 +311,9 @@ class VDVConsumer(JsonWebsocketConsumer):
                 ))
                 if not authorization_infotext.is_success():
                     self.error("Failed to read Authorization Info Text")
+                authorization = vdv_nm.authorization.Authorization.parse(authorization_data.data)
                 authorization_infotext = vdv_nm.info_text.InfoText.parse(authorization_infotext.data)
-
-                authorizations.append((authorization.data, authorization_infotext.text))
+                authorizations.append((authorization_data.data, authorization, authorization_infotext.text))
 
             self.message("Reading public keys...")
 
@@ -398,7 +398,16 @@ class VDVConsumer(JsonWebsocketConsumer):
                     }
                 )
 
-            for data, info_text in authorizations:
+            for data, auth, info_text in authorizations:
+                models.VDVSmartcardAuthorization.objects.update_or_create(
+                    smartcard=card,
+                    authorization_number=auth.ticket_use.authorization_number,
+                    authorization_org_id=auth.ticket_use.authorization_org_id,
+                    defaults={
+                        "authorization": data,
+                        "info_text": info_text
+                    }
+                )
                 pass
 
             self.done(f"{settings.EXTERNAL_URL_BASE}{card.get_absolute_url()}")

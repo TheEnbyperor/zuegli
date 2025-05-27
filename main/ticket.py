@@ -1454,7 +1454,6 @@ def parse_ticket_hzpp(ticket_bytes: bytes) -> HZPPTicket:
         data=data
     )
 
-
 def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     try:
         data = swisspass.SwissPassTicket.parse(ticket_bytes)
@@ -1549,7 +1548,7 @@ def parse_ticket(
     if ticket_bytes[:2] == b"FT":
         return parse_ticket_flexi_ticket(ticket_bytes)
 
-    if ticket_bytes[:2] == b"B1":
+    if ticket_bytes[:2] in (b"A1", b"B1"):
         return parse_ticket_hzpp(ticket_bytes)
 
     if ticket_bytes[:1] == b"e":

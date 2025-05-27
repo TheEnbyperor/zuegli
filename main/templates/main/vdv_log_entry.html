@@ -223,6 +223,387 @@
                                 </dd>
                             </div>
                         </dl>
+                    {% elif log.type == "authorization-issue" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization SAM sequence number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_sam_sequence_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization log sequence number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_log_sequence_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_number }}
+                                </dd>
+                            </div>
+                            {% with org_name=log.authorization_org_name_opt %}
+                                {% if org_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Authorization organisation</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ org_name }}
+                                            (<code>{{ log.authorization_org_id }}</code>)
+                                        </dd>
+                                    </div>
+                                {% else %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Authorization organisation ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ log.authorization_org_id }}</code>
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Product</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        {% with product_name=log.product_name_opt %}
+                                            {% if product_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Name</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ product_name }}
+                                                        (<code>{{ log.product_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Number</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.product_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% with org_name=log.product_org_name_opt %}
+                                            {% if org_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        Organisation
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ org_name }}
+                                                        (<code>{{ log.product_org_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        Organisation ID
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.product_org_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dl>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Old status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.old_status }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">New status</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.new_status }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization synchronisation number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_synchronisation_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control MAC</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_mac|as_hex }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control key version</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_key_version }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Product specific data</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.product_specific_data|as_hex }}
+                                </dd>
+                            </div>
+                        </dl>
+                    {% elif log.type == "ticket-use" %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization log sequence number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_log_sequence_number }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Authorization number</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.authorization_number }}
+                                </dd>
+                            </div>
+                            {% with org_name=log.authorization_org_name_opt %}
+                                {% if org_name %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Authorization organisation</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ org_name }}
+                                            (<code>{{ log.authorization_org_id }}</code>)
+                                        </dd>
+                                    </div>
+                                {% else %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Authorization organisation ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            <code>{{ log.authorization_org_id }}</code>
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Product</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        {% with product_name=log.product_name_opt %}
+                                            {% if product_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Name</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ product_name }}
+                                                        (<code>{{ log.product_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Number</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.product_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% with org_name=log.product_org_name_opt %}
+                                            {% if org_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        Organisation
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ org_name }}
+                                                        (<code>{{ log.product_org_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">
+                                                        Organisation ID
+                                                    </dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.product_org_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dl>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Line</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Number</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ log.line_number }}</code>
+                                            </dd>
+                                        </div>
+
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Variant</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ log.line_variant }}</code>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Journey</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list">
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Number</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ log.journey_number }}</code>
+                                            </dd>
+                                        </div>
+                                        {% with org_name=log.journey_org_name_opt %}
+                                            {% if org_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Organisation</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ org_name }}
+                                                        (<code>{{ log.journey_org_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Organisation ID</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.journey_org_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dl>
+                                </dd>
+                            </div>
+                            {% if log.timestamp %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Timestamp</dt>
+                                    <dd class="govuk-summary-list__value">{{ log.timestamp.as_datetime|date:"F d, Y H:i e" }}</dd>
+                                </div>
+                            {% endif %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Location</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                        {% with type_name=log.location_type_name_opt %}
+                                            {% if type_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Type</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ type_name }}
+                                                        (<code>{{ log.location_type }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Type Code</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.location_type }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Number</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ log.location_number }}</code>
+                                            </dd>
+                                        </div>
+                                        {% with org_name=log.location_org_name_opt %}
+                                            {% if org_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Owner</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ org_name }}
+                                                        (<code>{{ log.location_org_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Owner ID</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.location_org_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dl>
+                                </dd>
+                            </div>
+                            {% if log.previous_timestamp %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Previous timestamp</dt>
+                                    <dd class="govuk-summary-list__value">{{ log.previous_timestamp.as_datetime|date:"F d, Y H:i e" }}</dd>
+                                </div>
+                            {% endif %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Previous location</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <dl class="govuk-summary-list govuk-summary-list--no-border">
+                                        {% with type_name=log.previous_location_type_name_opt %}
+                                            {% if type_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Type</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ type_name }}
+                                                        (<code>{{ log.previous_location_type }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Type Code</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.previous_location_type }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Number</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ log.previous_location_number }}</code>
+                                            </dd>
+                                        </div>
+                                        {% with org_name=log.previous_location_org_name_opt %}
+                                            {% if org_name %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Owner</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {{ org_name }}
+                                                        (<code>{{ log.previous_location_org_id }}</code>)
+                                                    </dd>
+                                                </div>
+                                            {% else %}
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Owner ID</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        <code>{{ log.previous_location_org_id }}</code>
+                                                    </dd>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dl>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Product specific data</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.product_specific_data|as_hex }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control MAC</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_mac|as_hex }}
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Control key version</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ log.control_key_version }}
+                                </dd>
+                            </div>
+                        </dl>
                     {% else %}
                         Unknown entry type
                     {% endif %}

@@ -1,9 +1,6 @@
 import dataclasses
 import typing
 import base64
-import hashlib
-import ecdsa.util
-import ecdsa.keys
 import django.core.files.storage
 import cryptography.exceptions
 import cryptography.hazmat.primitives.serialization

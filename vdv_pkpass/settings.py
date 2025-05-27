@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+import base64
 import botocore.config
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
@@ -259,6 +260,8 @@ SNCB_API_KEY = os.getenv("SNCB_API_KEY")
 RAILEASY_API_KEY = os.getenv("RAILEASY_API_KEY")
 
 WALLET_PASSES_API_KEY = os.getenv("WALLET_PASSES_API_KEY")
+
+HZPP_KEY = base64.b64decode(os.getenv("HZPP_KEY"))
 
 try:
     with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
