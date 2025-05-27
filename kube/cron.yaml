@@ -66,6 +66,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -135,6 +137,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -204,6 +208,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -273,6 +279,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -342,6 +350,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -411,6 +421,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -480,6 +492,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -549,6 +563,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -618,6 +634,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -687,6 +705,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -752,6 +772,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -821,6 +843,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -890,6 +914,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -959,6 +985,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -1028,6 +1056,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -1097,6 +1127,8 @@ spec:
                     name: vdv-pkpass-raileasy
                 - secretRef:
                     name: vdv-pkpass-wallet-passes
+                - secretRef:
+                    name: vdv-pkpass-hzpp
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

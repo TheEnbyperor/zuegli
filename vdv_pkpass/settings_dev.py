@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import json
+import base64
 import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
@@ -203,6 +204,13 @@ try:
         WALLET_PASSES_API_KEY = d["key"]
 except FileNotFoundError:
     WALLET_PASSES_API_KEY = None
+
+try:
+    with open(BASE_DIR / "priv" / "hzpp.json") as f:
+        d = json.load(f)
+        HZPP_KEY = base64.b64decode(d["key"])
+except FileNotFoundError:
+    HZPP_KEY = None
 
 try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:

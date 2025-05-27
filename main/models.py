@@ -742,6 +742,26 @@ class VDVSmartcardLog(models.Model):
         return vdv_nm.log.parse_log(bytes(self.log_entry))
 
 
+class VDVSmartcardAuthorization(models.Model):
+    smartcard = models.ForeignKey(VDVSmartcard, on_delete=models.CASCADE, related_name="authorizations", db_index=True)
+    authorization_number = models.IntegerField()
+    authorization_org_id = models.IntegerField()
+    authorization = models.BinaryField()
+    info_text = models.TextField(blank=True, null=False)
+
+    class Meta:
+        verbose_name = "VDV Smartcard Authorization"
+        verbose_name_plural = "VDV Smartcard Authorizations"
+        unique_together = [("smartcard", "authorization_number", "authorization_org_id")]
+        ordering = ("authorization_number",)
+
+    def __str__(self):
+        return f"{self.smartcard} #{self.authorization_number}"
+
+    def as_log(self) -> vdv_nm.authorization.Authorization:
+        return vdv_nm.authorization.Authorization.parse(bytes(self.authorization))
+
+
 class VDVBlocklistMeta(SingletonModel):
     current_version = models.DateTimeField(blank=True, null=True)
 

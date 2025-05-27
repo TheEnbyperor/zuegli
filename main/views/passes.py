@@ -4492,10 +4492,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "altText": str(ticket_data.data.ticket_number)
         }]
 
-        pass_json["relevantDate"] = ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ")
-        pass_json["expirationDate"] = ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_json["relevantDate"] = ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_json["expirationDate"] = ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        if ticket_data.data.return_journey:
+        if len(ticket_data.data.journey_segments) > 1:
             has_return = True
             return_pass_json = copy.deepcopy(pass_json)
             return_pass_type = "boardingPass"
@@ -4510,30 +4510,36 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "key": "validity-start",
             "label": "validity-start-label",
             "dateStyle": "PKDateStyleMedium",
-            "timeStyle": "PKDateStyleNone",
-            "value": ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timeStyle": "PKDateStyleMedium",
+            "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["backFields"].append({
             "key": "validity-start-back",
             "label": "validity-start-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
-            "value": ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["secondaryFields"].append({
             "key": "validity-end",
             "label": "validity-end-label",
             "dateStyle": "PKDateStyleMedium",
-            "timeStyle": "PKDateStyleNone",
-            "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timeStyle": "PKDateStyleMedium",
+            "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["backFields"].append({
             "key": "validity-end-back",
             "label": "validity-end-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
-            "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
+        if ticket_data.data.customer:
+            pass_fields["auxiliaryFields"].append({
+                "key": "passenger",
+                "label": "passenger-label",
+                "value": ticket_data.data.customer.name
+            })
         if has_return:
             return_pass_fields["backFields"].append({
                 "key": "ticket-id",
@@ -4544,33 +4550,39 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "validity-start",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleNone",
-                "value": ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "timeStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["backFields"].append({
                 "key": "validity-start-back",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["secondaryFields"].append({
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleNone",
-                "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "timeStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["backFields"].append({
                 "key": "validity-end-back",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleFull",
                 "timeStyle": "PKDateStyleFull",
-                "value": ticket_data.data.valid_until.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
+            if ticket_data.data.customer:
+                return_pass_fields["auxiliaryFields"].append({
+                    "key": "passenger",
+                    "label": "passenger-label",
+                    "value": ticket_data.data.customer.name
+                })
 
-        from_station = templatetags.rics.get_station(ticket_data.data.outbound_journey.origin_station, "uic")
-        to_station = templatetags.rics.get_station(ticket_data.data.outbound_journey.destination_station, "uic")
+        from_station = templatetags.rics.get_station(ticket_data.data.journey_segments[0].origin_station, "uic")
+        to_station = templatetags.rics.get_station(ticket_data.data.journey_segments[0].destination_station, "uic")
         from_station_maps_link = urllib.parse.urlencode({
             "q": from_station["name"],
             "ll": f"{from_station['latitude']},{from_station['longitude']}"
@@ -4606,7 +4618,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         pass_fields["headerFields"] = [{
             "key": "class-code",
             "label": "class-code-label",
-            "value": f"class-code-{ticket_data.data.outbound_journey.travel_class}-label",
+            "value": f"class-code-{ticket_data.data.journey_segments[0].travel_class}-label",
         }]
         pass_fields["backFields"].append({
             "key": "from-station-back",
@@ -4622,8 +4634,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         })
 
         if has_return:
-            from_station = templatetags.rics.get_station(ticket_data.data.return_journey.origin_station, "uic")
-            to_station = templatetags.rics.get_station(ticket_data.data.return_journey.destination_station, "uic")
+            from_station = templatetags.rics.get_station(ticket_data.data.journey_segments[1].origin_station, "uic")
+            to_station = templatetags.rics.get_station(ticket_data.data.journey_segments[1].destination_station, "uic")
             from_station_maps_link = urllib.parse.urlencode({
                 "q": from_station["name"],
                 "ll": f"{from_station['latitude']},{from_station['longitude']}"
@@ -4658,7 +4670,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             return_pass_fields["headerFields"] = [{
                 "key": "class-code",
                 "label": "class-code-label",
-                "value": f"class-code-{ticket_data.data.return_journey.travel_class}-label",
+                "value": f"class-code-{ticket_data.data.journey_segments[1].travel_class}-label",
             }]
             return_pass_fields["backFields"].append({
                 "key": "from-station-back",
