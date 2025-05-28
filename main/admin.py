@@ -326,10 +326,14 @@ class VDVBlocklistItemAdmin(admin.ModelAdmin):
         "org_id",
         "item_id",
         "instance_counter",
-        "lock_mode"
+        "lock_mode",
+        "timestamp"
     ]
     list_filter = [
         "item_type",
         "lock_mode"
     ]
     search_fields = ["item_id"]
+    readonly_fields = [
+        "timestamp"
+    ]
