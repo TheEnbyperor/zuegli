@@ -21,10 +21,18 @@ class Train:
 class JourneySegment:
     origin_station: int
     destination_station: int
-    via_station: typing.Optional[int]
+    route_number: typing.Optional[int]
     travel_class: int
     train_type: int
     trains: typing.List[Train]
+
+    def travel_class_name(self):
+        if self.travel_class == 1:
+            return "First"
+        elif self.travel_class == 2:
+            return "Second"
+        else:
+            return f"Unknown ({self.travel_class})"
 
     def train_type_name(self):
         if self.train_type == 37:
@@ -153,7 +161,7 @@ class HZPPTicket:
             seg = JourneySegment(
                 origin_station=outbound_from_station + 7800000,
                 destination_station=outbound_to_station + 7800000,
-                via_station=outbound_via_station + 7800000 if outbound_via_station else None,
+                route_number=outbound_via_station if outbound_via_station else None,
                 travel_class=outbound_travel_class,
                 train_type=outbound_train_type,
                 trains=[]
@@ -176,7 +184,7 @@ class HZPPTicket:
             seg = JourneySegment(
                 origin_station=return_from_station + 7800000,
                 destination_station=return_to_station + 7800000,
-                via_station=return_via_station + 7800000 if return_via_station else None,
+                route_number=return_via_station if return_via_station else None,
                 travel_class=return_travel_class,
                 train_type=return_train_type,
                 trains=[]
@@ -278,7 +286,7 @@ class HZPPTicket:
             seg = JourneySegment(
                 origin_station=outbound_from_station + 7800000,
                 destination_station=outbound_to_station + 7800000,
-                via_station=outbound_via_station + 7800000 if outbound_via_station else None,
+                route_number=outbound_via_station if outbound_via_station else None,
                 travel_class=outbound_travel_class,
                 train_type=outbound_train_type,
                 trains=[]
@@ -301,7 +309,7 @@ class HZPPTicket:
             seg = JourneySegment(
                 origin_station=return_from_station + 7800000,
                 destination_station=return_to_station + 7800000,
-                via_station=return_via_station + 7800000 if return_via_station else None,
+                route_number=return_via_station if return_via_station else None,
                 travel_class=return_travel_class,
                 train_type=return_train_type,
                 trains=[]

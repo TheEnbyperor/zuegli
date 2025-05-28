@@ -131,28 +131,17 @@
                                     </div>
                                 {% endif %}
                             {% endwith %}
-                            {% if journey.via_station %}
-                                {% with station=journey.via_station|get_station:"uic" %}
-                                    {% if station %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Via station</dt>
-                                            <dd class="govuk-summary-list__value">
-                                                {% include "main/uic/station.html" with station=station %}
-                                            </dd>
-                                        </div>
-                                    {% else %}
-                                        <div class="govuk-summary-list__row">
-                                            <dt class="govuk-summary-list__key">Via station ID</dt>
-                                            <dd class="govuk-summary-list__value">
-                                                <code>{{ journey.via_station }}</code>
-                                            </dd>
-                                        </div>
-                                    {% endif %}
-                                {% endwith %}
+                            {% if journey.route_number %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Route ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ journey.route_number }}</code>
+                                    </dd>
+                                </div>
                             {% endif %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Travel class</dt>
-                                <dd class="govuk-summary-list__value">{{ journey.travel_class }}</dd>
+                                <dd class="govuk-summary-list__value">{{ journey.travel_class_name }}</dd>
                             </div>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Train type</dt>
