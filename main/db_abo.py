@@ -106,4 +106,4 @@ def update_abo_tickets(abo_id):
     logger.info(f"Successfully updated DB subscription {abo.device_token}")
 
     for t in abo.tickets.all():
-        apn.notify_ticket_if_renewed.delay(t.pk)
+        apn.notify_ticket_if_renewed(t)

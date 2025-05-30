@@ -10,7 +10,7 @@ import bs4
 import urllib.parse
 from Crypto.Cipher import AES
 from django.core.files.storage import storages
-from . import models, aztec, ticket
+from . import models, aztec, ticket, apn
 
 
 logger = logging.getLogger(__name__)
@@ -174,5 +174,8 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
             except ticket.TicketError as e:
                 logger.error("Error decoding barcode ticket: %s", e)
                 continue
+
+    for t in account_token.tickets.all():
+        apn.notify_ticket_if_renewed(t)
 
     logger.info(f"Successfully updated EOS {account_token.device_id}")
