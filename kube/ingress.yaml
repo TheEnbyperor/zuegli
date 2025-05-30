@@ -85,9 +85,20 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
+        - nfc.xn--zgli-0ra.app
         - vdv-pkpass-nfc.magicalcodewit.ch
       secretName: vdv-pkpass-nfc-tls
   rules:
+    - host: nfc.xn--zgli-0ra.app
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: "dummy"
+                port:
+                  number: 80
     - host: vdv-pkpass-nfc.magicalcodewit.ch
       http:
         paths:

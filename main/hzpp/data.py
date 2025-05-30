@@ -54,6 +54,14 @@ class Passenger:
             return "Adult return"
         elif self.passenger_type == 13:
             return "Child"
+        elif self.passenger_type == 27:
+            return "Journalist"
+        elif self.passenger_type == 28:
+            return "Senior"
+        elif self.passenger_type == 29:
+            return "Youth"
+        elif self.passenger_type == 75:
+            return "Student"
         else:
             return f"Unknown ({self.passenger_type})"
 

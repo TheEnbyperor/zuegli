@@ -1,4 +1,5 @@
 import niquests
+import urllib.parse
 from django.conf import settings
 from django.utils import timezone
 from celery import shared_task
@@ -19,6 +20,9 @@ def notify_device(device_id):
             "content-available": 1
         }
     }, cert=(str(settings.PKPASS_CERTIFICATE_LOCATION), str(settings.PKPASS_KEY_LOCATION)))
+    if r.status_code == 410:
+        device.delete()
+        return
     r.raise_for_status()
 
 
@@ -34,7 +38,6 @@ def notify_android_pass_device(device_id):
     }, headers={
         "Authorization": settings.WALLET_PASSES_API_KEY
     })
-    print(r.text)
     r.raise_for_status()
 
 
@@ -44,7 +47,8 @@ def notify_android_pass_device(device_id):
 )
 def notify_attido_device(device_id):
     device = models.AttidoDevice.objects.get(pk=device_id)
-    r = niquests.post(f"{device.push_service_url}/v1/pushUpdate", json={
+    url = urllib.parse.urljoin(device.push_service_url, "v1/pushUpdate")
+    r = niquests.post(url, json={
         "passTypeID": settings.PKPASS_CONF["pass_type"],
         "pushToken": device.push_token,
     })
