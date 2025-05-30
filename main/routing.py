@@ -1,7 +1,8 @@
 from django.urls import path
 
-from . import consumers
+from .vdv_nm import nfc
 
 websocket_urlpatterns = [
-    path(r"ws/vdv-nfc", consumers.VDVConsumer.as_asgi()),
+    path(r"ws/vdv-nfc", nfc.VDVConsumer.as_asgi()),
+    path(r"ws/vdv-nfc-sam", nfc.VDVConsumer.as_asgi()),
 ]
