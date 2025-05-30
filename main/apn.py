@@ -68,12 +68,8 @@ def notify_ticket(ticket_id):
         notify_attido_device.delay(registration.device_id)
 
 
-@shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
-    ignore_result=True
-)
-def notify_ticket_if_renewed(ticket_id):
-    ticket = models.Ticket.objects.get(id=ticket_id)
+
+def notify_ticket_if_renewed(ticket):
     now = timezone.now()
     current_ticket_valid_from = None
     uic_tickets = ticket.uic_instances.filter(validity_start__lt=now).order_by("-validity_end")
