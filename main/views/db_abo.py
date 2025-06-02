@@ -63,7 +63,7 @@ def new_abo(request):
                         "info": data["ticketHuelle"],
                         "account": request.user.account,
                     })
-                    db_abo.update_abo_tickets(abo)
+                    db_abo.update_abo_tickets.delay(abo.id)
                     return redirect("db_abo")
     else:
         form = forms.DBAboForm(initial=initial)
