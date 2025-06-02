@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "magiclink",
     "main",
     "channels",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
