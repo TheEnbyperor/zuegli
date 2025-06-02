@@ -182,6 +182,77 @@ spec:
             - secretRef:
                 name: vdv-pkpass-hzpp
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vdv-pkpass-beat
+  namespace: q-personal
+  labels:
+    app: vdv-pkpass
+    part: beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vdv-pkpass
+      part: beat
+  template:
+    metadata:
+      annotations:
+        cni.projectcalico.org/ipv6pools: "[\"default-ipv6-ippool\"]"
+      labels:
+        app: vdv-pkpass
+        part: beat
+    spec:
+      volumes:
+        - name: certs
+          secret:
+            secretName: vdv-pkpass-certs
+        - name: mapkit
+          secret:
+            secretName: vdv-pkpass-mapkit
+        - name: google-creds
+          secret:
+            secretName: vdv-pkpass-google-creds
+      containers:
+        - name: django
+          image: theenbyperor/vdv-pkpass-django:(version)
+          imagePullPolicy: Always
+          command: ["celery", "-A", "vdv_pkpass", "beat", "--loglevel=INFO", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
+          volumeMounts:
+            - mountPath: "/certs"
+              name: certs
+            - mountPath: "/mapkit"
+              name: mapkit
+            - mountPath: "/google-creds"
+              name: google-creds
+          envFrom:
+            - configMapRef:
+                name: vdv-pkpass
+            - secretRef:
+                name: vdv-pkpass-db-creds
+              prefix: "DB_"
+            - secretRef:
+                name: vdv-pkpass-email
+              prefix: "EMAIL_"
+            - secretRef:
+                name: vdv-pkpass-celery
+              prefix: "CELERY_"
+            - secretRef:
+                name: vdv-pkpass-django-secret
+            - secretRef:
+                name: vdv-pkpass-s3
+            - secretRef:
+                name: vdv-pkpass-nr
+            - secretRef:
+                name: vdv-pkpass-sncb
+            - secretRef:
+                name: vdv-pkpass-raileasy
+            - secretRef:
+                name: vdv-pkpass-wallet-passes
+            - secretRef:
+                name: vdv-pkpass-hzpp
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -219,6 +290,20 @@ spec:
     matchLabels:
       app: vdv-pkpass
       part: celery
+  policyTypes:
+    - Ingress
+  ingress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vdv-pkpass-beat
+  namespace: q-personal
+spec:
+  podSelector:
+    matchLabels:
+      app: vdv-pkpass
+      part: beat
   policyTypes:
     - Ingress
   ingress: []
