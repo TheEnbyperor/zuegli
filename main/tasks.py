@@ -3,3 +3,4 @@ from .uic import tasks
 from .vdv import tasks
 from .rsp import tasks
 from .flexi_ticket import tasks
+from .iata import tasks
