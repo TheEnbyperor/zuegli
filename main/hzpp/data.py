@@ -31,13 +31,17 @@ class JourneySegment:
             return "First"
         elif self.travel_class == 2:
             return "Second"
+        elif self.travel_class == 3:
+            return "Autotrain"
         else:
             return f"Unknown ({self.travel_class})"
 
     def train_type_name(self):
-        if self.train_type == 37:
-            return "Regional"
-        elif self.train_type == 102:
+        if self.train_type in (100, 37):
+            return "Regular train"
+        elif self.train_type in (101, 8):
+            return "Fast train"
+        elif self.train_type == (102, 9):
             return "InterCity"
         else:
             return f"Unknown ({self.train_type})"
@@ -49,7 +53,7 @@ class Passenger:
 
     def type_name(self):
         if self.passenger_type == 11:
-            return "Adult"
+            return "Adult single"
         elif self.passenger_type == 12:
             return "Adult return"
         elif self.passenger_type == 13:
@@ -82,6 +86,85 @@ class HZPPTicket:
     issued_on_board: bool
     passengers: typing.List[Passenger]
     journey_segments: typing.List[JourneySegment]
+
+    def ticket_type_name(self):
+        if self.ticket_type == 10000:
+            return "Single Trip 1. Class"
+        elif self.ticket_type == 10001:
+            return "Single trip 2. Class"
+        elif self.ticket_type == 10002:
+            return "Return trip 1. Class"
+        elif self.ticket_type == 10003:
+            return "Return trip 2. Class"
+        elif self.ticket_type == 10004:
+            return "Single Monthly General 1. Class R"
+        elif self.ticket_type == 10005:
+            return "Single Monthly General 2. Class R"
+        elif self.ticket_type == 10006:
+            return "Return Monthly General 1. Class R"
+        elif self.ticket_type == 10007:
+            return "Return Monthly General 2. Class R"
+        elif self.ticket_type == 10008:
+            return "Single Monthly Student 2. Class R"
+        elif self.ticket_type == 10009:
+            return "Single Monthly Student 1. Class R"
+        elif self.ticket_type == 10010:
+            return "Group 2. Class Student (for one student)"
+        elif self.ticket_type == 10011:
+            return "Return Monthly P-4 1. Class R"
+        elif self.ticket_type == 10012:
+            return "Return Monthly P-4 2. Class R"
+        elif self.ticket_type == 10013:
+            return "Car Type 1"
+        elif self.ticket_type == 10014:
+            return "Car Type 2"
+        elif self.ticket_type == 10015:
+            return "Car Type 3"
+        elif self.ticket_type == 10016:
+            return "Motorcycle"
+        elif self.ticket_type == 10017:
+            return "Single 1. Class HZ Employee"
+        elif self.ticket_type == 10018:
+            return "Single 2. Class HZ Employee"
+        elif self.ticket_type == 10019:
+            return "Return Monthly P-7 HZPP 2. Class R"
+        elif self.ticket_type == 10020:
+            return "Return Monthly P-7 HZPP 2. Class F"
+        elif self.ticket_type == 10021:
+            return "Return Monthly P-7 HZ Comp. R"
+        elif self.ticket_type == 10022:
+            return "Return Monthly P-7 HZ Comp. F"
+        elif self.ticket_type == 10023:
+            return "Return Monthly K-50 2. Class R"
+        elif self.ticket_type == 10024:
+            return "Return Monthly K-50 1. Class R"
+        elif self.ticket_type == 10025:
+            return "Return Monthly K-50 2. Class F"
+        elif self.ticket_type == 10026:
+            return "Return Monthly K-50 1. Class F"
+        elif self.ticket_type == 10027:
+            return "Single Monthly General 1. Class F"
+        elif self.ticket_type == 10028:
+            return "Single Monthly General 2. Class F"
+        elif self.ticket_type == 10029:
+            return "Return Monthly General 1. Class F"
+        elif self.ticket_type == 10030:
+            return "Return Monthly General 2. Class F"
+        elif self.ticket_type == 10031:
+            return "Single Monthly Student 2. Class F"
+        elif self.ticket_type == 10032:
+            return "Return Monthly Student 2. Class F"
+        elif self.ticket_type == 10033:
+            return "Return Monthly P-4 1. Class F"
+        elif self.ticket_type == 10034:
+            return "Return Monthly P-4 2. Class F"
+        elif self.ticket_type == 10035:
+            return "Mix Class Return Ticket"
+        elif self.ticket_type == 10036:
+            return "Mix Return Timebase"
+        else:
+            return f"Unknown ({self.ticket_type})"
+
 
     @classmethod
     def parse(cls, data: bytes) -> "HZPPTicket":
