@@ -555,6 +555,14 @@ class BahnBonusInstance(models.Model):
         )
 
 
+class KnownRailEasyJourney(models.Model):
+    journey_id = models.CharField(max_length=255)
+    purchase_id = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = [("journey_id", "purchase_id")]
+
+
 class AppleDevice(models.Model):
     device_id = models.CharField(max_length=255, primary_key=True, verbose_name="Device ID")
     push_token = models.CharField(max_length=255, verbose_name="Push token")
