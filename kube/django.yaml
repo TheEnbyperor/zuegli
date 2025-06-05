@@ -147,7 +147,7 @@ spec:
         - name: django
           image: theenbyperor/vdv-pkpass-django:(version)
           imagePullPolicy: Always
-          command: ["celery", "-A", "vdv_pkpass", "worker", "--loglevel=INFO", "-c", "16"]
+          command: ["celery", "-A", "vdv_pkpass", "worker", "--loglevel=INFO", "-c", "8"]
           volumeMounts:
             - mountPath: "/certs"
               name: certs

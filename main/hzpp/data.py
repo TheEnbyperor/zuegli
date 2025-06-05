@@ -3,12 +3,28 @@ import datetime
 import decimal
 import typing
 import pytz
+import pathlib
+import json
 from Crypto.Cipher import AES
 from django.conf import settings
 from . import util
 
 
 HZPP_EPOCH = pytz.timezone("Europe/Zagreb").localize(datetime.datetime(2003, 1, 1))
+
+ROUTE_DATA = None
+ROOT_DIR = pathlib.Path(__file__).parent
+
+def get_route_data():
+    global ROUTE_DATA
+
+    if ROUTE_DATA:
+        return ROUTE_DATA
+
+    with open(ROOT_DIR / "codes" / "routes.json") as f:
+        ROUTE_DATA = json.load(f)
+
+    return ROUTE_DATA
 
 
 @dataclasses.dataclass
@@ -41,10 +57,16 @@ class JourneySegment:
             return "Regular train"
         elif self.train_type in (101, 8):
             return "Fast train"
-        elif self.train_type == (102, 9):
+        elif self.train_type in (102, 9):
             return "InterCity"
         else:
             return f"Unknown ({self.train_type})"
+
+    def route_stations(self):
+        if self.route_number is None:
+            return []
+        return get_route_data()[str(self.route_number)]
+
 
 @dataclasses.dataclass
 class Passenger:
