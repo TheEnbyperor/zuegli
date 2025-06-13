@@ -166,6 +166,9 @@ class Leg:
 
         if date_num != 0:
             date += datetime.timedelta(days=date_num - 1)
+
+            if unique_conditional and unique_conditional.issue_date and unique_conditional.issue_date < date:
+                date = date.replace(year=date.year + 1)
         else:
             date = None
 
