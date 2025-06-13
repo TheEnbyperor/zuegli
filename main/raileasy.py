@@ -83,7 +83,7 @@ def update_tickets(account_id):
     for journey in r.json()["journeys"]:
         if models.KnownRailEasyJourney.objects.filter(journey_id=journey["journeyId"], purchase_id=journey["purchaseId"]).count() > 0:
             continue
-            
+
         r = session.post("https://raileasy.co.uk/api/GetIndividualJourney", json={
             "journeyId": journey["journeyId"],
             "purchaseId": journey["purchaseId"],
