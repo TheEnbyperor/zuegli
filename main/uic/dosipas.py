@@ -14,7 +14,7 @@ from . import certs, util
 ROOT = pathlib.Path(__file__).parent
 ASN1_SPEC_V1 = asn1tools.compile_files([ROOT / "asn1" / "uicBarcodeHeader_v1.0.0.asn"], codec="uper")
 ASN1_SPEC_V2 = asn1tools.compile_files([ROOT / "asn1" / "uicBarcodeHeader_v2.0.1.asn"], codec="uper")
-ASN1_DCD_SPEC_V1 = asn1tools.compile_files([ROOT / "asn1" / "uicDynamicContentData_v1.0.3.asn"], codec="uper")
+ASN1_DCD_SPEC_V1 = asn1tools.compile_files([ROOT / "asn1" / "uicDynamicContentData_v1.0.5.asn"], codec="uper")
 
 
 @dataclasses.dataclass

@@ -319,9 +319,9 @@ def uic_geo(value: dict):
         long /= 1_000_000
         lat /= 1_000_000
 
-    if value["hemisphereLongitude"] == "south":
+    if value["hemisphereLongitude"] == "west":
         long = -long
-    if value["hemisphereLatitude"] == "west":
+    if value["hemisphereLatitude"] == "south":
         lat = -lat
 
     return uic.util.Coordinate(
@@ -348,9 +348,9 @@ def uic_points_js(value: dict):
     else:
         return
 
-    if value["firstEdge"]["hemisphereLongitude"] == "south":
+    if value["firstEdge"]["hemisphereLongitude"] == "west":
         start_long = -start_long
-    if value["firstEdge"]["hemisphereLatitude"] == "west":
+    if value["firstEdge"]["hemisphereLatitude"] == "south":
         start_lat = -start_lat
 
     edges = [(start_long / divider, start_lat / divider)]

@@ -9,7 +9,7 @@ from . import util, fr_intercode
 ROOT = pathlib.Path(__file__).parent
 ASN1_SPEC_V1_3 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v1.3.4.asn"], codec="uper")
 ASN1_SPEC_V2 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v2.0.2.asn"], codec="uper")
-ASN1_SPEC_V3 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v3.0.3.asn"], codec="uper")
+ASN1_SPEC_V3 = asn1tools.compile_files([ROOT / "asn1" / "uicRailTicketData_v3.0.4.asn"], codec="uper")
 
 @dataclasses.dataclass
 class Flex:

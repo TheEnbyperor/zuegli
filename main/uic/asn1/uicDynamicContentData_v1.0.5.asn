@@ -100,8 +100,8 @@ ASN-Module-DynamicContentData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    GeoCoordinateType ::= SEQUENCE {
      geoUnit             GeoUnitType             DEFAULT milliDegree,
      coordinateSystem    GeoCoordinateSystemType DEFAULT wgs84,
-     hemisphereLongitude HemisphereLongitudeType DEFAULT north,       -- separate hemisphere flag reduces the data size
-     hemisphereLatitude  HemisphereLatitudeType  DEFAULT east,        -- separate hemisphere flag reduces the data size
+     hemisphereLongitude HemisphereLongitudeType DEFAULT east,   -- separate hemisphere flag reduces the data size
+     hemisphereLatitude  HemisphereLatitudeType  DEFAULT north,  -- separate hemisphere flag reduces the data size
      longitude           INTEGER,
      latitude            INTEGER,
      accuracy            GeoUnitType             OPTIONAL
@@ -121,13 +121,13 @@ ASN-Module-DynamicContentData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    }
 
    HemisphereLongitudeType ::= ENUMERATED {
-     north (0),
-     south (1)
+     east (0),
+     west (1)
    }
 
    HemisphereLatitudeType ::= ENUMERATED {
-     east (0),
-     west (1)
+     north (0),
+     south (1)
    }
 
 
@@ -141,6 +141,7 @@ ASN-Module-DynamicContentData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    -- # "_" + [4-digit RICS] + [addon, chosen by this company] means that 'extensionData' is a proprietary
    -- #    content of the company identified by the RICS code, identified as 'addon' by this company.
    -- # "*" + [addon] means that 'extensionData' is a content specific to this barcode,
+   -- # "_3011+0" (3011 being the RICS code of UIC) identifies empty extensionData.
    -- #    identified as 'addon', with no further information on who defined it.
    -- # Others values are reserved for future UIC use and shall not be used.
    -- ###########################################################################################

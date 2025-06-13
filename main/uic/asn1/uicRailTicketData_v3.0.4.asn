@@ -1400,6 +1400,7 @@ ASN-Module-RailTicketData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    -- # "_" + [4-digit RICS] + [addon, chosen by this company] means that 'extensionData' is a proprietary
    -- #    content of the company identified by the RICS code, identified as 'addon' by this company.
    -- # "*" + [addon] means that 'extensionData' is a content specific to this barcode,
+   -- # "_3011+0" (3011 being the RICS code of UIC) identifies empty extensionData.
    -- #    identified as 'addon', with no further information on who defined it.
    -- # Others values are reserved for future UIC use and shall not be used.
    -- ###########################################################################################
@@ -2116,9 +2117,9 @@ ASN-Module-RailTicketData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     	geoUnit   				GeoUnitType 			DEFAULT milliDegree,
     	coordinateSystem	 	GeoCoordinateSystemType DEFAULT wgs84,
     	-- separate hemishpere flag reduces the data size
-    	hemisphereLongitude 	HemisphereLongitudeType DEFAULT north,
+    	hemisphereLongitude 	HemisphereLongitudeType DEFAULT east,
     	-- separate hemishpere flag reduces the data size
-    	hemisphereLatitude 		HemisphereLatitudeType	DEFAULT east,
+    	hemisphereLatitude 		HemisphereLatitudeType	DEFAULT north,
     	longitude 				INTEGER,
     	latitude  				INTEGER,
     	accuracy                GeoUnitType 			OPTIONAL
@@ -2144,15 +2145,15 @@ ASN-Module-RailTicketData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     	deciDegree    		(4)
     }
 
-	HemisphereLongitudeType ::=		ENUMERATED {
-		north 				(0),
-		south 				(1)
-	}
+   HemisphereLongitudeType ::= ENUMERATED {
+     east (0),
+     west (1)
+   }
 
-	HemisphereLatitudeType	::=		ENUMERATED {
-		east 				(0),
-		west 				(1)
-	}
+   HemisphereLatitudeType ::= ENUMERATED {
+     north (0),
+     south (1)
+   }
 
 	LoadingDeckType		::=			ENUMERATED {
 		unspecified 		(0),
