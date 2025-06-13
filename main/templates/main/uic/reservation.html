@@ -1,4 +1,5 @@
 {% load tz rics %}
+{% localtime off %}
 <dl class="govuk-summary-list">
     {% if res.trainIA5 %}
         <div class="govuk-summary-list__row">
@@ -53,13 +54,13 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Departure time</dt>
         <dd class="govuk-summary-list__value">
-            {{ res|rics_departure_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ res|rics_departure_time:flex.issuing_time|date:"F d, Y H:i e" }}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Arrival time</dt>
         <dd class="govuk-summary-list__value">
-            {{ res|rics_arrival_time:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ res|rics_arrival_time:flex.issuing_time|date:"F d, Y H:i e" }}
         </dd>
     </div>
     {% if res.trainNum %}
@@ -235,3 +236,4 @@
         </div>
     {% endif %}
 </dl>
+{% endlocaltime %}
