@@ -79,6 +79,7 @@ def process_tickets(request, tickets):
 
     return None, None
 
+
 def index(request):
     ticket_bytes = None
     tickets = []
@@ -641,7 +642,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "return-included",
                             "label": "return-included-label",
                             "value": "yes-label" if \
-                            ticket_document["returnIncluded"] else "no-label",
+                                ticket_document["returnIncluded"] else "no-label",
                         })
 
                         if "productIdIA5" in ticket_document:
@@ -2412,7 +2413,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "product-label",
                     "value": parsed_layout.document_type,
                 })
-            
+
             if len(parsed_layout.discount_cards):
                 pass_fields["auxiliaryFields"].append({
                     "key": "discount",
@@ -2777,7 +2778,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             show_time = False
             if ticket_data.data.depart_time == rsp.data.DepartureTime.SpecificDeparture:
                 show_time = True
-            elif ticket_data.data.depart_time == rsp.data.DepartureTime.NotSet and validity_start.time() != datetime.time(0, 0, 0):
+            elif ticket_data.data.depart_time == rsp.data.DepartureTime.NotSet and validity_start.time() != datetime.time(
+                    0, 0, 0):
                 show_time = True
 
             if show_time:
@@ -4938,14 +4940,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if ticket_data.data.legs:
             leg = ticket_data.data.legs[0]
 
+            pass_json["preferredStyleSchemes"] = ["BoardingPassEnhancements"]
+            pass_json["semantics"]["airlinePassengerCapabilities"] = []
+            pass_json["semantics"]["departureAirportSecurityPrograms"] = []
+            if leg.date:
+                pass_json["semantics"]["originalDepartureDate"] = f"{leg.date.isoformat()}T00:00:00Z"
+            pass_json["semantics"]["airlineCode"] = leg.operating_carrier
+            pass_json["semantics"]["flightNumber"] = int(leg.flight_number)
+
             pass_fields["headerFields"].append({
                 "key": "flight-number",
                 "label": "flight-number-label",
                 "value": f"{leg.operating_carrier}{leg.flight_number}",
-                "semantics": {
-                    "airlineCode": leg.operating_carrier,
-                    "flightNumber": int(leg.flight_number),
-                }
             })
 
             pass_fields["auxiliaryFields"].append({
@@ -4960,17 +4966,17 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_fields["primaryFields"].append({
                 "key": "from-station",
                 "label": "from-station-label",
-                "value": leg.from_code,
-                "semantics": {
-                    "departureAirportCode": leg.from_code,
-                    "departureAirportName": departure["name"] if departure else None,
-                    "departureLocation": {
-                        "latitude": float(departure["latitude"]),
-                        "longitude": float(departure["longitude"]),
-                    } if departure else None,
-                }
+                "value": leg.from_code
             })
+            pass_json["semantics"]["departureAirportCode"] = leg.from_code
             if departure:
+                pass_json["semantics"]["departureAirportName"] = departure["name"]
+                pass_json["semantics"]["departureLocation"] = {
+                    "latitude": float(departure["latitude"]),
+                    "longitude": float(departure["longitude"]),
+                }
+                pass_json["semantics"]["departureAirportTimeZone"] = departure["tz_name"]
+                pass_json["semantics"]["departureCityName"] = departure["city"]
                 pass_json["locations"].append({
                     "latitude": float(departure["latitude"]),
                     "longitude": float(departure["longitude"]),
@@ -4992,16 +4998,16 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "to-station",
                 "label": "to-station-label",
                 "value": leg.to_code,
-                "semantics": {
-                    "destinationAirportCode": leg.to_code,
-                    "destinationAirportName": arrival["name"] if arrival else None,
-                    "destinationLocation": {
-                        "latitude": float(arrival["latitude"]),
-                        "longitude": float(arrival["longitude"]),
-                    } if arrival else None,
-                }
             })
+            pass_json["semantics"]["destinationAirportCode"] = leg.to_code
             if arrival:
+                pass_json["semantics"]["destinationAirportName"] = arrival["name"]
+                pass_json["semantics"]["destinationLocation"] = {
+                    "latitude": float(arrival["latitude"]),
+                    "longitude": float(arrival["longitude"]),
+                }
+                pass_json["semantics"]["destinationAirportTimeZone"] = arrival["tz_name"]
+                pass_json["semantics"]["destinationCityName"] = arrival["city"]
                 pass_json["locations"].append({
                     "latitude": float(arrival["latitude"]),
                     "longitude": float(arrival["longitude"]),
@@ -5022,8 +5028,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 pass_fields["secondaryFields"].append({
                     "key": "compartment",
                     "label": "class-code-label",
-                    "value": f"compartment-code-{c}-label"
+                    "value": f"compartment-code-{c}-label",
                 })
+                pass_json["semantics"]["ticketFareClass"] = f"compartment-code-{c}-label"
 
             if leg.leg_conditional and leg.leg_conditional.marketing_carrier:
                 airline = templatetags.iata.get_iata_airline_code(leg.operating_carrier)
@@ -5051,12 +5058,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "label": "fast-track-label",
                         "value": "yes-label" if leg.leg_conditional.fast_track else "no-label"
                     })
+                    if leg.leg_conditional.fast_track:
+                        pass_json["semantics"]["airlinePassengerCapabilities"].append(
+                            "PKAirlinePassengerCapabilityPriorityBoarding")
 
                 if leg.leg_conditional.selectee == iata.conditional.Selectee.TSAPre:
+                    pass_json["semantics"]["departureAirportSecurityPrograms"].append(
+                        "PKAirportSecurityProgramTSAPreCheck")
                     add_pkp_img(pkp, "pass/tsa-pre.png", "footer.png")
 
                 if leg.leg_conditional.frequent_flyer_number:
-                    if airline := templatetags.iata.get_iata_airline_code(leg.leg_conditional.frequent_flyer_designator):
+                    if airline := templatetags.iata.get_iata_airline_code(
+                            leg.leg_conditional.frequent_flyer_designator):
                         pass_fields["backFields"].append({
                             "key": "frequent-flyer",
                             "label": "frequent-flyer-label",
