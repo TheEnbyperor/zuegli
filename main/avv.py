@@ -74,7 +74,7 @@ def update_avv_tickets(account_id):
         r = niquests.get(f"https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements/{eid}", headers={
             "Authorization": f"Bearer {avv_token}",
             "ClientToken": client_token,
-            "deviceId": entitlement["deviceId"],
+            "deviceId": entitlement["deviceId"] or account_oauth.device_id,
             "language": "de",
             "User-Agent": "Zuegli (q@magicalcodewit.ch)"
         })
