@@ -46,4 +46,6 @@ xdg-mime default zuegli-hook.desktop x-scheme-handler/stoag
 xdg-mime default zuegli-hook.desktop x-scheme-handler/swk
 xdg-mime default zuegli-hook.desktop x-scheme-handler/ver
 
+sudo update-desktop-database ~/.local/share/applications
+
 echo "Install complete ✨"
