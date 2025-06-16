@@ -11,7 +11,10 @@ from . import models, gwallet
     ignore_result=True
 )
 def notify_device(device_id):
-    device = models.AppleDevice.objects.get(pk=device_id)
+    try:
+        device = models.AppleDevice.objects.get(pk=device_id)
+    except models.AppleDevice.DoesNotExist:
+        return
     r = niquests.post(f"https://api.push.apple.com/3/device/{device.push_token}", headers={
         "apns-push-type": "alert",
         "apns-priority": "10"
