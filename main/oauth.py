@@ -148,11 +148,14 @@ def get_token(account: "models.Account", provider: str):
         return oauth.token
     elif oauth.refresh_token:
         if not oauth.refresh_token_expires_at or oauth.refresh_token_expires_at > now - datetime.timedelta(minutes=3):
-            r = niquests.post(PROVIDERS[provider].token_url, data={
+            data = {
                 "grant_type": "refresh_token",
                 "client_id": PROVIDERS[provider].client_id,
                 "refresh_token": oauth.refresh_token,
-            }, headers={
+            }
+            if PROVIDERS[provider].client_secret:
+                data["client_secret"] = PROVIDERS[provider].client_secret
+            r = niquests.post(PROVIDERS[provider].token_url, data=data, headers={
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)"
             })
             if not r.ok:
