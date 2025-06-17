@@ -52,10 +52,13 @@ class Flex:
 
     def issuing_rics(self) -> int:
         rics = self.data["issuingDetail"].get("issuerNum", 0)
+        sp_rics = self.data["issuingDetail"].get("securityProviderNum", 0)
+        if sp_rics == 3634:
+            return sp_rics
         if rics:
             return rics
         else:
-            return self.data["issuingDetail"].get("securityProviderNum", 0)
+            return sp_rics
 
     def ticket_id(self) -> str:
         return self.data["issuingDetail"].get("issuerPNR", "")

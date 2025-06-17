@@ -338,6 +338,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
     pkp = pkpass.PKPass()
     have_logo = False
     have_icon = False
+    is_dark_bg = False
 
     pass_json = {
         "formatVersion": 1,
@@ -414,6 +415,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             have_logo = True
         if issuing_rics in RICS_BG:
             pass_json["backgroundColor"] = RICS_BG[issuing_rics]
+        if issuing_rics in RICS_DARK_BG:
+            is_dark_bg = True
         if issuing_rics in RICS_FG:
             pass_json["foregroundColor"] = RICS_FG[issuing_rics]
         if issuing_rics in RICS_FG_SECONDARY:
@@ -5177,7 +5180,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         add_pkp_img(pkp, "pass/icon.png", "icon.png")
 
     if ticket_obj.ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
-        add_pkp_img(pkp, "pass/logo-dt.png", "thumbnail.png")
+        if is_dark_bg:
+            add_pkp_img(pkp, "pass/logo-dt-white.png", "thumbnail.png")
+        else:
+            add_pkp_img(pkp, "pass/logo-dt.png", "thumbnail.png")
 
     public_id = ticket_obj.public_id()
     if has_return:
@@ -5570,6 +5576,7 @@ RICS_LOGO = {
     3591: "pass/logo-akn.png",
     3602: "pass/logo-vvv.png",
     3606: "pass/logo-qbuzz.png",
+    3634: "pass/logo-dtvg.png",
     3697: "pass/logo-cendis.png",
     3703: "pass/logo-grand-est.png",
     5008: "pass/logo-vrn.png",
@@ -5593,11 +5600,14 @@ RICS_BG = {
     3453: "#018e4a",
     3497: "#14181a",
     3602: "#004d66",
+    3634: "#343a40",
     3697: "#0f173e",
     3703: "#191998",
     5188: "#40002c",
     8999: "#0b828e",
 }
+
+RICS_DARK_BG = (3634,)
 
 RICS_FG = {
     10: "rgb(51, 51, 51)",
@@ -5612,6 +5622,7 @@ RICS_FG = {
     3497: "#ffffff",
     3602: "#ffffff",
     3606: "rgb(0, 70, 84)",
+    3634: "#ffffff",
     3697: "#ffffff",
     3703: "#ffffff",
     5188: "#ffffff",
@@ -5639,6 +5650,7 @@ RICS_FG_SECONDARY = {
     3497: "#96c87d",
     3602: "#69AB98",
     3606: "rgb(247, 147, 48)",
+    3634: "#fbc02d",
     3697: "rgb(110, 193, 228)",
     3703: "#ffc94f",
     5188: "rgb(255, 54, 0)",
