@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "main",
     "channels",
     "django_celery_beat",
+    "mathfilters"
 ]
 
 MIDDLEWARE = [
