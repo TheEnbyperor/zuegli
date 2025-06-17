@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 from . import ticket as t
 from . import vdv_nm
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2
 
 
 def make_pass_token():
@@ -553,6 +553,29 @@ class BahnBonusInstance(models.Model):
             raw_ticket=self.barcode_data,
             data=bahnbonus.BahnBonusCode.parse(bytes(self.barcode_data))
         )
+
+
+class TS2Instance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ts2_instances", db_index=True)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    barcode_data = models.BinaryField()
+    decoded_data = models.JSONField()
+
+    class Meta:
+        verbose_name = "TS2 ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def as_ticket(self) -> t.TS2Ticket:
+        config = dacite.Config(type_hooks={
+            bytes: base64.b64decode,
+            datetime.datetime: datetime.datetime.fromisoformat,
+            datetime.date: datetime.date.fromisoformat,
+        })
+        ticket_envelope = dacite.from_dict(data_class=ts2.Envelope, data=self.decoded_data["envelope"], config=config)
+        return t.TS2Ticket.from_envelope(bytes(self.barcode_data), ticket_envelope)
 
 
 class KnownRailEasyJourney(models.Model):

@@ -1,0 +1,94 @@
+{% load rics tz i18n %}
+{% localtime off %}
+    <h2 class="govuk-heading-m">{% trans "Security" %}</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Barcode version" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.version }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Signing RICS" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.issuer_rics }}</code></dd>
+        </div>
+        {% with org=ticket.envelope.issuer %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{% trans "Signer" %}</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include 'main/rics.html' with org=org %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Signature key ID" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.signature_key_id }}</code></dd>
+        </div>
+        {% if ticket.envelope.can_verify %}
+            {% with cert=ticket.envelope.signing_cert %}
+                {% if cert %}
+                    {% include "main/uic/cert.html" with cert=cert %}
+                {% endif %}
+            {% endwith %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Signature verification" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if ticket.envelope.verify_signature %}
+                        <strong class="govuk-tag govuk-tag--green">{% trans "Valid" %}</strong>
+                    {% else %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                {% trans "Signature verification failed, this is likely a forged ticket" %}
+                            </strong>
+                        </div>
+                    {% endif %}
+                </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Signing key" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            {% trans "Unknown signing key, can't verify ticket" %}
+                        </strong>
+                    </div>
+                </dd>
+            </div>
+        {% endif %}
+    </dl>
+    <h2 class="govuk-heading-m">Data</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Ticket ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.ticket_id }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Traveller name</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.customer_name }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Date of Birth</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.customer_dob|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Validity start</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Validity end</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.valid_to|date:"F d, Y" }}</dd>
+        </div>
+    </dl>
+    <div class="paper-ticket-container">
+        <div class="paper-ticket">
+            <div class="plai-ticket-inner" style="width: 25ch;height: {{ ticket.data.layout_lines|length }}em;">
+                {% for line in ticket.data.layout_lines %}
+                    <span class="paper-ticket-field" style="top:{{ forloop.counter0 }}em; left: 0;height: 1em; width: 25ch;">{{ line }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endlocaltime %}

@@ -44,3 +44,4 @@ urllib3
 django-solo
 celery
 django-celery-beat
+django-mathfilters

@@ -10,7 +10,7 @@ import enum
 import binascii
 import ber_tlv.tlv
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus, flexi_ticket
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2
 
 
 class TicketError(Exception):
@@ -396,6 +396,44 @@ class UICTicket:
             other_dosipas_records=[r for r in records if not (
                 r.format.startswith("FCB") or r.format.startswith("FDC")
             )],
+        )
+
+
+@dataclasses.dataclass
+class TS2Ticket:
+    raw_bytes: bytes
+    envelope: ts2.Envelope
+    data: ts2.TicketData
+
+    @property
+    def ticket_type(self) -> str:
+        return "TS2"
+
+    @staticmethod
+    def type() -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"ts2")
+        hd.update(self.envelope.issuer_rics.to_bytes(4, "big"))
+        hd.update(self.data.ticket_id.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+    def distributor(self):
+        return uic.rics.get_rics(self.envelope.issuer_rics)
+
+    @classmethod
+    def from_envelope(
+            cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
+    ) -> "TS2Ticket":
+        data = parse_ticket_ts2_data(ticket_envelope)
+
+        return cls(
+            raw_bytes=ticket_bytes,
+            envelope=ticket_envelope,
+            data=data,
         )
 
 @dataclasses.dataclass
@@ -1196,6 +1234,30 @@ def parse_ticket_uic_qr(ticket_bytes: bytes, context: "vdv.ticket.Context") -> U
     return parse_ticket_uic(ticket_bytes, context)
 
 
+def parse_ticket_ts2(ticket_bytes: bytes) -> TS2Ticket:
+    try:
+        ticket_envelope = ts2.Envelope.parse(ticket_bytes)
+    except ts2.util.TS2Exception:
+        raise TicketError(
+            title="Invalid TS2 data",
+            message="The TS2 ticket envelope can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+    return TS2Ticket.from_envelope(ticket_bytes, ticket_envelope)
+
+
+def parse_ticket_ts2_data(ticket_envelope: ts2.Envelope) -> ts2.TicketData:
+    try:
+        return ts2.TicketData.parse(ticket_envelope.data)
+    except ts2.util.TS2Exception:
+        raise TicketError(
+            title="Invalid TS2 data",
+            message="The TS2 ticket contents can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
 def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     pki_store = rsp.get_pki_store()
 
@@ -1510,7 +1572,7 @@ def parse_ticket(
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
-    FlexiTicket,
+    FlexiTicket, TS2Ticket,
 ]:
     context = vdv.ticket.Context(
         account_forename=account.user.first_name if account else None,
@@ -1538,6 +1600,9 @@ def parse_ticket(
 
     if ticket_bytes[:3] == b"#UT":
         return parse_ticket_uic(ticket_bytes, context)
+
+    if ticket_bytes[:3] == b"TS2":
+        return parse_ticket_ts2(ticket_bytes)
 
     if ticket_bytes[:4] == b"UIC:":
         return parse_ticket_uic_qr(ticket_bytes, context)
@@ -1767,6 +1832,18 @@ def create_ticket_obj(
             defaults={
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, TS2Ticket):
+        _, created = models.TS2Instance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "distributor_rics": ticket_data.envelope.issuer_rics,
+                "barcode_data": ticket_bytes,
+                "decoded_data": {
+                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
+                }
             }
         )
     return created
