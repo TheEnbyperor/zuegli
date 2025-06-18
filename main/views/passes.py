@@ -3471,6 +3471,61 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             add_pkp_img(pkp, "pass/logo-nr.png", "logo.png")
             have_logo = True
 
+    elif isinstance(ticket_instance, models.TS2Instance):
+        ticket_data: ticket.TS2Ticket = ticket_instance.as_ticket()
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+            "altText": ticket_data.data.vvt_ticket_id,
+        }]
+
+        pass_json["expirationDate"] = datetime.datetime.combine(ticket_data.data.valid_to, datetime.time.max)\
+            .strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_fields = {
+            "primaryFields": [{
+                "key": "passenger",
+                "label": "passenger-label",
+                "value": f"{ticket_data.data.customer_forename}\n{ticket_data.data.customer_surname}",
+                "semantics": {
+                    "passengerName": {
+                        "familyName": ticket_data.data.customer_surname,
+                        "givenName": ticket_data.data.customer_forename,
+                    }
+                }
+            }],
+            "secondaryFields": [{
+                "key": "validity-start",
+                "label": "validity-start-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_from.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }, {
+                "key": "validity-end",
+                "label": "validity-end-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.valid_to.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "changeMessage": "validity-end-change"
+            }],
+            "auxiliaryFields": [{
+                "key": "date-of-birth",
+                "label": "date-of-birth-label",
+                "dateStyle": "PKDateStyleMedium",
+                "value": ticket_data.data.customer_dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }],
+            "backFields": [{
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": str(ticket_data.data.ticket_id),
+            }]
+        }
+
+        add_pkp_img(pkp, "pass/logo-vvt.png", "logo.png")
+        have_logo = True
+        pass_json["backgroundColor"] = "#E5F2FB"
+        pass_json["foregroundColor"] = "#000000"
+        pass_json["labelColor"] = "#D9001A"
+
     elif isinstance(ticket_instance, models.SNCFTicketInstance):
         ticket_data: ticket.SNCFTicket = ticket_instance.as_ticket()
 
@@ -3579,6 +3634,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         }]
         add_pkp_img(pkp, "pass/logo-sncf.png", "logo.png")
         have_logo = True
+
     elif isinstance(ticket_instance, models.ELBTicketInstance):
         ticket_data: ticket.ELBTicket = ticket_instance.as_ticket()
         validity_end = ticket_data.data.validity_end_time()
@@ -3698,6 +3754,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         }]
         add_pkp_img(pkp, "pass/logo-eurostar.png", "logo.png")
         have_logo = True
+
     elif isinstance(ticket_instance, models.SSBTicketInstance):
         ticket_data: ticket.SSBTicket = ticket_instance.as_ticket()
 
@@ -4310,6 +4367,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["foregroundColor"] = RICS_FG[ticket_data.envelope.issuer_rics]
         if ticket_data.envelope.issuer_rics in RICS_FG_SECONDARY:
             pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.envelope.issuer_rics]
+
     elif isinstance(ticket_instance, models.SSB1TicketInstance):
         ticket_data: ticket.SSB1Ticket = ticket_instance.as_ticket()
 
@@ -4480,6 +4538,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["foregroundColor"] = RICS_FG[ticket_data.ticket.issuer_rics]
         if ticket_data.ticket.issuer_rics in RICS_FG_SECONDARY:
             pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.ticket.issuer_rics]
+
     elif isinstance(ticket_instance, models.HZPPTicketInstance):
         ticket_data: ticket.HZPPTicket = ticket_instance.as_ticket()
 
@@ -4907,6 +4966,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["foregroundColor"] = SWISSPASS_FG[issuer_id]
         if issuer_id in SWISSPASS_FG_SECONDARY:
             pass_json["labelColor"] = SWISSPASS_FG_SECONDARY[issuer_id]
+
     elif isinstance(ticket_instance, models.IATATicketInstance):
         ticket_data: ticket.IATATicket = ticket_instance.as_ticket()
 

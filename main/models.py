@@ -215,6 +215,9 @@ class Ticket(models.Model):
         if ticket_instance := self.bahnbonus_instances.first():
             return ticket_instance
 
+        if ticket_instance := self.ts2_instances.first():
+            return ticket_instance
+
         return None
 
 
