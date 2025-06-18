@@ -62,16 +62,39 @@
     <h2 class="govuk-heading-m">Data</h2>
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Ticket ID</dt>
+            <dt class="govuk-summary-list__key">Ticket type</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.ticket_type }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ÖBB Ticket ID</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.ticket_id }}</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Traveller name</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.customer_name }}</dd>
+            <dt class="govuk-summary-list__key">VVT Ticket ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.vvt_ticket_id }}</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Date of Birth</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.customer_dob|date:"F d, Y" }}</dd>
+            <dt class="govuk-summary-list__key">Card issue</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.card_issue }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Traveller</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Forename</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.customer_forename }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Surname</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.customer_surname }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date of birth</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.data.customer_dob|date:"F d, Y" }}</dd>
+                    </div>
+                </dl>
+            </dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Validity start</dt>
@@ -86,7 +109,8 @@
         <div class="paper-ticket">
             <div class="plai-ticket-inner" style="width: 25ch;height: {{ ticket.data.layout_lines|length }}em;">
                 {% for line in ticket.data.layout_lines %}
-                    <span class="paper-ticket-field" style="top:{{ forloop.counter0 }}em; left: 0;height: 1em; width: 25ch;">{{ line }}</span>
+                    <span class="paper-ticket-field"
+                          style="top:{{ forloop.counter0 }}em; left: 0;height: 1em; width: 25ch;">{{ line }}</span>
                 {% endfor %}
             </div>
         </div>

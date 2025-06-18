@@ -5,10 +5,14 @@ from .util import TS2Exception
 
 @dataclasses.dataclass
 class TicketData:
+    ticket_type: str
     ticket_id: str
+    vvt_ticket_id: str
+    card_issue: str
     valid_from: datetime.date
     valid_to: datetime.date
-    customer_name: str
+    customer_forename: str
+    customer_surname: str
     customer_dob: datetime.date
     layout_lines: typing.List[str]
 
@@ -32,13 +36,19 @@ class TicketData:
 
         layout_lines = [data[i:i+25] for i in range(98, len(data), 25)]
 
+        customer_name = data[53:90].strip().split(",", 1)
+        customer_surname = customer_name[0].strip()
+        customer_forename = customer_name[1].strip() if len(customer_name) > 1 else ""
+
         return cls(
-            # 0 Unknown
-            ticket_id=data[1:33],
-            # 33 - 37 Unknown
+            ticket_type=data[0],
+            ticket_id=data[1:17],
+            vvt_ticket_id=data[17:33],
+            card_issue=data[34:37],
             valid_from=valid_from,
             valid_to=valid_to,
-            customer_name=data[53:90].strip(),
+            customer_forename=customer_forename,
+            customer_surname=customer_surname,
             customer_dob=customer_dob,
             layout_lines=layout_lines,
         )
