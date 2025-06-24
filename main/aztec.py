@@ -44,7 +44,7 @@ def decode_multiple(img_data: bytes, *, scan_speed: str = "slow"):
     results = Barkoder.Barkoder.DecodeImageMemory(barkoder_config, img, width, height)
 
     if len(results) > 0:
-        d = [r.binaryData for r in results]
+        d = [bytes(r.binaryData) for r in results]
         del results
         return d
     else:
