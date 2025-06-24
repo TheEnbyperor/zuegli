@@ -120,8 +120,7 @@ def index(request):
                             for page in pdf:
                                 img_bytes = page.get_pixmap(dpi=300).tobytes()
                                 try:
-                                    ticket_bytes = aztec.decode(img_bytes, scan_speed="slow")
-                                    tickets.append(ticket_bytes)
+                                    tickets.extend(aztec.decode_multiple(img_bytes, scan_speed="slow"))
                                 except aztec.AztecError:
                                     continue
 
@@ -3565,9 +3564,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         pass_fields = {
             "transitType": "PKTransitTypeTrain",
             "headerFields": [{
-                "key": "class-code",
-                "label": "class-code-label",
-                "value": f"class-code-{ticket_data.data.travel_class}-label",
+                "key": "travel-date",
+                "label": "departure-date-label",
+                "value": ticket_data.data.travel_date.strftime("%b %d"),
             }],
             "primaryFields": [{
                 "key": "from-station",
@@ -3608,7 +3607,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "dateStyle": "PKDateStyleMedium",
                 "value": ticket_data.data.traveler_dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
             }],
-            "secondaryFields": [],
+            "secondaryFields": [{
+                "key": "class-code",
+                "label": "class-code-label",
+                "value": f"class-code-{ticket_data.data.travel_class}-label",
+            }, {
+                "key": "train-number",
+                "label": "train-number-label",
+                "value": ticket_data.data.train_number
+            }],
             "backFields": [{
                 "key": "from-station-back",
                 "label": "from-station-label",
