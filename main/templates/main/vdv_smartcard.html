@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-{% load static tz rics %}
+{% load static tz rics i18n %}
 
 {% block title %}Smartcard {{ smartcard.public_id }}{% endblock title %}
 
@@ -98,6 +98,18 @@
                                         </div>
                                     {% endif %}
                                 {% endwith %}
+                                {% if perms.main.view_revocation %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">{% trans "Revoked application" %}</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {% if card.application_directory.application_data.is_revoked %}
+                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                            {% else %}
+                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                {% endif %}
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">Version</dt>
                                     <dd class="govuk-summary-list__value">
@@ -226,6 +238,18 @@
                                                         </div>
                                                     {% endif %}
                                                 {% endwith %}
+                                                {% if perms.main.view_revocation %}
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key">{% trans "Revoked ticket" %}</dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if auth.is_revoked %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                {% endif %}
                                                 <div class="govuk-summary-list__row">
                                                     <dt class="govuk-summary-list__key">Product</dt>
                                                     <dd class="govuk-summary-list__value">
