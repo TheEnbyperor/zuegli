@@ -1,7 +1,7 @@
 import dataclasses
 import typing
 import ber_tlv.tlv
-from .. import vdv
+from .. import vdv, models
 from .util import VDVNMException
 
 @dataclasses.dataclass
@@ -84,6 +84,17 @@ class ApplicationData:
 
     def application_instance_org_name_opt(self):
         return vdv.ticket.map_org_id(self.application_instance_org_id, True)
+
+    def is_revoked(self) -> bool:
+        blocklist_entry = models.VDVBlocklistItem.objects.filter(
+            item_type=models.VDVBlocklistItem.ITEM_NUTZERMEDIUM,
+            org_id=self.application_instance_org_id,
+            item_id=self.application_instance_number,
+        ).order_by("-instance_counter").first()
+        if blocklist_entry:
+            if blocklist_entry.lock_mode != models.VDVBlocklistItem.LOCK_MODE_UNLOCK:
+                return True
+        return False
 
     @classmethod
     def parse(cls, data) -> "ApplicationData":
@@ -283,6 +294,17 @@ class Authorization:
 
     def product_org_name_opt(self):
         return vdv.ticket.map_org_id(self.product_org_id, True)
+
+    def is_revoked(self) -> bool:
+        blocklist_entry = models.VDVBlocklistItem.objects.filter(
+            item_type=models.VDVBlocklistItem.ITEM_BERECHTIGUNG,
+            org_id=self.authorization_org_id,
+            item_id=self.authorization_id,
+        ).order_by("-instance_counter").first()
+        if blocklist_entry:
+            if blocklist_entry.lock_mode != models.VDVBlocklistItem.LOCK_MODE_UNLOCK:
+                return True
+        return False
 
     @classmethod
     def parse(cls, data) -> "Authorization":
