@@ -22,7 +22,7 @@ except ImportError as e:
 class AztecError(Exception):
     pass
 
-def decode(img_data: bytes, *, scan_speed: str = "slow"):
+def decode_multiple(img_data: bytes, *, scan_speed: str = "slow"):
     if not barkoder_config:
         raise AztecError("Barkoder SDK not available") from e
 
@@ -44,9 +44,12 @@ def decode(img_data: bytes, *, scan_speed: str = "slow"):
     results = Barkoder.Barkoder.DecodeImageMemory(barkoder_config, img, width, height)
 
     if len(results) > 0:
-        d = bytes(results[0].binaryData)
+        d = [r.binaryData for r in results]
         del results
         return d
     else:
         del results
         raise AztecError("No barcodes found")
+
+def decode(img_data: bytes, *, scan_speed: str = "slow"):
+    return decode_multiple(img_data, scan_speed=scan_speed)[0]
