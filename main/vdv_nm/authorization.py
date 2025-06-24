@@ -1,4 +1,6 @@
 import dataclasses
+import typing
+
 import ber_tlv.tlv
 from . import log
 from .util import VDVNMException
@@ -7,7 +9,7 @@ from .util import VDVNMException
 @dataclasses.dataclass
 class Authorization:
     product_specific_data: bytes
-    ticket_use: log.TicketUse
+    ticket_use: typing.Optional[log.TicketUse]
     pv_key_version: int
     kvp_key_version: int
     auth_key_version: int
@@ -28,15 +30,16 @@ class Authorization:
 
         transaction = next(filter(lambda t: t[0] == 0xf1, authorization), None)
         if not transaction:
-            raise VDVNMException("Missing transaction data")
-        transaction = transaction[1]
+            ticket_use = None
+        else:
+            transaction = transaction[1]
 
-        issuing_general_data = next(filter(lambda t: t[0] == 0x89, transaction), None)
-        if not issuing_general_data:
-            raise VDVNMException("Missing issuance general transaction data")
-        issuing_general = log.GeneralData.parse(issuing_general_data[1])
+            issuing_general_data = next(filter(lambda t: t[0] == 0x89, transaction), None)
+            if not issuing_general_data:
+                raise VDVNMException("Missing issuance general transaction data")
+            issuing_general = log.GeneralData.parse(issuing_general_data[1])
 
-        ticket_use = log.TicketUse.parse(issuing_general, transaction)
+            ticket_use = log.TicketUse.parse(issuing_general, transaction)
 
         product_specific_data = next(filter(lambda t: t[0] == 0x85, authorization), None)
         if not product_specific_data:

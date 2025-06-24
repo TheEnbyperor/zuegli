@@ -132,7 +132,7 @@ SPACIAL_VALIDITY = {
         4300: "Bad König",
         4400: "Beerfelden",
         5000: "Frankfurt ohne Flughafen",
-        5090: "Frankfurt Flughafes",
+        5090: "Frankfurt Flughafen",
         5100: "Bad Homburg",
         5200: "Usingen",
         5300: "Braunfels",

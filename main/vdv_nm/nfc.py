@@ -125,9 +125,8 @@ class VDVConsumer(iso7816.Consumer):
                 ))
                 if not authorization_infotext.is_success():
                     self.error("Failed to read Authorization Info Text")
-                authorization = vdv_nm.authorization.Authorization.parse(authorization_data.data)
                 authorization_infotext = vdv_nm.info_text.InfoText.parse(authorization_infotext.data)
-                authorizations.append((authorization_data.data, authorization, authorization_infotext.text))
+                authorizations.append((authorization_data.data, auth, authorization_infotext.text))
 
             self.message("Reading public keys...")
 
@@ -215,8 +214,8 @@ class VDVConsumer(iso7816.Consumer):
             for data, auth, info_text in authorizations:
                 models.VDVSmartcardAuthorization.objects.update_or_create(
                     smartcard=card,
-                    authorization_number=auth.ticket_use.authorization_number,
-                    authorization_org_id=auth.ticket_use.authorization_org_id,
+                    authorization_number=auth.authorization_id,
+                    authorization_org_id=auth.authorization_org_id,
                     defaults={
                         "authorization": data,
                         "info_text": info_text
