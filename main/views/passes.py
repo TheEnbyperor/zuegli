@@ -4976,6 +4976,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "messageEncoding": "iso-8859-1",
             "altText": f"{ticket_data.data.pnr} SEQ {ticket_data.data.sequence}",
         }]
+        pass_json["preferredStyleSchemes"] = ["boardingPass"]
 
         pass_type = "boardingPass"
         pass_fields["transitType"] = "PKTransitTypeAir"
@@ -5003,7 +5004,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if ticket_data.data.legs:
             leg = ticket_data.data.legs[0]
 
-            pass_json["preferredStyleSchemes"] = ["BoardingPassEnhancements"]
             pass_json["semantics"]["airlinePassengerCapabilities"] = []
             pass_json["semantics"]["departureAirportSecurityPrograms"] = []
             if leg.date:
