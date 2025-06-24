@@ -29,7 +29,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">AID</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ card.fci.aid|as_hex }}
+                            <code>{{ card.fci.aid|as_hex }}</code>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -49,7 +49,8 @@
                         {% else %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Manufacturer organisation ID</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ card.fci.manufacturer_org_id }}</code>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ card.fci.manufacturer_org_id }}</code>
                                 </dd>
                             </div>
                         {% endif %}
@@ -217,7 +218,7 @@
                                                 <div class="govuk-summary-list__row">
                                                     <dt class="govuk-summary-list__key">ID</dt>
                                                     <dd class="govuk-summary-list__value">
-                                                        {{ auth.authorization_id }}
+                                                        <code>{{ auth.authorization_id }}</code>
                                                     </dd>
                                                 </div>
                                                 {% with org_name=auth.authorization_org_name_opt %}
