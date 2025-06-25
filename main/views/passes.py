@@ -2231,6 +2231,97 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "ignoresTimeZone": True,
                 })
 
+        elif ticket_data.db_plai:
+            pass_fields["headerFields"].append({
+                "key": "product",
+                "label": "product-label",
+                "value": ticket_data.db_plai.ticket_type
+            })
+            pass_fields["backFields"].append({
+                "key": "product-back",
+                "label": "product-label",
+                "value": ticket_data.db_plai.ticket_type,
+            })
+
+            pass_fields["backFields"].append({
+                "key": "conditions",
+                "label": "product-conditions-label",
+                "value": ticket_data.db_plai.conditions,
+            })
+
+            pass_fields["primaryFields"].append({
+                "key": "passenger",
+                "label": "passenger-label",
+                "value": ticket_data.db_plai.customer_name
+            })
+
+            if ticket_data.db_plai.customer_dob:
+                pass_fields["secondaryFields"].append({
+                    "key": "date-of-birth",
+                    "label": "date-of-birth-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "value": ticket_data.db_plai.customer_dob.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+
+            if ticket_data.db_plai.valid_from:
+                pass_fields["auxiliaryFields"].append({
+                    "key": "validity-start",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.db_plai.valid_from.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+                pass_fields["backFields"].append({
+                    "key": "validity-start-back",
+                    "label": "validity-start-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": ticket_data.db_plai.valid_to.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+
+            if ticket_data.db_plai.valid_to:
+                pass_json["expirationDate"] = ticket_data.db_plai.valid_to.isoformat()
+                pass_fields["auxiliaryFields"].append({
+                    "key": "validity-end",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleMedium",
+                    "value": ticket_data.db_plai.valid_to.isoformat(),
+                    "changeMessage": "validity-end-change",
+                    "ignoresTimeZone": True
+                })
+                pass_fields["backFields"].append({
+                    "key": "validity-end-back",
+                    "label": "validity-end-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": ticket_data.db_plai.valid_to.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+
+            if ticket_data.db_plai.booked_at:
+                pass_fields["backFields"].append({
+                    "key": "issued-at",
+                    "label": "issued-at-label",
+                    "dateStyle": "PKDateStyleFull",
+                    "timeStyle": "PKDateStyleFull",
+                    "value": ticket_data.db_plai.booked_at.isoformat(),
+                    "ignoresTimeZone": True,
+                })
+
+            pass_fields["secondaryFields"].append({
+                "key": "product-organisation",
+                "label": "product-organisation-label",
+                "value": ticket_data.db_plai.tariff
+            })
+            pass_fields["backFields"].append({
+                "key": "product-organisation-back",
+                "label": "product-organisation-label",
+                "value": ticket_data.db_plai.tariff
+            })
+
         elif parsed_layout:
             if parsed_layout.trips:
                 if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
