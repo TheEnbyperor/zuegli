@@ -96,6 +96,7 @@ class UICTicket:
     vor_vd: typing.Optional["uic.vor.VORRecordVD"] = None
     vor_fk: typing.Optional["uic.vor.VORRecordFK"] = None
     st01: typing.Optional["uic.st01_parse.ParsedST01"] = None
+    db_plai: typing.Optional["uic.db_plai_parse.ParsedPLAI"] = None
     bravo: typing.Optional["uic.bravo.BravoRecord"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
     other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
@@ -174,6 +175,8 @@ class UICTicket:
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
             else:
                 return models.Ticket.TYPE_FAHRKARTE
+        elif self.db_plai:
+            return models.Ticket.TYPE_FAHRKARTE
 
         return models.Ticket.TYPE_UNKNOWN
 
@@ -341,10 +344,16 @@ class UICTicket:
     ) -> "UICTicket":
         layout = parse_ticket_uic_layout(ticket_envelope)
         st01 = None
+        db_plai = None
         if layout and layout.standard == "ST01":
             parser = uic.st01_parse.ST01Parser()
             parser.read(layout)
             st01 = parser.parse()
+        elif layout and layout.standard == "PLAI" and ticket_envelope.issuer_rics == 80:
+            parser = uic.db_plai_parse.PLAIParser()
+            parser.read(layout)
+            db_plai = parser.parse()
+            print(db_plai)
 
         return cls(
             raw_bytes=ticket_bytes,
@@ -363,6 +372,7 @@ class UICTicket:
             vor_fk=parse_ticket_uic_vor_fk(ticket_envelope),
             bravo=parse_ticket_uic_bravo(ticket_envelope),
             st01=st01,
+            db_plai=db_plai,
             other_records=[r for r in ticket_envelope.records if not (
                     r.id.startswith("U_") or r.id == "0080BL" or r.id == "0080VU"
                     or r.id == "1154UT" or r.id == "118199"

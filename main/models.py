@@ -792,7 +792,7 @@ class VDVSmartcardAuthorization(models.Model):
     def __str__(self):
         return f"{self.smartcard} #{self.authorization_number}"
 
-    def as_log(self) -> vdv_nm.authorization.Authorization:
+    def as_auth(self) -> vdv_nm.authorization.Authorization:
         return vdv_nm.authorization.Authorization.parse(bytes(self.authorization))
 
 
