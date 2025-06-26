@@ -96,6 +96,8 @@ spec:
                 name: vdv-pkpass-wallet-passes
             - secretRef:
                 name: vdv-pkpass-hzpp
+            - secretRef:
+                name: vdv-pkpass-hvv
       containers:
         - name: gunicorn
           image: theenbyperor/vdv-pkpass-django:(version)
@@ -181,6 +183,8 @@ spec:
                 name: vdv-pkpass-wallet-passes
             - secretRef:
                 name: vdv-pkpass-hzpp
+            - secretRef:
+                name: vdv-pkpass-hvv
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -252,6 +256,8 @@ spec:
                 name: vdv-pkpass-wallet-passes
             - secretRef:
                 name: vdv-pkpass-hzpp
+            - secretRef:
+                name: vdv-pkpass-hvv
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
