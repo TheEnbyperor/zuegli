@@ -141,6 +141,8 @@ class UICTicket:
                         return models.Ticket.TYPE_INTERRAIL
                     elif issuer_name == "BMK":
                         return models.Ticket.TYPE_KLIMATICKET
+                    else:
+                        return models.Ticket.TYPE_FAHRKARTE
                 elif ticket_type == "customerCard":
                     return models.Ticket.TYPE_BAHNCARD
                 elif ticket_type == "reservation":
