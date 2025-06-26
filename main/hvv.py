@@ -77,6 +77,8 @@ def update_hvv_tickets(account_id):
     data = r.json()
 
     for order in data["content"]:
+        if "ticketPublicUUID" not in order:
+            continue
         r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
