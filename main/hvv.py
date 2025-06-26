@@ -96,9 +96,7 @@ def update_hvv_tickets(account_id):
             logger.error("Error decoding barcode ticket: %s", e)
 
 
-    r = niquests.get("https://api.hochbahn.cloud/subscriptions/orders", params={
-        "pageSize": "0",
-    }, headers={
+    r = niquests.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
         "Authorization": f"Bearer {token}"
     })
     if not r.ok:
