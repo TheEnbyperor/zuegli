@@ -38,6 +38,7 @@ urlpatterns = [
     path('account/db/', views.db.db_account, name='db_account'),
     path('account/saarvv/', views.saarvv.saarvv_account, name='saarvv_account'),
     path('account/sbahn_berlin/', views.sbahn_berlin.sbahn_berlin_account, name='sbahn_berlin_account'),
+    path('account/mvv/', views.mvv.mvv_account, name='mvv_account'),
 
     path('account/db_login/', views.db.db_login, name='db_login'),
     path('account/bahnbonus_login/', views.db.bahnbonus_login, name='bahnbonus_login'),
@@ -46,6 +47,7 @@ urlpatterns = [
     path('account/nrway_login/', views.vrr.nrway_login, name='nrway_login'),
     path('account/saarvv_login/', views.saarvv.saarvv_login, name='saarvv_login'),
     path('account/sbahn_berlin_login/', views.sbahn_berlin.sbahn_berlin_login, name='sbahn_berlin_login'),
+    path('account/mvv_login/', views.mvv.mvv_login, name='mvv_login'),
     path('account/raileasy_login/', views.raileasy.raileasy_login, name='raileasy_login'),
 
     path('account/oauth/<str:provider>/login', views.oauth.oauth_login_start, name='oauth_login_start'),

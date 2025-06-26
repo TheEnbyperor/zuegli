@@ -76,6 +76,19 @@
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "MVV Account" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if user.account.is_mvv_authenticated %}
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--secondary" href="{% url 'mvv_login' %}">{% trans "Reauthenticate" %}</a>
+                            <a class="govuk-button govuk-button--warning" href="{% url 'oauth_logout' 'mvv' %}">{% trans "Unlink" %}</a>
+                        </div>
+                    {% else %}
+                        <a class="govuk-button" href="{% url 'mvv_login' %}">{% trans "Login with MVV" %}</a>
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "AVV Account" %}</dt>
                 <dd class="govuk-summary-list__value">
                     {% if user.account.is_avv_authenticated %}

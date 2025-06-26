@@ -16,4 +16,4 @@ def update_all():
 )
 def update_sbahn_berlin_tickets(account_id):
     account = models.Account.objects.get(pk=account_id)
-    eos.update_eos_tickets(account, "sbahn_berlin", "https://sbahn-ber.tickeos.de", "sbb")
+    eos.update_eos_tickets(account, "sbahn_berlin")

@@ -62,6 +62,9 @@ class Account(models.Model):
     def is_sbahn_berlin_authenticated(self):
         return self.is_oauth_authenticated("sbahn_berlin")
 
+    def is_mvv_authenticated(self):
+        return self.is_oauth_authenticated("mvv")
+
     def is_raileasy_authenticated(self):
         return self.is_oauth_authenticated("raileasy")
 

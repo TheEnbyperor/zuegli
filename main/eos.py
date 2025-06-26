@@ -42,14 +42,14 @@ def get_eos_instance(eos_type: str):
     decrypted_license = cipher.decrypt(encrypted_license)
     eos_license = json.loads(decrypted_license)
     eos_instance = eos_license["instances"][0]
-    EOS_INSTANCES[eos_type] = eos_instance, license_info["version"]
-    return eos_instance, license_info["version"]
+    EOS_INSTANCES[eos_type] = eos_instance, license_info
+    return eos_instance, license_info
 
 
 def sign_request(request: niquests.PreparedRequest, device_id: str, eos_type: str) -> niquests.PreparedRequest:
-    eos, version = get_eos_instance(eos_type)
+    eos, license_info = get_eos_instance(eos_type)
 
-    request.headers["User-Agent"] = (f"{eos['clientName']}/{version}/{eos['mobileServiceAPIVersion']}/"
+    request.headers["User-Agent"] = (f"{eos['clientName']}/{license_info['version']}/{eos['mobileServiceAPIVersion']}/"
                                      f"{eos['identifier']} (Zuegli q@magicalcodewit.ch)")
     request.headers["X-Eos-Date"] = datetime.datetime.now(datetime.UTC).strftime('%a, %d %b %Y %H:%M:%S GMT')
     request.headers["Device-Identifier"] = device_id
@@ -87,11 +87,42 @@ def map_customer_field(f):
         return None
 
 
-def get_customer_account(account: "models.Account", operator: str, url_base: str, eos_type: str):
+def login(account: "models.Account", operator: str, username: str, password: str) -> bool:
+    _, license_info = get_eos_instance(operator)
+    device_id = get_device_id()
+    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/login", json={
+        "credentials": {
+            "password": password,
+            "username": username,
+        }
+    }, hooks={
+        "pre_request": [lambda req: sign_request(req, device_id, operator)],
+    })
+    if not r.ok:
+        return False
+    auth_data = r.json()
+    access_token_data = next(filter(lambda t: t["name"] == "tickeos_access_token", auth_data["authorization_types"]), None)
+    if not access_token_data:
+        return False
+    access_token = "{} {}".format(access_token_data["header"]["type"], access_token_data["header"]["value"])
+
+    models.AccountOAuth.objects.update_or_create(
+        account=account,
+        provider=operator,
+        defaults={
+            "token": access_token,
+            "device_id": device_id,
+        }
+    )
+    return True
+
+
+def get_customer_account(account: "models.Account", operator: str):
+    _, license_info = get_eos_instance(operator)
     account_token = models.AccountOAuth.objects.get(account=account, provider=operator)
 
-    r = niquests.post(f"{url_base}/index.php/mobileService/customer/fields", json={}, hooks={
-        "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
+    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/customer/fields", json={}, hooks={
+        "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
     })
@@ -101,15 +132,16 @@ def get_customer_account(account: "models.Account", operator: str, url_base: str
     return {f["name"]: map_customer_field(f) for b in data["layout_blocks"] for f in b["fields"]}
 
 
-def update_eos_tickets(account: "models.Account", operator: str, url_base: str, eos_type: str):
+def update_eos_tickets(account: "models.Account", operator: str):
+    _, license_info = get_eos_instance(operator)
     account_token = models.AccountOAuth.objects.filter(account=account, provider=operator).first()
     if not account_token:
         return
 
     logger.info(f"Updating EOS {account_token.device_id}")
 
-    r = niquests.post(f"{url_base}/index.php/mobileService/sync", json={}, hooks={
-        "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
+    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/sync", json={}, hooks={
+        "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
     })
@@ -120,13 +152,13 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
     data = r.json()
 
     if data["tickets"]:
-        r = niquests.post(f"{url_base}/index.php/mobileService/ticket", json={
+        r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/ticket", json={
             "details": True,
             "tickets": data["tickets"],
-            "provide_aztec_content": False,
-            "parameters": False,
+            "provide_aztec_content": True,
+            "parameters": True,
         }, hooks={
-            "pre_request": [lambda req: sign_request(req, account_token.device_id, eos_type)],
+            "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
         }, headers={
             "Authorization": account_token.token,
         })
@@ -134,38 +166,41 @@ def update_eos_tickets(account: "models.Account", operator: str, url_base: str, 
             logger.error(f"Failed to update EOS {account_token.device_id}: {r.text}")
         data = r.json()
         for t in data["tickets"].values():
-            template = json.loads(t["template"])
-
-            if "aztec_barcode" in template["content"]["images"]:
-                barcode_img = base64.b64decode(template["content"]["images"]["aztec_barcode"])
+            if "aztec_content" in t:
+                barcode_data = base64.b64decode(t["aztec_content"])
             else:
-                barcode_url = None
-                for page in template["content"]["pages"]:
-                    ticket_layout = bs4.BeautifulSoup(page, 'html.parser')
-                    barcode_elm = ticket_layout.find("img", attrs={
-                        "class": "barcode"
-                    }, recursive=True)
-                    if barcode_elm:
-                        barcode_url = barcode_elm.attrs["src"]
-                        break
+                template = json.loads(t["template"])
 
-                if not barcode_url:
-                    logger.error("Failed to find barcode")
+                if "aztec_barcode" in template["content"]["images"]:
+                    barcode_img = base64.b64decode(template["content"]["images"]["aztec_barcode"])
+                else:
+                    barcode_url = None
+                    for page in template["content"]["pages"]:
+                        ticket_layout = bs4.BeautifulSoup(page, 'html.parser')
+                        barcode_elm = ticket_layout.find("img", attrs={
+                            "class": "barcode"
+                        }, recursive=True)
+                        if barcode_elm:
+                            barcode_url = barcode_elm.attrs["src"]
+                            break
 
-                if not barcode_url.startswith("data:"):
-                    logger.error("Barcode image not a data URL")
-                    continue
-                media_type, data = barcode_url[5:].split(";", 1)
-                encoding, data = data.split(",", 1)
-                if not media_type.startswith("image/"):
-                    logger.error("Unsupported media type '%s'", media_type)
-                    continue
-                if encoding != "base64":
-                    logger.error("Unsupported encoding type '%s' in barcode image", encoding)
-                    continue
-                barcode_img = base64.urlsafe_b64decode(data)
+                    if not barcode_url:
+                        logger.error("Failed to find barcode")
 
-            barcode_data = aztec.decode(barcode_img)
+                    if not barcode_url.startswith("data:"):
+                        logger.error("Barcode image not a data URL")
+                        continue
+                    media_type, data = barcode_url[5:].split(";", 1)
+                    encoding, data = data.split(",", 1)
+                    if not media_type.startswith("image/"):
+                        logger.error("Unsupported media type '%s'", media_type)
+                        continue
+                    if encoding != "base64":
+                        logger.error("Unsupported encoding type '%s' in barcode image", encoding)
+                        continue
+                    barcode_img = base64.urlsafe_b64decode(data)
+
+                barcode_data = aztec.decode(barcode_img)
 
             try:
                 ticket_obj, _ = ticket.update_from_barcode(barcode_data, account=account)
