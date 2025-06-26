@@ -681,6 +681,7 @@ class SpacialValidity:
 
         definition_type = data[0]
         variant = None
+        bitlist = None
 
         if definition_type in (0x01, 0x02, 0x03, 0x04):
             variant = "A"
@@ -703,16 +704,32 @@ class SpacialValidity:
         elif definition_type in (0x25, 0x26, 0x27, 0x28):
             variant = "J"
         elif definition_type in (0x29, 0x2A, 0x2B, 0x2C):
+            print(data.hex())
             variant = "K"
 
-        if definition_type in (0x01, 0x05, 0x09, 0x0D, 0x11, 0x15, 0x19, 0x1D, 0x21, 0x25, 0x29):
+        if definition_type in (0x01, 0x05, 0x09, 0x0D, 0x11, 0x15, 0x19, 0x1D, 0x21):
             area_ids = [int.from_bytes(data[i:i + 3], 'big') for i in range(3, len(data), 3)]
-        elif definition_type in (0x02, 0x06, 0x0A, 0x0E, 0x12, 0x16, 0x1A, 0x1E, 0x26, 0x2A):
+        elif definition_type in (0x02, 0x06, 0x0A, 0x0E, 0x12, 0x16, 0x1A, 0x1E):
             area_ids = [int.from_bytes(data[i:i + 3], 'little') for i in range(3, len(data), 3)]
-        elif definition_type in (0x03, 0x07, 0x0B, 0x0F, 0x13, 0x17, 0x1B, 0x1F, 0x24, 0x27, 0x2B):
+        elif definition_type in (0x03, 0x07, 0x0B, 0x0F, 0x13, 0x17, 0x1B, 0x1F, 0x24):
             area_ids = [int.from_bytes(data[i:i + 2], 'big') for i in range(3, len(data), 2)]
-        elif definition_type in (0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20, 0x28, 0x2C):
+        elif definition_type in (0x04, 0x08, 0x0C, 0x10, 0x14, 0x18, 0x1C, 0x20):
             area_ids = [int.from_bytes(data[i:i + 2], 'little') for i in range(3, len(data), 2)]
+        elif definition_type in (0x25, 0x26, 0x27, 0x28):
+            area_ids = []
+            bitlist = int.from_bytes(data[3:], 'big')
+        elif definition_type == 0x29:
+            area_ids = [int.from_bytes(data[3:6], 'big')]
+            bitlist = int.from_bytes(data[6:], 'big')
+        elif definition_type == 0x2A:
+            area_ids = [int.from_bytes(data[3:6], 'little')]
+            bitlist = int.from_bytes(data[6:], 'big')
+        elif definition_type == 0x2B:
+            area_ids = [int.from_bytes(data[3:5], 'big')]
+            bitlist = int.from_bytes(data[5:], 'big')
+        elif definition_type == 0x2C:
+            area_ids = [int.from_bytes(data[3:5], 'little')]
+            bitlist = int.from_bytes(data[5:], 'big')
         else:
             area_ids = []
 
@@ -786,6 +803,19 @@ class SpacialValidity:
                 organization_id=area_org_id,
                 start_station=area_ids[0],
                 end_stations=area_ids[1:],
+            )
+        elif variant == "J":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                tariff_points=[b for b in (bitlist & (1 << i) for i in range(bitlist.bit_length() - 1, -1, -1)) if b]
+            )
+        elif variant == "K":
+            return cls(
+                variant=variant,
+                organization_id=area_org_id,
+                start_station=area_ids[0],
+                tariff_points=[b for b in (bitlist & (1 << i) for i in range(bitlist.bit_length() - 1, -1, -1)) if b]
             )
         elif variant:
             return cls(
