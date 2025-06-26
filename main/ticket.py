@@ -353,7 +353,6 @@ class UICTicket:
             parser = uic.db_plai_parse.PLAIParser()
             parser.read(layout)
             db_plai = parser.parse()
-            print(db_plai)
 
         return cls(
             raw_bytes=ticket_bytes,

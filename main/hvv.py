@@ -82,6 +82,8 @@ def update_hvv_tickets(account_id):
         r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
+        if not r.ok:
+            continue
         f = zipfile.ZipFile(io.BytesIO(r.content))
         pass_json = json.load(f.open("pass.json"))
         ticket_barcode = pass_json["barcodes"][0]["message"].encode("ISO-8859-1")
@@ -109,6 +111,8 @@ def update_hvv_tickets(account_id):
         r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
+        if not r.ok:
+            continue
         f = zipfile.ZipFile(io.BytesIO(r.content))
         pass_json = json.load(f.open("pass.json"))
         ticket_barcode = pass_json["barcodes"][0]["message"].encode("ISO-8859-1")
