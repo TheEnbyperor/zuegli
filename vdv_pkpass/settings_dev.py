@@ -215,6 +215,13 @@ except FileNotFoundError:
     HZPP_KEY = None
 
 try:
+    with open(BASE_DIR / "priv" / "hvv.json") as f:
+        d = json.load(f)
+        HVV_APPLICATION_KEY = d["key"]
+except FileNotFoundError:
+    HVV_APPLICATION_KEY = None
+
+try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
 except FileNotFoundError:
