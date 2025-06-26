@@ -81,7 +81,7 @@ def sbahn_berlin_account(request):
         return redirect("sbahn_berlin_login")
 
     account_oauth = models.AccountOAuth.objects.get(account=request.user.account, provider="sbahn_berlin")
-    fields = eos.get_customer_account(request.user.account, "sbahn_berlin", "https://sbahn-ber.tickeos.de", "sbb")
+    fields = eos.get_customer_account(request.user.account, "sbahn_berlin")
 
     return render(request, "main/account/sbahn_berlin.html", {
         "fields": fields,

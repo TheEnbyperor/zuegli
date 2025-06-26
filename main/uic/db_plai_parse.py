@@ -8,7 +8,7 @@ from . import layout
 TZ = pytz.timezone("Europe/Berlin")
 VALID_FROM_RE = re.compile(r"^Von (?P<d>\d{2})\.(?P<m>\d{2})\.(?P<y>\d{4}) (?P<H>\d{2}):(?P<M>\d{2})$")
 VALID_TO_RE = re.compile(r"^Bis (?P<d>\d{2})\.(?P<m>\d{2})\.(?P<y>\d{4}) (?P<H>\d{2}):(?P<M>\d{2})$")
-CUSTOMER_RE = re.compile(r"^(?P<name>.+)(?:, (?P<d>\d{2})\.(?P<m>\d{2})\.(?P<y>\d{4}))?$")
+CUSTOMER_RE = re.compile(r"^(?P<name>[^,]+)(?:, (?P<d>\d{2})\.(?P<m>\d{2})\.(?P<y>\d{4}))?$")
 BOOKED_AT_RE = re.compile(r"^Gebucht:? (?P<d>\d{2})\.(?P<m>\d{2})\.(?P<y>\d{4}) (?P<H>\d{2}):(?P<M>\d{2}):(?P<S>\d{2})$")
 
 

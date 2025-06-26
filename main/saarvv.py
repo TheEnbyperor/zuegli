@@ -16,4 +16,4 @@ def update_all():
 )
 def update_saarvv_tickets(account_id):
     account = models.Account.objects.get(pk=account_id)
-    eos.update_eos_tickets(account, "saarvv", "https://saarvv.tickeos.de", "saarvv")
+    eos.update_eos_tickets(account, "saarvv")

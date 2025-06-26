@@ -1,5 +1,6 @@
 {
   "version": "3.10.17",
   "flavour": "saarvv",
-  "commit_hash": "h183ab339"
+  "commit_hash": "h183ab339",
+  "url_base": "https://saarvv.tickeos.de"
 }

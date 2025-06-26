@@ -38,9 +38,6 @@ def oauth_login_start(request, provider: str):
 
 @login_required
 def oauth_logout(request, provider: str):
-    if provider not in oauth.PROVIDERS:
-        raise Http404()
-
     return oauth.logout(request, provider)
 
 @login_required
