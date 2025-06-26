@@ -168,7 +168,8 @@ SPACIAL_VALIDITY = {
     },
     6262: get_db_station_name,
     6292: {
-        128: "Zone M"
+        128: "Zone M",
+        65528: "Zonen M-12",
     },
     6310: saarvv_tariff,
 }
