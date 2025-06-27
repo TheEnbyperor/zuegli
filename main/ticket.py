@@ -123,6 +123,7 @@ class UICTicket:
                                     5062,  # Dessauer Verkehrs GmbH
                                     5173,  # Nahverkehrsservice Sachsen-Anhalt GmbH
                                     5197,  # Augsburger Verkehrs- und Tarifverbund GmbH
+                                    3634,  # Deutschlandtarifverbund GmbH
                             ) or self.dt_ti or self.dt_pa):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
