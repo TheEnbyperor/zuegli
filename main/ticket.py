@@ -10,7 +10,8 @@ import enum
 import binascii
 import ber_tlv.tlv
 from django.utils import timezone
-from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2
+from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, \
+    bahnbonus, flexi_ticket, ts2
 
 
 class TicketError(Exception):
@@ -123,8 +124,9 @@ class UICTicket:
                                     5062,  # Dessauer Verkehrs GmbH
                                     5173,  # Nahverkehrsservice Sachsen-Anhalt GmbH
                                     5197,  # Augsburger Verkehrs- und Tarifverbund GmbH
-                                    3634,  # Deutschlandtarifverbund GmbH
-                            ) or self.dt_ti or self.dt_pa):
+                            ) or self.dt_ti or self.dt_pa or
+                             security_num == 3634  # Deutschlandtarifverbund GmbH
+                            ):
                         if ticket.get("productIdNum") in (
                                 9999,  # Deutschlandticket subscription
                                 9998,  # Deutschlandjobticket subscription
@@ -167,9 +169,9 @@ class UICTicket:
 
             dt = layout.document_type.lower()
             if "deutschlandsemesterticket" in dt or \
-                "deutschlandticket" in dt or \
-                "deutschland-ticket" in dt or \
-                "d-ticket" in dt:
+                    "deutschlandticket" in dt or \
+                    "deutschland-ticket" in dt or \
+                    "d-ticket" in dt:
                 return models.Ticket.TYPE_DEUTCHLANDTICKET
 
             return models.Ticket.TYPE_FAHRKARTE
@@ -390,7 +392,6 @@ class UICTicket:
             )]
         )
 
-
     @classmethod
     def from_dosipas(
             cls, ticket_bytes: bytes, dosipas: uic.DOSIPASEnvelope,
@@ -406,7 +407,7 @@ class UICTicket:
             flex=parse_ticket_uic_flex_dosipas(dosipas),
             dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
             other_dosipas_records=[r for r in records if not (
-                r.format.startswith("FCB") or r.format.startswith("FDC")
+                    r.format.startswith("FCB") or r.format.startswith("FDC")
             )],
         )
 
@@ -447,6 +448,7 @@ class TS2Ticket:
             envelope=ticket_envelope,
             data=data,
         )
+
 
 @dataclasses.dataclass
 class RSPTicket:
@@ -1088,7 +1090,8 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional["ui
 def parse_ticket_uic_cd_ut(
         ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
 ) -> typing.Optional["uic.cd.CDRecordUT"]:
-    ut_record = next(filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
+    ut_record = next(
+        filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
     if not ut_record:
         return None
 
@@ -1120,7 +1123,8 @@ def parse_ticket_uic_db_vu(
 
 
 def parse_ticket_uic_oebb_99(ticket_envelope: uic.Envelope) -> typing.Optional["uic.oebb.OeBBRecord99"]:
-    oebb_record = next(filter(lambda r: (r.id == "118199" or r.id == "3602AA") and r.version == 1, ticket_envelope.records), None)
+    oebb_record = next(
+        filter(lambda r: (r.id == "118199" or r.id == "3602AA") and r.version == 1, ticket_envelope.records), None)
     if not oebb_record:
         return None
 
@@ -1180,7 +1184,8 @@ def parse_ticket_uic_vor_fk(ticket_envelope: uic.Envelope) -> typing.Optional["u
 
 
 def parse_ticket_uic_bravo(ticket_envelope: uic.Envelope) -> typing.Optional["uic.bravo.BravoRecord"]:
-    bravo_record = next(filter(lambda r: r.id in ("000IVU", "CXX___") and r.version == 1, ticket_envelope.records), None)
+    bravo_record = next(filter(lambda r: r.id in ("000IVU", "CXX___") and r.version == 1, ticket_envelope.records),
+                        None)
     if not bravo_record:
         return None
 
@@ -1495,6 +1500,7 @@ def parse_ticket_ssb(ticket_bytes: bytes, context: vdv.ticket.Context) -> SSBTic
         data=data
     )
 
+
 def parse_ticket_ssb1(ticket_bytes: bytes) -> SSB1Ticket:
     try:
         ticket = ssb1.Ticket.parse(ticket_bytes)
@@ -1527,6 +1533,7 @@ def parse_ticket_hzpp(ticket_bytes: bytes) -> HZPPTicket:
         raw_ticket=ticket_bytes,
         data=data
     )
+
 
 def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     try:
@@ -1654,7 +1661,6 @@ def parse_ticket(
     return parse_ticket_vdv(ticket_bytes, context)
 
 
-
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
     def encode_value(v):
         if isinstance(v, bytes) or isinstance(v, bytearray):
@@ -1669,6 +1675,7 @@ def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
             return [encode_value(i) for i in v]
         else:
             return v
+
     return {k: encode_value(v) for k, v in elements}
 
 
@@ -1699,7 +1706,8 @@ def create_ticket_obj(
                     "envelope_certificate":
                         dataclasses.asdict(ticket_data.envelope_certificate, dict_factory=to_dict_json),
                     "ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii"),
-                    "motics": dataclasses.asdict(ticket_data.motics, dict_factory=to_dict_json) if ticket_data.motics else None,
+                    "motics": dataclasses.asdict(ticket_data.motics,
+                                                 dict_factory=to_dict_json) if ticket_data.motics else None,
                 }
             }
         )
@@ -1727,8 +1735,10 @@ def create_ticket_obj(
                     validity_start = templatetags.rics.rics_valid_from_date(docs[0]["ticket"][1])
                     validity_end = templatetags.rics.rics_valid_until_date(docs[0]["ticket"][1])
         elif ticket_data.st01:
-            validity_start = datetime.datetime.combine(ticket_data.st01.valid_from, datetime.time.min) if ticket_data.st01 else None
-            validity_end = datetime.datetime.combine(ticket_data.st01.valid_to, datetime.time.max) if ticket_data.st01 else None
+            validity_start = datetime.datetime.combine(ticket_data.st01.valid_from,
+                                                       datetime.time.min) if ticket_data.st01 else None
+            validity_end = datetime.datetime.combine(ticket_data.st01.valid_to,
+                                                     datetime.time.max) if ticket_data.st01 else None
 
         _, created = models.UICTicketInstance.objects.update_or_create(
             barcode_hash=barcode_hash,
@@ -1740,8 +1750,10 @@ def create_ticket_obj(
                 "validity_start": validity_start,
                 "validity_end": validity_end,
                 "decoded_data": {
-                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json) if ticket_data.envelope else None,
-                    "dosipas_envelope": dataclasses.asdict(ticket_data.dosipas_envelope, dict_factory=to_dict_json) if ticket_data.dosipas_envelope else None,
+                    "envelope": dataclasses.asdict(ticket_data.envelope,
+                                                   dict_factory=to_dict_json) if ticket_data.envelope else None,
+                    "dosipas_envelope": dataclasses.asdict(ticket_data.dosipas_envelope,
+                                                           dict_factory=to_dict_json) if ticket_data.dosipas_envelope else None,
                 }
             }
         )
@@ -1774,8 +1786,10 @@ def create_ticket_obj(
                 "ticket": ticket_obj,
                 "barcode_data": ticket_bytes,
                 "decoded_data": {
-                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode("ascii") if ticket_data.raw_ticket else None,
-                    "raw_extra_data": base64.b64encode(ticket_data.raw_extra_data).decode("ascii") if ticket_data.raw_extra_data else None,
+                    "raw_ticket": base64.b64encode(ticket_data.raw_ticket).decode(
+                        "ascii") if ticket_data.raw_ticket else None,
+                    "raw_extra_data": base64.b64encode(ticket_data.raw_extra_data).decode(
+                        "ascii") if ticket_data.raw_extra_data else None,
                 }
             }
         )
