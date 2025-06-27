@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-27 16:55+0000\n"
+"POT-Creation-Date: 2025-06-27 11:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,47 +93,47 @@ msgstr "Buchungs-Referenz"
 msgid "Booking number"
 msgstr "Buchungsnummer"
 
-#: models.py:117
+#: models.py:123
 msgid "Deutschlandticket"
 msgstr "Deutschlandticket"
 
-#: models.py:118
+#: models.py:124
 msgid "Klimaticket"
 msgstr "Klimaticket"
 
-#: models.py:119
+#: models.py:125
 msgid "Bahncard"
 msgstr "Bahncard"
 
-#: models.py:120
+#: models.py:126
 msgid "Travel ticket"
 msgstr "Fahrkarte"
 
-#: models.py:121
+#: models.py:127
 msgid "Boarding card"
 msgstr "Bordkarte"
 
-#: models.py:122
+#: models.py:128
 msgid "Reservation"
 msgstr "Reservierung"
 
-#: models.py:123
+#: models.py:129
 msgid "Interrail"
 msgstr "Interrail"
 
-#: models.py:124
+#: models.py:130
 msgid "Railcard"
 msgstr "Railcard"
 
-#: models.py:125
+#: models.py:131
 msgid "Keycard"
 msgstr "Keycard"
 
-#: models.py:126
+#: models.py:132
 msgid "BahnBonus"
 msgstr "BahnBonus"
 
-#: models.py:127
+#: models.py:133
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -141,8 +141,8 @@ msgstr "Unbekannt"
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: templates/main/account/avv.html:4 templates/main/account/index.html:79
-#: templates/main/base.html:154
+#: templates/main/account/avv.html:4 templates/main/account/index.html:92
+#: templates/main/base.html:161
 msgid "AVV Account"
 msgstr "AVV-Konto"
 
@@ -188,6 +188,15 @@ msgstr "Konto bearbeiten"
 msgid "Back"
 msgstr "Zurück"
 
+#: templates/main/account/hvv_login.html:4
+msgid "HVV Switch Login"
+msgstr "HVV Switch Anmeldung"
+
+#: templates/main/account/hvv_login.html:8
+#: templates/main/account/index.html:165
+msgid "Login with HVV Switch"
+msgstr "Anmelden mit HVV Switch"
+
 #: templates/main/account/index.html:4 templates/main/base.html:90
 msgid "Account"
 msgstr "Konto"
@@ -215,6 +224,7 @@ msgstr "Vorname"
 #: templates/main/account/index.html:70 templates/main/account/index.html:83
 #: templates/main/account/index.html:96 templates/main/account/index.html:109
 #: templates/main/account/index.html:122 templates/main/account/index.html:135
+#: templates/main/account/index.html:148 templates/main/account/index.html:161
 msgid "Reauthenticate"
 msgstr "Neu Authentifizieren"
 
@@ -222,11 +232,12 @@ msgstr "Neu Authentifizieren"
 #: templates/main/account/index.html:71 templates/main/account/index.html:84
 #: templates/main/account/index.html:97 templates/main/account/index.html:110
 #: templates/main/account/index.html:123 templates/main/account/index.html:136
+#: templates/main/account/index.html:149 templates/main/account/index.html:162
 msgid "Unlink"
 msgstr "Trennen"
 
 #: templates/main/account/index.html:35 templates/main/account/index.html:55
-#: templates/main/account/index.html:113
+#: templates/main/account/index.html:126
 msgid "Login with DB"
 msgstr "Anmelden mit DB"
 
@@ -242,7 +253,7 @@ msgstr ""
 msgid "BahnBonus Account"
 msgstr "BahnBonus Konto"
 
-#: templates/main/account/index.html:62 templates/main/account/index.html:146
+#: templates/main/account/index.html:62 templates/main/account/index.html:172
 msgid "Add ticket"
 msgstr "Karte hinzufügen"
 
@@ -256,49 +267,66 @@ msgstr "S-Bahn Berlin Konto"
 msgid "Login with S-Bahn Berlin"
 msgstr "Anmelden mit S-Bahn Berlin"
 
-#: templates/main/account/index.html:87
+#: templates/main/account/index.html:79 templates/main/account/mvv.html:4
+#: templates/main/base.html:154
+msgid "MVV Account"
+msgstr "MVV-Konto"
+
+#: templates/main/account/index.html:87 templates/main/account/mvv_login.html:8
+msgid "Login with MVV"
+msgstr "Anmelden mit MVV"
+
+#: templates/main/account/index.html:100
 msgid "Login with AVV"
 msgstr "Anmelden mit AVV"
 
-#: templates/main/account/index.html:92 templates/main/account/saarvv.html:4
+#: templates/main/account/index.html:105 templates/main/account/saarvv.html:4
 #: templates/main/base.html:140
 msgid "SaarVV Account"
 msgstr "SaarVV-Konto"
 
-#: templates/main/account/index.html:100
+#: templates/main/account/index.html:113
 #: templates/main/account/saarvv_login.html:8
 msgid "Login with SaarVV"
 msgstr "Anmelden mit SaarVV"
 
-#: templates/main/account/index.html:105
+#: templates/main/account/index.html:118
 msgid "DB Regio NRW Account"
 msgstr "DB Region NRW Konto"
 
-#: templates/main/account/index.html:118
+#: templates/main/account/index.html:131
 msgid "Vestische Account"
 msgstr "Vestische-Konto"
 
-#: templates/main/account/index.html:126
+#: templates/main/account/index.html:139
 msgid "Login with Vestische"
 msgstr "Anmelden mit Vestische"
 
-#: templates/main/account/index.html:131
+#: templates/main/account/index.html:144
 msgid "Raileasy Account"
 msgstr "Konto"
 
-#: templates/main/account/index.html:139
+#: templates/main/account/index.html:152
 #: templates/main/account/raileasy_login.html:8
 msgid "Login with Raileasy"
 msgstr "Anmelden mit SaarVV"
 
-#: templates/main/account/index.html:150
+#: templates/main/account/index.html:157
+msgid "HVV Account"
+msgstr "HVV-Konto"
+
+#: templates/main/account/index.html:176
 #: templates/main/account/sbahn_berlin.html:44
 msgid "Tickets"
 msgstr "Karten"
 
-#: templates/main/account/index.html:153
+#: templates/main/account/index.html:179
 msgid "Subscribe to your trains as a calendar:"
 msgstr "Abboniere deine Zugfahrten als Kalender"
+
+#: templates/main/account/mvv_login.html:4
+msgid "MVV Login"
+msgstr "HVV Anmelden"
 
 #: templates/main/account/nrway_login.html:4
 msgid "DB Regio NRWay Login"
@@ -372,15 +400,15 @@ msgstr "Abmelden"
 msgid "Account home"
 msgstr "Kontostart"
 
-#: templates/main/base.html:169
+#: templates/main/base.html:176
 msgid "Zügli can be added to your home screen."
 msgstr "Zügli kann zu Ihrem Home-Bildschirm hinzugefügt werden."
 
-#: templates/main/base.html:172
+#: templates/main/base.html:179
 msgid "Install"
 msgstr "Installieren"
 
-#: templates/main/base.html:209
+#: templates/main/base.html:216
 msgid ""
 "Not affiliated with the Verband Deutscher Verkehrsunternehmen (VDV), Union "
 "Internationale des Chemins de fer (UIC), Rail Delivery Group (RDG), or any "
@@ -390,7 +418,7 @@ msgstr ""
 "Union Internationale des Chemins de fer (UIC), dem Rail Delivery Group "
 "(RDG), und keines ihrer jeweiligen Mitglieder."
 
-#: templates/main/base.html:216
+#: templates/main/base.html:223
 msgid ""
 "<a class=\"govuk-footer__link\" href=\"https://github.com/alphagov/govuk-"
 "frontend\" target=\"_blank\">GOV.UK Design System</a> used under license."
@@ -398,7 +426,7 @@ msgstr ""
 "<a class=\"govuk-footer__link\" href=\"https://github.com/alphagov/govuk-"
 "frontend\" target=\"_blank\">GOV.UK Design System</a> unter Lizenz verwendet."
 
-#: templates/main/base.html:224
+#: templates/main/base.html:231
 #, python-format
 msgid ""
 "Running version <a href=\"https://github.com/theenbyperor/vdv-pkpass\" "
@@ -407,11 +435,11 @@ msgstr ""
 "Software-Version <a href=\"https://github.com/theenbyperor/vdv-pkpass\" "
 "class=\"govuk-footer__link\" target=\"_blank\">%(git_hash)s</a>."
 
-#: templates/main/base.html:230
+#: templates/main/base.html:237
 msgid "Development build."
 msgstr "Entwicklungsversion."
 
-#: templates/main/base.html:234
+#: templates/main/base.html:241
 msgid ""
 "Licensed under the <a href=\"https://eupl.eu\" class=\"govuk-footer__link\" "
 "target=\"_blank\">EUPL v1.2</a>."
@@ -439,6 +467,7 @@ msgstr "Unbekannte Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
 #: templates/main/uic/ticket_details.html:272
 #: templates/main/uic/ticket_details.html:282
 #: templates/main/uic/ticket_details.html:292
+#: templates/main/vdv_smartcard.html:107 templates/main/vdv_smartcard.html:247
 #: templates/main/vdv_ticket_details.html:42
 #: templates/main/vdv_ticket_details.html:295
 msgid "Yes"
@@ -454,6 +483,7 @@ msgstr "Ja"
 #: templates/main/uic/ticket_details.html:274
 #: templates/main/uic/ticket_details.html:284
 #: templates/main/uic/ticket_details.html:294
+#: templates/main/vdv_smartcard.html:109 templates/main/vdv_smartcard.html:249
 #: templates/main/vdv_ticket_details.html:44
 #: templates/main/vdv_ticket_details.html:297
 msgid "No"
@@ -469,12 +499,14 @@ msgstr "Schlüssel-ID"
 
 #: templates/main/iata_ticket_details.html:279
 #: templates/main/ssb_ticket_details.html:34
+#: templates/main/ts2_ticket_details.html:34
 #: templates/main/uic/ticket_details.html:36
 msgid "Signature verification"
 msgstr "Prüfung der Signatur"
 
 #: templates/main/iata_ticket_details.html:286
 #: templates/main/ssb_ticket_details.html:55
+#: templates/main/ts2_ticket_details.html:55
 #: templates/main/uic/ticket_details.html:57
 #: templates/main/uic/ticket_details.html:174
 msgid "Unknown signing key, can't verify ticket"
@@ -482,6 +514,7 @@ msgstr "Unbekannte Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
 
 #: templates/main/iata_ticket_details.html:290
 #: templates/main/ssb_ticket_details.html:37
+#: templates/main/ts2_ticket_details.html:37
 #: templates/main/uic/ticket_details.html:39
 #: templates/main/uic/ticket_details.html:151
 #: templates/main/uic/ticket_details.html:210
@@ -490,6 +523,7 @@ msgstr "Gültig"
 
 #: templates/main/iata_ticket_details.html:295
 #: templates/main/ssb_ticket_details.html:42
+#: templates/main/ts2_ticket_details.html:42
 #: templates/main/uic/ticket_details.html:44
 #: templates/main/uic/ticket_details.html:156
 #: templates/main/uic/ticket_details.html:215
@@ -544,8 +578,6 @@ msgid "SwissPass/NOVA - SBB, ZVV, and other Swiss operators (VöV)"
 msgstr "SwissPass/NOVA - SBB, ZVV, und andere Schweizerische Unternehmen (VöV)"
 
 #: templates/main/index.html:24
-#, fuzzy
-#| msgid "Add ticket"
 msgid "HŽPP tickets"
 msgstr "HŽPP Fahrkarten"
 
@@ -558,8 +590,6 @@ msgid "BahnBonus vouchers and lounge access codes"
 msgstr "BahnBonus Gutscheine und Lounge Zugangscodes"
 
 #: templates/main/index.html:27
-#, fuzzy
-#| msgid "Tickets"
 msgid "MBTA mTickets"
 msgstr "MBTA Fahrkarten"
 
@@ -567,11 +597,11 @@ msgstr "MBTA Fahrkarten"
 msgid ""
 "If you want your tickets to automatically update when they are renewed you "
 "can create an account and add the subscription. Currently, DB, SaarVV, S-"
-"Bahn Berlin, and AVV (Aachen) are supported."
+"Bahn Berlin, AVV (Aachen), MVV, and HVV Switch are supported."
 msgstr ""
 "Wenn Sie möchten, dass Ihre Karten bei Verlängerung automatisch aktualisiert "
 "werden, können Sie ein Konto erstellen und das Abo hinzufügen. Derzeit "
-"werden DB, SaarVV, S-Bahn Berlin, und AVV (Aachen) unterstützt."
+"werden DB, SaarVV, S-Bahn Berlin, AVV (Aachen), MVV, und HVV Switch unterstützt."
 
 #: templates/main/index.html:45
 msgid "Full exception"
@@ -684,11 +714,13 @@ msgid "NFC Bridge"
 msgstr ""
 
 #: templates/main/ssb_ticket_details.html:3
+#: templates/main/ts2_ticket_details.html:3
 #: templates/main/uic/ticket_details.html:4
 msgid "Security"
 msgstr "Sicherheit"
 
 #: templates/main/ssb_ticket_details.html:6
+#: templates/main/ts2_ticket_details.html:6
 #: templates/main/uic/ticket_details.html:8
 #: templates/main/uic/ticket_details.html:67
 msgid "Barcode version"
@@ -703,12 +735,14 @@ msgid "Issuer"
 msgstr "Herausgeber"
 
 #: templates/main/ssb_ticket_details.html:24
+#: templates/main/ts2_ticket_details.html:24
 #: templates/main/uic/ticket_details.html:26
 #: templates/main/uic/ticket_details.html:95
 msgid "Signature key ID"
 msgstr "Sicherheitsschlüssel-ID"
 
 #: templates/main/ssb_ticket_details.html:50
+#: templates/main/ts2_ticket_details.html:50
 #: templates/main/uic/ticket_details.html:52
 msgid "Signing key"
 msgstr "Sicherheitsschlüssel"
@@ -867,6 +901,7 @@ msgstr "Karte %(id)s"
 #: templates/main/ticket.html:297 templates/main/ticket.html:328
 #: templates/main/ticket.html:342 templates/main/ticket.html:359
 #: templates/main/ticket.html:378 templates/main/ticket.html:427
+#: templates/main/ticket.html:456
 #, python-format
 msgid "Ticket #%(id)s"
 msgstr "Karte #%(id)s"
@@ -1083,10 +1118,12 @@ msgstr "Karte bearbeiten"
 msgid "You don't have permission to edit this ticket."
 msgstr "Sie haben keine Berechtigung, dieses Ticket zu bearbeiten."
 
+#: templates/main/ts2_ticket_details.html:10
 #: templates/main/uic/ticket_details.html:12
 msgid "Signing RICS"
 msgstr "RICS des Unterzeichneres"
 
+#: templates/main/ts2_ticket_details.html:16
 #: templates/main/uic/ticket_details.html:18
 msgid "Signer"
 msgstr "Unterzeichner"
@@ -1393,6 +1430,15 @@ msgstr "Andere Daten"
 msgid "Read Smartcard"
 msgstr "Lesen Sie Ihre Chipkarte"
 
+#: templates/main/vdv_smartcard.html:104
+msgid "Revoked application"
+msgstr "Applikation abgebrochen"
+
+#: templates/main/vdv_smartcard.html:244
+#: templates/main/vdv_ticket_details.html:39
+msgid "Revoked ticket"
+msgstr "Karte abgebrochen"
+
 #: templates/main/vdv_ticket_details.html:3
 msgid "Ticket Data"
 msgstr "Karte ID"
@@ -1407,12 +1453,6 @@ msgstr "Version"
 #: templates/main/vdv_ticket_details.html:246
 msgid "ID"
 msgstr "ID"
-
-#: templates/main/vdv_ticket_details.html:39
-#, fuzzy
-#| msgid "Add ticket"
-msgid "Revoked ticket"
-msgstr "Karte hinzufügen"
 
 #: templates/main/vdv_ticket_details.html:56
 msgid "Name"
