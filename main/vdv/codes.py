@@ -183,4 +183,7 @@ SPACIAL_VALIDITY = {
         32768: "Zone 8",
     },
     6310: saarvv_tariff,
+    6538: {
+        101: "Zone 101 - Koblenz City"
+    }
 }

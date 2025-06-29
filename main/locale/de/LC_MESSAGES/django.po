@@ -1363,11 +1363,11 @@ msgstr "Starthaltestelle"
 
 #: templates/main/vdv_elements.html:278
 msgid "Origin tariff point"
-msgstr "Tarifpunkte"
+msgstr "Starttarifpunkt"
 
 #: templates/main/vdv_elements.html:286
 msgid "End tariff point"
-msgstr "Tarifpunkte"
+msgstr "Endtarifpunkt"
 
 #: templates/main/vdv_elements.html:294
 msgid "Area"
