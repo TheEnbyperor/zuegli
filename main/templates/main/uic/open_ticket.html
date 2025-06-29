@@ -193,7 +193,7 @@
                 </dd>
             </div>
         {% endif %}
-        {% if ticket.price %}
+        {% if ticket.price is not None %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Price</dt>
                 <dd class="govuk-summary-list__value">

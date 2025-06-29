@@ -267,7 +267,11 @@ class UICTicket:
             interrail_pass = self.flex.data["transportDocument"][0]["ticket"][1]
             hd.update(b"interrail")
             if "referenceIA5" in interrail_pass:
-                hd.update(interrail_pass["referenceIA5"].encode("utf-8"))
+                ref_parts = interrail_pass["referenceIA5"].split("-")
+                if len(ref_parts) == 3:
+                    hd.update(ref_parts[0].encode("utf-8"))
+                else:
+                    hd.update(interrail_pass["referenceIA5"].encode("utf-8"))
             elif "referenceNum" in interrail_pass:
                 hd.update(str(interrail_pass["referenceNum"]).encode("utf-8"))
             else:
