@@ -176,10 +176,10 @@ class Envelope:
         if len(data) < 4 + data_length:
             raise util.UICException("UIC ticket data too short")
 
-        signed_data = data[4:]
+        signed_data = data[4:4+data_length]
 
         try:
-            raw_ticket = zlib.decompress(data[4:4+data_length])
+            raw_ticket = zlib.decompress(signed_data)
         except zlib.error as e:
             raise util.UICException("Failed to decompress UIC ticket data") from e
 
