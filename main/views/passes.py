@@ -5853,6 +5853,7 @@ VDV_ORG_ID_LOGO = {
     6491: "pass/logo-rnv.png",
     6496: "pass/logo-naldo.png",
     6517: "pass/logo-rnn.png",
+    6538: "pass/logo-vrm.png",
     6613: "pass/logo-arriva.png",
     6665: "pass/logo-rsag.png",
     6671: "pass/logo-ewse.png",
@@ -5867,6 +5868,7 @@ VDV_ORG_ID_BG = {
 VDV_ORG_ID_FG = {
     6072: "rgb(67, 67, 67)",
     6517: "rgb(255, 255, 255)",
+    6538: "#00aaa8",
 }
 
 VDV_ORG_ID_FG_SECONDARY = {
@@ -5875,6 +5877,7 @@ VDV_ORG_ID_FG_SECONDARY = {
     6310: "rgb(12, 156, 58)",
     6517: "rgb(255, 204, 2)",
     6691: "rgb(0, 56, 116)",
+    6538: "#2743a0",
 }
 
 SWISSPASS_LOGO = {
