@@ -5868,7 +5868,7 @@ VDV_ORG_ID_BG = {
 VDV_ORG_ID_FG = {
     6072: "rgb(67, 67, 67)",
     6517: "rgb(255, 255, 255)",
-    6538: "#00aaa8",
+    6538: "#2743a0",
 }
 
 VDV_ORG_ID_FG_SECONDARY = {
@@ -5877,7 +5877,7 @@ VDV_ORG_ID_FG_SECONDARY = {
     6310: "rgb(12, 156, 58)",
     6517: "rgb(255, 204, 2)",
     6691: "rgb(0, 56, 116)",
-    6538: "#2743a0",
+    6538: "#00aaa8",
 }
 
 SWISSPASS_LOGO = {

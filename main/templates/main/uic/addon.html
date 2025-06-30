@@ -31,12 +31,6 @@
             </div>
         {% endif %}
     {% endwith %}
-    {% if addon.externalIssuerId %}
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">External issuer ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ addon.externalIssuerId }}</code></dd>
-        </div>
-    {% endif %}
     {% if addon.productIdNum %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Product ID number</dt>
@@ -58,7 +52,13 @@
             </div>
         {% endif %}
     {% endwith %}
-    {% if addon.issuerAuthorizationId %}
+    {% if addon.externalIssuerId %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">External issuer ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ addon.externalIssuerId }}</code></dd>
+        </div>
+    {% endif %}
+    {% if addon.issuerAutorizationId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Issuer authorization ID</dt>
             <dd class="govuk-summary-list__value"><code>{{ addon.issuerAutorizationId }}</code></dd>
