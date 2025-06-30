@@ -1281,25 +1281,44 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": product_name,
                         })
 
-                    pass_fields["auxiliaryFields"].append({
-                        "key": "validity-start",
-                        "label": "validity-start-label",
-                        "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
-                        "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"),
-                        "ignoresTimeZone": True
-                    })
-                    pass_fields["auxiliaryFields"].append({
-                        "key": "validity-end",
-                        "label": "validity-end-label",
-                        "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
-                        "value": validity_end.isoformat() if validity_end.tzinfo else validity_end.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"),
-                        "changeMessage": "validity-end-change",
-                        "ignoresTimeZone": True
-                    })
+                    if "classCode" in pass_document and pass_document["classCode"] != "notApplicable":
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "class-code",
+                            "label": "class-code-label",
+                            "value": f"class-code-{pass_document['classCode']}-label",
+                        })
+
+                    if validity_start.date() == validity_end.date() and validity_start.time() == datetime.time(0, 0, 0) and validity_end.time() == datetime.time(23, 59, 59):
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-on",
+                            "label": "validity-on-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleNone",
+                            "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime(
+                                "%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                    else:
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-start",
+                            "label": "validity-start-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium" if validity_start.time() != datetime.time(0, 0, 0) else "PKDateStyleNone",
+                            "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime(
+                                "%Y-%m-%dT%H:%M:%SZ"),
+                            "ignoresTimeZone": True
+                        })
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "validity-end",
+                            "label": "validity-end-label",
+                            "dateStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleMedium" if validity_end.time() != datetime.time(23, 59, 59) else "PKDateStyleNone",
+                            "value": validity_end.isoformat() if validity_end.tzinfo else validity_end.strftime(
+                                "%Y-%m-%dT%H:%M:%SZ"),
+                            "changeMessage": "validity-end-change",
+                            "ignoresTimeZone": True
+                        })
+
                     pass_fields["backFields"].append({
                         "key": "validity-start-back",
                         "label": "validity-start-label",
@@ -5414,6 +5433,7 @@ PASS_STRINGS = {
 "product-organisation-label" = "Product Organisation";
 "issuing-organisation-label" = "Issuing Organisation";
 "ticketing-organisation-label" = "Ticketing Organisation";
+"validity-on-label" = "Valid on";
 "validity-start-label" = "Valid from";
 "validity-end-label" = "Valid until";
 "validity-end-change" = "Validity extended to %@";
@@ -5488,7 +5508,8 @@ PASS_STRINGS = {
 "product-organisation-label" = "Cynnyrchgwni";
 "issuing-organisation-label" = "Cwni dyddori";
 "ticketing-organisation-label" = "Cwni tocynnu";
-"validity-start-label" = "Dilys o";
+"validity-or-label" = "Dilys ar y";
+"validity-start-label" = "Dilys o'r";
 "validity-end-label" = "Dilys tan";
 "validity-end-change" = "Wedi ystynnedu tan %@";
 "issued-at-label" = "Dyddorwyd am";
@@ -5562,6 +5583,7 @@ PASS_STRINGS = {
 "product-organisation-label" = "Produktorganisation";
 "issuing-organisation-label" = "Ausstellende Organisation";
 "ticketing-organisation-label" = "Ticketverkaufsorganisation";
+"validity-on-label" = "Gültig am";
 "validity-start-label" = "Gültig vom";
 "validity-end-label" = "Gültig bis";
 "validity-end-change" = "Verlängert bis %@";
@@ -5636,6 +5658,7 @@ PASS_STRINGS = {
 "product-organisation-label" = "Productorganisatie";
 "issuing-organisation-label" = "Uitgevende Organisatie";
 "ticketing-organisation-label" = "Ticketorganisatie";
+"validity-on-label" = "Geldig op";
 "validity-start-label" = "Geldig van";
 "validity-end-label" = "Geldig tot";
 "validity-end-change" = "Geldigheid verlengd tot %@";
