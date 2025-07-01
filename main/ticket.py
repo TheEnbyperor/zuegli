@@ -1733,8 +1733,8 @@ def create_ticket_obj(
             docs = ticket_data.flex.data.get("transportDocument")
             if docs:
                 if docs[0]["ticket"][0] in ("openTicket", "pass"):
-                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.issuing_time())
-                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.issuing_time())
+                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.flex.issuing_time())
+                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.flex.issuing_time())
                 elif docs[0]["ticket"][0] == "customerCard":
                     validity_start = templatetags.rics.rics_valid_from_date(docs[0]["ticket"][1])
                     validity_end = templatetags.rics.rics_valid_until_date(docs[0]["ticket"][1])
