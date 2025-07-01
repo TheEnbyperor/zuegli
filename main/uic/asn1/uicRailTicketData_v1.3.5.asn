@@ -702,9 +702,9 @@ ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
 	   -- to support other ticket content (e.g. VDV, UTPF, V�V, CALYPSO)
 	   --   issuer code using the default code table of the product owner
-	   extIssuerId		 INTEGER  	OPTIONAL,
+	   extIssuerId				INTEGER  	OPTIONAL,
 	   --   authorization id provided to the issuer by the product owner
-	   issuerAutorizationId	 INTEGER  	OPTIONAL,
+	   issuerAuthorizationId	INTEGER  	OPTIONAL,
 
 	   -- ticket includes the return trip
 	   returnIncluded		BOOLEAN,
@@ -1308,7 +1308,7 @@ ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   	-- issuer code using the default code table of the product owner (today used e.g. by VDV)
   	externalIssuerId		INTEGER  	OPTIONAL,
   	-- authorization id provided to the issuer by the poroduct owner (today used e.g. by VDV)
-  	issuerAutorizationId	INTEGER  	OPTIONAL,
+  	issuerAuthorizationId	INTEGER  	OPTIONAL,
 
   	-- regional validity data
   	stationCodeTable	CodeTableType DEFAULT stationUIC,
@@ -1959,9 +1959,9 @@ ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     	geoUnit   				GeoUnitType 			DEFAULT milliDegree,
     	coordinateSystem	 	GeoCoordinateSystemType DEFAULT wgs84,
     	-- separate hemishpere flag reduces the data size
-    	hemisphereLongitude 	HemisphereLongitudeType DEFAULT north,
+    	hemisphereLongitude 	HemisphereLongitudeType DEFAULT east,
     	-- separate hemishpere flag reduces the data size
-    	hemisphereLatitude 		HemisphereLatitudeType	DEFAULT east,
+    	hemisphereLatitude 		HemisphereLatitudeType	DEFAULT north,
     	longitude 				INTEGER,
     	latitude  				INTEGER,
     	accuracy                GeoUnitType 			OPTIONAL
@@ -1988,13 +1988,13 @@ ASN-Module DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     }
 
 	HemisphereLongitudeType ::=		ENUMERATED {
-		north 				(0),
-		south 				(1)
-	}
+                east 				(0),
+	        west 				(1)
+       }
 
 	HemisphereLatitudeType	::=		ENUMERATED {
-		east 				(0),
-		west 				(1)
+		north 				(0),
+		south 				(1)
 	}
 
 	LoadingDeckType		::=			ENUMERATED {
