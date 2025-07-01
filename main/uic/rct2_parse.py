@@ -193,7 +193,10 @@ class RCT2Parser:
                         try:
                             departure_dt = datetime.datetime.strptime(f"{y} {departure_date} {departure_time}", "%Y %d.%m %H:%M")
                         except ValueError:
-                            pass
+                            try:
+                                departure_dt = datetime.datetime.strptime(f"{y} {departure_date}", "%Y %d.%m").date()
+                            except ValueError:
+                                pass
 
                 if not arrival_dt:
                     try:
@@ -202,7 +205,10 @@ class RCT2Parser:
                         try:
                             arrival_dt = datetime.datetime.strptime(f"{y} {arrival_date} {arrival_time}","%Y %d.%m %H:%M")
                         except ValueError:
-                            pass
+                            try:
+                                arrival_dt = datetime.datetime.strptime(f"{y} {arrival_date}","%Y %d.%m").date()
+                            except ValueError:
+                                pass
 
             if not departure_dt or not arrival_dt:
                 if m := EXTRA_DATA_VALIDITY_1.fullmatch(extra_data):
