@@ -118,7 +118,7 @@ LANGUAGES = {
         date_label="Dato",
         time_label="Tid",
         from_label="Fra",
-        to_label="Efter",
+        to_label="Til",
         class_label="Kl.",
     ),
     "SK": Language(
