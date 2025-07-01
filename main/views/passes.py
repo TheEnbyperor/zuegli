@@ -428,6 +428,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             parsed_layout = parser.parse(issuing_rics)
 
         if ticket_data.flex:
+            issued_at = ticket_data.flex.issuing_time()
             pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"]
 
             if ticket_data.flex.data["issuingDetail"].get("issuerName") in UIC_NAME_LOGO:
@@ -2650,14 +2651,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "label": "issued-at-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
-            "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "value": issued_at.isoformat(),
         })
         return_pass_fields["backFields"].append({
             "key": "issued-date",
             "label": "issued-at-label",
             "dateStyle": "PKDateStyleFull",
             "timeStyle": "PKDateStyleFull",
-            "value": issued_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "value": issued_at.isoformat(),
         })
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         ticket_data: ticket.VDVTicket = ticket_instance.as_ticket()
