@@ -2350,12 +2350,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     # which isn't very helpful
                     pass_type = "storeCard"
 
-                    """pass_fields["headerFields"].append({
-                        "key": "document-type",
-                        "label": "product-label",
-                        "value": parsed_layout.document_type,
-                    })"""
-
                     pass_fields["headerFields"].append({
                         "key": "document-type",
                         "label": "product-label",
