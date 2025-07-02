@@ -2368,6 +2368,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "dateStyle": "PKDateStyleMedium",
                         "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
                     })
+                    pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                 elif parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
                     pass_type = "boardingPass"
