@@ -58,6 +58,16 @@
             <dd class="govuk-summary-list__value"><code>{{ addon.externalIssuerId }}</code></dd>
         </div>
     {% endif %}
+    {% if addon.productOwnerIA5|slice:":3" == "VDV" %}
+        {% with org=addon.externalIssuerId|vdv_org_id %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">External issuer</dt>
+                    <dd class="govuk-summary-list__value">{{ org }}</dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
     {% if addon.issuerAuthorizationId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Issuer authorization ID</dt>
@@ -91,6 +101,24 @@
                         {% with org=carrier|rics %}
                             {% if org %}
                                 <li>{% include 'main/rics.html' with org=org %}</li>
+                            {% else %}
+                                <li><code>{{ carrier }}</code></li>
+                            {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+    {% if addon.carrierIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Carriers</dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="govuk-list--bullet">
+                    {% for carrier in addon.carrierIA5 %}
+                        {% with org=carrier|vdv_org_id %}
+                            {% if org %}
+                                <li>{{ org }}</li>
                             {% else %}
                                 <li><code>{{ carrier }}</code></li>
                             {% endif %}
