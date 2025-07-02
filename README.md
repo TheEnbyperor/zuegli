@@ -75,6 +75,21 @@ cd ../..
 cp ./barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so "$(python -c 'import site; print(site.getsitepackages()[0])')"
 ```
 
+#### Install RabbitMQ
+
+RabbitMQ is required for celery to work. The default configuration is often enough for a development environment.
+
+```shell
+
+# Debian etc.
+apt install -y rabbitmq-server
+
+# Fedora/RHEL etc.
+yum install -y rabbitmq-server
+
+systemctl start rabbitmq-server # or 'enable --now rabbitmq-server' if you want it to start by default on boot
+```
+
 #### Other changes
 
 Set an environment environment variable to use development settings:
@@ -95,15 +110,18 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "vdv_pkpass.settings_dev")
 mkdir -p ./uic-data
 mkdir -p ./vdv-certs
 python manage.py migrate
-python manage.py download-uic-data
-python manage.py download-vdv-certs
-python manage.py download-vdv-orgs
 ```
 
-#### Web Server
+#### Run webserver and celery
+
+In two separate windows, start the webserver and celery:
 
 ```shell
 python manage.py runserver
+```
+
+```shell
+celery -A vdv_pkpass worker
 ```
 
 ## Conclusion
