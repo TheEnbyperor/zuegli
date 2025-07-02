@@ -74,6 +74,18 @@
             <dd class="govuk-summary-list__value">{{ traveler.countryOfResidence|iso3166 }}</dd>
         </div>
     {% endif %}
+    {% if traveler.customerIdNum %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Customer ID</dt>
+            <dd class="govuk-summary-list__value">{{ traveler.customerIdNum }}</dd>
+        </div>
+    {% endif %}
+    {% if traveler.customerIdIA5 %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Customer ID</dt>
+            <dd class="govuk-summary-list__value">{{ traveler.customerIdIA5 }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Ticket holder</dt>
         <dd class="govuk-summary-list__value">
