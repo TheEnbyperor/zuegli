@@ -12,7 +12,39 @@
                 <dd class="govuk-summary-list__value">{{ vor.validity_end|date:"F d, Y H:i e" }}</dd>
             </div>
         {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Track code</dt>
+            <dd class="govuk-summary-list__value"><code>{{ vor.track_code }}</code></dd>
+        </div>
+        {% if vor.zone_start %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Start zone</dt>
+                <dd class="govuk-summary-list__value"><code>{{ vor.zone_start }}</code></dd>
+            </div>
+        {% endif %}
+        {% if vor.zone_via_1 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Via zone</dt>
+                <dd class="govuk-summary-list__value"><code>{{ vor.zone_via_1 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if vor.zone_via_2 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Via zone</dt>
+                <dd class="govuk-summary-list__value"><code>{{ vor.zone_via_2 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if vor.zone_end %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">End zone</dt>
+                <dd class="govuk-summary-list__value"><code>{{ vor.zone_end }}</code></dd>
+            </div>
+        {% endif %}
+        {% if vor.reference_id %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference ID</dt>
+                <dd class="govuk-summary-list__value"><code>{{ vor.reference_id }}</code></dd>
+            </div>
+        {% endif %}
     </dl>
-    <h3 class="govuk-heading-s">Raw Data</h3>
-    <pre><code style="word-break: break-all">{{ vor.raw_data }}</code></pre>
 {% endlocaltime %}

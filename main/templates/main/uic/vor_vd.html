@@ -1,9 +1,17 @@
 <h2 class="govuk-heading-m">VOR Passenger data</h2>
 <dl class="govuk-summary-list">
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Customer ID</dt>
-        <dd class="govuk-summary-list__value"><code>{{ vor.customer_id }}</code></dd>
-    </div>
+    {% if vor.contract_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Contract ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ vor.contract_id }}</code></dd>
+        </div>
+    {% endif %}
+    {% if vor.customer_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Customer ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ vor.customer_id }}</code></dd>
+        </div>
+    {% endif %}
     {% if vor.title %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Title</dt>
@@ -42,6 +50,16 @@
             <dd class="govuk-summary-list__value">{{ vor.gender.name }}</dd>
         </div>
     {% endif %}
+    {% if vor.id_document_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ID Document Type</dt>
+            <dd class="govuk-summary-list__value">{{ vor.id_document_type }}</dd>
+        </div>
+    {% endif %}
+    {% if vor.id_document_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">ID Document Number</dt>
+            <dd class="govuk-summary-list__value">{{ vor.id_document_number }}</dd>
+        </div>
+    {% endif %}
 </dl>
-<h3 class="govuk-heading-s">Raw Data</h3>
-<pre><code style="word-break: break-all">{{ vor.raw_data }}</code></pre>

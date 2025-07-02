@@ -124,9 +124,9 @@
                 <dd class="govuk-summary-list__value">
                     <ul class="govuk-list">
                         {% for carrier in pass.includedCarrierIA5 %}
-                            {% with org=carrier|rics %}
+                            {% with org=carrier|vdv_org_id %}
                                 {% if org %}
-                                    <li>{% include 'main/rics.html' with org=org %}</li>
+                                    <li>{{ org }}</li>
                                 {% else %}
                                     <li><code>{{ carrier }}</code></li>
                                 {% endif %}

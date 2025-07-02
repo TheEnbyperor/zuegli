@@ -1,30 +1,32 @@
-<h2 class="govuk-heading-m">VOR Additional Data</h2>
+<h2 class="govuk-heading-m">VOR Products</h2>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Currency</dt>
         <dd class="govuk-summary-list__value"><code>{{ vor.currency }}</code></dd>
     </div>
     <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Regions</dt>
+        <dt class="govuk-summary-list__key">Partner ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ vor.partner_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Products</dt>
         <dd class="govuk-summary-list__value">
-            {% for validity in vor.validity %}
+            {% for product in vor.products %}
                 <div class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
-                            Region #{{ forloop.counter }}
+                            Product <code>{{ product.product_id }}</code>
                         </h2>
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
-                            {% if validity.region %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Region</dt>
-                                    <dd class="govuk-summary-list__value"><code>{{ validity.region }}</code></dd>
-                                </div>
-                            {% endif %}
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Other data</dt>
-                                <dd class="govuk-summary-list__value"><code>{{ validity.other_data }}</code></dd>
+                                <dt class="govuk-summary-list__key">Product code</dt>
+                                <dd class="govuk-summary-list__value"><code>{{ product.product_code }}</code></dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Count</dt>
+                                <dd class="govuk-summary-list__value">{{ product.count }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -33,5 +35,3 @@
         </dd>
     </div>
 </dl>
-<h3 class="govuk-heading-s">Raw Data</h3>
-<pre><code style="word-break: break-all">{{ vor.raw_data }}</code></pre>

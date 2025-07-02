@@ -19,23 +19,34 @@ class Gender(enum.Enum):
 class VORRecordFI:
     validity_start: datetime.datetime
     validity_end: typing.Optional[datetime.datetime]
-    raw_data: str
+    track_code: str
+    zone_start: int
+    zone_end: int
+    zone_via_1: int
+    zone_via_2: int
+    reference_id: typing.Optional[str]
 
     @classmethod
     def parse(cls, data: bytes, version: int):
         if version != 1:
-            raise VORException(f"Unsupported FI record version {version}")
+            raise VORException(f"Unsupported VOR FI record version {version}")
 
         try:
             data = data.decode("utf-8")
         except UnicodeDecodeError as e:
-            raise VORException("Invalid FI record text encoding") from e
+            raise VORException("Invalid VOR FI record text encoding") from e
 
-        if len(data) < 55:
-            raise VORException("FI record is too short")
+        if len(data) != 75:
+            raise VORException("VOR FI record wrong length")
 
         validity_start_str = data[0:16]
         validity_end_str = data[16:32]
+        track_code = data[32:35]
+        zone_start = data[35:40]
+        zone_end = data[40:45]
+        zone_via_1 = data[45:50]
+        zone_via_2 = data[50:55]
+        reference_id = data[55:75]
 
         try:
             validity_start = TZ.localize(datetime.datetime.strptime(validity_start_str, "%d.%m.%Y %H:%M"))
@@ -50,19 +61,38 @@ class VORRecordFI:
         else:
             validity_end = None
 
-        return cls(
+        try:
+            zone_start = int(zone_start, 10)
+            zone_end = int(zone_end, 10)
+            zone_via_1 = int(zone_via_1, 10)
+            zone_via_2 = int(zone_via_2, 10)
+        except ValueError as e:
+            raise VORException("Invalid VOR FI record zone number") from e
+
+        reference_id = reference_id.strip()
+        reference_id = reference_id if reference_id else None
+
+        o = cls(
             validity_start=validity_start,
             validity_end=validity_end,
-            raw_data=data,
+            track_code=track_code.strip(),
+            zone_start=zone_start,
+            zone_end=zone_end,
+            zone_via_1=zone_via_1,
+            zone_via_2=zone_via_2,
+            reference_id=reference_id,
         )
+        return o
 
 
 @dataclasses.dataclass
 class VORRecordVD:
-    raw_data: str
-    customer_id: str
+    contract_id: typing.Optional[str]
+    customer_id: typing.Optional[str]
     date_of_birth: typing.Optional[datetime.date]
     gender: typing.Optional[Gender]
+    id_document_type: typing.Optional[str]
+    id_document_number: typing.Optional[str]
     title: typing.Optional[str] = None
     forename: typing.Optional[str] = None
     middle_name: typing.Optional[str] = None
@@ -72,20 +102,32 @@ class VORRecordVD:
     @classmethod
     def parse(cls, data: bytes, version: int):
         if version != 1:
-            raise VORException(f"Unsupported VD record version {version}")
+            raise VORException(f"Unsupported VOR VD record version {version}")
 
         try:
             data = data.decode("utf-8")
         except UnicodeDecodeError as e:
-            raise VORException("Invalid VD record text encoding") from e
+            raise VORException("Invalid VOR VD record text encoding") from e
 
         if len(data) < 69:
-            raise VORException("Invalid VD record length")
+            raise VORException("Invalid VOR VD record length")
 
-        customer_id = data[:48].strip()
+        contract_id = data[0:30]
+        customer_id = data[30:48]
         gender_str = data[48]
         dob_str = data[49:57]
+        id_document_type = data[57:59]
+        id_document_number = data[59:69]
         name_str = data[69:]
+
+        contract_id = contract_id.strip()
+        contract_id = contract_id if contract_id else None
+        customer_id = customer_id.strip()
+        customer_id = customer_id if customer_id else None
+        id_document_type = id_document_type.strip()
+        id_document_type = id_document_type if id_document_type else None
+        id_document_number = id_document_number.strip()
+        id_document_number = id_document_number if id_document_number else None
 
         if dob_str.strip():
             try:
@@ -124,59 +166,73 @@ class VORRecordVD:
             raise VORException(f"Unknown gender {gender_str}")
 
         return cls(
+            contract_id=contract_id,
             customer_id=customer_id,
             date_of_birth=dob,
+            id_document_type=id_document_type,
+            id_document_number=id_document_number,
             title=title,
             forename=forename,
             middle_name=middle_name,
             surname=surname,
             suffix=suffix,
             gender=gender,
-            raw_data=data,
         )
 
 
 @dataclasses.dataclass
-class VORValidity:
-    region: typing.Optional[int] = None
-    other_data: str = ""
+class VORProduct:
+    product_id: int
+    product_code: str
+    count: int
 
 @dataclasses.dataclass
 class VORRecordFK:
     currency: str
-    validity: typing.List[VORValidity]
-    raw_data: str
+    partner_id: typing.Optional[str]
+    products: typing.List[VORProduct]
 
     @classmethod
     def parse(cls, data: bytes, version: int):
         if version != 1:
-            raise VORException(f"Unsupported FK record version {version}")
+            raise VORException(f"Unsupported VOR FK record version {version}")
 
         try:
             data = data.decode("utf-8")
         except UnicodeDecodeError as e:
-            raise VORException("Invalid FK record text encoding") from e
+            raise VORException("Invalid VOR FK record text encoding") from e
 
         if len(data) < 13:
-            raise VORException("Invalid FK record length")
+            raise VORException("Invalid VOR FK record length")
 
-        validity = []
+        currency = data[0:3]
+        partner_id = data[3:13]
+
+        partner_id = partner_id.strip()
+        partner_id = partner_id if partner_id else None
+
+        products = []
         for d in (data[i:i+9] for i in range(13, len(data), 9)):
-            r = d[0:5].strip()
-            if r:
+            product_id = d[0:5].strip()
+            if product_id:
                 try:
-                    r = int(r)
+                    product_id = int(product_id, 10)
                 except ValueError as e:
-                    raise VORException("Invalid region ID") from e
+                    raise VORException("Invalid VOR product ID") from e
             else:
-                r = None
-            validity.append(VORValidity(
-                region=r,
-                other_data=d[5:],
+                product_id = 0
+            try:
+                count = int(d[6:9], 10)
+            except ValueError as e:
+                raise VORException("Invalid VOR product count") from e
+            products.append(VORProduct(
+                product_id=product_id,
+                product_code=d[5],
+                count=count,
             ))
 
         return cls(
             currency=data[0:3],
-            validity=validity,
-            raw_data=data,
+            partner_id=partner_id,
+            products=products,
         )
