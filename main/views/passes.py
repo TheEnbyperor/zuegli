@@ -2344,7 +2344,32 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         elif parsed_layout:
             if parsed_layout.trips:
-                if parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
+                if parsed_layout.operator_rics == 1084 and parsed_layout.document_type.startswith('Fietskaart'):
+                    # NS bicycle day passes, display these as storecards as instead they will be
+                    # displayed as a trip from 'any station in NL' to 'any station in NL'
+                    # which isn't very helpful
+                    pass_type = "storeCard"
+
+                    """pass_fields["headerFields"].append({
+                        "key": "document-type",
+                        "label": "product-label",
+                        "value": parsed_layout.document_type,
+                    })"""
+
+                    pass_fields["headerFields"].append({
+                        "key": "document-type",
+                        "label": "product-label",
+                        "value": parsed_layout.document_type,
+                    })
+
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-on",
+                        "label": "validity-on-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
+                    })
+
+                elif parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
                     pass_type = "boardingPass"
                     pass_fields["transitType"] = "PKTransitTypeTrain"
 
@@ -2514,11 +2539,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": parsed_layout.travel_class,
                     })
                 else:
-                    pass_fields["headerFields"].append({
-                        "key": "class-code",
-                        "label": "class-code-label",
-                        "value": parsed_layout.travel_class,
-                    })
+                    if not (parsed_layout.operator_rics == 1084 and parsed_layout.travel_class == 'n'):
+                        # NS bike tickets (and other supplement adj things I assume?) set their class as 'n'
+                        # needlessly filling up scarce header space, so do not display if that's the case
+                        pass_fields["headerFields"].append({
+                            "key": "class-code",
+                            "label": "class-code-label",
+                            "value": parsed_layout.travel_class,
+                        })
 
             if parsed_layout.document_type:
                 pass_fields["backFields"].append({
