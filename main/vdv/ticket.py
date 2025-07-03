@@ -152,7 +152,7 @@ class VDVTicket:
     terminal_type: int
     terminal_number: int
     terminal_owner_id: int
-    transaction_time: util.DateTime
+    transaction_time: typing.Optional[util.DateTime]
     location_type: int
     location_number: int
     location_org_id: int
@@ -270,7 +270,7 @@ class VDVTicket:
             terminal_type=common_transaction_data[2],
             terminal_number=int.from_bytes(common_transaction_data[3:5], 'big'),
             terminal_owner_id=int.from_bytes(common_transaction_data[5:7], 'big'),
-            transaction_time=util.DateTime.from_bytes(common_transaction_data[7:11]),
+            transaction_time=util.DateTime.from_bytes(common_transaction_data[7:11]) if any(common_transaction_data[7:11]) else None,
             location_type=common_transaction_data[11],
             location_number=int.from_bytes(common_transaction_data[12:15], 'big'),
             location_org_id=int.from_bytes(common_transaction_data[15:17], 'big'),

@@ -794,7 +794,14 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVT
             message="The certificate that issued this ticket is not known - the ticket is likely invalid."
         )
 
-    root_ca_ref = vdv.CAReference.root() if raw_issuing_ca.prod else vdv.CAReference.test_root()
+    if raw_issuing_ca.level == 3:
+        root_ca_ref = vdv.CAReference.level_3_root()
+    elif raw_issuing_ca.level == 2:
+        root_ca_ref = vdv.CAReference.level_2_root()
+    elif raw_issuing_ca.level == 1:
+        root_ca_ref = vdv.CAReference.level_1_root()
+    else:
+        raise NotImplementedError()
     raw_root_ca = pki_store.find_certificate(root_ca_ref)
     if not raw_root_ca:
         raise TicketError(
