@@ -5,7 +5,7 @@
             <code>{{ cert.certificate_profile_identifier }}</code>
             {% if cert.certificate_profile_identifier == 3 %}
                 (RSA-1536)
-            {% elif cert.certificate_profile_identifier == 4 %}
+            {% elif cert.certificate_profile_identifier == 4 or cert.certificate_profile_identifier == 5 or cert.certificate_profile_identifier == 6 %}
                 (RSA-1024)
             {% elif cert.certificate_profile_identifier == 7 %}
                 (RSA-1984)

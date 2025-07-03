@@ -13,6 +13,7 @@ from . import iso9796, util, ticket
 ROOT = pathlib.Path(__file__).parent
 SHA1 = [1, 3, 14, 3, 2, 26]
 RSA_ENCRYPTION = [1, 2, 840, 113549, 1, 1, 1]
+RSA_PSS = [1, 2, 840, 113549, 1, 1, 10]
 SHA1_WITH_RSA_SIGNATURE = [1, 2, 840, 113549, 1, 1, 5]
 TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG = [1, 3, 36, 3, 4, 2, 2, 1]
 TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH = [1, 3, 36, 3, 5, 2, 2, 1]
@@ -22,6 +23,7 @@ SECP_256_R1 = [1, 2, 840, 10045, 3, 1, 7]
 KNOWN_OIDS = (
     RSA_ENCRYPTION,
     SHA1_WITH_RSA_SIGNATURE,
+    RSA_PSS,
     TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH,
     TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG,
 )
@@ -71,12 +73,16 @@ class CAReference:
         )
 
     @classmethod
-    def root(cls):
+    def level_3_root(cls):
         return cls("EU", "VDV", 1, 0, 1, 2006)
 
     @classmethod
-    def test_root(cls):
+    def level_2_root(cls):
         return cls("EU", "VDV", 1, 8, 3, 2006)
+
+    @classmethod
+    def level_1_root(cls):
+        return cls("EU", "VDV", 1, 2, 1, 2006)
 
     @property
     def service_indicator_name(self):
@@ -238,7 +244,7 @@ class CertificateHolderAuthorization:
 class RawCertificate:
     filename: str
     ca_reference: CAReference
-    prod: bool
+    level: int
     data: bytes
 
 
@@ -257,11 +263,14 @@ class CertificateStore:
             with certificate_storage.open(filename, "rb") as f:
                 data = f.read()
             if filename.startswith("prod_"):
-                prod = True
+                level = 3
                 filename = filename[5:]
             elif filename.startswith("test_"):
-                prod = False
+                level = 2
                 filename = filename[5:]
+            elif filename.startswith("lv1_"):
+                level = 1
+                filename = filename[4:]
             else:
                 continue
             try:
@@ -271,7 +280,7 @@ class CertificateStore:
             certificates.append(RawCertificate(
                 filename=filename,
                 ca_reference=CAReference.from_bytes(car_bytes),
-                prod=prod,
+                level=level,
                 data=data
             ))
         self.certificates = certificates
@@ -439,7 +448,9 @@ class RSAPublicKey:
     def from_bytes(cls, data: bytes, certificate_profile_identifier: int):
         if certificate_profile_identifier == 3:
             modulus_len = 1536 // 8
-        elif certificate_profile_identifier == 4:
+        elif certificate_profile_identifier == 4 or \
+                certificate_profile_identifier == 5 or \
+                certificate_profile_identifier == 6:
             modulus_len = 1024 // 8
         elif certificate_profile_identifier == 7:
             modulus_len = 1984 // 8
@@ -570,6 +581,7 @@ class CertificateData:
 
         if components not in (
             SHA1_WITH_RSA_SIGNATURE,
+            RSA_PSS,
             TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_AUTH,
             TELETRUST_ISO9796_2_WITH_SHA1_AND_RSA_SIG,
         ):
