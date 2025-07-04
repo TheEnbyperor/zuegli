@@ -223,6 +223,27 @@
         </div>
     </div>
 
+    {% if ticket.ticket_type == ticket.TYPE_RAILCARD %}
+        <div class="govuk-width-container">
+            <div class="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">Caution about Railcards in Wallet</h2>
+                    <div class="govuk-error-summary__body">
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                The standards of the Rail Delivery Group do not allow a Railcard to be shown in
+                                Apple/Google Wallet. We have heard no reported issues of displaying a Railcard like
+                                this, but please be warned that you may be considered to be travelling without
+                                a valid ticket.
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="govuk-!-margin-7">
         <h2 class="govuk-heading-l">{% trans "Ticket details" %}</h2>
         {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count and not ticket.iata_instances.count and not ticket.bahnbonus_instances.count and not ticket.ft_instances.count and not ticket.ts2_instances.count %}
@@ -234,8 +255,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #
-                                        {{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 <span>{{ instance.validity_start|date:"F d, Y H:i:s e" }} - {{ instance.validity_end|date:"F d, Y H:i:s e" }}</span>
                             </summary>
@@ -394,8 +414,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #
-                                        {{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -409,8 +428,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}Ticket #
-                                        {{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -453,7 +471,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_id %}Ticket #{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
