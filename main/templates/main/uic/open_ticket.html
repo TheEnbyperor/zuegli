@@ -201,6 +201,14 @@
                 </dd>
             </div>
         {% endif %}
+        {% if ticket.vatDetail %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">VAT</dt>
+                <dd class="govuk-summary-list__value">
+                    {% include "main/uic/vat.html" with vat=ticket.vatDetail %}
+                </dd>
+            </div>
+        {% endif %}
         {% if ticket.infoText %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Extra info</dt>

@@ -1,0 +1,34 @@
+{% load mathfilters rics %}
+{% for detail in vat %}
+    <div class="govuk-summary-card">
+        <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+                VAT detail #{{ forloop.counter }}
+            </h2>
+        </div>
+        <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Country</dt>
+                    <dd class="govuk-summary-list__value">{{ detail.country|iso3166 }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Percentage</dt>
+                    <dd class="govuk-summary-list__value">{{ detail.percentage|div:10 }}%</dd>
+                </div>
+                {% if detail.amount is not None %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Amount</dt>
+                        <dd class="govuk-summary-list__value">{{ detail.amount|uic_price:flex.data.issuingDetail }}</dd>
+                    </div>
+                {% endif %}
+                {% if detail.vatId is not None %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">VAT ID</dt>
+                        <dd class="govuk-summary-list__value">{{ detail.vatId }}</dd>
+                    </div>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+{% endfor %}
