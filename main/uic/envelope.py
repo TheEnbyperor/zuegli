@@ -98,20 +98,23 @@ class Envelope:
             sig = ber_tlv.tlv.Tlv.build(sig_data)
             hasher = cryptography.hazmat.primitives.hashes.SHA1()
         elif self.version == 2:
+            r, s = self.signature[0:32], self.signature[32:64]
+
             sig = bytearray([0x30, 0x44])
-            if self.signature[0] & 0x80:
+            if r[0] & 0x80:
                 sig[1] += 1
                 sig.extend([0x02, 0x21, 0x00])
             else:
                 sig.extend([0x02, 0x20])
-            sig.extend(self.signature[0:32])
-            if self.signature[32] & 0x80:
+            sig.extend(r)
+            if s[0] & 0x80:
                 sig[1] += 1
                 sig.extend([0x02, 0x21, 0x00])
             else:
                 sig.extend([0x02, 0x20])
-            sig.extend(self.signature[32:64])
+            sig.extend(s)
             sig = bytes(sig)
+            
             if meta:
                 if meta["signature_algorithm"] == "SHA224withDSA":
                     hasher = cryptography.hazmat.primitives.hashes.SHA224()
