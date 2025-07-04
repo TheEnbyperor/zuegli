@@ -1614,7 +1614,10 @@ def parse_ticket(
 
     try:
         d = base64.b64decode(ticket_bytes, validate=True)
-        if (d[0] & 0xF0) >> 4 in (2, 3):
+
+        if d[:3] == b"#UT":
+            return parse_ticket_uic(d, context)
+        elif (d[0] & 0xF0) >> 4 in (2, 3):
             return parse_ticket_ssb(d, context)
     except binascii.Error:
         pass
