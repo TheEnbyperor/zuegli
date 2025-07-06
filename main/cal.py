@@ -58,10 +58,9 @@ def add_time(event, key, dt):
 
 def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
     ticket_instance = ticket.active_instance()
-    ticket_url = reverse('ticket', kwargs={"pk": ticket.pk})
 
     event = icalendar.Event()
-    event.add("url", f"{settings.EXTERNAL_URL_BASE}{ticket_url}")
+    event.add("url", f"{settings.EXTERNAL_URL_BASE}{ticket.get_absolute_url()}")
     event.add("status", "confirmed")
 
     if isinstance(ticket_instance, models.UICTicketInstance):

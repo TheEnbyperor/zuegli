@@ -253,6 +253,7 @@ class VDVTicketInstance(models.Model):
     validity_end = models.DateTimeField()
     barcode_data = models.BinaryField()
     decoded_data = models.JSONField()
+    reported = models.BooleanField(default=False, blank=True, null=False, db_index=True)
 
     class Meta:
         ordering = ["-validity_start"]
@@ -294,6 +295,7 @@ class UICTicketInstance(models.Model):
     decoded_data = models.JSONField()
     validity_start = models.DateTimeField(blank=True, null=True)
     validity_end = models.DateTimeField(blank=True, null=True)
+    reported = models.BooleanField(default=False, blank=True, null=False, db_index=True)
 
     class Meta:
         ordering = ["-issuing_time"]

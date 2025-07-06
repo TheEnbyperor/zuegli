@@ -18,3 +18,4 @@ media/
 /.devenv
 /.direnv
 /dtvg-certs
+main/management/commands/dticket-fraud.py
