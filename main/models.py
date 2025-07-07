@@ -147,6 +147,7 @@ class Ticket(models.Model):
     )
     photos = models.JSONField(default=dict, blank=True)
     label = models.CharField(max_length=255, null=True, blank=True, verbose_name="Label")
+    suspected_fraud = models.BooleanField(default=False, blank=True, null=False)
 
     class Meta:
         permissions = [

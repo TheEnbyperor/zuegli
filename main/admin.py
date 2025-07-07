@@ -155,10 +155,12 @@ class TicketAdmin(admin.ModelAdmin):
         "ticket_type",
         "last_updated",
         "created",
+        "suspected_fraud",
     ]
     date_hierarchy = "last_updated"
     list_filter = [
         "ticket_type",
+        "suspected_fraud",
     ]
     search_fields = ["id"]
     change_form_template = "main/admin/ticket_change.html"
