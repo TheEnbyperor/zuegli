@@ -111,6 +111,7 @@ class AccessLogInline(admin.StackedInline):
         "action",
         "remote_ip",
         "headers",
+        "timestamp",
     ]
 
 

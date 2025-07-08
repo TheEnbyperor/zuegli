@@ -244,6 +244,9 @@ class AccessLogEntry(models.Model):
     account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs", db_index=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name_plural = "Access Log Entries"
+
 
 class VDVTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="vdv_instances", db_index=True)
