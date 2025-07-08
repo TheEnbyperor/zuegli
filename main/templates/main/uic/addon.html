@@ -44,21 +44,23 @@
             <dd class="govuk-summary-list__value">{{ addon.productIdIA5 }}</dd>
         </div>
     {% endif %}
-    {% with product=addon.productIdNum|vdv_product_id:addon.productOwnerIA5 %}
-        {% if product %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Product</dt>
-                <dd class="govuk-summary-list__value">{{ product }}</dd>
-            </div>
-        {% endif %}
-    {% endwith %}
+    {% if addon.productOwnerIA5 %}
+        {% with product=addon.productIdNum|vdv_product_id:addon.productOwnerIA5 %}
+            {% if product %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product</dt>
+                    <dd class="govuk-summary-list__value">{{ product }}</dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
     {% if addon.externalIssuerId %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">External issuer ID</dt>
             <dd class="govuk-summary-list__value"><code>{{ addon.externalIssuerId }}</code></dd>
         </div>
     {% endif %}
-    {% if addon.productOwnerIA5|slice:":3" == "VDV" %}
+    {% if addon.productOwnerIA5 and addon.productOwnerIA5|slice:":3" == "VDV" %}
         {% with org=addon.externalIssuerId|vdv_org_id %}
             {% if org %}
                 <div class="govuk-summary-list__row">
