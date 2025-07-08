@@ -5786,6 +5786,7 @@ RICS_LOGO = {
     3634: "pass/logo-dtvg.png",
     3697: "pass/logo-cendis.png",
     3703: "pass/logo-grand-est.png",
+    3906: "pass/logo-mdv.png",
     5008: "pass/logo-vrn.png",
     5173: "pass/logo-nasa.png",
     5177: "pass/logo-fribus.png",
