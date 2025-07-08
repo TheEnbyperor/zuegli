@@ -12,9 +12,17 @@
 
 @font-face {
     font-family: 'DIN Mono';
-    src: url(din-mono.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    src: url(din-mono-reg.otf) format('opentype');
 }
 
+@font-face {
+    font-family: 'DIN Mono';
+    font-weight: bold;
+    font-style: normal;
+    src: url(din-mono-bold.otf) format('opentype');
+}
 
 @font-face {
     font-family: 'Rail Alphabet';
