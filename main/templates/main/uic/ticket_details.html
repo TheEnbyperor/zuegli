@@ -113,7 +113,7 @@
                 </div>
             {% endif %}
             {% if ticket.dosipas_envelope.level_2_data.level1Signature %}
-                {% if ticket.dosipas_envelope.level_2_data.level1Data.level1KeAlg %}
+                {% if ticket.dosipas_envelope.level_2_data.level1Data.level1KeyAlg %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">{% trans "Level 1 key algorithm" %}</dt>
                         <dd class="govuk-summary-list__value">
@@ -396,7 +396,7 @@
                 </h2>
             </div>
             <div class="govuk-summary-card__content">
-                <code style="line-break: anywhere">{{ record.data_hex }}</code>
+                <code style="line-break: anywhere">{{ record.data|as_hex }}</code>
             </div>
         </div>
     {% endfor %}
