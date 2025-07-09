@@ -295,6 +295,8 @@ def oid(value):
         return "Authority key identifier"
     elif value == "2.5.29.1":
         return "Authority key identifier (old)"
+    elif value == "1.3.101.112":
+        return "Ed25519"
     else:
         return str(value)
 

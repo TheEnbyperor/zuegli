@@ -294,7 +294,7 @@ class UICTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
-    issuing_time = models.DateTimeField()
+    issuing_time = models.DateTimeField(blank=True, null=True)
     barcode_data = models.BinaryField()
     decoded_data = models.JSONField()
     validity_start = models.DateTimeField(blank=True, null=True)

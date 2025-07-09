@@ -1259,6 +1259,9 @@ def parse_ticket_uic_qr(ticket_bytes: bytes, context: "vdv.ticket.Context") -> U
             exception=traceback.format_exc()
         )
 
+    if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
+        return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
+
     return parse_ticket_uic(ticket_bytes, context)
 
 
