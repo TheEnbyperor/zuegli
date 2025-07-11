@@ -366,6 +366,7 @@ class RSPTicketInstance(models.Model):
             rsp_type=self.ticket_type,
             ticket_ref=self.reference,
             issuer_id=self.issuer_id,
+            utn_data=rsp.utn.UTN.from_int(rsp.utn.decode_base30(self.reference)),
             raw_ticket=raw_ticket,
             data=data
         )
