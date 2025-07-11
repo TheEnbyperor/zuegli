@@ -65,8 +65,12 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
 
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data = ticket_instance.as_ticket()
-        issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
+        if t := ticket_data.issuing_time():
+            issued_at = t.astimezone(pytz.utc)
+        else:
+            issued_at = None
         if ticket_data.flex:
+            issued_at = ticket_data.flex.issuing_time()
             ticket_document = next(map(
                 lambda d: d["ticket"][1],
                 filter(

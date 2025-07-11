@@ -244,7 +244,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_type = None
         ticket_data = ticket_instance.as_ticket()
-        issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
+        if t := ticket_data.issuing_time():
+            issued_at = t.astimezone(pytz.utc)
+        else:
+            issued_at = None
         issuing_rics = ticket_data.issuing_rics()
 
         parsed_layout = None
@@ -284,6 +287,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 })
 
         if ticket_data.flex:
+            issued_at = ticket_data.flex.issuing_time()
             obj["state"] = "ACTIVE" if ticket_data.flex.data["issuingDetail"]["activated"] else "INACTIVE"
 
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
@@ -781,26 +785,27 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                 }
                             })
 
-        obj["textModulesData"].append({
-            "id": "issued-at",
-            "localizedHeader": {
-                "translatedValues": [{
-                    "language": "de",
-                    "value": "Ausgestellt am"
-                }, {
-                    "language": "nl",
-                    "value": "Uitgegeven om"
-                }, {
-                    "language": "cy",
-                    "value": "Dyddorwyd am"
-                }],
-                "defaultValue": {
-                    "language": "en-gb",
-                    "value": "Issued at"
-                }
-            },
-            "body": issued_at.strftime("%H:%M %d.%m.%Y"),
-        })
+        if issued_at:
+            obj["textModulesData"].append({
+                "id": "issued-at",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Ausgestellt am"
+                    }, {
+                        "language": "nl",
+                        "value": "Uitgegeven om"
+                    }, {
+                        "language": "cy",
+                        "value": "Dyddorwyd am"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Issued at"
+                    }
+                },
+                "body": issued_at.strftime("%H:%M %d.%m.%Y"),
+            })
 
         if ticket_type:
             return obj, ticket_type

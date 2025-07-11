@@ -382,7 +382,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_data: ticket.UICTicket = ticket_instance.as_ticket()
-        issued_at = ticket_data.issuing_time().astimezone(pytz.utc)
+        if t := ticket_data.issuing_time():
+            issued_at = t.astimezone(pytz.utc)
+        else:
+            issued_at = None
         issuing_rics = ticket_data.issuing_rics()
 
         if issuing_rics == 1184:
@@ -2670,20 +2673,21 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": distributor["full_name"],
                 })
 
-        pass_fields["backFields"].append({
-            "key": "issued-date",
-            "label": "issued-at-label",
-            "dateStyle": "PKDateStyleFull",
-            "timeStyle": "PKDateStyleFull",
-            "value": issued_at.isoformat(),
-        })
-        return_pass_fields["backFields"].append({
-            "key": "issued-date",
-            "label": "issued-at-label",
-            "dateStyle": "PKDateStyleFull",
-            "timeStyle": "PKDateStyleFull",
-            "value": issued_at.isoformat(),
-        })
+        if issued_at:
+            pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleFull",
+                "value": issued_at.isoformat(),
+            })
+            return_pass_fields["backFields"].append({
+                "key": "issued-date",
+                "label": "issued-at-label",
+                "dateStyle": "PKDateStyleFull",
+                "timeStyle": "PKDateStyleFull",
+                "value": issued_at.isoformat(),
+            })
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         ticket_data: ticket.VDVTicket = ticket_instance.as_ticket()
 
