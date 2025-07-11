@@ -11,17 +11,31 @@
 }
 
 @font-face {
-    font-family: 'DIN Mono';
+    font-family: 'IBM Plex Mono';
     font-weight: normal;
     font-style: normal;
-    src: url(din-mono-reg.otf) format('opentype');
+    src: url(IBMPlexMono-Regular.ttf) format('truetype');
 }
 
 @font-face {
-    font-family: 'DIN Mono';
+    font-family: 'IBM Plex Mono';
     font-weight: bold;
     font-style: normal;
-    src: url(din-mono-bold.otf) format('opentype');
+    src: url(IBMPlexMono-Bold.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-weight: normal;
+    font-style: italic;
+    src: url(IBMPlexMono-Italic.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'IBM Plex Mono';
+    font-weight: bold;
+    font-style: italic;
+    src: url(IBMPlexMono-BoldItalic.ttf) format('truetype');
 }
 
 @font-face {
@@ -58,7 +72,7 @@
 }
 
 .paper-ticket {
-    font-family: "DIN Mono", monospace;
+    font-family: "IBM Plex Mono", monospace;
     background-image: linear-gradient(-45deg, #f2d4b6 0% 50%, #b6def2 50% 100%);
     background-size: 2ch 2ch;
     border-radius: 15px;
@@ -119,7 +133,7 @@ pre {
 }
 
 code {
-    font-family: 'DIN Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
 }
 
 .rail-alphabet {
