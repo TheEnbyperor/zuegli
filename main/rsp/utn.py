@@ -37,7 +37,7 @@ class UTN:
             epoch = datetime.date(year=epoch.year + 5, month=12, day=31)
             date_of_issue_tmp = epoch + datetime.timedelta(days=self.day_of_issue)
 
-        if issuer_id in ("TP", "TV", "TK"):
+        if issuer_id in ("TP", "TV", "TK", "TS"):
             date_of_issue_ttk_tmp = datetime.date(year=2015, month=12, day=31) + datetime.timedelta(days=self.day_of_issue)
             date_of_issue_ttk = date_of_issue_ttk_tmp
             while date_of_issue_ttk_tmp < today:
