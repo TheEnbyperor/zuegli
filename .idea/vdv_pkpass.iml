@@ -22,6 +22,9 @@
     <orderEntry type="library" name="mapkit.core" level="application" />
     <orderEntry type="library" name="script" level="application" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="" />
+  </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
     <option name="myDocStringFormat" value="Plain" />
