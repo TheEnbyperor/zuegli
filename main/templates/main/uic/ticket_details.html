@@ -374,6 +374,10 @@
         {% include "main/uic/bravo.html" with bravo=ticket.bravo %}
     {% endif %}
 
+    {% if ticket.pretix %}
+        {% include "main/uic/pretix.html" with pretix=ticket.pretix %}
+    {% endif %}
+
     {% for record in ticket.other_records %}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">

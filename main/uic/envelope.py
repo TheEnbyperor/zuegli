@@ -91,7 +91,10 @@ class Envelope:
         if not pk:
             return False
 
-        meta, _ = certs.signing_cert(self.issuer_rics, self.signature_key_id)
+        if c := certs.signing_cert(self.issuer_rics, self.signature_key_id):
+            meta, _ = c
+        else:
+            meta = None
 
         if self.version == 1:
             sig_data = ber_tlv.tlv.Tlv.parse(self.signature, True)
@@ -100,18 +103,21 @@ class Envelope:
         elif self.version == 2:
             r, s = self.signature[0:32], self.signature[32:64]
 
-            sig = bytearray([0x30, 0x44])
+            r = r.lstrip(b"\x00")
+            s = s.lstrip(b"\x00")
+
+            sig = bytearray([0x30, len(r) + len(s) + 4])
             if r[0] & 0x80:
                 sig[1] += 1
-                sig.extend([0x02, 0x21, 0x00])
+                sig.extend([0x02, len(r) + 1, 0x00])
             else:
-                sig.extend([0x02, 0x20])
+                sig.extend([0x02, len(r)])
             sig.extend(r)
             if s[0] & 0x80:
                 sig[1] += 1
-                sig.extend([0x02, 0x21, 0x00])
+                sig.extend([0x02, len(s) + 1, 0x00])
             else:
-                sig.extend([0x02, 0x20])
+                sig.extend([0x02, len(s)])
             sig.extend(s)
             sig = bytes(sig)
             

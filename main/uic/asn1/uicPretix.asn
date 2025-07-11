@@ -1,0 +1,28 @@
+ASN-Module-Pretix DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    PretixTicket ::= SEQUENCE {
+    	uniqueId OCTET STRING,
+
+    	orderYear INTEGER (2016..2269),
+   		orderDay INTEGER (1..366),
+   		orderTime INTEGER (0..1440),
+
+		eventId INTEGER,
+   		itemId INTEGER,
+   		subeventId INTEGER OPTIONAL,
+   		variationId INTEGER OPTIONAL,
+
+   		attendeeName UTF8String OPTIONAL,
+
+    	validFromYear INTEGER (2016..2269) OPTIONAL,
+   		validFromDay INTEGER (1..366) OPTIONAL,
+   		validFromTime INTEGER (0..1439) OPTIONAL,
+
+    	validUntilYear INTEGER (2016..2269) OPTIONAL,
+   		validUntilDay INTEGER (1..366) OPTIONAL,
+   		validUntilTime INTEGER (0..1439) OPTIONAL,
+
+   		...
+   }
+
+END

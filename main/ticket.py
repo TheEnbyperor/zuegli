@@ -99,6 +99,7 @@ class UICTicket:
     st01: typing.Optional["uic.st01_parse.ParsedST01"] = None
     db_plai: typing.Optional["uic.db_plai_parse.ParsedPLAI"] = None
     bravo: typing.Optional["uic.bravo.BravoRecord"] = None
+    pretix: typing.Optional["uic.pretix.Pretix"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
     other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
 
@@ -319,6 +320,8 @@ class UICTicket:
             return self.head.ticket_id
         elif self.flex:
             return self.flex.ticket_id()
+        elif self.pretix:
+            return self.pretix.ticket_id()
         else:
             return ""
 
@@ -379,6 +382,7 @@ class UICTicket:
             vor_vd=parse_ticket_uic_vor_vd(ticket_envelope),
             vor_fk=parse_ticket_uic_vor_fk(ticket_envelope),
             bravo=parse_ticket_uic_bravo(ticket_envelope),
+            pretix=parse_ticket_uic_pretix(ticket_envelope),
             st01=st01,
             db_plai=db_plai,
             other_records=[r for r in ticket_envelope.records if not (
@@ -392,7 +396,7 @@ class UICTicket:
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3306FK"
                     or r.id == "3606AA" or r.id == "3697OT"
                     or r.id == "000IVU" or r.id == "CXX___"
-                    or r.id == "3602AA"
+                    or r.id == "3602AA" or r.id == "5101PX"
             )]
         )
 
@@ -410,8 +414,10 @@ class UICTicket:
             dosipas_envelope=dosipas,
             flex=parse_ticket_uic_flex_dosipas(dosipas),
             dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
+            pretix=parse_ticket_uic_dosipas_pretix(dosipas),
             other_dosipas_records=[r for r in records if not (
                     r.format.startswith("FCB") or r.format.startswith("FDC")
+                    or r.format == "_5101PTIX"
             )],
         )
 
@@ -1206,6 +1212,36 @@ def parse_ticket_uic_bravo(ticket_envelope: uic.Envelope) -> typing.Optional["ui
         raise TicketError(
             title="Invalid Bravo data",
             message="The Bravo data is can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_pretix(ticket_envelope: uic.Envelope) -> typing.Optional["uic.pretix.Pretix"]:
+    pretix_record = next(filter(lambda r: r.id == "5101PX" and r.version == 1, ticket_envelope.records),None)
+    if not pretix_record:
+        return None
+
+    try:
+        return uic.pretix.Pretix.parse(pretix_record.data)
+    except uic.UICException:
+        raise TicketError(
+            title="Invalid Pretix data",
+            message="The Pretix data is can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dosipas_pretix(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.Pretix"]:
+    pretix_record = next(filter(lambda r: r.format == "_5101PTIX", ticket_envelope.records),None)
+    if not pretix_record:
+        return None
+
+    try:
+        return uic.pretix.Pretix.parse(pretix_record.data)
+    except uic.UICException:
+        raise TicketError(
+            title="Invalid Pretix data",
+            message="The Pretix data is can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 
