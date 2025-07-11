@@ -1,0 +1,60 @@
+{% load tz rics %}
+<h2 class="govuk-heading-m">Pretix data</h2>
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Unique ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ pretix.data.uniqueId|as_hex }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Order time</dt>
+            <dd class="govuk-summary-list__value">{{ pretix.order_time|date:"F d, Y H:i e" }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Event ID</dt>
+            <dd class="govuk-summary-list__value">{{ pretix.data.eventId }}</dd>
+        </div>
+        {% if pretix.data.subeventId is not None %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Sub-event ID</dt>
+                <dd class="govuk-summary-list__value">{{ pretix.data.subeventId }}</dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Item ID</dt>
+            <dd class="govuk-summary-list__value">{{ pretix.data.itemId }}</dd>
+        </div>
+        {% if pretix.data.variationId is not None %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Variation ID</dt>
+                <dd class="govuk-summary-list__value">{{ pretix.data.variationId }}</dd>
+            </div>
+        {% endif %}
+        {% if pretix.data.attendeeName is not None %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Attendee name</dt>
+                <dd class="govuk-summary-list__value">{{ pretix.data.attendeeName }}</dd>
+            </div>
+        {% endif %}
+        {% if pretix.data.validFromYear is not None %}
+            {% with valid_from=pretix.data|rics_valid_from %}
+                {% if valid_from %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Valid from</dt>
+                        <dd class="govuk-summary-list__value">{{ valid_from|date:"F d, Y H:i e" }}</dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+        {% if pretix.data.validUntilYear is not None %}
+            {% with valid_until=card|rics_valid_until %}
+                {% if valid_until %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Valid until</dt>
+                        <dd class="govuk-summary-list__value">{{ valid_until|date:"F d, Y H:i e" }}</dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    </dl>
+{% endlocaltime %}
