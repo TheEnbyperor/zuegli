@@ -2,7 +2,7 @@ import dataclasses
 import datetime
 import typing
 from django.utils import timezone
-from . import util, sncb
+from . import util, sncb, cd
 from .. import vdv
 
 @dataclasses.dataclass
@@ -22,6 +22,7 @@ class NonReservationTicket:
     information_message: int
     extra_text: str
     sncb_data: typing.Optional[sncb.SNCBData]
+    cd_data: typing.Optional[cd.CDData]
 
     @staticmethod
     def type():
@@ -70,12 +71,16 @@ class NonReservationTicket:
                     arrival_station = util.Station(id=data.read_string(168, 198), type="name")
 
         extra_text = data.read_string(212, 434)
+        sncb_data = None
+        cd_data = None
         if issuer_rics == 1088:
             sncb_data = sncb.SNCBData.parse(extra_text, context)
             if sncb_data:
                 extra_text = ""
-        else:
-            sncb_data = None
+        elif issuer_rics == 1154:
+            cd_data = cd.CDData.parse(extra_text)
+            if cd_data:
+                extra_text = ""
 
         return cls(
             specimen=data.read_bool(14),
@@ -93,4 +98,5 @@ class NonReservationTicket:
             information_message=data.read_int(198, 212),
             extra_text=extra_text,
             sncb_data=sncb_data,
+            cd_data=cd_data,
         )

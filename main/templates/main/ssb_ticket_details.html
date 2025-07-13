@@ -241,7 +241,7 @@
             <dt class="govuk-summary-list__key">{% trans "Valid until" %}</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.validity_end|date:"F d, Y" }}</dd>
         </div>
-        {% if ticket.data.station_code_table %}
+        {% if ticket.data.station_code_table is not None %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Station code table" %}</dt>
                 <dd class="govuk-summary-list__value"><code>{{ ticket.data.station_code_table }}</code></dd>
@@ -319,6 +319,49 @@
                                     {% if ticket.data.sncb_data.original_surname %}
                                         ({{ ticket.data.sncb_data.original_surname }})
                                     {% endif %}
+                                </dd>
+                            </div>
+                        {% endif %}
+                    </dl>
+                </dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.cd_data %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "ČD Data" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    <dl class="govuk-summary-list">
+                        {% if ticket.data.cd_data.price %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Price" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ ticket.data.cd_data.price_str }}
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if ticket.data.cd_data.distance %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Distance" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ ticket.data.cd_data.distance }} km
+                                </dd>
+                            </div>
+                        {% endif %}
+                        {% if ticket.data.cd_data.other_blocks %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Unknown blocks</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% for block_id, value in ticket.data.cd_data.other_blocks.items %}
+                                        <div class="govuk-summary-card">
+                                            <div class="govuk-summary-card__title-wrapper">
+                                                <h2 class="govuk-summary-card__title">Block <code>{{ block_id }}</code>
+                                                </h2>
+                                            </div>
+                                            <div class="govuk-summary-card__content">
+                                                <code>{{ value }}</code>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 </dd>
                             </div>
                         {% endif %}

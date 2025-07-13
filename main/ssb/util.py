@@ -44,8 +44,10 @@ STRING1 = {
     63: "?",
 }
 
+
 class SSBException(Exception):
     pass
+
 
 class BitStream:
     data: bitstring.ConstBitStream
@@ -62,14 +64,14 @@ class BitStream:
     def read_string(self, start: int, end: int) -> str:
         out = bytearray()
         for i in range(start, end, 6):
-            out.append(self.data[i:i+6].uint + 0x20)
+            out.append(self.data[i:i + 6].uint + 0x20)
 
         return out.decode("ascii").strip()
 
     def read_string1(self, start: int, end: int) -> str:
         out = ""
         for i in range(start, end, 6):
-            out += STRING1.get(self.data[i:i+6].uint, " ")
+            out += STRING1.get(self.data[i:i + 6].uint, " ")
 
         return out
 
@@ -79,17 +81,21 @@ class BitStream:
     def __getitem__(self, index) -> "BitStream":
         if isinstance(index, slice):
             return BitStream(self.data[index])
+        else:
+            raise ValueError("Index must be a slice")
 
 
 @dataclasses.dataclass
 class Station:
-   id: typing.Union[int, str]
-   type: str
+    id: typing.Union[int, str]
+    type: str
 
-   def station(self):
-       if self.type == "uic":
-           return rics.get_station(self.id, "uic")
-       elif self.type == "db_hafas":
-           return rics.get_station(self.id, "db")
-       elif self.type == "benerail":
-           return rics.get_station(self.id, "benerail")
+    def station(self):
+        if self.type == "uic":
+            return rics.get_station(self.id, "uic")
+        elif self.type == "db_hafas":
+            return rics.get_station(self.id, "db")
+        elif self.type == "benerail":
+            return rics.get_station(self.id, "benerail")
+        else:
+            return None
