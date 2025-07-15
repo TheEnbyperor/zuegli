@@ -51,6 +51,11 @@
     font-family: 'GDS Transport', sans-serif;
 }
 
+.button-link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .govuk-template--rebranded .govuk-header {
     background-color: #c42126;
     border: none;

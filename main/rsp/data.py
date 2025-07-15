@@ -86,7 +86,6 @@ class CouponType(enum.Enum):
             return "Return - outbound"
         elif self == CouponType.Inbound:
             return "Return - inbound"
-        return None
 
 class DepartureTime(enum.Enum):
     NotSet = 0
@@ -103,7 +102,6 @@ class DepartureTime(enum.Enum):
             return "specific departure"
         elif self == DepartureTime.SuggestedDeparture:
             return "suggested departure"
-        return None
 
 @dataclasses.dataclass
 class TicketData:
