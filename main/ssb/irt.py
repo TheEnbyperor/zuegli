@@ -105,4 +105,5 @@ class IntegratedReservationTicket:
             information_message=data.read_int(260, 274),
             extra_text=extra_text,
             sncb_data=sncb_data,
+            cd_data=cd_data,
         )

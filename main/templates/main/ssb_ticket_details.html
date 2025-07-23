@@ -654,12 +654,20 @@
     <h2 class="govuk-heading-m">Slovenske železnice ticket</h2>
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Ticket type</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.ticket_type_str }}</dd>
+            <dt class="govuk-summary-list__key">Format type</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.format_type }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Tariff location ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.tariff_location_id }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Product</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.product_str }}</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Price level</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.price_level_str }}</dd>
+            <dd class="govuk-summary-list__value">{{ ticket.data.status_str }}</dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Travel class</dt>
@@ -670,6 +678,26 @@
             <dd class="govuk-summary-list__value">{{ ticket.data.reference }}</dd>
         </div>
         <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Bill number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.bill_number }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Unit price</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.price_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Total price</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.total_price_str }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Number of travellers</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.num_travellers }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Discount ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.discount_id }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Valid from</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y H:i:s e" }}</dd>
         </div>
@@ -678,12 +706,53 @@
             <dd class="govuk-summary-list__value">{{ ticket.data.valid_to|date:"F d, Y H:i:s e" }}</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Unit price</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.price_str }}</dd>
+            <dt class="govuk-summary-list__key">Service provider</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.service_provider }}</dd>
+        </div>
+        {% if ticket.data.stations %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Stations</dt>
+                <dd class="govuk-summary-list__value">
+                    {% for station in ticket.data.stations %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__content">
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Station type</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ station.station_type }}
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ station.station_id }}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Distance</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.distance }} km</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Number of travellers</dt>
-            <dd class="govuk-summary-list__value">{{ ticket.data.num_travellers }}</dd>
+            <dt class="govuk-summary-list__key">One way</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.one_way %}
+                    <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reprint number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.reprint_number }}</dd>
         </div>
     </dl>
 {% endif %}
