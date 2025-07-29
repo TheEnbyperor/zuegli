@@ -11,8 +11,8 @@
             <dd class="govuk-summary-list__value">{{ pretix.order_time|date:"F d, Y H:i e" }}</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Event ID</dt>
-            <dd class="govuk-summary-list__value">{{ pretix.data.eventId }}</dd>
+            <dt class="govuk-summary-list__key">Event slug</dt>
+            <dd class="govuk-summary-list__value">{{ pretix.data.eventSlug }}</dd>
         </div>
         {% if pretix.data.subeventId is not None %}
             <div class="govuk-summary-list__row">

@@ -100,6 +100,7 @@ class UICTicket:
     db_plai: typing.Optional["uic.db_plai_parse.ParsedPLAI"] = None
     bravo: typing.Optional["uic.bravo.BravoRecord"] = None
     pretix: typing.Optional["uic.pretix.Pretix"] = None
+    pretix_wallet: typing.Optional["uic.pretix.PretixWallet"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
     other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
 
@@ -383,6 +384,7 @@ class UICTicket:
             vor_fk=parse_ticket_uic_vor_fk(ticket_envelope),
             bravo=parse_ticket_uic_bravo(ticket_envelope),
             pretix=parse_ticket_uic_pretix(ticket_envelope),
+            pretix_wallet=parse_ticket_uic_pretix_wallet(ticket_envelope),
             st01=st01,
             db_plai=db_plai,
             other_records=[r for r in ticket_envelope.records if not (
@@ -396,7 +398,8 @@ class UICTicket:
                     or r.id == "3306FI" or r.id == "3306VD" or r.id == "3306FK"
                     or r.id == "3606AA" or r.id == "3697OT"
                     or r.id == "000IVU" or r.id == "CXX___"
-                    or r.id == "3602AA" or r.id == "5101PX"
+                    or r.id == "3602AA"
+                    or r.id == "5101PX" or r.id == "5101PW"
             )]
         )
 
@@ -415,9 +418,10 @@ class UICTicket:
             flex=parse_ticket_uic_flex_dosipas(dosipas),
             dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
             pretix=parse_ticket_uic_dosipas_pretix(dosipas),
+            pretix_wallet=parse_ticket_uic_dosipas_pretix_wallet(dosipas),
             other_dosipas_records=[r for r in records if not (
                     r.format.startswith("FCB") or r.format.startswith("FDC")
-                    or r.format == "_5101PTIX"
+                    or r.format == "_5101PTIX" or r.format == "_5101PXW"
             )],
         )
 
@@ -1243,6 +1247,36 @@ def parse_ticket_uic_dosipas_pretix(ticket_envelope: uic.DOSIPASEnvelope) -> typ
         raise TicketError(
             title="Invalid Pretix data",
             message="The Pretix data is can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_pretix_wallet(ticket_envelope: uic.Envelope) -> typing.Optional["uic.pretix.PretixWallet"]:
+    pretix_record = next(filter(lambda r: r.id == "5101PW" and r.version == 1, ticket_envelope.records),None)
+    if not pretix_record:
+        return None
+
+    try:
+        return uic.pretix.PretixWallet.parse(pretix_record.data)
+    except uic.UICException:
+        raise TicketError(
+            title="Invalid Pretix data",
+            message="The Pretix wallet data is can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.PretixWallet"]:
+    pretix_record = next(filter(lambda r: r.format == "_5101PXW", ticket_envelope.records),None)
+    if not pretix_record:
+        return None
+
+    try:
+        return uic.pretix.PretixWallet.parse(pretix_record.data)
+    except uic.UICException:
+        raise TicketError(
+            title="Invalid Pretix data",
+            message="The Pretix wallet data is can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 

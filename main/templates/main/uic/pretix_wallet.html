@@ -1,0 +1,14 @@
+{% load tz rics %}
+<h2 class="govuk-heading-m">Pretix wallet</h2>
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Unique ID</dt>
+            <dd class="govuk-summary-list__value"><code>{{ pretix.data.uniqueId|as_hex }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Issuer</dt>
+            <dd class="govuk-summary-list__value">{{ pretix.data.issuer }}</dd>
+        </div>
+    </dl>
+{% endlocaltime %}

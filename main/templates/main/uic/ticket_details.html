@@ -378,6 +378,10 @@
         {% include "main/uic/pretix.html" with pretix=ticket.pretix %}
     {% endif %}
 
+    {% if ticket.pretix_wallet %}
+        {% include "main/uic/pretix_wallet.html" with pretix=ticket.pretix_wallet %}
+    {% endif %}
+
     {% for record in ticket.other_records %}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
