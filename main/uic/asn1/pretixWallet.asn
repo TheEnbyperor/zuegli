@@ -1,7 +1,7 @@
 ASN-Module-Pretix-Wallet DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
     PretixWallet ::= SEQUENCE {
-    	uniqueId OCTET STRING,
+    	pan IA5String,
 		issuer UTF8String,
    		...
    }
