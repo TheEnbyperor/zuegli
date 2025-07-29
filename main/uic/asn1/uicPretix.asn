@@ -7,7 +7,7 @@ ASN-Module-Pretix DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    		orderDay INTEGER (1..366),
    		orderTime INTEGER (0..1440),
 
-		eventId INTEGER,
+		eventSlug UTF8String,
    		itemId INTEGER,
    		subeventId INTEGER OPTIONAL,
    		variationId INTEGER OPTIONAL,

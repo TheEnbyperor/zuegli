@@ -9,6 +9,7 @@ from . import util
 
 ROOT = pathlib.Path(__file__).parent
 ASN1_SPEC = asn1tools.compile_files([ROOT / "asn1" / "uicPretix.asn"], codec="uper")
+WALLET_SPEC = asn1tools.compile_files([ROOT / "asn1" / "pretixWallet.asn"], codec="uper")
 
 @dataclasses.dataclass
 class Pretix:
@@ -40,3 +41,17 @@ class Pretix:
         date = datetime.datetime(self.data["orderYear"], 1, 1)
         date += datetime.timedelta(days=self.data["orderDay"] - 1, minutes=self.data["orderTime"])
         return pytz.utc.localize(date)
+
+
+@dataclasses.dataclass
+class PretixWallet:
+    data: typing.Dict[str, typing.Any]
+
+    @classmethod
+    def parse(cls, data: bytes) -> "PretixWallet":
+        try:
+            return cls(
+                data=WALLET_SPEC.decode("PretixWallet", data)
+            )
+        except asn1tools.DecodeError as e:
+            raise util.UICException("Failed to decode UIC Pretix wallet data") from e

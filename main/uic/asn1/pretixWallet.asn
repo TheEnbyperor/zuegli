@@ -1,0 +1,9 @@
+ASN-Module-Pretix-Wallet DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    PretixWallet ::= SEQUENCE {
+    	uniqueId OCTET STRING,
+		issuer UTF8String,
+   		...
+   }
+
+END
