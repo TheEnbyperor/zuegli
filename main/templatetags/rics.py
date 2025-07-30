@@ -106,6 +106,8 @@ def rics_valid_from(value, issuing_time: typing.Optional[datetime.datetime]=None
     if "validFromUTCOffset" in value:
         tz = datetime.timezone(-datetime.timedelta(minutes=15 * value["validFromUTCOffset"]))
         issuing_time = issuing_time.replace(tzinfo=tz)
+    elif value.get("productOwnerNum", None) == 9901:
+        issuing_time = pytz.timezone("Europe/Berlin").localize(issuing_time)
     return issuing_time
 
 @register.filter(name="rics_valid_from_date")
