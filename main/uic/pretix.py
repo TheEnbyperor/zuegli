@@ -35,7 +35,7 @@ class Pretix:
             return sp_rics
 
     def ticket_id(self) -> str:
-        return base64.b32hexencode(self.data["uniqueId"]).decode().replace("=", "")
+        return self.data["uniqueId"]
 
     def order_time(self) -> datetime.datetime:
         date = datetime.datetime(self.data["orderYear"], 1, 1)

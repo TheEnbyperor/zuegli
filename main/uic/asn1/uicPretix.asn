@@ -1,13 +1,13 @@
 ASN-Module-Pretix DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
     PretixTicket ::= SEQUENCE {
-    	uniqueId OCTET STRING,
+    	uniqueId IA5String,
 
     	orderYear INTEGER (2016..2269),
    		orderDay INTEGER (1..366),
    		orderTime INTEGER (0..1440),
 
-		eventSlug UTF8String,
+		eventSlug IA5String,
    		itemId INTEGER,
    		subeventId INTEGER OPTIONAL,
    		variationId INTEGER OPTIONAL,
