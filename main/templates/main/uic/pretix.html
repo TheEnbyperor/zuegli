@@ -4,7 +4,7 @@
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Unique ID</dt>
-            <dd class="govuk-summary-list__value"><code>{{ pretix.data.uniqueId|as_hex }}</code></dd>
+            <dd class="govuk-summary-list__value"><code>{{ pretix.data.uniqueId }}</code></dd>
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Order time</dt>
@@ -12,7 +12,7 @@
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Event slug</dt>
-            <dd class="govuk-summary-list__value">{{ pretix.data.eventSlug }}</dd>
+            <dd class="govuk-summary-list__value"><code>{{ pretix.data.eventSlug }}</code></dd>
         </div>
         {% if pretix.data.subeventId is not None %}
             <div class="govuk-summary-list__row">
