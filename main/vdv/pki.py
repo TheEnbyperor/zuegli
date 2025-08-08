@@ -540,7 +540,7 @@ class ECDSAPublicKey:
 class CertificateData:
     certificate_profile_identifier: int
     ca_reference: CAReference
-    certificate_holder_reference: typing.Union[CertificateReference, CAReference]
+    certificate_holder_reference: typing.Union[CertificateReference, CAReference, NMReference]
     certificate_holder_authorization: CertificateHolderAuthorization
     expiry_date: util.Date
     public_key: RSAPublicKey

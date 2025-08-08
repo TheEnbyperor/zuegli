@@ -8,6 +8,7 @@ import cryptography.exceptions
 import cryptography.hazmat.primitives.hashes
 import cryptography.hazmat.primitives.asymmetric.dsa
 import cryptography.hazmat.primitives.asymmetric.ec
+import cryptography.hazmat.primitives.asymmetric.ed25519
 import cryptography.hazmat.primitives.serialization
 from . import certs, util
 
@@ -62,31 +63,38 @@ class DOSIPASEnvelope:
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
 
-            hasher = cryptography.hazmat.primitives.hashes.SHA224()
+            args = (cryptography.hazmat.primitives.hashes.SHA224(),)
         elif sig_alg == "2.16.840.1.101.3.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
                 return False
 
-            hasher = cryptography.hazmat.primitives.hashes.SHA256()
+            args = (cryptography.hazmat.primitives.hashes.SHA256(),)
         elif sig_alg == "1.2.840.10045.4.3.2":
             if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
                 return False
 
-            hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
+            args = (cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
                 cryptography.hazmat.primitives.hashes.SHA256()
-            )
+            ),)
+        elif sig_alg == "1.3.101.112":
+            if not isinstance(pk, cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PublicKey):
+                return False
+
+            args = ()
         else:
             if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
-                hasher = cryptography.hazmat.primitives.hashes.SHA224()
+                args = (cryptography.hazmat.primitives.hashes.SHA224(),)
             elif isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey):
-                hasher = cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
+                args = (cryptography.hazmat.primitives.asymmetric.ec.ECDSA(
                     cryptography.hazmat.primitives.hashes.SHA256()
-                )
+                ),)
+            elif isinstance(pk, cryptography.hazmat.primitives.asymmetric.ed25519.Ed25519PublicKey):
+                args = ()
             else:
                 return False
 
         try:
-            pk.verify(self.level_1_signature, self.level_1_signed_data, hasher)
+            pk.verify(self.level_1_signature, self.level_1_signed_data, *args)
             return True
         except cryptography.exceptions.InvalidSignature:
             return False
