@@ -83,8 +83,6 @@ class PKPass:
                     cryptography.hazmat.primitives.hashes.SHA512()
                 )
             )
-        else:
-            raise ValueError("Unsupported private key type")
 
         timestamp_nonce = int.from_bytes(secrets.token_bytes(8), "big")
         timestamp_digest = cryptography.hazmat.primitives.hashes.Hash(
