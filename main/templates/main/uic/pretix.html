@@ -47,7 +47,7 @@
             {% endwith %}
         {% endif %}
         {% if pretix.data.validUntilYear is not None %}
-            {% with valid_until=card|rics_valid_until %}
+            {% with valid_until=pretix.data|rics_valid_until %}
                 {% if valid_until %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Valid until</dt>
@@ -56,5 +56,15 @@
                 {% endif %}
             {% endwith %}
         {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Has TOTP</dt>
+            <dd class="govuk-summary-list__value">
+                {% if pretix.data.hasTotp %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
     </dl>
 {% endlocaltime %}

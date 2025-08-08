@@ -22,6 +22,8 @@ ASN-Module-Pretix DEFINITIONS AUTOMATIC TAGS ::= BEGIN
    		validUntilDay INTEGER (1..366) OPTIONAL,
    		validUntilTime INTEGER (0..1439) OPTIONAL,
 
+   		hasTotp BOOLEAN,
+
    		...
    }
 
