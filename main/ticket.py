@@ -1,4 +1,6 @@
 import base64
+from copy import deepcopy
+
 import base45
 import dataclasses
 import traceback
@@ -101,6 +103,7 @@ class UICTicket:
     bravo: typing.Optional["uic.bravo.BravoRecord"] = None
     pretix: typing.Optional["uic.pretix.Pretix"] = None
     pretix_wallet: typing.Optional["uic.pretix.PretixWallet"] = None
+    pretix_totp: typing.Optional["uic.pretix.PretixWallet"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
     other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
 
@@ -408,7 +411,7 @@ class UICTicket:
             cls, ticket_bytes: bytes, dosipas: uic.DOSIPASEnvelope,
             _context: "vdv.ticket.Context"
     ) -> "UICTicket":
-        records = dosipas.records
+        records = list(dosipas.records)
         if dosipas.level_2_record:
             records += [dosipas.level_2_record]
 
@@ -419,9 +422,11 @@ class UICTicket:
             dosipas_dcd=parse_ticket_uic_dosipas_dcd(dosipas),
             pretix=parse_ticket_uic_dosipas_pretix(dosipas),
             pretix_wallet=parse_ticket_uic_dosipas_pretix_wallet(dosipas),
+            pretix_totp=parse_ticket_uic_dosipas_pretix_totp(dosipas),
             other_dosipas_records=[r for r in records if not (
                     r.format.startswith("FCB") or r.format.startswith("FDC")
                     or r.format == "_5101PTIX" or r.format == "_5101PXW"
+                    or r.format == "_5101TOTP"
             )],
         )
 
@@ -1277,6 +1282,20 @@ def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope)
         raise TicketError(
             title="Invalid Pretix data",
             message="The Pretix wallet data is can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.PretixWallet"]:
+    if not ticket_envelope.level_2_record or not ticket_envelope.level_2_record.format == "_5101TOTP":
+        return None
+
+    try:
+        return uic.pretix.PretixTOTP.parse(ticket_envelope.level_2_record.data)
+    except uic.util.UICException:
+        raise TicketError(
+            title="Invalid Pretix TOTP",
+            message="The TOTP record can't be parsed - the ticket is likely invalid.",
             exception=traceback.format_exc()
         )
 

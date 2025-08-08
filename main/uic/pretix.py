@@ -10,6 +10,7 @@ from . import util
 ROOT = pathlib.Path(__file__).parent
 ASN1_SPEC = asn1tools.compile_files([ROOT / "asn1" / "uicPretix.asn"], codec="uper")
 WALLET_SPEC = asn1tools.compile_files([ROOT / "asn1" / "pretixWallet.asn"], codec="uper")
+TOTP_SPEC = asn1tools.compile_files([ROOT / "asn1" / "pretixTotp.asn"], codec="uper")
 
 @dataclasses.dataclass
 class Pretix:
@@ -55,3 +56,17 @@ class PretixWallet:
             )
         except asn1tools.DecodeError as e:
             raise util.UICException("Failed to decode UIC Pretix wallet data") from e
+
+
+@dataclasses.dataclass
+class PretixTOTP:
+    data: typing.Dict[str, typing.Any]
+
+    @classmethod
+    def parse(cls, data: bytes) -> "PretixTOTP":
+        try:
+            return cls(
+                data=TOTP_SPEC.decode("PretixTotp", data)
+            )
+        except asn1tools.DecodeError as e:
+            raise util.UICException("Failed to decode UIC Pretix TOTP data") from e

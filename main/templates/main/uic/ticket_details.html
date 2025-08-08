@@ -316,6 +316,10 @@
         {% include "main/uic/dcd.html" with dcd=ticket.dosipas_dcd %}
     {% endif %}
 
+    {% if ticket.pretix_totp %}
+        {% include "main/uic/pretix_totp.html" with pretix=ticket.pretix_totp %}
+    {% endif %}
+
     {% if ticket.layout %}
         {% include 'main/uic/paper.html' with layout=ticket.layout head=ticket.head %}
     {% endif %}
