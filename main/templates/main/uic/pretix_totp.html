@@ -1,0 +1,10 @@
+{% load tz rics %}
+<h2 class="govuk-heading-m">Pretix TOTP</h2>
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">TOTP</dt>
+            <dd class="govuk-summary-list__value"><code>{{ pretix.data.totp }}</code></dd>
+        </div>
+    </dl>
+{% endlocaltime %}

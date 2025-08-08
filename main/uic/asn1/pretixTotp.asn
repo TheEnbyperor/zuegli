@@ -1,0 +1,8 @@
+ASN-Module-Pretix-Totp DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    PretixTotp ::= SEQUENCE {
+    	padding BIT STRING (SIZE(0..7)),
+    	totp UTF8String (SIZE(8))
+    }
+
+END
