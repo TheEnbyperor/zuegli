@@ -197,7 +197,7 @@ class UICTicket:
 
         if ticket_type == models.Ticket.TYPE_DEUTCHLANDTICKET:
             hd.update(b"deutschlandticket")
-            hd.update(self.issuing_rics().to_bytes(8, "big"))
+            hd.update(self.issuer_id())
             if self.flex:
                 passenger = self.flex.data.get("travelerDetail", {}).get("traveler", [{}])[0]
                 dob_year = passenger.get("yearOfBirth", 0)
@@ -230,7 +230,7 @@ class UICTicket:
         elif ticket_type == models.Ticket.TYPE_BAHNCARD:
             card = self.flex.data["transportDocument"][0]["ticket"][1]
             hd.update(b"bahncard")
-            hd.update(self.flex.data["issuingDetail"].get("issuerNum", 0).to_bytes(8, "big"))
+            hd.update(self.flex_issuer_id())
             if "cardIdIA5" in card:
                 hd.update(card["cardIdIA5"].encode("utf-8"))
             else:
@@ -241,7 +241,7 @@ class UICTicket:
             hd.update(b"fahrkarte")
             if self.flex:
                 ticket = self.flex.data["transportDocument"][0]["ticket"][1]
-                hd.update(self.flex.data["issuingDetail"].get("issuerNum", 0).to_bytes(8, "big"))
+                hd.update(self.flex_issuer_id())
                 if "referenceIA5" in ticket:
                     hd.update(ticket["referenceIA5"].encode("utf-8"))
                 elif "referenceNum" in ticket:
@@ -249,17 +249,17 @@ class UICTicket:
                 else:
                     hd.update(self.ticket_id().encode("utf-8"))
             elif self.st01:
-                hd.update(self.issuing_rics().to_bytes(8, "big"))
+                hd.update(self.issuer_id())
                 hd.update(self.st01.ticket_id.encode("utf-8"))
             else:
-                hd.update(self.issuing_rics().to_bytes(8, "big"))
+                hd.update(self.issuer_id())
                 hd.update(self.ticket_id().encode("utf-8"))
             return base64.b32hexencode(hd.digest()).decode("utf-8")
 
         elif ticket_type == models.Ticket.TYPE_RESERVIERUNG:
             ticket = self.flex.data["transportDocument"][0]["ticket"][1]
             hd.update(b"reservierung")
-            hd.update(self.flex.data["issuingDetail"].get("issuerNum", 0).to_bytes(8, "big"))
+            hd.update(self.flex_issuer_id())
             if "referenceIA5" in ticket:
                 hd.update(ticket["referenceIA5"].encode("utf-8"))
             elif "referenceNum" in ticket:
@@ -296,7 +296,7 @@ class UICTicket:
 
         else:
             hd.update(b"unknown-uic")
-            hd.update(self.issuing_rics().to_bytes(4, "big"))
+            hd.update(self.issuer_id())
             hd.update(self.ticket_id().encode("utf-8"))
             return base64.b32encode(hd.digest()).decode("utf-8")
 
@@ -311,10 +311,27 @@ class UICTicket:
         if self.envelope:
             return self.envelope.issuer_rics
 
-        if self.dosipas_envelope:
+        if self.dosipas_envelope and "securityProviderNum" in self.dosipas_envelope.level_2_data["level1Data"]:
             return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderNum"]
 
         return 0
+
+    def issuer_id(self) -> bytes:
+        if rics := self.issuing_rics():
+            return rics.to_bytes(8, "big")
+
+        if self.dosipas_envelope and "securityProviderIA5" in self.dosipas_envelope.level_2_data["level1Data"]:
+            return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderIA5"].encode("utf-8")
+
+        return b""
+
+    def flex_issuer_id(self) -> bytes:
+        if "issuerNum" in self.flex.data["issuingDetail"]:
+            return self.flex.data["issuingDetail"]["issuerNum"].to_bytes(8, "big")
+        elif "issuerIA5" in self.flex.data["issuingDetail"]:
+            return self.flex.data["issuingDetail"]["issuerIA5"].encode("utf-8")
+        else:
+            return b""
 
     def distributor(self):
         return uic.rics.get_rics(self.issuing_rics())
