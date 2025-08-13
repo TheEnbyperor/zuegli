@@ -1,9 +1,13 @@
 ASN-Module-Pretix-Wallet DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-    PretixWallet ::= SEQUENCE {
-    	pan IA5String,
-		issuer UTF8String,
-   		...
-   }
+	PretixWallet ::= SEQUENCE {
+		pan IA5String (SIZE (10..19) ^ FROM ("0".."9")),
+		issuer IA5String (FROM ("a".."z"|"A".."Z"|"0".."9"|"."|"-")),
+		...
+	}
+
+	VASPretixWallet ::= SEQUENCE {
+		pan IA5String (SIZE (10..19) ^ FROM ("0".."9"))
+	}
 
 END

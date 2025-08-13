@@ -1027,7 +1027,7 @@ class UnknownElement:
 
 ELEMENT = typing.Union[
     BasicData, PassengerData, SpacialValidity, IdentificationMedium,
-    UnknownSpacialValidity, UnknownElement
+    UnknownSpacialValidity, SEId, UnknownElement
 ]
 
 def map_org_id(code: int, opt=False):

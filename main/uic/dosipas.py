@@ -31,29 +31,26 @@ class DOSIPASEnvelope:
     records: typing.List["Record"] = dataclasses.field(default_factory=list)
     expiry: typing.Optional[datetime.datetime] = None
 
+    @property
+    def security_provider(self) -> typing.Union[int, str]:
+        return  self.level_2_data["level1Data"]["securityProviderNum"] \
+            if "securityProviderNum" in self.level_2_data["level1Data"] else \
+            self.level_2_data["level1Data"].get("securityProviderIA5", "")
+
     def signing_cert(self):
-        return certs.signing_cert(
-            self.level_2_data["level1Data"]["securityProviderNum"],
-            self.level_2_data["level1Data"]["keyId"]
-        )
+        return certs.signing_cert(self.security_provider, self.level_2_data["level1Data"]["keyId"])
 
     def can_verify(self):
         if not self.level_1_signature:
             return False
 
-        return bool(certs.public_key(
-            self.level_2_data["level1Data"]["securityProviderNum"],
-            self.level_2_data["level1Data"]["keyId"]
-        ))
+        return bool(certs.public_key(self.security_provider, self.level_2_data["level1Data"]["keyId"]))
 
     def verify_level_1_signature(self):
         if not self.level_1_signature or not self.level_1_signed_data:
             return False
 
-        pk = certs.public_key(
-            self.level_2_data["level1Data"]["securityProviderNum"],
-            self.level_2_data["level1Data"]["keyId"]
-        )
+        pk = certs.public_key(self.security_provider, self.level_2_data["level1Data"]["keyId"])
         if not pk:
             return False
 

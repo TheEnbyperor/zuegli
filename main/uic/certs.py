@@ -1,3 +1,5 @@
+import typing
+
 import cryptography.x509
 import cryptography.exceptions
 import cryptography.hazmat.primitives.hashes
@@ -8,10 +10,14 @@ import functools
 
 
 @functools.lru_cache
-def signing_cert(rics: int, key_id: str):
+def signing_cert(security_provider: typing.Union[int, str], key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
-    key_name = f"cert-{rics}_{key_id}.der"
-    key_meta_name = f"cert-{rics}_{key_id}.json"
+    if isinstance(security_provider, int):
+        key_name = f"cert-{security_provider}_{key_id}.der"
+        key_meta_name = f"cert-{security_provider}_{key_id}.json"
+    elif isinstance(security_provider, str):
+        key_name = f"cert-ia5-{security_provider}_{key_id}.der"
+        key_meta_name = f"cert-ia5-{security_provider}_{key_id}.json"
     try:
         with uic_storage.open(key_meta_name) as key_file:
             meta = json.load(key_file)
@@ -33,10 +39,14 @@ def signing_cert(rics: int, key_id: str):
 
 
 @functools.lru_cache
-def public_key(rics: int, key_id: str):
+def public_key(security_provider: typing.Union[int, str], key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
-    cert_name = f"cert-{rics}_{key_id}.der"
-    key_name = f"pk-{rics}_{key_id}.der"
+    if isinstance(security_provider, int):
+        cert_name = f"cert-{security_provider}_{key_id}.der"
+        key_name = f"pk-{security_provider}_{key_id}.der"
+    elif isinstance(security_provider, str):
+        cert_name = f"cert-ia5-{security_provider}_{key_id}.der"
+        key_name = f"pk-ia5-{security_provider}_{key_id}.der"
 
     try:
         with uic_storage.open(cert_name) as key_file:
