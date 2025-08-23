@@ -362,11 +362,15 @@ class RSPTicketInstance(models.Model):
             data = rsp.Type11.parse(raw_ticket)
         else:
             raise NotImplementedError()
+        try:
+            utn_data = rsp.utn.UTN.from_int(rsp.utn.decode_base30(self.reference))
+        except ValueError:
+            utn_data = None
         return t.RSPTicket(
             rsp_type=self.ticket_type,
             ticket_ref=self.reference,
             issuer_id=self.issuer_id,
-            utn_data=rsp.utn.UTN.from_int(rsp.utn.decode_base30(self.reference)),
+            utn_data=utn_data,
             raw_ticket=raw_ticket,
             data=data
         )

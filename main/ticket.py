@@ -491,7 +491,7 @@ class RSPTicket:
     rsp_type: str
     issuer_id: str
     ticket_ref: str
-    utn_data: rsp.utn.UTN
+    utn_data: typing.Optional[rsp.utn.UTN]
     raw_ticket: bytes
     data: typing.Union[rsp.RailcardData, rsp.TicketData, rsp.Type11]
 
@@ -1455,11 +1455,7 @@ def parse_ticket_rsp(ticket_bytes: bytes) -> RSPTicket:
     try:
         utn_data = rsp.utn.UTN.from_int(rsp.utn.decode_base30(ticket_envelope.ticket_ref))
     except ValueError:
-        raise TicketError(
-            title="Invalid ticket reference",
-            message="The UTN for this ticket is invalidly formatted.",
-            exception=traceback.format_exc()
-        )
+        utn_data = None
 
     return RSPTicket(
         rsp_type=ticket_envelope.ticket_type,
@@ -1485,11 +1481,7 @@ def parse_ticket_rsp_11(ticket_bytes: bytes) -> RSPTicket:
     try:
         utn_data = rsp.utn.UTN.from_int(rsp.utn.decode_base30(data.ticket_ref))
     except ValueError:
-        raise TicketError(
-            title="Invalid ticket reference",
-            message="The UTN for this ticket is invalidly formatted.",
-            exception=traceback.format_exc()
-        )
+        utn_data = None
 
     return RSPTicket(
         rsp_type=data.barcode_type,

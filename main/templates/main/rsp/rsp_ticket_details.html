@@ -12,25 +12,27 @@
         <dt class="govuk-summary-list__key">UTN</dt>
         <dd class="govuk-summary-list__value"><code>{{ ticket.ticket_ref }}</code></dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">UTN Data</dt>
-        <dd class="govuk-summary-list__value">
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Date of issue</dt>
-                    <dd class="govuk-summary-list__value">{{ ticket.utn_data.date_of_issue|date:"F d, Y" }}</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Machine number</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.utn_data.machine_number }}</code></dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Transaction number</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ ticket.utn_data.transaction_number }}</code></dd>
-                </div>
-            </dl>
-        </dd>
-    </div>
+    {% if ticket.utn_data %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">UTN Data</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date of issue</dt>
+                        <dd class="govuk-summary-list__value">{{ ticket.utn_data.date_of_issue|date:"F d, Y" }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Machine number</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ ticket.utn_data.machine_number }}</code></dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Transaction number</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ ticket.utn_data.transaction_number }}</code></dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
 </dl>
 
 {% if ticket.rsp_type == "06" %}
