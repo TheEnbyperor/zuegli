@@ -34,7 +34,8 @@ def new_abo(request):
                 abo_data["geburtsdatum"] = form.cleaned_data["date_of_birth"].strftime("%d.%m.%Y")
             if request.POST.get("action") == "remove":
                 r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json=abo_data, headers={
-                    "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
+                    "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
+                    "X-Api-Version": "9"
                 })
                 if r.status_code == 200:
                     messages.success(request, f"Removal request was successful.")
@@ -42,7 +43,8 @@ def new_abo(request):
                     messages.error(request, f"Error occurred with removal request")
             else:
                 r = niquests.get("https://dig-aboprod.noncd.db.de/aboticket", params=abo_data, headers={
-                    "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
+                    "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
+                    "X-Api-Version": "9"
                 })
                 if r.status_code == 404:
                     messages.add_message(request, messages.ERROR, "Subscription not found")
@@ -84,7 +86,8 @@ def delete_abo(request, abo_id):
         r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/logout", json={
             "deviceToken": subscription.device_token,
         }, headers={
-            "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
+            "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
+            "X-Api-Version": "9"
         })
         if r.status_code == 200:
             messages.success(request, "Removal request was successful.")
