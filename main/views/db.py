@@ -1,13 +1,7 @@
 import secrets
 import base64
-import hashlib
-import urllib.parse
-import binascii
 import niquests
-import jwt
-import datetime
 import bs4
-from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -74,8 +68,8 @@ def db_add_ticket(request):
             booking_number = form.cleaned_data["booking_number"]
             surname = form.cleaned_data["surname"]
             r = niquests.post(f"https://app.vendo.noncd.db.de/mob/auftrag/{booking_number}/manuellLaden", headers={
-                "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
-                "Content-Type": "application/x.db.vendo.mob.auftraege.v7+json",
+                "Accept": "application/x.db.vendo.mob.auftraege.v9+json",
+                "Content-Type": "application/x.db.vendo.mob.auftraege.v9+json",
                 "X-Correlation-ID": secrets.token_hex(16),
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             }, json={
@@ -93,7 +87,7 @@ def db_add_ticket(request):
                 data = r.json()
                 added = []
                 for ticket in data["auftragsbezogeneReisen"]:
-                    ticket_data = base64.urlsafe_b64decode(ticket["ticket"]["ticket"] + '==')
+                    ticket_data = base64.urlsafe_b64decode(ticket["reise"]["reiseInfos"]["ticket"]["ticket"] + '====')
                     ticket_layout = bs4.BeautifulSoup(ticket_data, 'html.parser')
                     barcode_elm = ticket_layout.find("img", attrs={
                         "id": "ticketbarcode"

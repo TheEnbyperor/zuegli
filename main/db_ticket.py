@@ -112,7 +112,7 @@ def update_account(account_id):
                 try:
                     r = session.get(f"https://app.vendo.noncd.db.de/mob/auftrag/{auftragsnummer}/kundenwunsch/{kundenwunsch_id}", headers={
                         "Authorization": f"Bearer {db_token}",
-                        "Accept": "application/x.db.vendo.mob.auftraege.v7+json",
+                        "Accept": "application/x.db.vendo.mob.auftraege.v9+json",
                         "X-Correlation-ID": secrets.token_hex(16),
                         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
                     })
@@ -127,7 +127,7 @@ def update_account(account_id):
                 if not ticket_data.get("ticket"):
                     continue
 
-                ticket_data = base64.urlsafe_b64decode(ticket_data["ticket"]["ticket"] + '==')
+                ticket_data = base64.urlsafe_b64decode(ticket_data["reise"]["reiseInfos"]["ticket"]["ticket"] + '==')
                 ticket_layout = bs4.BeautifulSoup(ticket_data, 'html.parser')
                 barcode_elm = ticket_layout.find("img", attrs={
                     "id": "ticketbarcode"

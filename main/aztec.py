@@ -24,7 +24,7 @@ class AztecError(Exception):
 
 def decode_multiple(img_data: bytes, *, scan_speed: str = "slow"):
     if not barkoder_config:
-        raise AztecError("Barkoder SDK not available") from e
+        raise AztecError("Barkoder SDK not available")
 
     match scan_speed.lower():
         case "slow":
