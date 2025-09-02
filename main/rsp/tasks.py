@@ -56,13 +56,22 @@ def download_rsp_data():
             if line[0] != 82:  # R
                 continue
             route_code = int(line[2:7].decode("ascii"))
-            end_date = datetime.datetime.strptime(line[7:15].decode("ascii"), "%d%m%Y").date()
+            try:
+                end_date = datetime.datetime.strptime(line[7:15].decode("ascii").strip().rjust(8, "0"), "%d%m%Y").date()
+            except ValueError:
+                continue
             if line[1] == 82:
-                start_date = datetime.datetime.strptime(line[15:23].decode("ascii"), "%d%m%Y").date()
+                try:
+                    start_date = datetime.datetime.strptime(line[15:23].decode("ascii").strip().rjust(8, "0"), "%d%m%Y").date()
+                except ValueError:
+                    continue
                 if start_date > today or end_date < today:
                     continue
 
-                quote_date = datetime.datetime.strptime(line[23:31].decode("ascii"), "%d%m%Y").date()
+                try:
+                    quote_date = datetime.datetime.strptime(line[23:31].decode("ascii").strip().rjust(8, "0"), "%d%m%Y").date()
+                except ValueError:
+                    continue
                 description = line[31:47].decode("utf-8").strip()
                 atb_desc_1 = line[47:82].decode("utf-8").strip()
                 atb_desc_2 = line[82:117].decode("utf-8").strip()
@@ -119,8 +128,11 @@ def download_rsp_data():
             if line[0] != 83:  # S
                 continue
             discount_code = int(line[1:4].decode("ascii"))
-            end_date = datetime.datetime.strptime(line[5:12].decode("ascii"), "%d%m%Y").date()
-            start_date = datetime.datetime.strptime(line[12:20].decode("ascii"), "%d%m%Y").date()
+            try:
+                end_date = datetime.datetime.strptime(line[5:12].decode("ascii").strip().rjust(8, "0"), "%d%m%Y").date()
+                start_date = datetime.datetime.strptime(line[12:20].decode("ascii").strip().rjust(8, "0"), "%d%m%Y").date()
+            except ValueError:
+                continue
             if start_date > today or end_date < today:
                 continue
             description = line[25:30].decode("utf-8").strip()
