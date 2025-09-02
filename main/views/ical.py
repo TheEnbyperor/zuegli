@@ -20,6 +20,6 @@ def account_calendar(request, account_token):
 
     response = HttpResponse()
     response["Content-Type"] = "text/calendar; charset=utf-8"
-    response["Content-Disposition"] = f'attachment; filename="vdv-pkpass.ics"'
+    response["Content-Disposition"] = f'attachment; filename="zuegli.ics"'
     response.write(cal_resp)
     return response

@@ -446,10 +446,10 @@ msgstr ""
 #: templates/main/base.html:231
 #, python-format
 msgid ""
-"Running version <a href=\"https://github.com/theenbyperor/vdv-pkpass\" "
+"Running version <a href=\"https://github.com/theenbyperor/zuegli\" "
 "class=\"govuk-footer__link\" target=\"_blank\">%(git_hash)s</a>."
 msgstr ""
-"Versie <a href=\"https://github.com/theenbyperor/vdv-pkpass\" class=\"govuk-"
+"Versie <a href=\"https://github.com/theenbyperor/zuegli\" class=\"govuk-"
 "footer__link\" target=\"_blank\">%(git_hash)s</a>."
 
 #: templates/main/base.html:237
