@@ -2,9 +2,11 @@ import django.contrib.auth
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from .. import forms
+from django.views.decorators.http import require_POST
+
+from .. import forms, models
 
 @login_required
 def index(request):
@@ -84,3 +86,34 @@ def login(request):
     return render(request, "registration/login.html", {
         "login_form": login_form,
     })
+
+
+@login_required
+def new_alternate_expansion(request):
+    if request.method == "POST":
+        form = forms.AlternateExpansionForm(request.POST)
+
+        if form.is_valid():
+            models.AlternateExpansions.objects.create(
+                account=request.user.account,
+                forename=form.cleaned_data["first_name"],
+                surname=form.cleaned_data["last_name"],
+            )
+            return redirect('account')
+    else:
+        form = forms.AlternateExpansionForm()
+
+    return render(request, "main/account/new_alternate_expansion.html", {
+        "form": form,
+    })
+
+
+@login_required
+@require_POST
+def delete_alternate_expansion(request, ae_id):
+    ae = get_object_or_404(models.AlternateExpansions, pk=ae_id)
+    if ae.account != request.user.account:
+        return redirect("account")
+
+    ae.delete()
+    return redirect("account")

@@ -3,7 +3,7 @@ import re
 import typing
 import pathlib
 import json
-from .. import vdv
+from .. import ticket
 
 SNCB_RE = re.compile(r"^(?P<product_code>[\w\d]{3,})( (?P<forename>[\w\d]{1,2}) (?P<surname>[\w\d]{1,2}))?$")
 
@@ -32,7 +32,7 @@ class SNCBData:
     original_surname: typing.Optional[str] = None
 
     @classmethod
-    def parse(cls, data: str, context: vdv.ticket.Context) -> typing.Optional["SNCBData"]:
+    def parse(cls, data: str, context: "ticket.TicketContexts") -> typing.Optional["SNCBData"]:
         if match := SNCB_RE.match(data):
             out = cls(
                 product_code=match.group("product_code"),
@@ -40,12 +40,18 @@ class SNCBData:
                 surname=match.group("surname")
             )
 
-            if out.forename and context.account_forename and context.account_forename.upper().startswith(out.forename):
-                out.original_forename = out.forename
-                out.forename = context.account_forename
-            if out.surname and context.account_surname and context.account_surname.upper().startswith(out.surname):
-                out.original_surname = out.surname
-                out.surname = context.account_surname
+            for c in context.contexts:
+                found = False
+                if out.forename and c.forename and c.forename.upper().startswith(out.forename):
+                    out.original_forename = out.forename
+                    out.forename = c.forename
+                    found = True
+                if out.surname and c.surname and c.surname.upper().startswith(out.surname):
+                    out.original_surname = out.surname
+                    out.surname = c.surname
+                    found = True
+                if found:
+                    break
 
             if product_name := get_sncb_producs().get(out.product_code):
                 out.product_name = product_name

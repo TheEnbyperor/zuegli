@@ -29,6 +29,20 @@ class Account(models.Model):
     def __str__(self):
         return str(self.user)
 
+    def ticket_contexts(self):
+        out = [t.TicketContext(
+            forename=self.user.first_name,
+            surname=self.user.last_name,
+            email=self.user.email,
+        )]
+        for ae in self.alternate_expansions.all():
+            out.append(t.TicketContext(
+                forename=ae.forename,
+                surname=ae.surname,
+                email=ae.email,
+            ))
+        return t.TicketContexts(out)
+
     def is_oauth_authenticated(self, provider: str) -> bool:
         oauth = self.oauth.filter(provider=provider).first()
         if not oauth:
@@ -104,6 +118,13 @@ class AccountOAuth(models.Model):
             return True
         else:
             return False
+
+
+class AlternateExpansions(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="alternate_expansions")
+    forename = models.CharField(max_length=255, verbose_name="Forename", blank=True, null=True)
+    surname = models.CharField(max_length=255, verbose_name="Surname", blank=True, null=True)
+    email = models.EmailField(max_length=255, verbose_name="Email", blank=True, null=True)
 
 
 class Ticket(models.Model):
@@ -281,11 +302,7 @@ class VDVTicketInstance(models.Model):
             issuing_ca=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["issuing_ca"], config=config),
             envelope_certificate=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["envelope_certificate"], config=config),
             raw_ticket=raw_ticket,
-            ticket=vdv.VDVTicket.parse(raw_ticket, vdv.ticket.Context(
-                account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
-                account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
-                email=self.ticket.account.user.email if self.ticket.account else None,
-            )),
+            ticket=vdv.VDVTicket.parse(raw_ticket, self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])),
             motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if self.decoded_data.get("motics") else None,
         )
 
@@ -314,11 +331,7 @@ class UICTicketInstance(models.Model):
             datetime.datetime: datetime.datetime.fromisoformat,
             datetime.date: datetime.date.fromisoformat,
         })
-        context = vdv.ticket.Context(
-            account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
-            account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
-            email=self.ticket.account.user.email if self.ticket.account else None,
-        )
+        context = self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])
 
         if self.decoded_data.get("envelope"):
             ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
@@ -472,11 +485,7 @@ class SSBTicketInstance(models.Model):
 
     def as_ticket(self) -> t.SSBTicket:
         envelope = ssb.Envelope.parse(bytes(self.ssb_data or self.barcode_data))
-        context = vdv.ticket.Context(
-            account_forename=self.ticket.account.user.first_name if self.ticket.account else None,
-            account_surname=self.ticket.account.user.last_name if self.ticket.account else None,
-            email=self.ticket.account.user.email if self.ticket.account else None,
-        )
+        context = self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])
 
         if envelope.ticket_type == 1:
             data = ssb.IntegratedReservationTicket.parse(envelope.data, envelope.issuer_rics, context)

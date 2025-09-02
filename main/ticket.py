@@ -23,6 +23,19 @@ class TicketError(Exception):
         self.exception = exception
 
 
+
+@dataclasses.dataclass
+class TicketContext:
+    forename: typing.Optional[str]
+    surname: typing.Optional[str]
+    email: typing.Optional[str]
+
+
+@dataclasses.dataclass
+class TicketContexts:
+    contexts: typing.List[TicketContext]
+
+
 @dataclasses.dataclass
 class VDVTicket:
     root_ca: "vdv.CertificateData"
@@ -373,7 +386,7 @@ class UICTicket:
     @classmethod
     def from_envelope(
             cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
-            context: "vdv.ticket.Context"
+            context: "TicketContexts"
     ) -> "UICTicket":
         layout = parse_ticket_uic_layout(ticket_envelope)
         st01 = None
@@ -426,7 +439,7 @@ class UICTicket:
     @classmethod
     def from_dosipas(
             cls, ticket_bytes: bytes, dosipas: uic.DOSIPASEnvelope,
-            _context: "vdv.ticket.Context"
+            _context: "TicketContexts"
     ) -> "UICTicket":
         records = list(dosipas.records)
         if dosipas.level_2_record:
@@ -795,7 +808,7 @@ class BahnBonusCode:
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
-def parse_ticket_vdv(ticket_bytes: bytes, context: "vdv.ticket.Context") -> VDVTicket:
+def parse_ticket_vdv(ticket_bytes: bytes, context: "TicketContexts") -> VDVTicket:
     pki_store = vdv.get_pki_store()
 
     try:
@@ -1132,7 +1145,7 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional["ui
 
 
 def parse_ticket_uic_cd_ut(
-        ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
+        ticket_envelope: uic.Envelope, context: TicketContexts
 ) -> typing.Optional["uic.cd.CDRecordUT"]:
     ut_record = next(
         filter(lambda r: (r.id == "1154UT" or r.id == "3697OT") and r.version == 1, ticket_envelope.records), None)
@@ -1150,7 +1163,7 @@ def parse_ticket_uic_cd_ut(
 
 
 def parse_ticket_uic_db_vu(
-        ticket_envelope: uic.Envelope, context: "vdv.ticket.Context"
+        ticket_envelope: uic.Envelope, context: TicketContexts
 ) -> typing.Optional["uic.db_vu.DBRecordVU"]:
     vu_record = next(filter(lambda r: r.id == "0080VU" and r.version == 1, ticket_envelope.records), None)
     if not vu_record:
@@ -1317,7 +1330,7 @@ def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -
         )
 
 
-def parse_ticket_uic(ticket_bytes: bytes, context: "vdv.ticket.Context") -> UICTicket:
+def parse_ticket_uic(ticket_bytes: bytes, context: TicketContexts) -> UICTicket:
     try:
         ticket_envelope = uic.Envelope.parse(ticket_bytes)
     except uic.util.UICException:
@@ -1331,7 +1344,7 @@ def parse_ticket_uic(ticket_bytes: bytes, context: "vdv.ticket.Context") -> UICT
     return UICTicket.from_envelope(ticket_bytes, ticket_envelope, context)
 
 
-def parse_ticket_uic_qr(ticket_bytes: bytes, context: "vdv.ticket.Context") -> UICTicket:
+def parse_ticket_uic_qr(ticket_bytes: bytes, context: TicketContexts) -> UICTicket:
     try:
         ticket = ticket_bytes.decode("ascii")
     except UnicodeDecodeError:
@@ -1598,7 +1611,7 @@ def parse_ticket_elb(ticket_bytes: bytes) -> ELBTicket:
     )
 
 
-def parse_ticket_ssb(ticket_bytes: bytes, context: vdv.ticket.Context) -> SSBTicket:
+def parse_ticket_ssb(ticket_bytes: bytes, context: TicketContexts) -> SSBTicket:
     try:
         envelope = ssb.Envelope.parse(ticket_bytes)
     except ssb.SSBException:
@@ -1685,7 +1698,7 @@ def parse_ticket_swiss_pass(ticket_bytes: bytes) -> SwissPassTicket:
     )
 
 
-def parse_ticket_iata(ticket_bytes: bytes, context: "vdv.ticket.Context") -> IATATicket:
+def parse_ticket_iata(ticket_bytes: bytes, _context: TicketContexts) -> IATATicket:
     try:
         data = iata.Envelope.parse(ticket_bytes)
     except iata.IATAException:
@@ -1726,11 +1739,7 @@ def parse_ticket(
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
     FlexiTicket, TS2Ticket,
 ]:
-    context = vdv.ticket.Context(
-        account_forename=account.user.first_name if account else None,
-        account_surname=account.user.last_name if account else None,
-        email=account.user.email if account else None,
-    )
+    context = account.ticket_contexts() if account else TicketContexts([])
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
         return parse_ticket_ssb(ticket_bytes, context)
 

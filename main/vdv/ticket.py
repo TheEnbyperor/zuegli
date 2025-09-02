@@ -2,8 +2,6 @@ import dataclasses
 import decimal
 import enum
 import typing
-from typing import Any
-
 import ber_tlv.tlv
 import re
 import phonenumbers
@@ -11,6 +9,7 @@ import phonenumbers.geocoder
 import phonenumbers.carrier
 
 from . import util, org_id, product_id, codes, motics
+from .. import ticket
 
 NAME_TYPE_1_RE = re.compile(r"(?P<start>\w?)(?P<len>\d+)(?P<end>\w?)")
 
@@ -133,13 +132,6 @@ def location_name(location_type: int, opt=False):
 
 
 @dataclasses.dataclass
-class Context:
-    account_forename: typing.Optional[str]
-    account_surname: typing.Optional[str]
-    email: typing.Optional[str]
-
-
-@dataclasses.dataclass
 class VDVTicket:
     version: str
     ticket_id: int
@@ -206,7 +198,7 @@ class VDVTicket:
         return out
 
     @classmethod
-    def parse(cls, data: bytes, context: Context) -> "VDVTicket":
+    def parse(cls, data: bytes, context: "ticket.TicketContexts") -> "VDVTicket":
         if len(data) < 111:
             raise util.VDVException("Invalid VDV ticket length")
 
@@ -284,7 +276,7 @@ class VDVTicket:
         )
 
     @staticmethod
-    def parse_product_data_element(elm, context: Context, product_org_id: int) -> typing.Any:
+    def parse_product_data_element(elm, context: "ticket.TicketContexts", product_org_id: int) -> typing.Any:
         if elm[0] == 0xDA:
             return BasicData.parse(elm[1])
         elif elm[0] == 0xDB:
@@ -569,17 +561,23 @@ class PassengerData:
         return f"Passenger: forename={self.forename}, surname={self.surname}, date_of_birth={self.date_of_birth}, gender={self.gender}"
 
     @staticmethod
-    def parse_name(name: bytes, context: Context) -> typing.Tuple[str, str | None, str, str | None]:
+    def parse_name(name: bytes, context: "ticket.TicketContexts") -> typing.Tuple[str, str | None, str, str | None]:
         name = name.decode("iso-8859-15", "replace")
         forename = ""
         original_forename = None
         original_surname = None
         if "#" in name:
             forename, surname = name.split("#", 1)
-            if context.account_forename and context.account_forename.startswith(forename):
-                forename = context.account_forename
-            if context.account_surname and context.account_surname.startswith(surname):
-                surname = context.account_surname
+            for c in context.contexts:
+                found = False
+                if c.forename and c.forename.startswith(forename):
+                    forename = c.forename
+                    found = True
+                if c.surname and c.surname.startswith(surname):
+                    surname = c.surname
+                    found = True
+                if found:
+                    break
         elif "@" in name:
             forename, surname = name.split("@", 1)
             new_forename = []
@@ -602,44 +600,52 @@ class PassengerData:
                     surname_len = 10
                 new_surname.append(f"{surname_start}{'_' * surname_len}{surname_end}")
 
-            if new_forename:
-                forename = " ".join(new_forename)
-                if context.account_forename and len(context.account_forename) == len(forename):
-                    if (
-                            context.account_forename.lower().startswith(forename[0].lower()) and
-                            context.account_forename.lower().endswith(forename[-1].lower())
-                    ) or (
-                            (context.account_forename.lower().startswith(forename[0].lower()) or
-                             context.account_forename.lower().endswith(forename[-1].lower())) and
-                            len(forename) == 2
-                    ) or (
-                            len(forename) == 1
-                    ):
-                        original_forename = forename
-                        forename = context.account_forename
+            for c in context.contexts:
+                found = False
+                if new_forename:
+                    forename = " ".join(new_forename)
+                    if c.forename and len(c.forename) == len(forename):
+                        if (
+                                c.forename.lower().startswith(forename[0].lower()) and
+                                c.forename.lower().endswith(forename[-1].lower())
+                        ) or (
+                                (c.forename.lower().startswith(forename[0].lower()) or
+                                 c.forename.lower().endswith(forename[-1].lower())) and
+                                len(forename) == 2
+                        ) or (
+                                len(forename) == 1
+                        ):
+                            original_forename = forename
+                            forename = c.forename
+                            found = True
 
-            if new_surname:
-                surname = " ".join(new_surname)
-                if context.account_surname and len(context.account_surname) == len(surname):
-                    if (
-                            context.account_surname.lower().startswith(surname[0].lower()) and
-                            context.account_surname.lower().endswith(surname[-1].lower())
-                    ) or (
-                            (context.account_surname.lower().startswith(surname[0].lower()) or
-                             context.account_surname.lower().endswith(surname[-1].lower())) and
-                            len(surname) == 2
-                    ) or (
-                            len(surname) == 1
-                    ):
-                        original_surname = surname
-                        surname = context.account_surname
+                if new_surname:
+                    surname = " ".join(new_surname)
+                    if c.surname and len(c.surname) == len(surname):
+                        if (
+                                c.surname.lower().startswith(surname[0].lower()) and
+                                c.surname.lower().endswith(surname[-1].lower())
+                        ) or (
+                                (c.surname.lower().startswith(surname[0].lower()) or
+                                 c.surname.lower().endswith(surname[-1].lower())) and
+                                len(surname) == 2
+                        ) or (
+                                len(surname) == 1
+                        ):
+                            original_surname = surname
+                            surname = c.surname
+                            found = True
+
+                if found:
+                    break
+
         else:
             surname = name
 
         return forename, original_forename, surname, original_surname
 
     @classmethod
-    def parse(cls, data: bytes, context: Context) -> "PassengerData":
+    def parse(cls, data: bytes, context: "ticket.TicketContexts") -> "PassengerData":
         if len(data) < 5:
             raise util.VDVException("Invalid passenger data element")
 
@@ -940,7 +946,7 @@ class RMVProductData:
     vat_rate: decimal.Decimal
 
     @classmethod
-    def parse(cls, data: bytes, context: Context) -> "RMVProductData":
+    def parse(cls, data: bytes, context: "ticket.TicketContexts") -> "RMVProductData":
         if len(data) != 0x44:
             raise util.VDVException("Invalid RMV product data length")
 

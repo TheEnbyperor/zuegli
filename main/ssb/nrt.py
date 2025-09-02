@@ -3,7 +3,7 @@ import datetime
 import typing
 from django.utils import timezone
 from . import util, sncb, cd
-from .. import vdv
+from .. import ticket
 
 @dataclasses.dataclass
 class NonReservationTicket:
@@ -29,7 +29,7 @@ class NonReservationTicket:
         return "NRT"
 
     @classmethod
-    def parse(cls, data: util.BitStream, issuer_rics: int, context: vdv.ticket.Context) -> "NonReservationTicket":
+    def parse(cls, data: util.BitStream, issuer_rics: int, context: "ticket.TicketContexts") -> "NonReservationTicket":
         year = data.read_int(105, 109)
         issuing_day = data.read_int(109, 118)
         validity_start_day = data.read_int(119, 128)
