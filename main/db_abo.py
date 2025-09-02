@@ -43,7 +43,8 @@ def update_abo_tickets(abo_id):
             "deviceToken": abo.device_token,
         }]
     }, headers={
-        "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul"
+        "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
+        "X-Api-Version": "9"
     })
 
     if r.status_code == 404:
