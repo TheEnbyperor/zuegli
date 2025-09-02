@@ -26,6 +26,17 @@ class AccountEditForm(forms.Form):
         self.helper.add_input(Submit("submit", _("Save")))
 
 
+class AlternateExpansionForm(forms.Form):
+    first_name = forms.CharField(max_length=255, required=False)
+    last_name = forms.CharField(max_length=255, required=False)
+    email = forms.EmailField(max_length=255, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", _("Save")))
+
+
 class SetPasswordForm(_SetPasswordForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

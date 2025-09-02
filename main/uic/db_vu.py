@@ -2,6 +2,7 @@ import dataclasses
 import typing
 import datetime
 from ..vdv import ticket, org_id, product_id
+from .. import ticket
 
 class DBVUException(Exception):
     pass
@@ -12,7 +13,7 @@ class DBRecordVU:
   products: typing.List["DBVUProduct"]
 
   @classmethod
-  def parse(cls, data: bytes, version: int, context: "ticket.Context"):
+  def parse(cls, data: bytes, version: int, context: "ticket.TicketContexts") -> "DBRecordVU":
     if version != 1:
       raise DBVUException(f"Unsupported record version {version}")
 
@@ -50,7 +51,7 @@ class DBVUProduct:
   sequence_number: typing.Optional[int]             # Sequenznummer (SAM)
   product_data: typing.List["ticket.ELEMENT"]
 
-  def __init__(self, data: bytes, context: "ticket.Context"):
+  def __init__(self, data: bytes, context: "ticket.TicketContexts") -> None:
     self.__data = data
     offset = 0
     self.product_authorization = DBVUProductAuthorization(data[offset:offset+6])

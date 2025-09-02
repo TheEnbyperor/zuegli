@@ -5,7 +5,7 @@ import datetime
 import base64
 import hashlib
 import pytz
-from .. import vdv
+from .. import ticket
 
 
 class CDException(Exception):
@@ -52,7 +52,7 @@ class CDRecordUT:
         return reservations
 
     @classmethod
-    def parse(cls, data: bytes, version: int, context: "vdv.ticket.Context"):
+    def parse(cls, data: bytes, version: int, context: "ticket.TicketContexts"):
         if version != 1:
             raise CDException(f"Unsupported record version {version}")
 
@@ -162,8 +162,10 @@ class CDRecordUT:
                 except ValueError as e:
                     raise CDException(f"Invalid email hash") from e
 
-                if context.email and hashlib.sha512(context.email.encode("utf-8")).digest()[:8] == email_hash:
-                    email = context.email
+                for c in context.contexts:
+                    if c.email and hashlib.sha512(c.email.encode("utf-8")).digest()[:8] == email_hash:
+                        email = c.email
+                        break
             elif block_data:
                 blocks[block_id] = block_data
 

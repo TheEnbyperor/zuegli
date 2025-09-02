@@ -3,7 +3,7 @@ import datetime
 import typing
 from django.utils import timezone
 from . import util, sncb, cd
-from .. import vdv
+from .. import ticket
 
 @dataclasses.dataclass
 class IntegratedReservationTicket:
@@ -32,7 +32,7 @@ class IntegratedReservationTicket:
         return "IRT"
 
     @classmethod
-    def parse(cls, data: util.BitStream, issuer_rics: int, context: vdv.ticket.Context) -> "IntegratedReservationTicket":
+    def parse(cls, data: util.BitStream, issuer_rics: int, context: "ticket.TicketContexts") -> "IntegratedReservationTicket":
         year = data.read_int(105, 109)
         issuing_day = data.read_int(109, 118)
 

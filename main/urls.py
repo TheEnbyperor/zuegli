@@ -28,6 +28,8 @@ urlpatterns = [
     path('account/', views.account.index, name='account'),
     path('account/edit/', views.account.edit, name='account_edit'),
     path('account/set_password/', views.account.set_password, name='account_set_password'),
+    path('account/alternate_expansions/new/', views.account.new_alternate_expansion, name='account_new_alternate_expansion'),
+    path('account/alternate_expansions/delete/<ae_id>/', views.account.delete_alternate_expansion, name='account_delete_alternate_expansion'),
 
     path('account/db/add_ticket/', views.db.db_add_ticket, name='db_add_ticket'),
     path('account/db_abo/', views.db_abo.view_db_abo, name='db_abo'),
