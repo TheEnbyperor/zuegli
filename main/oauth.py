@@ -144,10 +144,10 @@ def get_token(account: "models.Account", provider: str):
     if not oauth:
         return None
 
-    if oauth.token and oauth.token_expires_at and oauth.token_expires_at > now - datetime.timedelta(minutes=3):
+    if oauth.token and oauth.token_expires_at and oauth.token_expires_at - datetime.timedelta(minutes=2) > now:
         return oauth.token
     elif oauth.refresh_token:
-        if not oauth.refresh_token_expires_at or oauth.refresh_token_expires_at > now - datetime.timedelta(minutes=3):
+        if not oauth.refresh_token_expires_at or oauth.refresh_token_expires_at - datetime.timedelta(minutes=2) > now :
             data = {
                 "grant_type": "refresh_token",
                 "client_id": PROVIDERS[provider].client_id,
