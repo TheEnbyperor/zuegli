@@ -19,7 +19,7 @@ def get_auth_token(account: "models.Account"):
     if not oauth:
         return None
 
-    if oauth.token and oauth.token_expires_at and oauth.token_expires_at > now - datetime.timedelta(minutes=3):
+    if oauth.token and oauth.token_expires_at and oauth.token_expires_at - datetime.timedelta(minutes=3) > now:
         return oauth.token
     elif oauth.refresh_token:
         r = niquests.get("https://api.hochbahn.cloud/auth/token/refresh", headers={
@@ -79,6 +79,7 @@ def update_hvv_tickets(account_id):
     for order in data["content"]:
         if "ticketPublicUUID" not in order:
             continue
+        token = get_auth_token(account)
         r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
@@ -95,7 +96,7 @@ def update_hvv_tickets(account_id):
         except ticket.TicketError as e:
             logger.error("Error decoding barcode ticket: %s", e)
 
-
+    token = get_auth_token(account)
     r = niquests.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
         "Authorization": f"Bearer {token}"
     })
@@ -106,6 +107,7 @@ def update_hvv_tickets(account_id):
     data = r.json()
 
     for sub in data["content"]:
+        token = get_auth_token(account)
         r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
