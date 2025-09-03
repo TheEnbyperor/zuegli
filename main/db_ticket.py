@@ -89,6 +89,7 @@ def update_account(account_id):
     account_data = r.json()
     for profile in account_data["kundenprofile"]:
         profile_id = profile["id"]
+        db_token = oauth.get_token(account, "db")
         try:
             r = session.get("https://app.vendo.noncd.db.de/mob/reisenuebersicht", params={
                 "kundenprofilId": profile_id,
@@ -109,6 +110,7 @@ def update_account(account_id):
         for auftrag in profile_data["auftragsIndizes"]:
             auftragsnummer = auftrag["auftragsnummer"]
             for kundenwunsch_id in auftrag["kundenwunschIds"]:
+                db_token = oauth.get_token(account, "db")
                 try:
                     r = session.get(f"https://app.vendo.noncd.db.de/mob/auftrag/{auftragsnummer}/kundenwunsch/{kundenwunsch_id}", headers={
                         "Authorization": f"Bearer {db_token}",
