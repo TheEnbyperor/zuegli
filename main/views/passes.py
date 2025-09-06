@@ -5994,6 +5994,8 @@ BC_STRIP_IMG = {
     "BahnCard 50 Herbst Aktion 2024 (2. Klasse)": "bahncard/AKTIONSBAHNCARD502KLASSE.png",
     "My BahnCard 50 Aktion Frühjahr 2025 (1. Kl.)": "bahncard/AKTIONSMYBAHNCARD501KLASSE.png",
     "My BahnCard 50 Aktion Frühjahr 2025 (2. Kl.)": "bahncard/AKTIONSMYBAHNCARD502KLASSE.png",
+    "BahnCard 25 Aktion Frühjahr 2025 (2. Kl.)": "bahncard/AKTIONSBAHNCARD252KLASSE.png",
+    "BahnCard 25 Aktion Frühjahr 2025 (1. Kl.)": "bahncard/AKTIONSBAHNCARD251KLASSE.png",
     "My BahnCard 25 (1. Klasse)": "bahncard/MYBAHNCARD251KLASSE.png",
     "My BahnCard 25 (2. Klasse)": "bahncard/MYBAHNCARD252KLASSE.png",
     "My BahnCard 50 (1. Klasse)": "bahncard/MYBAHNCARD501KLASSE.png",
