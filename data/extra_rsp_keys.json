@@ -29,5 +29,13 @@
     "public_exponent_hex": "10001",
     "valid_from": "2015-07-01T00:00:00",
     "valid_until": "2049-12-12T23:59:59"
+  }],
+  "XY": [{
+    "is_test": true,
+    "issuer_id": "XY",
+    "modulus_hex": "c5a7ea94a9af0c58e14e815c2adc6d9bc6eaad339f69948b66c60d89474fc990eb80b1c8eca0b16b463dac79ce5d42305e5be353733faa01088d7714e66ffeb227914a4e6809e63952a981f5ded2f96e62b499efe333a1da49de538cb1dc0da153b4daff9cc5a7c3965d883937e1d6fdc2d422dff7c8cc74b9ae743fc4e7b745",
+    "public_exponent_hex": "10001",
+    "valid_from": "2015-11-01T00:00:00",
+    "valid_until": "2049-12-12T23:59:59"
   }]
 }

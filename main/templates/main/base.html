@@ -227,6 +227,11 @@
                     {% endblocktrans %}
                 </div>
                 <div class="govuk-footer__meta-custom">
+                    {% blocktrans trimmed %}
+                        IATA data courtesy of <a class="govuk-footer__link" href="https://avcodes.co.uk">avcodes.co.uk</a>.
+                    {% endblocktrans %}
+                </div>
+                <div class="govuk-footer__meta-custom">
                     {% if git_hash %}
                         {% blocktrans trimmed %}
                             Running version

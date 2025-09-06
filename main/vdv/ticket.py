@@ -571,9 +571,11 @@ class PassengerData:
             for c in context.contexts:
                 found = False
                 if c.forename and c.forename.startswith(forename):
+                    original_forename = forename
                     forename = c.forename
                     found = True
                 if c.surname and c.surname.startswith(surname):
+                    original_surname = surname
                     surname = c.surname
                     found = True
                 if found:
@@ -600,41 +602,43 @@ class PassengerData:
                     surname_len = 10
                 new_surname.append(f"{surname_start}{'_' * surname_len}{surname_end}")
 
+            if new_forename:
+                forename = " ".join(new_forename)
+
+            if new_surname:
+                surname = " ".join(new_surname)
+
             for c in context.contexts:
                 found = False
-                if new_forename:
-                    forename = " ".join(new_forename)
-                    if c.forename and len(c.forename) == len(forename):
-                        if (
-                                c.forename.lower().startswith(forename[0].lower()) and
-                                c.forename.lower().endswith(forename[-1].lower())
-                        ) or (
-                                (c.forename.lower().startswith(forename[0].lower()) or
-                                 c.forename.lower().endswith(forename[-1].lower())) and
-                                len(forename) == 2
-                        ) or (
-                                len(forename) == 1
-                        ):
-                            original_forename = forename
-                            forename = c.forename
-                            found = True
+                if c.forename and len(c.forename) == len(forename):
+                    if (
+                            c.forename.lower().startswith(forename[0].lower()) and
+                            c.forename.lower().endswith(forename[-1].lower())
+                    ) or (
+                            (c.forename.lower().startswith(forename[0].lower()) or
+                             c.forename.lower().endswith(forename[-1].lower())) and
+                            len(forename) == 2
+                    ) or (
+                            len(forename) == 1
+                    ):
+                        original_forename = forename
+                        forename = c.forename
+                        found = True
 
-                if new_surname:
-                    surname = " ".join(new_surname)
-                    if c.surname and len(c.surname) == len(surname):
-                        if (
-                                c.surname.lower().startswith(surname[0].lower()) and
-                                c.surname.lower().endswith(surname[-1].lower())
-                        ) or (
-                                (c.surname.lower().startswith(surname[0].lower()) or
-                                 c.surname.lower().endswith(surname[-1].lower())) and
-                                len(surname) == 2
-                        ) or (
-                                len(surname) == 1
-                        ):
-                            original_surname = surname
-                            surname = c.surname
-                            found = True
+                if c.surname and len(c.surname) == len(surname):
+                    if (
+                            c.surname.lower().startswith(surname[0].lower()) and
+                            c.surname.lower().endswith(surname[-1].lower())
+                    ) or (
+                            (c.surname.lower().startswith(surname[0].lower()) or
+                             c.surname.lower().endswith(surname[-1].lower())) and
+                            len(surname) == 2
+                    ) or (
+                            len(surname) == 1
+                    ):
+                        original_surname = surname
+                        surname = c.surname
+                        found = True
 
                 if found:
                     break
