@@ -1,30 +1,30 @@
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Name</dt>
-        <dd class="govuk-summary-list__value">{{ airline.name }}</dd>
+        <dd class="govuk-summary-list__value">{{ airline.Airline_Name }}</dd>
     </div>
-    {% if airline.iata_code %}
+    {% if airline.IATA_Code %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">IATA Code</dt>
-            <dd class="govuk-summary-list__value"><code>{{ airline.iata_code }}</code></dd>
+            <dd class="govuk-summary-list__value"><code>{{ airline.IATA_Code }}</code></dd>
         </div>
     {% endif %}
-    {% if airline.icao_code %}
+    {% if airline.ICAO_Code %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">ICAO Code</dt>
-            <dd class="govuk-summary-list__value"><code>{{ airline.icao_code }}</code></dd>
+            <dd class="govuk-summary-list__value"><code>{{ airline.ICAO_Code }}</code></dd>
         </div>
     {% endif %}
-    {% if airline.callsign %}
+    {% if airline.Callsign %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Callsign</dt>
-            <dd class="govuk-summary-list__value">{{ airline.callsign }}</dd>
+            <dd class="govuk-summary-list__value">{{ airline.Callsign }}</dd>
         </div>
     {% endif %}
-    {% if airline.country %}
+    {% if airline.Country %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Country</dt>
-            <dd class="govuk-summary-list__value">{{ airline.country }}</dd>
+            <dd class="govuk-summary-list__value">{{ airline.Country }}</dd>
         </div>
     {% endif %}
 </dl>

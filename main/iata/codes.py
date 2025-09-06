@@ -1,3 +1,4 @@
+import csv
 import typing
 import django.core.files.storage
 import json
@@ -12,8 +13,23 @@ def get_airlines_list() -> typing.Dict[str, typing.Any]:
         return AIRLINES
 
     iata_storage = django.core.files.storage.storages["iata-data"]
-    with iata_storage.open("airlines.json", "r") as f:
-        AIRLINES = json.loads(f.read())
+    with iata_storage.open("airlines.txt", "r") as f:
+        r = csv.DictReader(f, delimiter="\t")
+        airlines = list(r)
+
+    AIRLINES = {
+        "iata_codes": {},
+        "icao_codes": {},
+        "prefix_codes": {},
+        "airlines": airlines,
+    }
+    for i, airline in enumerate(airlines):
+        if airline["IATA_Code"]:
+            AIRLINES["iata_codes"][airline["IATA_Code"]] = i
+        if airline["ICAO_Code"]:
+            AIRLINES["icao_codes"][airline["ICAO_Code"]] = i
+        if airline["Prefix_Code"]:
+            AIRLINES["prefix_codes"][int(airline["Prefix_Code"])] = i
 
     return AIRLINES
 
@@ -39,6 +55,12 @@ def get_iata_airline(code: str) -> typing.Optional[dict]:
 def get_icao_airline(code: str) -> typing.Optional[dict]:
     data = get_airlines_list()
     if i := data["icao_codes"].get(code):
+        return data["airlines"][i]
+
+
+def get_prefix_code_airline(code: int) -> typing.Optional[dict]:
+    data = get_airlines_list()
+    if i := data["prefix_codes"].get(code):
         return data["airlines"][i]
 
 

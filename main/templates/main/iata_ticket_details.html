@@ -176,7 +176,15 @@
                                 <dl class="govuk-summary-list">
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Airline numeric code</dt>
-                                        <dd class="govuk-summary-list__value">{{ leg.leg_conditional.airline_numeric_code }}</dd>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ leg.leg_conditional.airline_numeric_code }}
+                                            {% with org=leg.leg_conditional.airline_numeric_code|prefix_code_airline %}
+                                                <hr/>
+                                                {% if org %}
+                                                    {% include "main/iata_airline.html" with airline=org %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        </dd>
                                     </div>
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">Document serial</dt>

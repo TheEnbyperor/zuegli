@@ -13,6 +13,14 @@ def get_iata_airline_code(value):
         return v
     return None
 
+@register.filter(name="prefix_code_airline")
+def get_prefix_airline_code(value):
+    if not value:
+        return None
+    if v := iata.codes.get_prefix_code_airline(int(value)):
+        return v
+    return None
+
 @register.filter(name="iata_airport")
 def get_iata_airport_code(value):
     if not value:
