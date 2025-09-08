@@ -142,7 +142,7 @@ def share_target(request):
 
         tickets = []
         for page in pdf:
-            img_bytes = page.get_pixmap(dpi=300).tobytes()
+            img_bytes = page.get_pixmap(dpi=900).tobytes()
             try:
                 ticket_bytes = aztec.decode(img_bytes, scan_speed="slow")
                 tickets.append(ticket_bytes)

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "solo",
     "magiclink",
     "main",
+    "gtfs",
     "channels",
     "django_celery_beat",
     "mathfilters"

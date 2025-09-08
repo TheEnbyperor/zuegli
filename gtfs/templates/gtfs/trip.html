@@ -1,0 +1,147 @@
+{% load gtfs mapkit %}
+<div class="train-trip{% if trip.trip.shape %} has-map{% endif %}"
+     style="--route-colour: #{{ trip.trip.route.colour }}; --route-text-colour: #{{ trip.trip.route.text_colour }};">
+    <div class="journey">
+        <header>
+            <div class="route">
+                <span class="train-id">{{ trip.trip.short_name }}</span>
+                {{ trip.trip.route.long_name }}
+            </div>
+            <div class="meta">
+                {{ trip.date }}
+                &middot; {{ trip.trip.stops.count }} stops
+                {% if trip.last_rt_data %} &middot; Last updated: {{ trip.last_rt_data|date:"N j, H:i T" }} {% endif %}
+            </div>
+            <div class="agency">
+                Operated by {% if trip.trip.route.agency.url %}
+                <a class="govuk-link"
+                   href="{{ trip.trip.route.agency.url }}">{{ trip.trip.route.agency.name }}</a>{% else %}
+                {{ trip.trip.route.agency.name }}{% endif %}
+                {% if trip.trip.route.agency.phone %} &middot; <a class="govuk-link"
+                                                                  href="tel:{{ trip.trip.route.agency.phone }}">{{ trip.trip.route.agency.phone }}</a>{% endif %}
+                {% if trip.trip.route.agency.email %} &middot; <a class="govuk-link"
+                                                                  href="mailto:{{ trip.trip.route.agency.email }}">{{ trip.trip.route.agency.email }}</a>{% endif %}
+            </div>
+        </header>
+        <section class="journey">
+            <ol class="stops" style="--num-stops: {{ trip.stops|length }}">
+                {% for stop in trip.stops %}
+                    <li class="stop{% if stop.skipped %} cancelled{% endif %}">
+                        <div class="time">
+                            {% if stop.arrival and not forloop.first %}
+                                <div class="arrival-time">
+                                    {% if stop.skipped or not stop.rt_arrival %}
+                                        {{ stop.arrival|date:"H:i T" }}
+                                    {% else %}
+                                        {% if stop.rt_arrival == stop.arrival %}
+                                            <span class="on-time">{{ stop.rt_arrival|date:"H:i T" }}</span>
+                                        {% else %}
+                                            <span class="orig-time">{{ stop.arrival|date:"H:i T" }}</span>
+                                            <span class="late-time">{{ stop.rt_arrival|date:"H:i T" }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            {% if stop.departure and not forloop.last %}
+                                <div class="departure-time">
+                                    {% if stop.skipped or not stop.rt_departure %}
+                                        {{ stop.arrival|date:"H:i T" }}
+                                    {% else %}
+                                        {% if stop.rt_departure == stop.departure %}
+                                            <span class="on-time">{{ stop.rt_departure|date:"H:i T" }}</span>
+                                        {% else %}
+                                            <span class="orig-time">{{ stop.departure|date:"H:i T" }}</span>
+                                            <span class="late-time">{{ stop.rt_departure|date:"H:i T" }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="details">
+                            <div class="details-primary">
+                                <div class="stop-name">
+                                    {{ stop.stop.name }}
+                                </div>
+                                {% if stop.stop.platform_code and not stop.skipped %}
+                                    <div class="chip platform">Platform {{ stop.stop.platform_code }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="details-extra">
+                                {% if not stop.skipped %}
+                                    <a class="govuk-link"
+                                       href="https://maps.apple.com/?q={{ stop.stop.name|urlencode }}&ll={{ stop.stop.lat }},{{ stop.stop.long }}">Open
+                                        in Maps</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        </section>
+    </div>
+    {% if trip.trip.shape %}
+        <div class="map">
+            {% mapkit_id as id %}
+            <div id="{{ id }}" style="height: max(400px, 100%);"></div>
+            <script>
+                mapKitRequired = true;
+                document.addEventListener("mapKitLoaded", function () {
+                    const points = ({{ trip.trip.shape|shape_points_js }}).map(function (point) {
+                        return new mapkit.Coordinate(point[0], point[1]);
+                    });
+                    const style = new mapkit.Style({
+                        strokeColor: "#{{ trip.trip.route.colour }}",
+                        lineWidth: 5,
+                        lineJoin: "round",
+                    });
+                    let overlay = new mapkit.PolylineOverlay(points, {style: style});
+
+                    const center = [0, 0]
+                    points.forEach(function (point) {
+                        center[0] += point.latitude;
+                        center[1] += point.longitude;
+                    });
+                    const center_p = new mapkit.Coordinate(
+                        center[0] / points.length,
+                        center[1] / points.length
+                    );
+                    const span_lat = Math.max.apply(null, points.map(function (point) {
+                        return point.latitude
+                    })) - Math.min.apply(null, points.map(function (point) {
+                        return point.latitude
+                    }));
+                    const span_long = Math.max.apply(null, points.map(function (point) {
+                        return point.longitude
+                    })) - Math.min.apply(null, points.map(function (point) {
+                        return point.longitude
+                    }));
+
+                    let annotations = [];
+
+                    {% for stop in trip.stops %}
+                        {% if not stop.skipped %}
+                            annotations.push(new mapkit.MarkerAnnotation(
+                                new mapkit.Coordinate({{ stop.stop.lat }}, {{ stop.stop.long }}), {
+                                color: "#{{ trip.trip.route.colour }}",
+                                title: "{{ stop.stop.name }}"
+                            }));
+                        {% endif %}
+                    {% endfor %}
+
+                    new mapkit.Map("{{ id }}", {
+                        region: new mapkit.CoordinateRegion(
+                            center_p,
+                            new mapkit.CoordinateSpan(span_lat * 1.4, span_long * 1.4)
+                        ),
+                        overlays: [overlay],
+                        annotations: annotations,
+                        tintColor: "#EC0016",
+                        colorScheme: mapkit.Map.ColorSchemes.Light,
+                        showsMapTypeControl: true,
+                        showScale: true
+                    });
+                });
+            </script>
+        </div>
+    {% endif %}
+</div>
