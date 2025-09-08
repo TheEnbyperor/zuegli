@@ -115,20 +115,31 @@ def process_gtfs(feed_id: str, feed_url: str):
         unique_fields=("feed_id", "stop_id"),
         update_fields=("code", "name", "tts_name", "description", "lat", "long", "url", "location_type", "timezone", "wheelchair_boarding", "platform_code"),
     )
-    for row in data:
+    station_cache = {}
+    for row, obj in zip(data, objs):
         if parent_station_id := row.get("parent_station"):
-            parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
+            if parent_station_id not in station_cache:
+                parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
+                station_cache[parent_station_id] = parent_station
+            else:
+                parent_station = station_cache[parent_station_id]
         else:
             parent_station = None
-        models.Stop.objects.filter(feed_id=feed_id, stop_id=row["stop_id"]).update(parent_station=parent_station)
+        obj.parent_station = parent_station
+    models.Stop.objects.bulk_update(objs, fields=("parent_station",))
     models.Stop.objects.filter(Q(feed_id=feed_id) & ~Q(stop_id__in=seen_ids)).delete()
 
     objs = []
     seen_ids = []
+    agency_cache = {}
     with gtfs_zip.open("routes.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
-            agency = models.Agency.objects.get(feed_id=feed_id, agency_id=row["agency_id"])
+            if row["agency_id"] not in agency_cache:
+                agency = models.Agency.objects.get(feed_id=feed_id, agency_id=row["agency_id"])
+                agency_cache[row["agency_id"]] = agency
+            else:
+                agency = agency_cache[row["agency_id"]]
 
             route_type = row.get("route_type")
             if route_type == "0":
@@ -167,13 +178,6 @@ def process_gtfs(feed_id: str, feed_url: str):
                 text_colour=row.get("route_text_color"),
                 sort_order=row.get("route_sort_order"),
             ))
-            models.Route.objects.update_or_create(
-                feed_id=feed_id,
-                route_id=row["route_id"],
-                defaults={
-                    "agency": agency,
-                }
-            )
             seen_ids.append(row["route_id"])
     models.Route.objects.bulk_create(
         objs,
@@ -247,7 +251,7 @@ def process_gtfs(feed_id: str, feed_url: str):
 
                 objs.append(models.Calendar(
                     feed_id=feed_id,
-                    calendar_id=row["calendar_id"],
+                    calendar_id=row["service_id"],
                     monday=monday,
                     tuesday=tuesday,
                     wednesday=wednesday,
