@@ -57,6 +57,14 @@ class CalendarExceptionAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(models.CalendarDate)
+class CalendarDateAdmin(admin.ModelAdmin):
+    list_filter = (
+        "feed_id",
+        "exception"
+    )
+
+
 class StopTimeAdmin(admin.StackedInline):
     model = models.StopTime
     extra = 0
