@@ -270,6 +270,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     if "calendar_dates.txt" in filenames:
         objs1 = []
         objs2 = []
+        objs2_k = set()
         seen_ids = []
         seen_dates = {}
         with gtfs_zip.open("calendar_dates.txt") as f:
@@ -302,13 +303,16 @@ def process_gtfs(feed_id: str, feed_url: str):
                         seen_dates[calendar] = []
                     seen_dates[calendar].append(date)
                 else:
-                    objs2.append(models.CalendarDate(
-                        feed_id=feed_id,
-                        service_id=calendar_id,
-                        date=date,
-                        exception=exception_type,
-                    ))
-                    seen_ids.append(calendar_id)
+                    k = (feed_id, calendar_id, date)
+                    if k not in objs2_k:
+                        objs2_k.add(k)
+                        objs2.append(models.CalendarDate(
+                            feed_id=feed_id,
+                            service_id=calendar_id,
+                            date=date,
+                            exception=exception_type,
+                        ))
+                        seen_ids.append(calendar_id)
         models.CalendarException.objects.bulk_create(
             objs1,
             update_conflicts=True,
@@ -328,15 +332,20 @@ def process_gtfs(feed_id: str, feed_url: str):
     if "shapes.txt" in filenames:
         objs = []
         seen_ids = set()
+        shape_cache = []
         with gtfs_zip.open("shapes.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
             for row in data:
-                shape, _ = models.Shape.objects.get_or_create(
-                    feed_id=feed_id,
-                    shape_id=row["shape_id"],
-                )
-                if row["shape_id"] not in seen_ids:
-                    shape.points.all().delete()
+                if row["shape_id"] not in shape_cache:
+                    shape, _ = models.Shape.objects.get_or_create(
+                        feed_id=feed_id,
+                        shape_id=row["shape_id"],
+                    )
+                    if row["shape_id"] not in seen_ids:
+                        shape.points.all().delete()
+                    shape_cache[row["shape_id"]] = shape
+                else:
+                    shape = shape_cache[row["shape_id"]]
                 seen_ids.add(row["shape_id"])
                 objs.append(models.ShapePoint(
                     shape=shape,

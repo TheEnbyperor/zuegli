@@ -142,9 +142,6 @@ class CalendarException(models.Model):
     exception = models.CharField(max_length=64, choices=EXCEPTIONS)
 
     class Meta:
-        indexes = (
-            models.Index(fields=("feed_id", "calendar")),
-        )
         unique_together = (
             ("feed_id", "calendar", "date"),
         )
@@ -160,9 +157,6 @@ class CalendarDate(models.Model):
     exception = models.CharField(max_length=64, choices=CalendarException.EXCEPTIONS)
 
     class Meta:
-        indexes = (
-            models.Index(fields=("feed_id", "service_id")),
-        )
         unique_together = (
             ("feed_id", "service_id", "date"),
         )
