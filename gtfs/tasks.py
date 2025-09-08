@@ -39,29 +39,35 @@ def process_gtfs(feed_id: str, feed_url: str):
 
     filenames = [f.filename for f in gtfs_zip.filelist]
 
+    objs = []
+    seen_ids = []
     with gtfs_zip.open("agency.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-        seen_ids = []
         for row in data:
             seen_ids.append(row["agency_id"])
-            models.Agency.objects.update_or_create(
+            objs.append(models.Agency(
                 feed_id=feed_id,
                 agency_id=row["agency_id"],
-                defaults={
-                    "name": row["agency_name"],
-                    "url": row["agency_url"],
-                    "timezone": row["agency_timezone"],
-                    "primary_language": row.get("agency_language"),
-                    "phone": row.get("agency_phone"),
-                    "fare_url": row.get("agency_fare_url"),
-                    "email": row.get("agency_email"),
-                }
-            )
-        models.Agency.objects.filter(Q(feed_id=feed_id) & ~Q(agency_id__in=seen_ids)).delete()
+                name=row["agency_name"],
+                url=row["agency_url"],
+                timezone=row["agency_timezone"],
+                primary_language=row.get("agency_language"),
+                phone=row.get("agency_phone"),
+                fare_url=row.get("agency_fare_url"),
+                email=row.get("agency_email"),
+            ))
+    models.Agency.objects.bulk_create(
+        objs,
+        update_conflicts=True,
+        unique_fields=("feed_id", "agency_id"),
+        update_fields=("name", "url", "timezone", "primary_language", "phone", "fare_url", "email"),
+    )
+    models.Agency.objects.filter(Q(feed_id=feed_id) & ~Q(agency_id__in=seen_ids)).delete()
 
+    objs = []
+    seen_ids = []
     with gtfs_zip.open("stops.txt") as f:
         data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8")))
-        seen_ids = []
         for row in data:
             location_type = row.get("location_type")
             if not location_type or location_type == "0":
@@ -87,37 +93,40 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 raise ValueError(f"Invalid wheelchair boarding: {wheelchair_boarding}")
 
-            models.Stop.objects.update_or_create(
+            objs.append(models.Stop(
                 feed_id=feed_id,
                 stop_id=row["stop_id"],
-                defaults={
-                    "code": row.get("stop_code"),
-                    "name": row.get("stop_name"),
-                    "tts_name": row.get("tts_stop_name"),
-                    "description": row.get("stop_desc"),
-                    "lat": row.get("stop_lat"),
-                    "long": row.get("stop_lon"),
-                    "url": row.get("stop_url"),
-                    "location_type": location_type,
-                    "timezone": row.get("stop_timezone"),
-                    "wheelchair_boarding": wheelchair_boarding,
-                    "platform_code": row.get("platform_code"),
-                }
-            )
+                code=row.get("stop_code"),
+                name=row.get("stop_name"),
+                tts_name=row.get("tts_stop_name"),
+                description=row.get("stop_desc"),
+                lat=row.get("stop_lat"),
+                long=row.get("stop_lon"),
+                url=row.get("stop_url"),
+                location_type=location_type,
+                timezone=row.get("stop_timezone"),
+                wheelchair_boarding=wheelchair_boarding,
+                platform_code=row.get("platform_code"),
+            ))
             seen_ids.append(row["stop_id"])
+    models.Stop.objects.bulk_create(
+        objs,
+        update_conflicts=True,
+        unique_fields=("feed_id", "stop_id"),
+        update_fields=("code", "name", "tts_name", "description", "lat", "long", "url", "location_type", "timezone", "wheelchair_boarding", "platform_code"),
+    )
+    for row in data:
+        if parent_station_id := row.get("parent_station"):
+            parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
+        else:
+            parent_station = None
+        models.Stop.objects.filter(feed_id=feed_id, stop_id=row["stop_id"]).update(parent_station=parent_station)
+    models.Stop.objects.filter(Q(feed_id=feed_id) & ~Q(stop_id__in=seen_ids)).delete()
 
-        for row in data:
-            if parent_station_id := row.get("parent_station"):
-                parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
-            else:
-                parent_station = None
-            models.Stop.objects.filter(feed_id=feed_id, stop_id=row["stop_id"]).update(parent_station=parent_station)
-
-        models.Stop.objects.filter(Q(feed_id=feed_id) & ~Q(stop_id__in=seen_ids)).delete()
-
+    objs = []
+    seen_ids = []
     with gtfs_zip.open("routes.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-        seen_ids = []
         for row in data:
             agency = models.Agency.objects.get(feed_id=feed_id, agency_id=row["agency_id"])
 
@@ -145,28 +154,40 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 raise ValueError(f"Invalid route type: {route_type}")
 
+            objs.append(models.Route(
+                feed_id=feed_id,
+                route_id=row["route_id"],
+                agency=agency,
+                short_name=row.get("route_short_name"),
+                long_name=row.get("route_long_name"),
+                description=row.get("route_desc"),
+                route_type=route_type,
+                url=row.get("route_url"),
+                colour=row.get("route_color"),
+                text_colour=row.get("route_text_color"),
+                sort_order=row.get("route_sort_order"),
+            ))
             models.Route.objects.update_or_create(
                 feed_id=feed_id,
                 route_id=row["route_id"],
                 defaults={
                     "agency": agency,
-                    "short_name": row.get("route_short_name"),
-                    "long_name": row.get("route_long_name"),
-                    "description": row.get("route_desc"),
-                    "route_type": route_type,
-                    "url": row.get("route_url"),
-                    "colour": row.get("route_color"),
-                    "text_colour": row.get("route_text_color"),
-                    "sort_order": row.get("route_sort_order"),
                 }
             )
             seen_ids.append(row["route_id"])
-        models.Route.objects.filter(Q(feed_id=feed_id) & ~Q(route_id__in=seen_ids)).delete()
+    models.Route.objects.bulk_create(
+        objs,
+        update_conflicts=True,
+        unique_fields=("feed_id", "route_id"),
+        update_fields=("agency", "short_name", "long_name", "description", "route_type", "url", "colour", "text_colour", "sort_order"),
+    )
+    models.Route.objects.filter(Q(feed_id=feed_id) & ~Q(route_id__in=seen_ids)).delete()
 
     if "calendar.txt" in filenames:
+        objs = []
+        seen_ids = []
         with gtfs_zip.open("calendar.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-            seen_ids = []
             for row in data:
                 monday = row["monday"]
                 if monday == "0":
@@ -224,29 +245,35 @@ def process_gtfs(feed_id: str, feed_url: str):
                 else:
                     raise ValueError(f"Invalid Sunday availability: {sunday}")
 
-                models.Calendar.objects.update_or_create(
+                objs.append(models.Calendar(
                     feed_id=feed_id,
-                    calendar_id=row["service_id"],
-                    defaults={
-                        "monday": monday,
-                        "tuesday": tuesday,
-                        "wednesday": wednesday,
-                        "thursday": thursday,
-                        "friday": friday,
-                        "saturday": saturday,
-                        "sunday": sunday,
-                        "start_date": datetime.datetime.strptime(row["start_date"], "%Y%m%d").date(),
-                        "end_date": datetime.datetime.strptime(row["end_date"], "%Y%m%d").date(),
-                    }
-                )
+                    calendar_id=row["calendar_id"],
+                    monday=monday,
+                    tuesday=tuesday,
+                    wednesday=wednesday,
+                    thursday=thursday,
+                    friday=friday,
+                    saturday=saturday,
+                    sunday=sunday,
+                    start_date=datetime.datetime.strptime(row["start_date"], "%Y%m%d").date(),
+                    end_date=datetime.datetime.strptime(row["end_date"], "%Y%m%d").date(),
+                ))
                 seen_ids.append(row["service_id"])
-            models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_ids)).delete()
+        models.Calendar.objects.bulk_create(
+            objs,
+            update_conflicts=True,
+            unique_fields=("feed_id", "calendar_id"),
+            update_fields=("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "start_date", "end_date"),
+        )
+        models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_ids)).delete()
 
     if "calendar_dates.txt" in filenames:
+        objs1 = []
+        objs2 = []
+        seen_ids = []
+        seen_dates = {}
         with gtfs_zip.open("calendar_dates.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-            seen_ids = []
-            seen_dates = {}
             for row in data:
                 calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
                 if calendar_qs.count():
@@ -265,29 +292,45 @@ def process_gtfs(feed_id: str, feed_url: str):
                     raise ValueError(f"Invalid exception type: {exception_type}")
 
                 date = datetime.datetime.strptime(row["date"], "%Y%m%d").date()
-                models.CalendarException.objects.update_or_create(
-                    feed_id=feed_id,
-                    calendar=calendar,
-                    service_id=calendar_id,
-                    date=date,
-                    defaults={
-                        "exception": exception_type,
-                    }
-                )
                 if calendar:
+                    objs1.append(models.CalendarException(
+                        feed_id=feed_id,
+                        calendar=calendar,
+                        date=date,
+                        exception=exception_type,
+                    ))
                     if calendar not in seen_dates:
                         seen_dates[calendar] = []
                     seen_dates[calendar].append(date)
-                if calendar_id:
+                else:
+                    objs2.append(models.CalendarDate(
+                        feed_id=feed_id,
+                        service_id=calendar_id,
+                        date=date,
+                        exception=exception_type,
+                    ))
                     seen_ids.append(calendar_id)
-            for c, dates in seen_dates.items():
-                models.CalendarException.objects.filter(Q(feed_id=feed_id) & Q(calendar_id=c) & ~Q(date__in=dates)).delete()
-            models.CalendarException.objects.filter(Q(feed_id=feed_id) & Q(service_id__isnull=False) & ~Q(service_id__in=seen_ids)).delete()
+        models.CalendarException.objects.bulk_create(
+            objs1,
+            update_conflicts=True,
+            unique_fields=("feed_id", "calendar", "date"),
+            update_fields=("exception",),
+        )
+        models.CalendarDate.objects.bulk_create(
+            objs2,
+            update_conflicts=True,
+            unique_fields=("feed_id", "service_id", "date"),
+            update_fields=("exception",),
+        )
+        for c, dates in seen_dates.items():
+            models.CalendarException.objects.filter(Q(feed_id=feed_id) & Q(calendar_id=c) & ~Q(date__in=dates)).delete()
+        models.CalendarDate.objects.filter(Q(feed_id=feed_id) & ~Q(service_id__in=seen_ids)).delete()
 
     if "shapes.txt" in filenames:
+        objs = []
+        seen_ids = set()
         with gtfs_zip.open("shapes.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-            seen_ids = set()
             for row in data:
                 shape, _ = models.Shape.objects.get_or_create(
                     feed_id=feed_id,
@@ -296,24 +339,29 @@ def process_gtfs(feed_id: str, feed_url: str):
                 if row["shape_id"] not in seen_ids:
                     shape.points.all().delete()
                 seen_ids.add(row["shape_id"])
-                models.ShapePoint.objects.update_or_create(
+                objs.append(models.ShapePoint(
                     shape=shape,
                     sequence=row["shape_pt_sequence"],
-                    defaults={
-                        "lat": row["shape_pt_lat"],
-                        "lon": row["shape_pt_lon"],
-                    }
-                )
-            models.Shape.objects.filter(Q(feed_id=feed_id) & ~Q(shape_id__in=seen_ids)).delete()
+                    lat=row["shape_pt_lat"],
+                    lon=row["shape_pt_lon"],
+                ))
+        models.ShapePoint.objects.bulk_create(
+            objs,
+            update_conflicts=True,
+            unique_fields=("shape", "sequence"),
+            update_fields=("lat", "lon"),
+        )
+        models.Shape.objects.filter(Q(feed_id=feed_id) & ~Q(shape_id__in=seen_ids)).delete()
 
+    objs = []
+    seen_ids = []
     with gtfs_zip.open("trips.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-        seen_ids = []
         for row in data:
             route = models.Route.objects.get(feed_id=feed_id, route_id=row["route_id"])
 
             calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
-            calendar_date_qs = models.CalendarException.objects.filter(feed_id=feed_id, service_id=row["service_id"])
+            calendar_date_qs = models.CalendarDate.objects.filter(feed_id=feed_id, service_id=row["service_id"])
             if calendar_qs.count():
                 calendar = calendar_qs[0]
                 calendar_date = None
@@ -368,29 +416,34 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 shape = None
 
-            models.Trip.objects.update_or_create(
+            objs.append(models.Trip(
                 feed_id=feed_id,
                 trip_id=row["trip_id"],
-                defaults={
-                    "route": route,
-                    "calendar": calendar,
-                    "calendar_date": calendar_date,
-                    "headsign": row.get("trip_headsign"),
-                    "short_name": row.get("trip_short_name"),
-                    "direction": direction_id,
-                    "block_id": row.get("block_id"),
-                    "wheelchair_accessible": wheelchair_accessible,
-                    "bikes_allowed": bikes_allowed,
-                    "cars_allowed": cars_allowed,
-                    "shape": shape,
-                }
-            )
+                route=route,
+                calendar=calendar,
+                calendar_date=calendar_date,
+                headsign=row.get("trip_headsign"),
+                short_name=row.get("trip_short_name"),
+                direction=direction_id,
+                block_id=row.get("block_id"),
+                wheelchair_accessible=wheelchair_accessible,
+                bikes_allowed=bikes_allowed,
+                cars_allowed=cars_allowed,
+                shape=shape,
+            ))
             seen_ids.append(row["trip_id"])
-        models.Trip.objects.filter(Q(feed_id=feed_id) & ~Q(trip_id__in=seen_ids)).delete()
+    models.Trip.objects.bulk_create(
+        objs,
+        update_conflicts=True,
+        unique_fields=("feed_id", "trip_id"),
+        update_fields=("route", "calendar", "calendar_date", "headsign", "short_name", "direction", "block_id", "wheelchair_accessible", "bikes_allowed", "cars_allowed", "shape"),
+    )
+    models.Trip.objects.filter(Q(feed_id=feed_id) & ~Q(trip_id__in=seen_ids)).delete()
 
+    objs = []
+    seen_ids = {}
     with gtfs_zip.open("stop_times.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
-        seen_ids = {}
         for row in data:
             trip = models.Trip.objects.get(feed_id=feed_id, trip_id=row["trip_id"])
             stop = models.Stop.objects.get(feed_id=feed_id, stop_id=row["stop_id"])
@@ -435,24 +488,28 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 raise ValueError(f"Invalid drop_off type: {drop_off_type}")
 
-            models.StopTime.objects.update_or_create(
+            objs.append(models.StopTime(
                 trip=trip,
                 sequence=row["stop_sequence"],
-                defaults={
-                    "stop": stop,
-                    "arrival_time": arrival_time,
-                    "departure_time": departure_time,
-                    "headsign": row.get("stop_headsign"),
-                    "distance_traveled": row.get("shape_dist_traveled"),
-                    "pick_up_type": pick_up_type,
-                    "drop_off_type": drop_off_type,
-                }
-            )
+                stop=stop,
+                arrival_time=arrival_time,
+                departure_time=departure_time,
+                headsign=row.get("stop_headsign"),
+                distance_traveled=row.get("shape_dist_traveled"),
+                pick_up_type=pick_up_type,
+                drop_off_type=drop_off_type,
+            ))
             if trip not in seen_ids:
                 seen_ids[trip] = []
             seen_ids[trip].append(row["stop_sequence"])
-        for t, sequences in seen_ids.items():
-            models.StopTime.objects.filter(Q(trip=t) & ~Q(sequence__in=sequences)).delete()
+    models.StopTime.objects.bulk_create(
+        objs,
+        update_conflicts=True,
+        unique_fields=("trip", "sequence"),
+        update_fields=("stop", "arrival_time", "departure_time", "headsign", "distance_traveled", "pick_up_type", "drop_off_type"),
+    )
+    for t, sequences in seen_ids.items():
+        models.StopTime.objects.filter(Q(trip=t) & ~Q(sequence__in=sequences)).delete()
 
 
 @shared_task(
