@@ -60,7 +60,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         models.Agency.objects.filter(Q(feed_id=feed_id) & ~Q(agency_id__in=seen_ids)).delete()
 
     with gtfs_zip.open("stops.txt") as f:
-        data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+        data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8")))
         seen_ids = []
         for row in data:
             location_type = row.get("location_type")
@@ -76,11 +76,6 @@ def process_gtfs(feed_id: str, feed_url: str):
                 location_type = models.Stop.LOCATION_TYPE_BOARDING_AREA
             else:
                 raise ValueError(f"Invalid location type: {location_type}")
-
-            if parent_station_id := row.get("parent_station"):
-                parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
-            else:
-                parent_station = None
 
             wheelchair_boarding = row.get("wheelchair_boarding")
             if not wheelchair_boarding or wheelchair_boarding == "0":
@@ -104,13 +99,20 @@ def process_gtfs(feed_id: str, feed_url: str):
                     "long": row.get("stop_lon"),
                     "url": row.get("stop_url"),
                     "location_type": location_type,
-                    "parent_station": parent_station,
                     "timezone": row.get("stop_timezone"),
                     "wheelchair_boarding": wheelchair_boarding,
                     "platform_code": row.get("platform_code"),
                 }
             )
             seen_ids.append(row["stop_id"])
+
+        for row in data:
+            if parent_station_id := row.get("parent_station"):
+                parent_station = models.Stop.objects.get(feed_id=feed_id, stop_id=parent_station_id)
+            else:
+                parent_station = None
+            models.Stop.objects.filter(feed_id=feed_id, stop_id=row["stop_id"]).update(parent_station=parent_station)
+
         models.Stop.objects.filter(Q(feed_id=feed_id) & ~Q(stop_id__in=seen_ids)).delete()
 
     with gtfs_zip.open("routes.txt") as f:
