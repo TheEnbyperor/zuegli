@@ -160,6 +160,9 @@ class CalendarDate(models.Model):
         unique_together = (
             ("feed_id", "service_id", "date"),
         )
+        index_together = (
+            ("date", "exception"),
+        )
 
     def __str__(self):
         return f"{self.feed_id}:{self.service_id}: {self.date}"
