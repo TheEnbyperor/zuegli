@@ -25,6 +25,7 @@ USER app:app
 
 COPY --from=barkoder /barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so /usr/local/lib/python3.13/site-packages/Barkoder.cpython-313-x86_64-linux-gnu.so
 COPY main /app/main
+COPY gtfs /app/gtfs
 COPY vdv_pkpass /app/vdv_pkpass
 COPY manage.py /app/manage.py
 COPY .git_hash /app/git_hash
