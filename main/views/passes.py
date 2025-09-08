@@ -3793,6 +3793,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if not to_station:
             to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "benerail")
 
+        gtfs_trip = ticket_data.data.gtfs_trip()
+
         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
         pass_json["relevantDate"] = departure_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -3849,6 +3851,20 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": from_station["name"],
                 "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
             })
+            if gtfs_trip:
+                if departure_stop := next(filter(lambda s: s.uic_station_id == from_station["uic"], gtfs_trip.stops), None):
+                    departure_time_str = departure_stop.departure.isoformat()
+                    pass_fields["secondaryFields"].append({
+                        "key": "departure-time",
+                        "label": "departure-time-label",
+                        "value": departure_time_str,
+                        "dateStyle": "PKDateStyleNone",
+                        "timeStyle": "PKDateStyleShort",
+                        "ignoresTimeZone": True,
+                        "semantics": {
+                            "originalDepartureDate": departure_time_str,
+                        }
+                    })
         else:
             pass_fields["primaryFields"].append({
                 "key": "from-station",
@@ -3879,6 +3895,20 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": to_station["name"],
                 "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
             })
+            if gtfs_trip:
+                if arrival_stop := next(filter(lambda s: s.uic_station_id == to_station["uic"], gtfs_trip.stops), None):
+                    arrival_time_str = arrival_stop.arrival.isoformat()
+                    pass_fields["secondaryFields"].append({
+                        "key": "arrival-time",
+                        "label": "arrival-time-label",
+                        "value": arrival_time_str,
+                        "dateStyle": "PKDateStyleNone",
+                        "timeStyle": "PKDateStyleShort",
+                        "ignoresTimeZone": True,
+                        "semantics": {
+                            "originalArrivalDate": arrival_time_str,
+                        }
+                    })
         else:
             pass_fields["primaryFields"].append({
                 "key": "to-station",

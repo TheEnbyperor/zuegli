@@ -30,6 +30,9 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
         ticket_data = ticket_instance.as_ticket()
         if isinstance(ticket_data.data, rsp.TicketData):
             return True
+    elif isinstance(ticket_instance, models.ELBTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+        return ticket_data.data.gtfs_trip() is not None
 
     return False
 
@@ -250,6 +253,41 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
             event.add("summary", f"{from_station_name} ➡ {to_station_name}")
         else:
             return
+    elif isinstance(ticket_instance, models.ELBTicketInstance):
+        ticket_data = ticket_instance.as_ticket()
+        gtfs_trip = ticket_data.data.gtfs_trip()
+
+        from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "sncf")
+        if not from_station:
+            from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "benerail")
+        to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "sncf")
+        if not to_station:
+            to_station = templatetags.rics.get_station(ticket_data.data.arrival_station, "benerail")
+
+        if not from_station or not to_station:
+            return
+
+        departure_stop = next(filter(lambda s: s.uic_station_id == from_station["uic"], gtfs_trip.stops), None)
+        arrival_stop = next(filter(lambda s: s.uic_station_id == to_station["uic"], gtfs_trip.stops), None)
+        if not departure_stop or not arrival_stop:
+            return
+
+        add_time(event, "dtstart", departure_stop.departure)
+        add_time(event, "dtend", arrival_stop.arrival)
+
+        event.add("geo", (float(from_station["latitude"]), float(from_station["longitude"])))
+        event.add(
+            "X-APPLE-STRUCTURED-LOCATION",
+            icalendar.prop.vInline(f"geo:{from_station['latitude']},{from_station['longitude']}"),
+            {
+                "VALUE": "URI",
+                "X-APPLE-RADIUS": "0",
+                "X-TITLE": from_station["name"]
+            }
+        )
+        event.add("location", from_station["name"])
+
+        event.add("summary", f"{ticket_data.data.train_number}: {from_station['name']} ➡ {to_station['name']}")
     else:
         return
 

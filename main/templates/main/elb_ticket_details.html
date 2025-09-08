@@ -31,6 +31,12 @@
             {% endif %}
         </dd>
     </div>
+    {% if ticket.data.reserved_data %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Reserved data</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.reserved_data }}</code></dd>
+        </div>
+    {% endif %}
     {% if ticket.data.traveller_type %}
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Traveller type</dt>
@@ -113,6 +119,18 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Tariff code</dt>
             <dd class="govuk-summary-list__value">{{ ticket.data.tariff_code }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.class_of_service %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Class of Service</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.class_of_service }}</code></dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.remainder %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Remainder</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.remainder }}</code></dd>
         </div>
     {% endif %}
 </dl>

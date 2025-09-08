@@ -356,6 +356,11 @@
                 {% endfor %}
                 {% for instance in ticket.elb_instances.all %}
                     {% with ticket_obj=instance.as_ticket %}
+                        {% with trip=ticket_obj.data.gtfs_trip %}
+                            {% if trip %}
+                                {% include "gtfs/trip.html" with trip=trip %}
+                            {% endif %}
+                        {% endwith %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">

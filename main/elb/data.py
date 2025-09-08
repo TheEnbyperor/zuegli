@@ -1,6 +1,9 @@
 import dataclasses
 import datetime
 import pytz
+import typing
+import gtfs.models
+import gtfs.trip
 from django.utils import timezone
 from . import util
 
@@ -16,6 +19,7 @@ class ELBTicket:
     version_number: str
     sequence_number: int
     total_tickets: int
+    reserved_data: str
     traveler_type: str
     number_adults: int
     number_children: int
@@ -31,6 +35,8 @@ class ELBTicket:
     seat_number: str
     travel_class: str
     tariff_code: str
+    class_of_service: str
+    remainder: str
 
     @classmethod
     def parse(cls, data: bytes) -> "ELBTicket":
@@ -120,6 +126,7 @@ class ELBTicket:
             version_number=data[20],
             sequence_number=sequence_number,
             total_tickets=total_tickets,
+            reserved_data=data[23:33],
             traveler_type=data[33:35],
             number_adults=number_adults,
             number_children=number_children,
@@ -128,13 +135,15 @@ class ELBTicket:
             valid_until=valid_until,
             departure_station=data[49:54].strip(),
             arrival_station=data[54:59].strip(),
-            train_number=data[59:65].strip(" 0"),
+            train_number=data[59:65].lstrip(" 0").rstrip(" "),
             security_number=data[65:69],
             departure_date=departure_date,
-            coach_number=data[72:75].strip(" 0"),
-            seat_number=data[75:78].strip(" 0"),
+            coach_number=data[72:75].lstrip(" 0").rstrip(" "),
+            seat_number=data[75:78].lstrip(" 0").rstrip(" "),
             travel_class=data[78],
             tariff_code=data[79:82].strip(),
+            class_of_service=data[82:85].strip(),
+            remainder=data[85:].strip(),
         )
 
     def validity_start_time(self) -> datetime.datetime:
@@ -145,3 +154,29 @@ class ELBTicket:
 
     def departure_time(self) -> datetime.datetime:
         return TZ.localize(datetime.datetime.combine(self.departure_date, datetime.time.min))
+
+    def gtfs_trip(self) -> typing.Optional[gtfs.trip.Trip]:
+        if t := gtfs.models.Trip.objects.filter(
+                feed_id="eil",
+                short_name=self.train_number,
+                calendar_date__date=self.departure_date,
+                calendar_date__exception=gtfs.models.CalendarException.SERVICE_ADDED
+        ).first():
+            return gtfs.trip.Trip.from_trip(t, self.departure_date)
+        if t := gtfs.models.Trip.objects.filter(
+                feed_id="eil",
+                short_name=self.train_number,
+                calendar__exceptions__date=self.departure_date,
+                calendar__exceptions__exception=gtfs.models.CalendarException.SERVICE_ADDED
+        ).first():
+            return gtfs.trip.Trip.from_trip(t, self.departure_date)
+        if t := gtfs.models.Trip.objects.filter(
+                feed_id="eil",
+                short_name=self.train_number,
+                calendar__start_date__lte=self.departure_date,
+                calendar__end_date__gte=self.departure_date,
+        ).first():
+            if t.calendar.exceptions.filter(date=self.departure_date, exception=gtfs.models.CalendarException.SERVICE_REMOVED).count():
+                return None
+            return gtfs.trip.Trip.from_trip(t, self.departure_date)
+        return None
