@@ -42,7 +42,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     objs = []
     seen_ids = []
     with gtfs_zip.open("agency.txt") as f:
-        data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+        data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
             seen_ids.append(row["agency_id"])
             objs.append(models.Agency(
@@ -67,7 +67,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     objs = []
     seen_ids = []
     with gtfs_zip.open("stops.txt") as f:
-        data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8")))
+        data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8-sig")))
         for row in data:
             location_type = row.get("location_type")
             if not location_type or location_type == "0":
@@ -126,7 +126,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     objs = []
     seen_ids = []
     with gtfs_zip.open("routes.txt") as f:
-        data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+        data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
             agency = models.Agency.objects.get(feed_id=feed_id, agency_id=row["agency_id"])
 
@@ -187,7 +187,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     if "calendar.txt" in filenames:
         objs = []
         with gtfs_zip.open("calendar.txt") as f:
-            data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+            data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
             for row in data:
                 monday = row["monday"]
                 if monday == "0":
@@ -274,7 +274,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         seen_ids = []
         seen_dates = {}
         with gtfs_zip.open("calendar_dates.txt") as f:
-            data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+            data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
             for row in data:
                 if row["service_id"] not in seen_calendar_ids:
                     calendar = None
@@ -334,7 +334,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         seen_ids = set()
         shape_cache = {}
         with gtfs_zip.open("shapes.txt") as f:
-            data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+            data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
             for row in data:
                 if row["shape_id"] not in shape_cache:
                     shape, _ = models.Shape.objects.get_or_create(
@@ -365,7 +365,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     seen_ids = []
     route_cache = {}
     with gtfs_zip.open("trips.txt") as f:
-        data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+        data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
             if row["route_id"] not in route_cache:
                 route = models.Route.objects.get(feed_id=feed_id, route_id=row["route_id"])
@@ -458,7 +458,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     trip_cache = {}
     stop_cache = {}
     with gtfs_zip.open("stop_times.txt") as f:
-        data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
+        data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
             if row["trip_id"] not in trip_cache:
                 trip = models.Trip.objects.get(feed_id=feed_id, trip_id=row["trip_id"])
