@@ -368,6 +368,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     objs = []
     seen_ids = []
     route_cache = {}
+    objs_k = set()
     with gtfs_zip.open("trips.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
@@ -433,22 +434,25 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 shape = None
 
-            objs.append(models.Trip(
-                feed_id=feed_id,
-                trip_id=row["trip_id"],
-                route=route,
-                calendar=calendar,
-                calendar_date=calendar_date,
-                headsign=row.get("trip_headsign"),
-                short_name=row.get("trip_short_name"),
-                direction=direction_id,
-                block_id=row.get("block_id"),
-                wheelchair_accessible=wheelchair_accessible,
-                bikes_allowed=bikes_allowed,
-                cars_allowed=cars_allowed,
-                shape=shape,
-            ))
-            seen_ids.append(row["trip_id"])
+            k = (feed_id, row["trip_id"])
+            if k not in objs_k:
+                objs_k.add(k)
+                objs.append(models.Trip(
+                    feed_id=feed_id,
+                    trip_id=row["trip_id"],
+                    route=route,
+                    calendar=calendar,
+                    calendar_date=calendar_date,
+                    headsign=row.get("trip_headsign"),
+                    short_name=row.get("trip_short_name"),
+                    direction=direction_id,
+                    block_id=row.get("block_id"),
+                    wheelchair_accessible=wheelchair_accessible,
+                    bikes_allowed=bikes_allowed,
+                    cars_allowed=cars_allowed,
+                    shape=shape,
+                ))
+                seen_ids.append(row["trip_id"])
     models.Trip.objects.bulk_create(
         objs,
         update_conflicts=True,
