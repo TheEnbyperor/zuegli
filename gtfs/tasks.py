@@ -332,7 +332,7 @@ def process_gtfs(feed_id: str, feed_url: str):
     if "shapes.txt" in filenames:
         objs = []
         seen_ids = set()
-        shape_cache = []
+        shape_cache = {}
         with gtfs_zip.open("shapes.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
             for row in data:
