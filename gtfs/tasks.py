@@ -183,9 +183,9 @@ def process_gtfs(feed_id: str, feed_url: str):
     )
     models.Route.objects.filter(Q(feed_id=feed_id) & ~Q(route_id__in=seen_ids)).delete()
 
+    seen_calendar_ids = []
     if "calendar.txt" in filenames:
         objs = []
-        seen_ids = []
         with gtfs_zip.open("calendar.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
             for row in data:
@@ -258,14 +258,14 @@ def process_gtfs(feed_id: str, feed_url: str):
                     start_date=datetime.datetime.strptime(row["start_date"], "%Y%m%d").date(),
                     end_date=datetime.datetime.strptime(row["end_date"], "%Y%m%d").date(),
                 ))
-                seen_ids.append(row["service_id"])
+                seen_calendar_ids.append(row["service_id"])
         models.Calendar.objects.bulk_create(
             objs,
             update_conflicts=True,
             unique_fields=("feed_id", "calendar_id"),
             update_fields=("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "start_date", "end_date"),
         )
-        models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_ids)).delete()
+        models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_calendar_ids)).delete()
 
     if "calendar_dates.txt" in filenames:
         objs1 = []
@@ -275,13 +275,12 @@ def process_gtfs(feed_id: str, feed_url: str):
         with gtfs_zip.open("calendar_dates.txt") as f:
             data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
             for row in data:
-                calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
-                if calendar_qs.count():
-                    calendar = calendar_qs[0]
-                    calendar_id = None
-                else:
+                if row["service_id"] not in seen_calendar_ids:
                     calendar = None
                     calendar_id = row["service_id"]
+                else:
+                    calendar = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"]).first()
+                    calendar_id = None
 
                 exception_type = row["exception_type"]
                 if exception_type == "1":
