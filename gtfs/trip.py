@@ -37,7 +37,7 @@ class Trip:
         rt_info = models.TripUpdate.objects.filter(trip=trip).first()
         start_time = datetime.datetime.combine(date, datetime.time(0, 0, 0))
         for stop in trip.stops.all():
-            stop_info = rt_info.stops.filter(stop=stop).first()
+            stop_info = rt_info.stops.filter(stop=stop).first() if rt_info else None
             stop_tz = pytz.timezone(stop.stop.timezone)
 
             ps = stop.stop

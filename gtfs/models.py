@@ -145,6 +145,9 @@ class CalendarException(models.Model):
         unique_together = (
             ("feed_id", "calendar", "date"),
         )
+        index_together = (
+            ("feed_id", "calendar",),
+        )
 
     def __str__(self):
         return f"{self.calendar}: {self.date}"
@@ -161,6 +164,7 @@ class CalendarDate(models.Model):
             ("feed_id", "service_id", "date"),
         )
         index_together = (
+            ("feed_id", "service_id"),
             ("date", "exception"),
         )
 

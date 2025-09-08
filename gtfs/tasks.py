@@ -363,10 +363,15 @@ def process_gtfs(feed_id: str, feed_url: str):
 
     objs = []
     seen_ids = []
+    route_cache = {}
     with gtfs_zip.open("trips.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
         for row in data:
-            route = models.Route.objects.get(feed_id=feed_id, route_id=row["route_id"])
+            if row["route_id"] not in route_cache:
+                route = models.Route.objects.get(feed_id=feed_id, route_id=row["route_id"])
+                route_cache[row["route_id"]] = route
+            else:
+                route = route_cache[row["route_id"]]
 
             calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
             calendar_date_qs = models.CalendarDate.objects.filter(feed_id=feed_id, service_id=row["service_id"])
@@ -450,11 +455,21 @@ def process_gtfs(feed_id: str, feed_url: str):
 
     objs = []
     seen_ids = {}
+    trip_cache = {}
+    stop_cache = {}
     with gtfs_zip.open("stop_times.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8"))
         for row in data:
-            trip = models.Trip.objects.get(feed_id=feed_id, trip_id=row["trip_id"])
-            stop = models.Stop.objects.get(feed_id=feed_id, stop_id=row["stop_id"])
+            if row["trip_id"] not in trip_cache:
+                trip = models.Trip.objects.get(feed_id=feed_id, trip_id=row["trip_id"])
+                trip_cache[row["trip_id"]] = trip
+            else:
+                trip = trip_cache[row["trip_id"]]
+            if row["stop_id"] not in stop_cache:
+                stop = models.Stop.objects.get(feed_id=feed_id, stop_id=row["stop_id"])
+                stop_cache[row["stop_id"]] = stop
+            else:
+                stop = stop_cache[row["stop_id"]]
 
             if arrival_time := row.get("arrival_time"):
                 if m := TIME_RE.fullmatch(arrival_time):
