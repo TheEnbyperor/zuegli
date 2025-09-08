@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import UniqueConstraint
+
 
 class Agency(models.Model):
     feed_id = models.CharField(max_length=255, verbose_name="Feed ID")
@@ -136,23 +138,37 @@ class CalendarException(models.Model):
 
     feed_id = models.CharField(max_length=255, verbose_name="Feed ID")
     calendar = models.ForeignKey("Calendar", on_delete=models.CASCADE, blank=True, null=True, related_name="exceptions")
-    service_id = models.CharField(max_length=255, verbose_name="Calendar ID", blank=True, null=True)
     date = models.DateField()
     exception = models.CharField(max_length=64, choices=EXCEPTIONS)
+
+    class Meta:
+        indexes = (
+            models.Index(fields=("feed_id", "calendar")),
+        )
+        unique_together = (
+            ("feed_id", "calendar", "date"),
+        )
+
+    def __str__(self):
+        return f"{self.calendar}: {self.date}"
+
+
+class CalendarDate(models.Model):
+    feed_id = models.CharField(max_length=255, verbose_name="Feed ID")
+    service_id = models.CharField(max_length=255, verbose_name="Calendar ID", blank=True, null=True)
+    date = models.DateField()
+    exception = models.CharField(max_length=64, choices=CalendarException.EXCEPTIONS)
 
     class Meta:
         indexes = (
             models.Index(fields=("feed_id", "service_id")),
         )
         unique_together = (
-            ("feed_id", "calendar", "service_id", "date"),
+            ("feed_id", "service_id", "date"),
         )
 
     def __str__(self):
-        if self.calendar:
-            return f"{self.calendar}: {self.date}"
-        else:
-            return f"{self.feed_id}:{self.service_id}: {self.date}"
+        return f"{self.feed_id}:{self.service_id}: {self.date}"
 
 
 class Trip(models.Model):
@@ -169,7 +185,7 @@ class Trip(models.Model):
     trip_id = models.CharField(max_length=255, verbose_name="Trip ID")
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True)
-    calendar_date = models.ForeignKey(CalendarException, on_delete=models.CASCADE, blank=True, null=True)
+    calendar_date = models.ForeignKey(CalendarDate, on_delete=models.CASCADE, blank=True, null=True)
     headsign = models.CharField(max_length=255, blank=True, null=True)
     short_name = models.CharField(max_length=255, blank=True, null=True)
     direction = models.CharField(max_length=64, choices=DIRECTIONS)
@@ -256,6 +272,11 @@ class ShapePoint(models.Model):
     lat = models.FloatField()
     lon = models.FloatField()
     sequence = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = (
+            ("shape", "sequence"),
+        )
 
 
 class GtfsRtFeed(models.Model):
