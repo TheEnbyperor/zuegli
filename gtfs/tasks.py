@@ -363,14 +363,18 @@ def process_gtfs(feed_id: str, feed_url: str):
                         shape_id=row["shape_id"],
                     ))
                     seen_ids.add(row["shape_id"])
+            to_lookup = set()
             for r in models.Shape.objects.bulk_create(
                 objs,
-                update_conflicts=True,
+                ignore_conflicts=True,
                 unique_fields=("feed_id", "shape_id"),
-                update_fields=[],
             ):
                 if r.pk:
                     shape_cache[r.shape_id] = r
+                else:
+                    to_lookup.add(r.shape_id)
+            for r in models.Shape.objects.filter(feed_id=feed_id, shape_id__in=to_lookup):
+                shape_cache[r.shape_id] = r
             models.Shape.objects.filter(Q(feed_id=feed_id) & ~Q(shape_id__in=seen_ids)).delete()
             objs = []
             for row in data:
