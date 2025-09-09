@@ -6,8 +6,23 @@ from . import models
 
 STATION_MAPPING = {
     "eil": {
+        "aachen_hbf_station_area": "8015345",
+        "antwerpen_centraal_station_area": "8821006",
+        "amsterdam_centraal_station_area": "8400058",
+        "bruxelles_midi_station_area": "8814001",
+        "dortmund_hbf_station_area": "8010053",
+        "duisburg_hbf_station_area": "8010316",
+        "dusseldorf_airport_station_area": "8039904",
+        "dusseldorf_hbf_station_area": "8008094",
+        "essen_hbf_station_area": "8010184",
+        "liege_guillemins_station_area": "8841004",
+        "lille_europe_station_area": "8722326",
+        "marne_la_vallee_chessy_station_area": "8711184",
+        "paris_nord_station_area": "8727100",
+        "roissy_airport_cdg_2_station_area": "8727149",
+        "rotterdam_centraal_station_area": "8400530",
+        "schiphol_airport_station_area": "8400561",
         "st_pancras_international_station_area": "7015400",
-        "amsterdam_centraal_station_area": "8400058"
     }
 }
 
