@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Imprint" %}{% endblock title %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">{% trans "Imprint" %}</h1>
+                <p class="govuk-body-lead">
+                    {% trans "This service is provided by:" %}
+                </p>
+                <p class="govuk-body">
+                    <b>Q Misell</b><br/>
+                    Schulstraße 86<br/>
+                    66125 Saarbrücken<br/>
+                    Deutschland<br/>
+                    <a href="mailto:q@magicalcodewit.ch">q@magicalcodewit.ch</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -68,4 +68,5 @@ urlpatterns = [
     path('robots.txt', views.util.robots, name='robots'),
     path('manifest.json', views.util.manifest, name='manifest'),
     path('.well-known/apple-app-site-association', views.util.apple_app_site_association, name='apple-app-site-association'),
+    path('impressum', views.impressum, name='impressum'),
 ]
