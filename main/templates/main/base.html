@@ -229,7 +229,8 @@
                 </div>
                 <div class="govuk-footer__meta-custom">
                     {% blocktrans trimmed %}
-                        IATA data courtesy of <a class="govuk-footer__link" href="https://avcodes.co.uk">avcodes.co.uk</a>.
+                        IATA data courtesy of
+                        <a class="govuk-footer__link" href="https://avcodes.co.uk">avcodes.co.uk</a>.
                     {% endblocktrans %}
                 </div>
                 <div class="govuk-footer__meta-custom">
@@ -251,16 +252,22 @@
                 </span>
             </div>
             <div class="govuk-footer__meta-item">
-                <a
-                        class="govuk-footer__link"
-                        href="https://magicalcodewit.ch">
-                    &copy; Q Misell, {% now "Y" %}
-                </a>
+                <p>
+                    <a class="govuk-footer__link" href="{% url 'impressum' %}">{% trans "Imprint" %}</a>
+                </p>
+                <p>
+                    <a
+                            class="govuk-footer__link"
+                            href="https://magicalcodewit.ch">
+                        &copy; Q Misell, {% now "Y" %}
+                    </a>
+                </p>
             </div>
         </div>
         <div class="govuk-footer__meta">
             <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
-                <iframe src="https://github.com/sponsors/TheEnbyperor/card" title="Sponsor TheEnbyperor" height="225" style="width: 100%; border: 0;"></iframe>
+                <iframe src="https://github.com/sponsors/TheEnbyperor/card" title="Sponsor TheEnbyperor" height="225"
+                        style="width: 100%; border: 0;"></iframe>
             </div>
         </div>
     </div>

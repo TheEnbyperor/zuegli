@@ -7,3 +7,7 @@ def page_not_found(request, exception):
     return render(request, "main/404.html", {
         "exception": exception,
     }, status=404)
+
+
+def impressum(request):
+    return render(request, "main/impressum.html", {})

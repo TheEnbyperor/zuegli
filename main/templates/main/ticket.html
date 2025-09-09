@@ -476,7 +476,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_id %}Ticket #{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
