@@ -66,6 +66,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         if r.pk:
             agency_cache[r.agency_id] = r
     models.Agency.objects.filter(Q(feed_id=feed_id) & ~Q(agency_id__in=seen_ids)).delete()
+    logger.info(f"Imported {len(objs)} agencies")
 
     objs = []
     seen_ids = []
@@ -133,6 +134,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         obj.parent_station = parent_station
     models.Stop.objects.bulk_update(objs, fields=("parent_station",))
     models.Stop.objects.filter(Q(feed_id=feed_id) & ~Q(stop_id__in=seen_ids)).delete()
+    logger.info(f"Imported {len(objs)} stops")
 
     objs = []
     seen_ids = []
@@ -193,6 +195,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         if r.pk:
             route_cache[r.route_id] = r
     models.Route.objects.filter(Q(feed_id=feed_id) & ~Q(route_id__in=seen_ids)).delete()
+    logger.info(f"Imported {len(objs)} routes")
 
     seen_calendar_ids = []
     calendar_cache = {}
@@ -280,6 +283,7 @@ def process_gtfs(feed_id: str, feed_url: str):
             if r.pk:
                 calendar_cache[r.calendar_id] = r
         models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_calendar_ids)).delete()
+        logger.info(f"Imported {len(objs)} calendars")
 
     calendar_date_cache = {}
     if "calendar_dates.txt" in filenames:
@@ -349,6 +353,8 @@ def process_gtfs(feed_id: str, feed_url: str):
         for c, dates in seen_dates.items():
             models.CalendarException.objects.filter(Q(feed_id=feed_id) & Q(calendar_id=c) & ~Q(date__in=dates)).delete()
         models.CalendarDate.objects.filter(Q(feed_id=feed_id) & ~Q(service_id__in=seen_ids)).delete()
+        logger.info(f"Imported {len(objs1)} calendar exceptions")
+        logger.info(f"Imported {len(objs2)} calendar dates")
 
     shape_cache = {}
     if "shapes.txt" in filenames:
@@ -395,6 +401,7 @@ def process_gtfs(feed_id: str, feed_url: str):
                 unique_fields=("shape", "sequence"),
                 update_fields=("lat", "lon"),
             )
+            logger.info(f"Imported {len(objs)} shape points")
 
     objs = []
     seen_ids = []
@@ -504,6 +511,7 @@ def process_gtfs(feed_id: str, feed_url: str):
         if r.pk:
             trip_cache[r.trip_id] = r
     models.Trip.objects.filter(Q(feed_id=feed_id) & ~Q(trip_id__in=seen_ids)).delete()
+    logger.info(f"Imported {len(seen_ids)} trips")
 
     objs = []
     objs_k = set()
