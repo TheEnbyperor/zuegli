@@ -292,6 +292,11 @@ class TripUpdate(models.Model):
     cancelled = models.BooleanField(default=False, blank=True)
     last_updated = models.DateTimeField()
 
+    class Meta:
+        unique_together = (
+            ("rt_feed", "trip"),
+        )
+
 
 class StopUpdate(models.Model):
     trip_update = models.ForeignKey(TripUpdate, on_delete=models.CASCADE, related_name="stops")
@@ -300,3 +305,8 @@ class StopUpdate(models.Model):
     arrival = models.DateTimeField(blank=True, null=True)
     departure = models.DateTimeField(blank=True, null=True)
     skipped = models.BooleanField(default=False, blank=True)
+
+    class Meta:
+        unique_together = (
+            ("trip_update", "stop"),
+        )
