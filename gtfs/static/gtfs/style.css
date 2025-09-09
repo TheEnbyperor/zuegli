@@ -22,6 +22,10 @@
     }
 }
 
+.train-trip .map {
+    min-height: 400px;
+}
+
 .train-trip .meta {
     color: #282D37;
     font-size: 0.9em;

@@ -613,7 +613,6 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
                 logger.info("Feed not updated since last fetch")
                 return
 
-            f.trip_updates.all().delete()
             f.last_updated = generation_time
             f.save()
         else:
@@ -637,14 +636,17 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
 
                 trip_date = datetime.datetime.strptime(entity.trip_update.trip.start_date, "%Y%m%d").date()
                 start_time = datetime.datetime.combine(trip_date, datetime.time(0, 0, 0))
-                tu = models.TripUpdate.objects.create(
+                tu, _ = models.TripUpdate.objects.update_or_create(
                     rt_feed=f,
                     trip=trip,
                     date=trip_date,
-                    cancelled=entity.trip_update.trip.schedule_relationship == entity.trip_update.trip.CANCELED,
-                    last_updated=datetime.datetime.fromtimestamp(entity.trip_update.timestamp, tz=datetime.timezone.utc),
+                    defaults={
+                        "cancelled": entity.trip_update.trip.schedule_relationship == entity.trip_update.trip.CANCELED,
+                        "last_updated": datetime.datetime.fromtimestamp(entity.trip_update.timestamp, tz=datetime.timezone.utc),
+                    }
                 )
 
+                objs = []
                 for stop in entity.trip_update.stop_time_update:
                     stop_time = trip.stops.filter(sequence=stop.stop_sequence).first()
                     if not stop_time:
@@ -654,7 +656,7 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
                     su = models.StopUpdate(
                         trip_update=tu,
                         stop=stop_time,
-                        skipped=stop.schedule_relationship == stop.SKIPPED,
+                        skipped=stop.schedule_relationship == stop.SKIPPED
                     )
 
                     stop_tz = pytz.timezone(stop_time.stop.timezone)
@@ -673,7 +675,15 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
                         if stop.stop_time_properties.assigned_stop_id:
                             su.assigned_stop = models.Stop.objects.get(feed_id=feed_id, stop_id=stop.stop_time_properties.assigned_stop_id)
 
-                    su.save()
+                    objs.append(su)
+
+                models.StopUpdate.objects.bulk_create(
+                    objs,
+                    update_conflicts=True,
+                    unique_fields=("trip_update", "stop"),
+                    update_fields=("skipped", "arrival", "departure", "assigned_stop"),
+                )
+
 
 @shared_task(
     autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
