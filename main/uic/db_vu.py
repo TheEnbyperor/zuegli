@@ -1,8 +1,7 @@
 import dataclasses
 import typing
 import datetime
-from ..vdv import ticket, org_id, product_id
-from .. import ticket
+from .. import ticket, vdv
 
 class DBVUException(Exception):
     pass
@@ -49,7 +48,7 @@ class DBVUProduct:
   validity_end: datetime.datetime                   # GueltigBis
   cost: typing.Optional[str]                        # Preis
   sequence_number: typing.Optional[int]             # Sequenznummer (SAM)
-  product_data: typing.List["ticket.ELEMENT"]
+  product_data: typing.List["vdv.ticket.ELEMENT"]
 
   def __init__(self, data: bytes, context: "ticket.TicketContexts") -> None:
     self.__data = data
@@ -86,7 +85,7 @@ class DBVUProduct:
         struct_type = data[offset]                          # Sub-block type is announced
         struct_length = data[offset+1]                      # Sub-block length is announced
         struct_data = data[offset+2:offset+2+struct_length] # Sub-block data is remaining bytes.
-        self.product_data.append(ticket.VDVTicket.parse_product_data_element((struct_type, struct_data), context))
+        self.product_data.append(vdv.ticket.VDVTicket.parse_product_data_element((struct_type, struct_data), context, self.product_details.issuer_id))
         offset += struct_length+2
 
     # If the 0080VU spec is "as standard"
@@ -102,7 +101,7 @@ class DBVUProduct:
 
       # Will automatically convert to a DBVUTAGListe type.
       offset += 1
-      self.product_data = [ticket.SpacialValidity.parse(
+      self.product_data = [vdv.ticket.SpacialValidity.parse(
         data[offset+2:offset+data_fields_length],
         self.product_details.issuer_id
       )]
@@ -128,7 +127,7 @@ class DBVUProductAuthorization:
 
   @property
   def issuer(self):
-    org, is_test = org_id.get_org(self.issuer_id)
+    org, is_test = vdv.org_id.get_org(self.issuer_id)
     if org:
       if is_test:
         return f"{org['name']} (Test)"
@@ -149,7 +148,7 @@ class DBVUProductDetails:
 
   @property
   def issuer(self):
-    org, is_test = org_id.get_org(self.issuer_id)
+    org, is_test = vdv.org_id.get_org(self.issuer_id)
     if org:
       if is_test:
         return f"{org['name']} (Test)"
@@ -158,7 +157,7 @@ class DBVUProductDetails:
 
   @property
   def product_type(self):
-    product_id_map = product_id.get_product_id_list()
+    product_id_map = vdv.product_id.get_product_id_list()
     if name := product_id_map.get((self.issuer_id, self.product_type_id)):
       return name
 

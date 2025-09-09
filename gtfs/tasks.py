@@ -56,16 +56,20 @@ def process_gtfs(feed_id: str, feed_url: str):
                 fare_url=row.get("agency_fare_url"),
                 email=row.get("agency_email"),
             ))
-    models.Agency.objects.bulk_create(
+    agency_cache = {}
+    for r in models.Agency.objects.bulk_create(
         objs,
         update_conflicts=True,
         unique_fields=("feed_id", "agency_id"),
         update_fields=("name", "url", "timezone", "primary_language", "phone", "fare_url", "email"),
-    )
+    ):
+        if r.pk:
+            agency_cache[r.agency_id] = r
     models.Agency.objects.filter(Q(feed_id=feed_id) & ~Q(agency_id__in=seen_ids)).delete()
 
     objs = []
     seen_ids = []
+    station_cache = {}
     with gtfs_zip.open("stops.txt") as f:
         data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8-sig")))
         for row in data:
@@ -109,13 +113,14 @@ def process_gtfs(feed_id: str, feed_url: str):
                 platform_code=row.get("platform_code"),
             ))
             seen_ids.append(row["stop_id"])
-    models.Stop.objects.bulk_create(
+    for r in models.Stop.objects.bulk_create(
         objs,
         update_conflicts=True,
         unique_fields=("feed_id", "stop_id"),
         update_fields=("code", "name", "tts_name", "description", "lat", "long", "url", "location_type", "timezone", "wheelchair_boarding", "platform_code"),
-    )
-    station_cache = {}
+    ):
+        if r.pk:
+            station_cache[r.stop_id] = r
     for row, obj in zip(data, objs):
         if parent_station_id := row.get("parent_station"):
             if parent_station_id not in station_cache:
@@ -131,7 +136,7 @@ def process_gtfs(feed_id: str, feed_url: str):
 
     objs = []
     seen_ids = []
-    agency_cache = {}
+    route_cache = {}
     with gtfs_zip.open("routes.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
@@ -179,15 +184,18 @@ def process_gtfs(feed_id: str, feed_url: str):
                 sort_order=row.get("route_sort_order"),
             ))
             seen_ids.append(row["route_id"])
-    models.Route.objects.bulk_create(
+    for r in models.Route.objects.bulk_create(
         objs,
         update_conflicts=True,
         unique_fields=("feed_id", "route_id"),
         update_fields=("agency", "short_name", "long_name", "description", "route_type", "url", "colour", "text_colour", "sort_order"),
-    )
+    ):
+        if r.pk:
+            route_cache[r.route_id] = r
     models.Route.objects.filter(Q(feed_id=feed_id) & ~Q(route_id__in=seen_ids)).delete()
 
     seen_calendar_ids = []
+    calendar_cache = {}
     if "calendar.txt" in filenames:
         objs = []
         with gtfs_zip.open("calendar.txt") as f:
@@ -263,14 +271,17 @@ def process_gtfs(feed_id: str, feed_url: str):
                     end_date=datetime.datetime.strptime(row["end_date"], "%Y%m%d").date(),
                 ))
                 seen_calendar_ids.append(row["service_id"])
-        models.Calendar.objects.bulk_create(
+        for r in models.Calendar.objects.bulk_create(
             objs,
             update_conflicts=True,
             unique_fields=("feed_id", "calendar_id"),
             update_fields=("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "start_date", "end_date"),
-        )
+        ):
+            if r.pk:
+                calendar_cache[r.calendar_id] = r
         models.Calendar.objects.filter(Q(feed_id=feed_id) & ~Q(calendar_id__in=seen_calendar_ids)).delete()
 
+    calendar_date_cache = {}
     if "calendar_dates.txt" in filenames:
         objs1 = []
         objs2 = []
@@ -284,7 +295,11 @@ def process_gtfs(feed_id: str, feed_url: str):
                     calendar = None
                     calendar_id = row["service_id"]
                 else:
-                    calendar = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"]).first()
+                    if row["service_id"] not in calendar_cache:
+                        calendar = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"]).first()
+                        calendar_cache[row["service_id"]] = calendar
+                    else:
+                        calendar = calendar_cache[row["service_id"]]
                     calendar_id = None
 
                 exception_type = row["exception_type"]
@@ -323,52 +338,64 @@ def process_gtfs(feed_id: str, feed_url: str):
             unique_fields=("feed_id", "calendar", "date"),
             update_fields=("exception",),
         )
-        models.CalendarDate.objects.bulk_create(
+        for r in models.CalendarDate.objects.bulk_create(
             objs2,
             update_conflicts=True,
             unique_fields=("feed_id", "service_id", "date"),
             update_fields=("exception",),
-        )
+        ):
+            if r.pk:
+                calendar_date_cache[r.service_id] = r
         for c, dates in seen_dates.items():
             models.CalendarException.objects.filter(Q(feed_id=feed_id) & Q(calendar_id=c) & ~Q(date__in=dates)).delete()
         models.CalendarDate.objects.filter(Q(feed_id=feed_id) & ~Q(service_id__in=seen_ids)).delete()
 
+    shape_cache = {}
     if "shapes.txt" in filenames:
-        objs = []
-        seen_ids = set()
-        shape_cache = {}
         with gtfs_zip.open("shapes.txt") as f:
-            data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
+            objs = []
+            seen_ids = set()
+            data = list(csv.DictReader(io.TextIOWrapper(f, "utf-8-sig")))
             for row in data:
-                if row["shape_id"] not in shape_cache:
-                    shape, _ = models.Shape.objects.get_or_create(
+                if row["shape_id"] not in seen_ids:
+                    objs.append(models.Shape(
                         feed_id=feed_id,
                         shape_id=row["shape_id"],
-                    )
-                    if row["shape_id"] not in seen_ids:
-                        shape.points.all().delete()
+                    ))
+                    seen_ids.add(row["shape_id"])
+            for r in models.Shape.objects.bulk_create(
+                objs,
+                update_conflicts=True,
+                unique_fields=("feed_id", "shape_id"),
+                update_fields=[],
+            ):
+                if r.pk:
+                    shape_cache[r.shape_id] = r
+            models.Shape.objects.filter(Q(feed_id=feed_id) & ~Q(shape_id__in=seen_ids)).delete()
+            objs = []
+            for row in data:
+                if row["shape_id"] not in shape_cache:
+                    shape = models.Shape.objects.get(feed_id=feed_id, shape_id=row["shape_id"])
                     shape_cache[row["shape_id"]] = shape
                 else:
                     shape = shape_cache[row["shape_id"]]
-                seen_ids.add(row["shape_id"])
                 objs.append(models.ShapePoint(
                     shape=shape,
                     sequence=row["shape_pt_sequence"],
                     lat=row["shape_pt_lat"],
                     lon=row["shape_pt_lon"],
                 ))
-        models.ShapePoint.objects.bulk_create(
-            objs,
-            update_conflicts=True,
-            unique_fields=("shape", "sequence"),
-            update_fields=("lat", "lon"),
-        )
-        models.Shape.objects.filter(Q(feed_id=feed_id) & ~Q(shape_id__in=seen_ids)).delete()
+            models.ShapePoint.objects.bulk_create(
+                objs,
+                update_conflicts=True,
+                unique_fields=("shape", "sequence"),
+                update_fields=("lat", "lon"),
+            )
 
     objs = []
     seen_ids = []
-    route_cache = {}
     objs_k = set()
+    trip_cache = {}
     with gtfs_zip.open("trips.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
@@ -378,16 +405,23 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 route = route_cache[row["route_id"]]
 
-            calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
-            calendar_date_qs = models.CalendarDate.objects.filter(feed_id=feed_id, service_id=row["service_id"])
-            if calendar_qs.count():
-                calendar = calendar_qs[0]
+            if row["service_id"] in calendar_cache:
+                calendar = calendar_cache[row["service_id"]]
                 calendar_date = None
-            elif calendar_date_qs.count():
+            elif row["service_id"] in calendar_date_cache:
                 calendar = None
-                calendar_date = calendar_date_qs[0]
+                calendar_date = calendar_date_cache[row["service_id"]]
             else:
-                raise Exception(f"No calendar found for service ID {row['service_id']}")
+                calendar_qs = models.Calendar.objects.filter(feed_id=feed_id, calendar_id=row["service_id"])
+                calendar_date_qs = models.CalendarDate.objects.filter(feed_id=feed_id, service_id=row["service_id"])
+                if calendar_qs.count():
+                    calendar = calendar_qs[0]
+                    calendar_date = None
+                elif calendar_date_qs.count():
+                    calendar = None
+                    calendar_date = calendar_date_qs[0]
+                else:
+                    raise Exception(f"No calendar found for service ID {row['service_id']}")
 
             direction_id = row.get("direction_id")
             if direction_id is None:
@@ -430,7 +464,11 @@ def process_gtfs(feed_id: str, feed_url: str):
                 raise ValueError(f"Invalid cars allowed: {cars_allowed}")
 
             if shape_id := row.get("shape_id"):
-                shape = models.Shape.objects.get(feed_id=feed_id, shape_id=shape_id)
+                if row["shape_id"] in shape_cache:
+                    shape = shape_cache[row["shape_id"]]
+                else:
+                    shape = models.Shape.objects.get(feed_id=feed_id, shape_id=shape_id)
+                    shape_cache[row["shape_id"]] = shape
             else:
                 shape = None
 
@@ -453,18 +491,19 @@ def process_gtfs(feed_id: str, feed_url: str):
                     shape=shape,
                 ))
                 seen_ids.append(row["trip_id"])
-    models.Trip.objects.bulk_create(
+    for r in models.Trip.objects.bulk_create(
         objs,
         update_conflicts=True,
         unique_fields=("feed_id", "trip_id"),
         update_fields=("route", "calendar", "calendar_date", "headsign", "short_name", "direction", "block_id", "wheelchair_accessible", "bikes_allowed", "cars_allowed", "shape"),
-    )
+    ):
+        if r.pk:
+            trip_cache[r.trip_id] = r
     models.Trip.objects.filter(Q(feed_id=feed_id) & ~Q(trip_id__in=seen_ids)).delete()
 
     objs = []
+    objs_k = set()
     seen_ids = {}
-    trip_cache = {}
-    stop_cache = {}
     with gtfs_zip.open("stop_times.txt") as f:
         data = csv.DictReader(io.TextIOWrapper(f, "utf-8-sig"))
         for row in data:
@@ -473,11 +512,11 @@ def process_gtfs(feed_id: str, feed_url: str):
                 trip_cache[row["trip_id"]] = trip
             else:
                 trip = trip_cache[row["trip_id"]]
-            if row["stop_id"] not in stop_cache:
+            if row["stop_id"] not in station_cache:
                 stop = models.Stop.objects.get(feed_id=feed_id, stop_id=row["stop_id"])
-                stop_cache[row["stop_id"]] = stop
+                station_cache[row["stop_id"]] = stop
             else:
-                stop = stop_cache[row["stop_id"]]
+                stop = station_cache[row["stop_id"]]
 
             if arrival_time := row.get("arrival_time"):
                 if m := TIME_RE.fullmatch(arrival_time):
@@ -519,20 +558,23 @@ def process_gtfs(feed_id: str, feed_url: str):
             else:
                 raise ValueError(f"Invalid drop_off type: {drop_off_type}")
 
-            objs.append(models.StopTime(
-                trip=trip,
-                sequence=row["stop_sequence"],
-                stop=stop,
-                arrival_time=arrival_time,
-                departure_time=departure_time,
-                headsign=row.get("stop_headsign"),
-                distance_traveled=row.get("shape_dist_traveled"),
-                pick_up_type=pick_up_type,
-                drop_off_type=drop_off_type,
-            ))
-            if trip not in seen_ids:
-                seen_ids[trip] = []
-            seen_ids[trip].append(row["stop_sequence"])
+            k = (trip.pk, row["stop_sequence"])
+            if k not in objs_k:
+                objs_k.add(k)
+                objs.append(models.StopTime(
+                    trip=trip,
+                    sequence=row["stop_sequence"],
+                    stop=stop,
+                    arrival_time=arrival_time,
+                    departure_time=departure_time,
+                    headsign=row.get("stop_headsign"),
+                    distance_traveled=row.get("shape_dist_traveled"),
+                    pick_up_type=pick_up_type,
+                    drop_off_type=drop_off_type,
+                ))
+                if trip not in seen_ids:
+                    seen_ids[trip] = []
+                seen_ids[trip].append(row["stop_sequence"])
     models.StopTime.objects.bulk_create(
         objs,
         update_conflicts=True,
