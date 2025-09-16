@@ -32,7 +32,7 @@ class Envelope:
         if not pk:
             return False
 
-        if self.issuer_rics == 1184:
+        if self.issuer_rics in (1184, 1080):
             sig = ber_tlv.tlv.Tlv.parse(self.signature)
             sig = ber_tlv.tlv.Tlv.build(sig)
             hasher = cryptography.hazmat.primitives.hashes.SHA1()
