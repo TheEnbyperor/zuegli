@@ -716,9 +716,9 @@ class DBSubscription(models.Model):
         elif self.info["type"] == "TicketHuelle":
             now = timezone.now()
             for info in self.info["ticketHuellen"]:
-                start = datetime.datetime.fromisoformat(info["anzeigeAb"])
-                end = datetime.datetime.fromisoformat(info["anzeigeBis"])
-                if start > now and end < now:
+                start = datetime.datetime.fromisoformat(info["anzeigeAb"]) if info["anzeigeAb"] else None
+                end = datetime.datetime.fromisoformat(info["anzeigeBis"]) if info["anzeigeBis"] else None
+                if (start is None or start > now) and (end is None or end < now):
                     return info["huelleInfo"]
 
         return None
