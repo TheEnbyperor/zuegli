@@ -782,8 +782,12 @@ class IATATicket:
 
         hd.update(b"iata")
         for leg in self.data.legs:
-            hd.update(leg.pnr.encode("utf-8"))
-            hd.update(leg.sequence.encode("utf-8"))
+            if leg.operating_carrier == "UPX":
+                hd.update(b"upx")
+                hd.update(leg.airline_data.encode("utf-8"))
+            else:
+                hd.update(leg.pnr.encode("utf-8"))
+                hd.update(leg.sequence.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
