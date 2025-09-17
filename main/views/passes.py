@@ -2757,6 +2757,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         }
         pass_json["organizationName"] = ticket_data.ticket.kvp_org_name()
 
+        if validity_start.date() == validity_end.date():
+            pass_json["relevantDate"] = validity_start.isoformat()
+
         barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
