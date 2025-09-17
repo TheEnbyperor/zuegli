@@ -828,7 +828,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         obj["hexBackgroundColor"] = "#ffffff"
         obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
 
-        if ticket_data.is_revoked():
+        if ticket_data.revoked_status():
             obj["state"] = "COMPLETED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",

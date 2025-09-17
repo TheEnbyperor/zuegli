@@ -103,11 +103,13 @@
                                     <div class="govuk-summary-list__row">
                                         <dt class="govuk-summary-list__key">{% trans "Revoked application" %}</dt>
                                         <dd class="govuk-summary-list__value">
-                                            {% if card.application_directory.application_data.is_revoked %}
-                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
-                                            {% else %}
-                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
-                                            {% endif %}
+                                            {% with rev=card.application_directory.application_data.revoked_status %}
+                                                {% if rev %}
+                                                    <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong> - {{ rev }}
+                                                {% else %}
+                                                    <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                {% endif %}
+                                            {% endwith %}
                                         </dd>
                                     </div>
                                 {% endif %}
@@ -243,11 +245,13 @@
                                                     <div class="govuk-summary-list__row">
                                                         <dt class="govuk-summary-list__key">{% trans "Revoked ticket" %}</dt>
                                                         <dd class="govuk-summary-list__value">
-                                                            {% if auth.is_revoked %}
-                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
-                                                            {% else %}
-                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
-                                                            {% endif %}
+                                                            {% with rev=auth.revoked_status %}
+                                                                {% if rev %}
+                                                                    <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong> - {{ rev }}
+                                                                {% else %}
+                                                                    <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                                {% endif %}
+                                                            {% endwith %}
                                                         </dd>
                                                     </div>
                                                 {% endif %}

@@ -81,16 +81,15 @@ class VDVTicket:
         hd.update(self.ticket.ticket_org_id.to_bytes(8, "big"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
-    def is_revoked(self) -> bool:
+    def revoked_status(self) -> typing.Optional[str]:
         blocklist_entry = models.VDVBlocklistItem.objects.filter(
             item_type=models.VDVBlocklistItem.ITEM_BERECHTIGUNG,
             org_id=self.ticket.ticket_org_id,
             item_id=self.ticket.ticket_id,
         ).order_by("-instance_counter").first()
         if blocklist_entry:
-            if blocklist_entry.lock_mode != models.VDVBlocklistItem.LOCK_MODE_UNLOCK:
-                return True
-        return False
+            return blocklist_entry.get_lock_mode_display()
+        return None
 
 
 @dataclasses.dataclass

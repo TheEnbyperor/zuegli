@@ -85,16 +85,15 @@ class ApplicationData:
     def application_instance_org_name_opt(self):
         return vdv.ticket.map_org_id(self.application_instance_org_id, True)
 
-    def is_revoked(self) -> bool:
+    def revoked_status(self) -> typing.Optional[str]:
         blocklist_entry = models.VDVBlocklistItem.objects.filter(
             item_type=models.VDVBlocklistItem.ITEM_NUTZERMEDIUM,
             org_id=self.application_instance_org_id,
             item_id=self.application_instance_number,
         ).order_by("-instance_counter").first()
         if blocklist_entry:
-            if blocklist_entry.lock_mode != models.VDVBlocklistItem.LOCK_MODE_UNLOCK:
-                return True
-        return False
+            return blocklist_entry.get_lock_mode_display()
+        return None
 
     @classmethod
     def parse(cls, data) -> "ApplicationData":
@@ -295,16 +294,15 @@ class Authorization:
     def product_org_name_opt(self):
         return vdv.ticket.map_org_id(self.product_org_id, True)
 
-    def is_revoked(self) -> bool:
+    def revoked_status(self) -> typing.Optional[str]:
         blocklist_entry = models.VDVBlocklistItem.objects.filter(
             item_type=models.VDVBlocklistItem.ITEM_BERECHTIGUNG,
             org_id=self.authorization_org_id,
             item_id=self.authorization_id,
         ).order_by("-instance_counter").first()
         if blocklist_entry:
-            if blocklist_entry.lock_mode != models.VDVBlocklistItem.LOCK_MODE_UNLOCK:
-                return True
-        return False
+            return blocklist_entry.get_lock_mode_display()
+        return None
 
     @classmethod
     def parse(cls, data) -> "Authorization":

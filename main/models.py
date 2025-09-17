@@ -835,9 +835,9 @@ class VDVBlocklistItem(models.Model):
     ITEM_NUTZERMEDIUM = "nm"
     ITEM_BERECHTIGUNG = "ber"
 
-    LOCK_MODE_UNKNOWN = 0
-    LOCK_MODE_LOCK = 1
-    LOCK_MODE_UNLOCK = 2
+    LOCK_MODE_NORMAL = 0
+    LOCK_MODE_CONFISCATE = 1
+    LOCK_MODE_SUSPICIOUS = 2
 
     ITEM_TYPES = (
         (ITEM_NUTZERMEDIUM, "Nutzermedium"),
@@ -845,9 +845,9 @@ class VDVBlocklistItem(models.Model):
     )
 
     LOCK_MODES = (
-        (LOCK_MODE_UNKNOWN, "Unknown"),
-        (LOCK_MODE_LOCK, "Lock"),
-        (LOCK_MODE_UNLOCK, "Unlock"),
+        (LOCK_MODE_NORMAL, "Normal"),
+        (LOCK_MODE_CONFISCATE, "Confiscate"),
+        (LOCK_MODE_SUSPICIOUS, "Suspicious"),
     )
 
     item_type = models.CharField(max_length=10, choices=ITEM_TYPES, db_index=True)
