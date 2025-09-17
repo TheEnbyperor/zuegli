@@ -2696,7 +2696,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         issued_at = ticket_data.ticket.transaction_time.as_datetime()
 
         pass_json["expirationDate"] = validity_end.isoformat()
-        pass_json["voided"] = ticket_data.is_revoked()
+        pass_json["voided"] = ticket_data.revoked_status() is not None
         pass_fields = {
             "headerFields": [],
             "primaryFields": [],
