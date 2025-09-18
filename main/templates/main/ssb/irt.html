@@ -1,0 +1,120 @@
+{% load i18n %}
+<h2 class="govuk-heading-m">{% trans "Integrated reservation ticket" %}</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PNR</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.pnr }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Issuing date" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.issuing_date|date:"F d, Y" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Specimen" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.specimen %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Ticket type" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.sub_type == 0 %}
+                {% trans "Reservation only" %}
+            {% elif ticket.data.sub_type == 1 %}
+                {% trans "Reservation + ticket" %}
+            {% elif ticket.data.sub_type == 2 %}
+                {% trans "Boarding pass" %}
+            {% else %}
+                <code>{{ ticket.data.sub_type }}</code>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Number of adults" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.num_adults }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Number of children" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.num_children }}</dd>
+    </div>
+    {% if ticket.data.travel_class %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Travel class" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.travel_class == 1 %}
+                    {% trans "First" %}
+                {% elif ticket.data.travel_class == 2 %}
+                    {% trans "Second" %}
+                {% else %}
+                    <code>{{ ticket.data.travel_class }}</code>
+                {% endif %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.station_code_table %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Station code table" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.station_code_table }}</code></dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "From station" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/ssb/station.html" with station=ticket.data.departure_station %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "To station" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/ssb/station.html" with station=ticket.data.arrival_station %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Departure time" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.departure|date:"F d, Y H:i" }}</dd>
+    </div>
+    {% if ticket.data.train_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Train number" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.train_number }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.coach_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Coach" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.coach_number }}</dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.seat_number %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Seat" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.seat_number }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Overbooked" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.overbooked %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    {% if ticket.data.information_message %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Information message" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.information_message }}</code></dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.extra_text %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Extra text" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.extra_text }}</dd>
+        </div>
+    {% endif %}
+</dl>

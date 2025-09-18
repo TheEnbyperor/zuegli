@@ -5,6 +5,7 @@ import json
 STATIONS = None
 UIC_STATIONS = None
 FINNISH_STATIONS = None
+SZ_STATIONS = None
 
 def get_stations_list() -> typing.Dict[str, typing.Any]:
     global STATIONS
@@ -41,6 +42,18 @@ def get_finnish_stations_list() -> typing.Dict[str, typing.Any]:
         FINNISH_STATIONS = json.load(f)
 
     return FINNISH_STATIONS
+
+def get_sz_stations_list() -> typing.Dict[str, typing.Any]:
+    global SZ_STATIONS
+
+    if SZ_STATIONS:
+        return SZ_STATIONS
+
+    uic_storage = django.core.files.storage.storages["uic-data"]
+    with uic_storage.open("sz-stations.json", "r") as f:
+        SZ_STATIONS = json.load(f)
+
+    return SZ_STATIONS
 
 
 def get_station_by_uic(code) -> typing.Optional[dict]:
@@ -83,6 +96,13 @@ def get_station_by_finland(code) -> typing.Optional[dict]:
     if i:
         station = get_finnish_stations_list()["stations"][i]
         return get_station_by_uic(1000000 + station["stationUICCode"])
+    return None
+
+
+def get_station_by_sz(code) -> typing.Optional[dict]:
+    code = str(code)
+    if uic_code := get_sz_stations_list().get(code):
+        return get_station_by_uic(uic_code)
     return None
 
 # DB is stupid and uses the wrong codes sometimes

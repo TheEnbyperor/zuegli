@@ -19,3 +19,5 @@ media/
 /.direnv
 /dtvg-certs
 main/management/commands/dticket-fraud.py
+data/sz
+scripts/convert-sz-data.py

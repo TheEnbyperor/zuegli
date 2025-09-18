@@ -4,9 +4,11 @@ import uuid
 import json
 import pathlib
 import dataclasses
+import django.core.files.storage
 from . import rics, stations
 
 DB_ABBR = None
+SZ_ROUTES = None
 ROOT_DIR = pathlib.Path(__file__).parent
 
 
@@ -20,6 +22,18 @@ def get_db_abbr():
         DB_ABBR = json.load(f)
 
     return DB_ABBR
+
+def get_sz_route_list() -> typing.Dict[str, typing.Any]:
+    global SZ_ROUTES
+
+    if SZ_ROUTES:
+        return SZ_ROUTES
+
+    uic_storage = django.core.files.storage.storages["uic-data"]
+    with uic_storage.open("sz-routes.json", "r") as f:
+        SZ_ROUTES = json.load(f)
+
+    return SZ_ROUTES
 
 
 class Point:
@@ -384,3 +398,25 @@ class FlexVia:
 
         self.out.append("}")
         return "\n".join(self.out)
+
+
+def get_route_by_sz(code) -> typing.Optional[str]:
+    code = str(code)
+    uic_codes = get_sz_route_list().get(code)
+    if not uic_codes:
+        return None
+
+    out = []
+    out.append("digraph {")
+    out.append("rankdir=\"LR\";")
+
+    for station in uic_codes:
+        s = stations.get_station_by_uic(station)
+        out.append(f"station_{int(station)} [label=\"{s['name']}\", shape=\"box\", style=\"rounded\"]")
+
+    for i, station in enumerate(uic_codes[1:]):
+        out.append(f"station_{int(uic_codes[i])} -> station_{int(station)}")
+
+    out.append("}")
+
+    return "\n".join(out)

@@ -12,13 +12,31 @@ class Station:
     station_type: int
     station_id: int
 
+
+@dataclasses.dataclass
+class Extra:
+    type_of_addon: int
+    extension_type: int
+    extension_train_type: int
+    product_id: int
+    price: decimal.Decimal
+    unique_extra_id: int
+    start_station: int
+    end_station: int
+    validity_date: datetime.datetime
+    train_number: typing.Optional[int]
+
+    def price_str(self):
+        return f"{self.price:.2f} €"
+
+
 @dataclasses.dataclass
 class Ticket:
     format_type: int
     tariff_location_id: int
     product_id: int
     status_id: int
-    reference: int
+    unique_ticket_id: int
     bill_number: int
     price: decimal.Decimal
     total_price: decimal.Decimal
@@ -31,6 +49,7 @@ class Ticket:
     distance: decimal.Decimal
     one_way: bool
     reprint_number: int
+    extras: typing.List[Extra]
 
     @staticmethod
     def type():
@@ -38,7 +57,7 @@ class Ticket:
 
     @property
     def pnr(self):
-        return str(self.reference)
+        return str(self.unique_ticket_id)
 
     @staticmethod
     def parse_dt(data: int):
@@ -60,7 +79,7 @@ class Ticket:
         )
 
     @classmethod
-    def parse(cls, data: util.BitStream):
+    def parse(cls, data: util.BitStream, version: int):
         stations = []
         if t := data.read_int(272, 274):
             stations.append(Station(
@@ -88,24 +107,42 @@ class Ticket:
                 station_id=data.read_int(402, 432),
             ))
 
+        extras = []
+        if version >= 3:
+            for extra in range(0, data.read_int(464, 472)):
+                offset = 196 * extra
+                extras.append(Extra(
+                    type_of_addon=data.read_int(472 + offset, 480 + offset),
+                    extension_type=data.read_int(480 + offset, 488 + offset),
+                    extension_train_type=data.read_int(488 + offset, 496 + offset),
+                    product_id=data.read_int(496 + offset, 512 + offset),
+                    price=decimal.Decimal(data.read_int(512 + offset, 528 + offset)) / decimal.Decimal(100),
+                    unique_extra_id=data.read_int(528 + offset, 576 + offset),
+                    start_station=data.read_int(576 + offset, 608 + offset),
+                    end_station=data.read_int(608 + offset, 640 + offset),
+                    validity_date=cls.parse_dt(data.read_int(640 + offset, 672 + offset)),
+                    train_number=data.read_int(672 + offset, 688 + offset),
+                ))
+
         return cls(
             format_type=data.read_int(0, 8),
             tariff_location_id=data.read_int(8, 24),
             product_id=data.read_int(24, 40),
             status_id=data.read_int(40, 56),
-            reference=data.read_int(56, 104),
+            unique_ticket_id=data.read_int(56, 104),
             bill_number=data.read_int(104, 136),
             price=decimal.Decimal(data.read_int(136, 152)) / decimal.Decimal(100),
             total_price=decimal.Decimal(data.read_int(152, 168)) / decimal.Decimal(100),
             num_travellers=data.read_int(168, 176),
             discount_id=data.read_int(176, 192),
-            valid_from=Ticket.parse_dt(data.read_int(192, 224)),
-            valid_to=Ticket.parse_dt(data.read_int(224, 256)),
+            valid_from=cls.parse_dt(data.read_int(192, 224)),
+            valid_to=cls.parse_dt(data.read_int(224, 256)),
             service_provider=data.read_int(256, 272),
             stations=stations,
             distance=decimal.Decimal(data.read_int(432, 448)) / decimal.Decimal(100),
             one_way=bool(data.read_int(448, 456)),
             reprint_number=data.read_int(456, 464),
+            extras=extras,
         )
 
     def price_str(self):
