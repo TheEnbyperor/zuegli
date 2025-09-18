@@ -1,0 +1,223 @@
+{% load i18n rics %}
+<h2 class="govuk-heading-m">Slovenske železnice ticket</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Format type</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.format_type }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Tariff location ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.tariff_location_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Product</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.product_str }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Price level</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.status_str }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Travel class</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.travel_class }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Unique ID</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.unique_ticket_id }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Bill number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.bill_number }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Unit price</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.price_str }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Total price</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.total_price_str }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Number of travellers</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.num_travellers }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Discount ID</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.discount_id }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid from</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y H:i:s e" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Valid until</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.valid_to|date:"F d, Y H:i:s e" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Service provider</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.service_provider }}</dd>
+    </div>
+    {% if ticket.data.stations %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Stations</dt>
+            <dd class="govuk-summary-list__value">
+                {% for station in ticket.data.stations %}
+                    {% if station.station_type == 1 %}
+                        {% with graph=station.station_id|sz_as_graphviz %}
+                            <div id="{{ graph.0 }}" class="route-graph"></div>
+                            <script>
+                                window.addEventListener('load', function () {
+                                    const graph = `{{ graph.1|safe }}`;
+                                    Viz.instance().then(function (viz) {
+                                        const svg = viz.renderSVGElement(graph, {
+                                            graphAttributes: {
+                                                fontname: "GDS Transport",
+                                                fontsize: 12,
+                                            },
+                                            nodeAttributes: {
+                                                fontname: "GDS Transport",
+                                                fontsize: 12,
+                                            }
+                                        });
+                                        document.getElementById('{{ graph.0 }}').appendChild(svg);
+                                    });
+                                });
+                            </script>
+                        {% endwith %}
+                    {% else %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__content">
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Station type</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ station.station_type }}
+                                        </dd>
+                                    </div>
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">ID</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ station.station_id }}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Distance</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.distance }} km</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">One way</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.one_way %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reprint number</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.reprint_number }}</dd>
+    </div>
+    {% if ticket.data.extras %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extras</dt>
+            <dd class="govuk-summary-list__value">
+                {% for extra in ticket.data.extras %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Extra #{{ forloop.counter }}
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Type of addon</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.type_of_addon }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Unique ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ extra.unique_extra_id }}</code>
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Extension type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.extension_type }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Extension train type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.extension_train_type }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Product ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.product_id }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Price</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.price_str }}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Start station</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% with s=extra.start_station|get_station:"sz" %}
+                                            {% if s %}
+                                                {% include "main/uic/station.html" with station=s %}
+                                            {% else %}
+                                                <code>{{ extra.start_station }}</code>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">End station</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% with s=extra.end_station|get_station:"sz" %}
+                                            {% if s %}
+                                                {% include "main/uic/station.html" with station=s %}
+                                            {% else %}
+                                                <code>{{ extra.end_station }}</code>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Date</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ extra.validity_date|date:"F d, Y" }}
+                                    </dd>
+                                </div>
+                                {% if extra.train_number %}
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Train number</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ extra.train_number }}
+                                        </dd>
+                                    </div>
+                                {% endif %}
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
+            </dd>
+        </div>
+    {% endif %}
+</dl>

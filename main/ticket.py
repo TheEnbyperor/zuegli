@@ -695,7 +695,12 @@ class SSBTicket:
         hd.update(b"ssb")
         hd.update(self.envelope.issuer_rics.to_bytes(8, "big"))
         hd.update(self.envelope.ticket_type.to_bytes(8, "big"))
-        hd.update(self.data.pnr.encode("utf-8"))
+        if isinstance(self.data, ssb.sz.Ticket):
+            hd.update(self.data.unique_ticket_id.to_bytes(8, "big"))
+            for e in self.data.extras:
+                hd.update(e.unique_extra_id.to_bytes(8, "big"))
+        else:
+            hd.update(self.data.pnr.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1636,7 +1641,7 @@ def parse_ticket_ssb(ticket_bytes: bytes, context: TicketContexts) -> SSBTicket:
     elif envelope.issuer_rics == 1184 and envelope.ticket_type == 21:
         data = ssb.ns_keycard.Keycard.parse(envelope.data)
     elif envelope.issuer_rics == 1179 and envelope.ticket_type == 21:
-        data = ssb.sz.Ticket.parse(envelope.data)
+        data = ssb.sz.Ticket.parse(envelope.data, envelope.version)
     else:
         raise TicketError(
             title="Unsupported SSB ticket type",

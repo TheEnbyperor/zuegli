@@ -45,6 +45,8 @@ def get_station(value, code_type):
             return uic.stations.get_station_by_benerail(value)
         elif code_type == "finland":
             return uic.stations.get_station_by_finland(value)
+        elif code_type == "sz":
+            return uic.stations.get_station_by_sz(value)
         elif code_type == "uic":
             return uic.stations.get_station_by_uic(value)
     elif isinstance(code_type, dict):
@@ -201,6 +203,12 @@ def via_as_graphviz(value):
 def flex_via_as_graphviz(value):
     via = uic.parse_via.FlexVia.parse(value)
     return uuid.uuid4(), via.to_graph()
+
+
+@register.filter(name="sz_as_graphviz")
+def sz_as_graphviz(value):
+    via = uic.parse_via.get_route_by_sz(value)
+    return uuid.uuid4(), via
 
 
 @register.filter(name="vdv_org_id")
