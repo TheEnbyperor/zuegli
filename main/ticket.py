@@ -272,7 +272,9 @@ class UICTicket:
             ticket = self.flex.data["transportDocument"][0]["ticket"][1]
             hd.update(b"reservierung")
             hd.update(self.flex_issuer_id())
-            if "referenceIA5" in ticket:
+            if self.flex.data["issuingDetail"].get("securityProviderNum") == 1183:
+                hd.update(self.flex.data["issuingDetail"].get("issuerPNR", "").encode("utf-8"))
+            elif "referenceIA5" in ticket:
                 hd.update(ticket["referenceIA5"].encode("utf-8"))
             elif "referenceNum" in ticket:
                 hd.update(str(ticket["referenceNum"]).encode("utf-8"))
