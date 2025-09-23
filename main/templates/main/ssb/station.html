@@ -23,6 +23,14 @@
         HAFAS: <code>{{ station.id }}</code>
     {% endif %}
 {% endwith %}
+{% elif station.type == "uic_sncf" %}
+{% with s=station.id|get_station:"uic_sncf" %}
+    {% if s %}
+        {% include "main/uic/station.html" with station=s %}
+    {% else %}
+        UIC (SNCF): <code>{{ station.id }}</code>
+    {% endif %}
+{% endwith %}
 {% elif station.type == "other" %}
 Other: <code>{{ station.id }}</code>
 {% elif station.type == "name" %}

@@ -41,6 +41,8 @@ def get_station(value, code_type):
             return uic.stations.get_station_by_db(value)
         elif code_type == "sncf":
             return uic.stations.get_station_by_sncf(value)
+        elif code_type == "uic_sncf":
+            return uic.stations.get_station_by_uic_sncf(value)
         elif code_type == "benerail":
             return uic.stations.get_station_by_benerail(value)
         elif code_type == "finland":

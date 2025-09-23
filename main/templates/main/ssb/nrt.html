@@ -45,6 +45,8 @@
                     {% trans "First" %}
                 {% elif ticket.data.travel_class == 2 %}
                     {% trans "Second" %}
+                {% elif ticket.data.travel_class == 5 and ticket.envelope.issuer_rics == 1187 %}
+                    {% trans "Fluo Jeune - Second" %}
                 {% else %}
                     <code>{{ ticket.data.travel_class }}</code>
                 {% endif %}
@@ -183,6 +185,21 @@
                             </dd>
                         </div>
                     {% endif %}
+                </dl>
+            </dd>
+        </div>
+    {% endif %}
+    {% if ticket.data.sncf_data %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "SNCF Data" %}</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Price" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.data.sncf_data.price_str }}
+                        </dd>
+                    </div>
                 </dl>
             </dd>
         </div>
