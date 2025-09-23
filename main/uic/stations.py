@@ -74,6 +74,12 @@ def get_station_by_db(code) -> typing.Optional[dict]:
     return None
 
 
+def get_station_by_uic_sncf(code) -> typing.Optional[dict]:
+    if i := get_stations_list()["uic_sncf_codes"].get(str(code)):
+        return get_stations_list()["stations"][i]
+    return None
+
+
 def get_station_by_sncf(code) -> typing.Optional[dict]:
     if i := get_stations_list()["sncf_ids"].get(str(code)):
         return get_stations_list()["stations"][i]

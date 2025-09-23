@@ -59,6 +59,9 @@ class IntegratedReservationTicket:
                 if station_code_table == 1:
                     departure_station = util.Station(id=data.read_int(125, 153), type="uic")
                     arrival_station = util.Station(id=data.read_int(153, 181), type="uic")
+                    if issuer_rics == 1187:
+                        departure_station.type = "uic_sncf"
+                        arrival_station.type = "uic_sncf"
                 else:
                     departure_station = util.Station(id=data.read_int(125, 153), type="other")
                     arrival_station = util.Station(id=data.read_int(153, 181), type="other")

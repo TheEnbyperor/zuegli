@@ -1,8 +1,9 @@
 import dataclasses
 import datetime
+import decimal
 import typing
 from django.utils import timezone
-from . import util, sncb, cd
+from . import util, sncb, cd, sncf
 from .. import ticket
 
 @dataclasses.dataclass
@@ -23,6 +24,7 @@ class NonReservationTicket:
     extra_text: str
     sncb_data: typing.Optional[sncb.SNCBData]
     cd_data: typing.Optional[cd.CDData]
+    sncf_data: typing.Optional[sncf.SNCFData]
 
     @staticmethod
     def type():
@@ -55,6 +57,9 @@ class NonReservationTicket:
                 if station_code_table == 1:
                     departure_station = util.Station(id=data.read_int(142, 170), type="uic")
                     arrival_station = util.Station(id=data.read_int(170, 198), type="uic")
+                    if issuer_rics == 1187:
+                        departure_station.type = "uic_sncf"
+                        arrival_station.type = "uic_sncf"
                 else:
                     departure_station = util.Station(id=data.read_int(142, 170), type="other")
                     arrival_station = util.Station(id=data.read_int(170, 198), type="other")
@@ -70,9 +75,10 @@ class NonReservationTicket:
                     departure_station = util.Station(id=data.read_string(138, 168), type="name")
                     arrival_station = util.Station(id=data.read_string(168, 198), type="name")
 
-        extra_text = data.read_string(212, 434)
+        extra_text = data.read_string1(212, 434)
         sncb_data = None
         cd_data = None
+        sncf_data = None
         if issuer_rics == 1088:
             sncb_data = sncb.SNCBData.parse(extra_text, context)
             if sncb_data:
@@ -81,6 +87,11 @@ class NonReservationTicket:
             cd_data = cd.CDData.parse(extra_text)
             if cd_data:
                 extra_text = ""
+        elif issuer_rics == 1187:
+            extra_text = ""
+            sncf_data = sncf.SNCFData(
+                price=decimal.Decimal(data.read_int(344, 376)) / decimal.Decimal(100),
+            )
 
         return cls(
             specimen=data.read_bool(14),
@@ -99,4 +110,5 @@ class NonReservationTicket:
             extra_text=extra_text,
             sncb_data=sncb_data,
             cd_data=cd_data,
+            sncf_data=sncf_data,
         )

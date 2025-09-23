@@ -78,6 +78,7 @@ def download_data():
     out = {
         "stations": [],
         "uic_codes": {},
+        "uic_sncf_codes": {},
         "db_ids": {},
         "sncf_ids": {},
         "benerail_ids": {}
@@ -95,6 +96,8 @@ def download_data():
         i = len(out["stations"]) - 1
         if row["uic"]:
             out["uic_codes"][row["uic"]] = i
+        if row["uic8_sncf"]:
+            out["uic_sncf_codes"][row["uic8_sncf"]] = i
         if row["db_id"]:
             out["db_ids"][row["db_id"]] = i
         if row["benerail_id"]:
