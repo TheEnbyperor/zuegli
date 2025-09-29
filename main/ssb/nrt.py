@@ -6,6 +6,7 @@ from django.utils import timezone
 from . import util, sncb, cd, sncf
 from .. import ticket
 
+
 @dataclasses.dataclass
 class NonReservationTicket:
     specimen: bool
@@ -89,8 +90,19 @@ class NonReservationTicket:
                 extra_text = ""
         elif issuer_rics == 1187:
             extra_text = ""
+            via = data.read_int(268, 296)
             sncf_data = sncf.SNCFData(
-                price=decimal.Decimal(data.read_int(344, 376)) / decimal.Decimal(100),
+                network_id=data.read_int(212, 236),
+                contract_provider=data.read_int(236, 244),
+                tariff_code=data.read_string(244, 268),
+                via=via if via else None,
+                validity_zones=sncf.parse_bitmap(data.read_bytes(296, 360)),
+                price=decimal.Decimal(data.read_int(360, 376)) / decimal.Decimal(100),
+                payment_method=data.read_int(376, 387),
+                retail_channel=data.read_string(387, 399),
+                distance_km=data.read_int(399, 415),
+                terminal_id=data.read_string(415, 433),
+                one_way_ticket=data.read_bool(433),
             )
 
         return cls(
