@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n rics %}
 <h2 class="govuk-heading-m">{% trans "Non-reservation ticket" %}</h2>
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
@@ -45,8 +45,10 @@
                     {% trans "First" %}
                 {% elif ticket.data.travel_class == 2 %}
                     {% trans "Second" %}
+                {% elif ticket.data.travel_class == 1 and ticket.envelope.issuer_rics == 1187 %}
+                    {% trans "First" %}
                 {% elif ticket.data.travel_class == 5 and ticket.envelope.issuer_rics == 1187 %}
-                    {% trans "Fluo Jeune - Second" %}
+                    {% trans "Second" %}
                 {% else %}
                     <code>{{ ticket.data.travel_class }}</code>
                 {% endif %}
@@ -195,9 +197,119 @@
             <dd class="govuk-summary-list__value">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Network" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% with network=ticket.data.sncf_data.network_id|dbr_network_id %}
+                                <dl class="govuk-summary-list">
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">Country</dt>
+                                        <dd class="govuk-summary-list__value">
+                                            {{ network.country }}
+                                        </dd>
+                                    </div>
+                                    {% if network.network_name %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Name</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ network.network_name }}
+                                            </dd>
+                                        </div>
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ network.network_id }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                </dl>
+                            {% endwith %}
+                        </dd>
+                    </div>
+                    {% with contract_provider=ticket.data.sncf_data.contract_provider_str %}
+                        {% if contract_provider %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Contract provider" %}</dt>
+                                <dd class="govuk-summary-list__value">{{ contract_provider }}</dd>
+                            </div>
+                        {% else %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">{% trans "Contract provider ID" %}</dt>
+                                <dd class="govuk-summary-list__value">
+                                    <code>{{ ticket.data.sncf_data.contract_provider }}</code></dd>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Tariff" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ ticket.data.sncf_data.tariff_code }}</code>
+                        </dd>
+                    </div>
+                    {% if ticket.data.sncf_data.via %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">{% trans "Via" %}</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% with s=ticket.data.sncf_data.via|get_station:"uic_sncf" %}
+                                    {% if s %}
+                                        {% include "main/uic/station.html" with station=s %}
+                                    {% else %}
+                                        UIC (SNCF): <code>{{ station.id }}</code>
+                                    {% endif %}
+                                {% endwith %}
+                            </dd>
+                        </div>
+                    {% endif %}
+                    {% if ticket.data.sncf_data.validity_zones %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">{% trans "Validity zones" %}</dt>
+                            <dd class="govuk-summary-list__value">
+                                <ul>
+                                    {% for zone in ticket.data.sncf_data.validity_zones %}
+                                        <li>{{ zone }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                        </div>
+                    {% endif %}
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">{% trans "Price" %}</dt>
                         <dd class="govuk-summary-list__value">
                             {{ ticket.data.sncf_data.price_str }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Payment method" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ ticket.data.sncf_data.payment_method }}</code>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Retail channel" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.data.sncf_data.retail_channel_str }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Travel distance" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.data.sncf_data.distance_km }}km
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Terminal ID" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ ticket.data.sncf_data.terminal_id }}</code>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "One-way ticket" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.sncf_data.one_way_ticket %}
+                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                            {% endif %}
                         </dd>
                     </div>
                 </dl>

@@ -432,3 +432,40 @@ def en1545_transport_type(value: int):
         return "Furnicular"
     else:
         return f"Unknown - {value}"
+
+FRANCE_NETWORK_IDS = {
+    "502": "Auvergne-Rhône-Alpes",
+    "922": "Bourgogne-Franche-Comté",
+    "908": "Bretagne",
+    "072": "Centre-Val de Loire",
+    "910": "Corse",
+    "915": "Grand Est",
+    "000": "Hauts-de-France",
+    "901": "Île-de-France",
+    "912": "Normandie",
+    "921": "Nouvelle-Aquitaine",
+    "924": "Occitanie",
+    "917": "Pays de La Loire",
+    "920": "Provence-Alpes-Côte d'Azur"
+}
+
+@register.filter(name="intercode_network_id")
+def intercode_network_id(value: bytes):
+    value = value.hex()
+    country = int(value[:3], 10)
+    network = value[3:]
+    return {
+        "country": iso3166.countries_by_numeric.get(str(country)).name,
+        "network_id": network,
+        "network_name": FRANCE_NETWORK_IDS.get(network) if country == 250 else None,
+    }
+
+@register.filter(name="dbr_network_id")
+def dbr_network_id(value: int):
+    country = value // 1000
+    network = value % 1000
+    return {
+        "country": iso3166.countries_by_numeric.get(str(country)).name,
+        "network_id": network,
+        "network_name": FRANCE_NETWORK_IDS.get(f"{network:03d}") if country == 250 else None,
+    }

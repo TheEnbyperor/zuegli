@@ -5,11 +5,38 @@
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Version</dt>
-                <dd class="govuk-summary-list__value">v{{ obj.data.intercodeVersion }}.{{ obj.data.intercodeInstanciation }}</dd>
+                <dd class="govuk-summary-list__value">
+                    v{{ obj.data.intercodeVersion }}.{{ obj.data.intercodeInstanciation }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Network ID</dt>
-                <dd class="govuk-summary-list__value">{{ obj.data.networkId|as_hex }}</dd>
+                <dt class="govuk-summary-list__key">Network</dt>
+                <dd class="govuk-summary-list__value">
+                    {% with network=obj.data.networkId|intercode_network_id %}
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Country</dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ network.country }}
+                                </dd>
+                            </div>
+                            {% if network.network_name %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Name</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ network.network_name }}
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">ID</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <code>{{ network.network_id }}</code>
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    {% endwith %}
+                </dd>
             </div>
             {% if obj.data.productRetailer %}
                 <div class="govuk-summary-list__row">
