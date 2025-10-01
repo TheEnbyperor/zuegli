@@ -74,6 +74,10 @@ def update_abo_tickets(abo_id):
                 "id": "ticketbarcode"
             }, recursive=True)
             if not barcode_elm:
+                barcode_elm = ticket_layout.find("img", attrs={
+                    "id": "ticketbarcode"
+                }, recursive=True)
+            if not barcode_elm:
                 logger.error("Could not find barcode element")
                 continue
             barcode_url = barcode_elm.attrs["src"]
