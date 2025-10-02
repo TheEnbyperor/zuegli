@@ -184,6 +184,19 @@ class Ticket(models.Model):
     def public_id(self):
         return self.pk.upper()[0:8]
 
+    def admin_issuer_id(self):
+        active_instance = self.active_instance()
+        if isinstance(active_instance, VDVTicketInstance):
+            return f"VDV:{active_instance.ticket_org_id}"
+        elif isinstance(active_instance, UICTicketInstance):
+            return f"UIC:{active_instance.distributor_rics}"
+        elif isinstance(active_instance, RSPTicketInstance):
+            return f"RSP:{active_instance.issuer_id}"
+        else:
+            return ""
+
+    admin_issuer_id.short_description = "Issuer ID"
+
     def active_instance(self):
         now = timezone.now()
         if ticket_instance := self.uic_instances.filter(validity_start__lte=now).order_by("-validity_end").first():
