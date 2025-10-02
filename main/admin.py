@@ -153,6 +153,7 @@ class TicketAdmin(admin.ModelAdmin):
     view_on_site = True
     list_display = [
         "id",
+        "admin_issuer_id",
         "ticket_type",
         "last_updated",
         "created",
