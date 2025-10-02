@@ -1,0 +1,88 @@
+{
+  "retail_generator_id": {
+    "0": {
+      "name": "Valeur réservée à un usage futur",
+      "siren": null
+    },
+    "1": {
+      "name": "Région Grand Est",
+      "siren": "200 052 264"
+    },
+    "2": {
+      "name": "Région Auvergne-Rhône-Alpes",
+      "siren": "200 053 767"
+    },
+    "3": {
+      "name": "Nouvelle-Aquitaine Mobilités",
+      "siren": "200 081 735"
+    },
+    "4": {
+      "name": "Ministère de l'aménagement du territoire et de la décentralisation - DGITM / SDMINT",
+      "siren": "130 016 728"
+    }
+  },
+  "retail_server_id": {
+    "0": {
+      "name": "Valeur réservée à un usage futur",
+      "siren": null
+    },
+    "1": {
+      "name": "Monkey Factory",
+      "siren": "802 619 866"
+    },
+    "2": {
+      "name": "SNCF Voyageurs",
+      "siren": "519 037 584"
+    },
+    "3": {
+      "name": "Airweb",
+      "siren": "428 152 607"
+    },
+    "4": {
+      "name": "Nouvelle-Aquitaine Mobilités",
+      "siren": "200 081 735"
+    },
+    "5": {
+      "name": "Ministère de l'aménagement du territoire et de la décentralisation - DGITM / SDMINT",
+      "siren": "130 016 728"
+    }
+  },
+  "retailer_id": {
+    "0": {
+      "name": "Valeur réservée à un usage futur",
+      "siren": null
+    },
+    "1": {
+      "name": "Monkey Factory",
+      "siren": "802 619 866"
+    },
+    "2": {
+      "name": "SNCF Voyageurs",
+      "siren": "519 037 584"
+    },
+    "3": {
+      "name": "Airweb",
+      "siren": "428 152 607"
+    },
+    "4": {
+      "name": "SNCF Connect",
+      "siren": "431 810 621"
+    },
+    "5": {
+      "name": "DOCAPOSTE APPLICAM",
+      "siren": "339 662 603"
+    },
+    "6": {
+      "name": "Ministère de l'aménagement du territoire et de la décentralisation - DGITM / SDMINT",
+      "siren": "130 016 728"
+    },
+    "7": {
+      "name": "Nouvelle-Aquitaine Mobilités",
+      "siren": "200 081 735"
+    },
+    "8": {
+      "name": "Île de la Réunion Mobilités",
+      "siren": "200 045 276"
+    }
+  }
+}

@@ -469,3 +469,21 @@ def dbr_network_id(value: int):
         "network_id": network,
         "network_name": FRANCE_NETWORK_IDS.get(f"{network:03d}") if country == 250 else None,
     }
+
+
+@register.filter(name="intercode_retail_generator_id")
+def intercode_retail_generator_id(value: int):
+    intercode_data = uic.sncf.get_intercode_data()
+    return intercode_data["retail_generator_id"].get(str(value))
+
+
+@register.filter(name="intercode_retail_server_id")
+def intercode_retail_server_id(value: int):
+    intercode_data = uic.sncf.get_intercode_data()
+    return intercode_data["retail_server_id"].get(str(value))
+
+
+@register.filter(name="intercode_retailer_id")
+def intercode_retailer_id(value: int):
+    intercode_data = uic.sncf.get_intercode_data()
+    return intercode_data["retailer_id"].get(str(value))

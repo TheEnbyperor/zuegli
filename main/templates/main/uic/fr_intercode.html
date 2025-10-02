@@ -52,28 +52,85 @@
                                 </div>
                             {% endif %}
                             {% if obj.data.productRetailer.retailGeneratorId is not None %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Generator ID</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {{ obj.data.productRetailer.retailGeneratorId }}
-                                    </dd>
-                                </div>
+                                {% with gen=obj.data.productRetailer.retailGeneratorId|intercode_retail_generator_id %}
+                                    {% if gen %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Generator</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ gen.name }}
+                                            </dd>
+                                        </div>
+                                        {% if gen.siren %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Generator SIREN</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ gen.siren }}</code>
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Generator ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ obj.data.productRetailer.retailGeneratorId }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
                             {% endif %}
                             {% if obj.data.productRetailer.retailServerId is not None %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Server ID</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {{ obj.data.productRetailer.retailServerId }}
-                                    </dd>
-                                </div>
+                                {% with server=obj.data.productRetailer.retailServerId|intercode_retail_server_id %}
+                                    {% if server %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Server</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ server.name }}
+                                            </dd>
+                                        </div>
+                                        {% if server.siren %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Server SIREN</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ server.siren }}</code>
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Server ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ obj.data.productRetailer.retailServerId }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
                             {% endif %}
                             {% if obj.data.productRetailer.retailerId is not None %}
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">Retailer ID</dt>
-                                    <dd class="govuk-summary-list__value">
-                                        {{ obj.data.productRetailer.retailerId }}
-                                    </dd>
-                                </div>
+                                {% with retailer=obj.data.productRetailer.retailerId|intercode_retailer_id %}
+                                    {% if retailer %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Retailer</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ retailer.name }}
+                                            </dd>
+                                        </div>
+                                        {% if retailer.siren %}
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">Retailer SIREN</dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    <code>{{ retailer.siren }}</code>
+                                                </dd>
+                                            </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Retailer ID</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ obj.data.productRetailer.retailerId }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endwith %}
                             {% endif %}
                             {% if obj.data.productRetailer.retailPointId is not None %}
                                 <div class="govuk-summary-list__row">
