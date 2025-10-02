@@ -37,7 +37,10 @@ def update_all():
     ignore_result=True
 )
 def update_abo_tickets(abo_id):
-    abo = models.DBSubscription.objects.get(pk=abo_id)
+    try:
+        abo = models.DBSubscription.objects.get(pk=abo_id)
+    except models.DBSubscription.DoesNotExist:
+        return
     r = session.post("https://dig-aboprod.noncd.db.de/aboticket/refreshmultiple", json={
         "aboTicketCheckRequestList": [{
             "deviceToken": abo.device_token,

@@ -29,7 +29,6 @@ class ApplicationData:
         if not key_version:
             raise VDVNMException("Missing key version")
         key_version = key_version[1]
-
         if len(key_version) != 3:
             raise VDVNMException("Invalid key version")
 
