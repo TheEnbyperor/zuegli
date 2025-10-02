@@ -175,7 +175,7 @@ def registration(request, device_id, ticket_obj, ticket_part, auth_type):
 
 @csrf_exempt
 @check_pass_auth("AttidoPass")
-def registration_attido(request, device_id, ticket_obj, ticket_part):
+def registration_attido(request, device_id, ticket_obj, ticket_part, auth_type):
     if request.method == "POST":
         if request.content_type != "application/json":
             return HttpResponse(status=415)
