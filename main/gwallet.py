@@ -95,9 +95,9 @@ def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
 
 
 def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, str]]:
-    ticket_instance = ticket.active_instance()
+    ticket_instance = ticket.active_instance
     if isinstance(ticket_instance, models.UICTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if ticket_data.flex:
             if len(ticket_data.flex.data.get("transportDocument", [])) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
@@ -121,7 +121,7 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         return "generic", settings.GWALLET_CONF["train_pass_class"]
     elif isinstance(ticket_instance, models.SSBTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
 
         if isinstance(ticket_data.data, ssb.IntegratedReservationTicket) or \
                 isinstance(ticket_data.data, ssb.NonReservationTicket):
@@ -129,7 +129,7 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
         elif isinstance(ticket_data.data, ssb.ns_keycard.Keycard):
             return "generic", settings.GWALLET_CONF["train_pass_class"]
     elif isinstance(ticket_instance, models.RSPTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if isinstance(ticket_data.data, rsp.TicketData):
             return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
         elif isinstance(ticket_data.data, rsp.RailcardData):
@@ -240,10 +240,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             }
         })
 
-    ticket_instance = ticket.active_instance()
+    ticket_instance = ticket.active_instance
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_type = None
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if t := ticket_data.issuing_time():
             issued_at = t.astimezone(pytz.utc)
         else:
@@ -811,7 +811,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             return obj, ticket_type
 
     elif isinstance(ticket_instance, models.VDVTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
 
         validity_start = ticket_data.ticket.validity_start.as_datetime().astimezone(pytz.utc)
         validity_end = ticket_data.ticket.validity_end.as_datetime().astimezone(pytz.utc)
@@ -1019,7 +1019,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         return obj, "generic"
 
     elif isinstance(ticket_instance, models.SSBTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         ticket_type = None
 
         obj["logo"] = {
@@ -1236,7 +1236,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
         }
 
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
 
         if isinstance(ticket_data.data, rsp.TicketData):
             obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_ticket_pass_class']}"

@@ -9,7 +9,7 @@ def uic_signature(apps, schema_editor):
     model = apps.get_model("main", "UICTicketInstance")
     for i in model.objects.all():
         try:
-            t = main.models.UICTicketInstance.as_ticket(i)
+            t = i.as_ticket
         except main.ticket.TicketError:
             traceback.print_exc()
             continue

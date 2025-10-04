@@ -187,7 +187,7 @@ class Ticket(models.Model):
 
     @cached_property
     def admin_issuer_id(self):
-        active_instance = self.active_instance()
+        active_instance = self.active_instance
         if isinstance(active_instance, VDVTicketInstance):
             return f"VDV:{active_instance.ticket_org_id}"
         elif isinstance(active_instance, UICTicketInstance):
