@@ -151,7 +151,7 @@ def view_ticket(request, pk):
     is_saarvv = False
     is_sbahn_berlin = False
     is_db_abo = False
-    active_instance = ticket_obj.active_instance()
+    active_instance = ticket_obj.active_instance
     if isinstance(active_instance, models.VDVTicketInstance):
         if active_instance.ticket_org_id == 6310:
             is_saarvv = True
@@ -169,7 +169,7 @@ def view_ticket(request, pk):
 
     photo_upload_forms = {}
     if rsp_obj := ticket_obj.rsp_instances.first():
-        td = rsp_obj.as_ticket()  # type: ticket.RSPTicket
+        td = rsp_obj.as_ticket # type: ticket.RSPTicket
         if isinstance(td.data, rsp.RailcardData):
             photo_upload_forms["first"] = {
                 "name": td.data.passenger_1_name(),
@@ -378,10 +378,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
     return_pass_type = "generic"
     return_pass_json = None
 
-    ticket_instance = ticket_obj.active_instance()
+    ticket_instance = ticket_obj.active_instance
 
     if isinstance(ticket_instance, models.UICTicketInstance):
-        ticket_data: ticket.UICTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.UICTicket = ticket_instance.as_ticket
         if t := ticket_data.issuing_time():
             issued_at = t.astimezone(pytz.utc)
         else:
@@ -2689,7 +2689,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": issued_at.isoformat(),
             })
     elif isinstance(ticket_instance, models.VDVTicketInstance):
-        ticket_data: ticket.VDVTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.VDVTicket = ticket_instance.as_ticket
 
         validity_start = ticket_data.ticket.validity_start.as_datetime()
         validity_end = ticket_data.ticket.validity_end.as_datetime()
@@ -2898,7 +2898,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         if org_id in VDV_ORG_ID_FG_SECONDARY:
             pass_json["labelColor"] = VDV_ORG_ID_FG_SECONDARY[org_id]
     elif isinstance(ticket_instance, models.RSPTicketInstance):
-        ticket_data: ticket.RSPTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.RSPTicket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -3613,7 +3613,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             have_logo = True
 
     elif isinstance(ticket_instance, models.TS2Instance):
-        ticket_data: ticket.TS2Ticket = ticket_instance.as_ticket()
+        ticket_data: ticket.TS2Ticket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -3668,7 +3668,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         pass_json["labelColor"] = "#D9001A"
 
     elif isinstance(ticket_instance, models.SNCFTicketInstance):
-        ticket_data: ticket.SNCFTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.SNCFTicket = ticket_instance.as_ticket
 
         pass_type = "boardingPass"
 
@@ -3785,7 +3785,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         have_logo = True
 
     elif isinstance(ticket_instance, models.ELBTicketInstance):
-        ticket_data: ticket.ELBTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.ELBTicket = ticket_instance.as_ticket
         validity_end = ticket_data.data.validity_end_time()
         departure_date = ticket_data.data.departure_time()
         pass_type = "boardingPass"
@@ -3935,7 +3935,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         have_logo = True
 
     elif isinstance(ticket_instance, models.SSBTicketInstance):
-        ticket_data: ticket.SSBTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.SSBTicket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -4548,7 +4548,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.envelope.issuer_rics]
 
     elif isinstance(ticket_instance, models.SSB1TicketInstance):
-        ticket_data: ticket.SSB1Ticket = ticket_instance.as_ticket()
+        ticket_data: ticket.SSB1Ticket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -4719,7 +4719,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.ticket.issuer_rics]
 
     elif isinstance(ticket_instance, models.HZPPTicketInstance):
-        ticket_data: ticket.HZPPTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.HZPPTicket = ticket_instance.as_ticket
 
         pass_type = "boardingPass"
         pass_fields["transitType"] = "PKTransitTypeTrain"
@@ -4931,7 +4931,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         add_pkp_img(pkp, "pass/logo-hzpp.png", "logo.png")
         have_logo = True
     elif isinstance(ticket_instance, models.SwissPassTicketInstance):
-        ticket_data: ticket.SwissPassTicket = ticket_instance.as_ticket()
+        ticket_data: ticket.SwissPassTicket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatQR",
@@ -5147,7 +5147,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["labelColor"] = SWISSPASS_FG_SECONDARY[issuer_id]
 
     elif isinstance(ticket_instance, models.IATATicketInstance):
-        ticket_data: ticket.IATATicket = ticket_instance.as_ticket()
+        ticket_data: ticket.IATATicket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -5325,7 +5325,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         })
 
     elif isinstance(ticket_instance, models.BahnBonusInstance):
-        ticket_data: ticket.BahnBonusCode = ticket_instance.as_ticket()
+        ticket_data: ticket.BahnBonusCode = ticket_instance.as_ticket
 
         if ticket_data.data.valid_from:
             validity_start = datetime.datetime.combine(ticket_data.data.valid_from, datetime.time.min)

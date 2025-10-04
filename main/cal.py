@@ -6,9 +6,9 @@ from . import models, templatetags, rsp
 
 
 def supports_calendar(ticket: "models.Ticket") -> bool:
-    ticket_instance = ticket.active_instance()
+    ticket_instance = ticket.active_instance
     if isinstance(ticket_instance, models.UICTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if ticket_data.flex:
             if len(ticket_data.flex.data.get("transportDocument", [])) >= 1:
                 ticket_document = next(map(
@@ -27,11 +27,11 @@ def supports_calendar(ticket: "models.Ticket") -> bool:
                     ):
                         return True
     elif isinstance(ticket_instance, models.RSPTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if isinstance(ticket_data.data, rsp.TicketData):
             return True
     elif isinstance(ticket_instance, models.ELBTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         return ticket_data.data.gtfs_trip() is not None
 
     return False
@@ -60,14 +60,14 @@ def add_time(event, key, dt):
 
 
 def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
-    ticket_instance = ticket.active_instance()
+    ticket_instance = ticket.active_instance
 
     event = icalendar.Event()
     event.add("url", f"{settings.EXTERNAL_URL_BASE}{ticket.get_absolute_url()}")
     event.add("status", "confirmed")
 
     if isinstance(ticket_instance, models.UICTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         if t := ticket_data.issuing_time():
             issued_at = t.astimezone(pytz.utc)
         else:
@@ -201,7 +201,7 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
         else:
             return
     elif isinstance(ticket_instance, models.RSPTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
 
         if isinstance(ticket_data.data, rsp.TicketData):
             validity_start = ticket_data.data.validity_start_time()
@@ -254,7 +254,7 @@ def add_ticket_to_calendar(cal: icalendar.Calendar, ticket: "models.Ticket"):
         else:
             return
     elif isinstance(ticket_instance, models.ELBTicketInstance):
-        ticket_data = ticket_instance.as_ticket()
+        ticket_data = ticket_instance.as_ticket
         gtfs_trip = ticket_data.data.gtfs_trip()
 
         from_station = templatetags.rics.get_station(ticket_data.data.departure_station, "sncf")
