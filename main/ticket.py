@@ -2031,11 +2031,11 @@ def create_ticket_obj(
 
 
 def update_from_barcode(
-        barcode_data: bytes, account: typing.Optional["models.Account"]
+        barcode_data: bytes, account: typing.Optional["models.Account"], force_update: bool = False
 ) -> typing.Tuple["models.Ticket", bool]:
     decoded_ticket = parse_ticket(barcode_data, account=account)
 
-    should_update = False
+    should_update = force_update
     created = False
     ticket_pk = decoded_ticket.pk()
     ticket_obj = models.Ticket.objects.filter(pk=ticket_pk).first()

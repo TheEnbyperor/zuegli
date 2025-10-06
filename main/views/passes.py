@@ -45,7 +45,8 @@ def process_tickets(request, tickets):
         for tb in tickets:
             try:
                 ticket_obj, ticket_created = ticket.update_from_barcode(
-                    tb, request.user.account if request.user.is_authenticated else None
+                    tb, request.user.account if request.user.is_authenticated else None,
+                    force_update=True
                 )
             except ticket.TicketError as e:
                 errors.append({
@@ -4472,7 +4473,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_fields["primaryFields"].append({
                 "key": "card-name",
                 "label": "product-label",
-                "value": ticket_data.data.ticket_type_str()
+                "value": ticket_data.data.product_str()
             })
 
             pass_fields["secondaryFields"].append({
@@ -4497,12 +4498,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "label": "class-code-label",
                     "value": f"class-code-{class_code}-label",
                 })
-
-            pass_fields["backFields"].append({
-                "key": "price-level",
-                "label": "price-level-label",
-                "value": ticket_data.data.price_level_str()
-            })
 
             pass_fields["backFields"].append({
                 "key": "price",
