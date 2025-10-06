@@ -65,7 +65,7 @@ def sbahn_berlin_login(request):
                         "device_id": device_id,
                     }
                 )
-                sbahn_berlin.update_sbahn_berlin_tickets.delay(request.user.account.id)
+                sbahn_berlin.update_sbahn_berlin_tickets.apply_async(args=(request.user.account.id,), queue="celery")
                 return redirect("sbahn_berlin_account")
     else:
         form = forms.EOSLoginForm()

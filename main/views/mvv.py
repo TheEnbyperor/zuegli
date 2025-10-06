@@ -12,7 +12,7 @@ def mvv_login(request):
                 messages.error(request, "Login failed")
             else:
                 messages.success(request, "Login successful")
-                mvv.update_mvv_tickets.delay(request.user.account.id)
+                mvv.update_mvv_tickets.apply_async(args=(request.user.account.id,), queue="celery")
                 return redirect("mvv_account")
     else:
         form = forms.EOSLoginForm()
