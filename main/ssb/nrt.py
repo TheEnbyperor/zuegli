@@ -76,7 +76,7 @@ class NonReservationTicket:
                     departure_station = util.Station(id=data.read_string(138, 168), type="name")
                     arrival_station = util.Station(id=data.read_string(168, 198), type="name")
 
-        extra_text = data.read_string1(212, 434)
+        extra_text = data.read_string(212, 434)
         sncb_data = None
         cd_data = None
         sncf_data = None
