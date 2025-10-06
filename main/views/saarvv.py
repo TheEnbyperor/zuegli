@@ -12,7 +12,7 @@ def saarvv_login(request):
                 messages.error(request, "Login failed")
             else:
                 messages.success(request, "Login successful")
-                saarvv.update_saarvv_tickets.delay(request.user.account.id)
+                saarvv.update_saarvv_tickets.apply_async(args=(request.user.account.id,), queue="celery")
                 return redirect("saarvv_account")
     else:
         form = forms.EOSLoginForm()

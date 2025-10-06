@@ -37,7 +37,7 @@ def hvv_login(request):
                         "device_id": device_id,
                     }
                 )
-                hvv.update_hvv_tickets.delay(request.user.account.id)
+                hvv.update_hvv_tickets.apply_async(args=(request.user.account.id,), queue="celery")
                 return redirect("account")
     else:
         form = forms.EOSLoginForm()
