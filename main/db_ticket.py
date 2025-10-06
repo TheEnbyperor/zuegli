@@ -55,6 +55,9 @@ def update_all():
         if not account.is_db_authenticated():
             continue
 
+        if not oauth.get_token(account, "db"):
+            continue
+
         update_account.delay(account.pk)
 
 
