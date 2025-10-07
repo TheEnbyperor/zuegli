@@ -433,43 +433,40 @@ def en1545_transport_type(value: int):
     else:
         return f"Unknown - {value}"
 
-FRANCE_NETWORK_IDS = {
-    "502": "Auvergne-Rhône-Alpes",
-    "922": "Bourgogne-Franche-Comté",
-    "908": "Bretagne",
-    "072": "Centre-Val de Loire",
-    "910": "Corse",
-    "915": "Grand Est",
-    "000": "Hauts-de-France",
-    "901": "Île-de-France",
-    "912": "Normandie",
-    "921": "Nouvelle-Aquitaine",
-    "924": "Occitanie",
-    "917": "Pays de La Loire",
-    "920": "Provence-Alpes-Côte d'Azur"
-}
+
+def afnor_network_id(value: int):
+    afnor_ids = uic.sncf.get_afnor_ids()
+    country = value // 1000
+    network = value % 1000
+    country_name = iso3166.countries_by_numeric.get(str(country)).name
+    if network == 999:
+        network_name = "Whole country"
+    elif 991 <= network <= 998:
+        network_name = "Test"
+    elif country == 250:
+        if region_name := afnor_ids["region"].get(network):
+            network_name = f"Region {region_name}"
+        elif department_name := afnor_ids["department"].get(network):
+            network_name = f"Département {department_name}"
+        elif authority := afnor_ids["authority"].get(network):
+            network_name = f"{authority['name']} - {authority['org']} ({authority['siren']})"
+        else:
+            network_name = "Unknown"
+    else:
+        network_name = None
+    return {
+        "country": country_name,
+        "network_id": network,
+        "network_name": network_name,
+    }
 
 @register.filter(name="intercode_network_id")
 def intercode_network_id(value: bytes):
-    value = value.hex()
-    country = int(value[:3], 10)
-    network = value[3:]
-    return {
-        "country": iso3166.countries_by_numeric.get(str(country)).name,
-        "network_id": network,
-        "network_name": FRANCE_NETWORK_IDS.get(network) if country == 250 else None,
-    }
+    return afnor_network_id(vdv.util.un_bcd(value))
 
 @register.filter(name="dbr_network_id")
 def dbr_network_id(value: int):
-    country = value // 1000
-    network = value % 1000
-    return {
-        "country": iso3166.countries_by_numeric.get(str(country)).name,
-        "network_id": network,
-        "network_name": FRANCE_NETWORK_IDS.get(f"{network:03d}") if country == 250 else None,
-    }
-
+    return afnor_network_id(value)
 
 @register.filter(name="intercode_retail_generator_id")
 def intercode_retail_generator_id(value: int):
