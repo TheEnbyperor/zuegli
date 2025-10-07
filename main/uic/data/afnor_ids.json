@@ -1,0 +1,1758 @@
+{
+  "region": {
+    "502": "Auvergne-Rhône-Alpes",
+    "922": "Bourgogne-Franche-Comté",
+    "908": "Bretagne",
+    "72": "Centre-Val de Loire",
+    "910": "Corse",
+    "915": "Grand Est",
+    "0": "Hauts-de-France",
+    "901": "Île-de-France",
+    "912": "Normandie",
+    "921": "Nouvelle-Aquitaine",
+    "924": "Occitanie",
+    "917": "Pays de La Loire",
+    "920": "Provence-Alpes-Côte d'Azur",
+    "904": "Alsace",
+    "905": "Auvergne",
+    "906": "Basse-Normandie",
+    "907": "Bourgogne",
+    "909": "Champagne-Ardenne",
+    "911": "Franche-Comté",
+    "913": "Languedoc-Roussillon",
+    "914": "Limousin",
+    "916": "Midi-Pyrénées",
+    "918": "Picardie",
+    "919": "Poitou-Charentes"
+  },
+  "department": {
+    "511": "Ain (01)",
+    "512": "Aisne (02)",
+    "513": "Allier (03)",
+    "514": "Alpes-de-Haute-Provence (04)",
+    "515": "Hautes-Alpes (05)",
+    "516": "Alpes-Maritimes (06)",
+    "517": "Ardèche (07)",
+    "518": "Ardennes (08)",
+    "519": "Ariège (09)",
+    "520": "Aube (10)",
+    "521": "Aude (11)",
+    "522": "Aveyron (12)",
+    "523": "Bouches-du-Rhône (13)",
+    "501": "Calvados (14)",
+    "524": "Cantal (15)",
+    "525": "Charente (16)",
+    "582": "Charente-Maritime (17)",
+    "526": "Cher (18)",
+    "527": "Corrèze (19)",
+    "528": "Côte-d'Or (21)",
+    "529": "Côtes-D'Armor (22)",
+    "530": "Creuse (23)",
+    "531": "Dordogne (24)",
+    "532": "Doubs (25)",
+    "533": "Drôme (26)",
+    "534": "Eure (27)",
+    "535": "Eure-et-Loir (28)",
+    "536": "Finistère (29)",
+    "537": "Haute-Corse (2A)",
+    "538": "Corse-du-Sud (2B)",
+    "539": "Gard (30)",
+    "540": "Haute-Garonne (31)",
+    "541": "Gers (32)",
+    "542": "Gironde (33)",
+    "543": "Hérault (34)",
+    "544": "Ille-et-Vilaine (35)",
+    "545": "Indre (36)",
+    "546": "Indre-et-Loire (37)",
+    "547": "Isère (38)",
+    "548": "Jura (39)",
+    "549": "Landes (40)",
+    "550": "Loir-et-Cher (41)",
+    "551": "Loire (42)",
+    "552": "Haute-Loire (43)",
+    "553": "Loire-Atlantique (44)",
+    "554": "Loiret (45)",
+    "555": "Lot (46)",
+    "556": "Lot-et-Garonne (47)",
+    "557": "Lozère (48)",
+    "558": "Maine-et-Loire (49)",
+    "559": "Manche (50)",
+    "560": "Marne (51),",
+    "561": "Haute-Marne (52)",
+    "562": "Mayenne (53)",
+    "563": "Meurthe-et-Moselle (54)",
+    "564": "Meuse (55)",
+    "565": "Morbihan (56),",
+    "566": "Moselle (57)",
+    "567": "Nièvre (58)",
+    "568": "Nord (59)",
+    "569": "Oise (60)",
+    "570": "Orne (61)",
+    "571": "Pas-de-Calais (62)",
+    "572": "Puy-De-Dôme (63)",
+    "573": "Pyrénées-Atlantiques (64)",
+    "574": "Hautes-Pyrénées (65)",
+    "575": "Pyrénées-Orientales (66)",
+    "591": "Bas-Rhin (67)",
+    "576": "Haut-Rhin (68)",
+    "577": "Rhône (69)",
+    "578": "Haute-Saône (70)",
+    "579": "Saône-et-Loire (71)",
+    "580": "Sarthe (72)",
+    "581": "Savoie (73)",
+    "583": "Haute-Savoie (74)",
+    "584": "Paris (75)",
+    "585": "Seine-Maritime (76)",
+    "586": "Seine-et-Marne (77)",
+    "587": "Yvelines (78)",
+    "588": "Deux-Sèvres (79)",
+    "589": "Somme (80)",
+    "590": "Tarn (81)",
+    "592": "Tarn-et-Garonne (82)",
+    "593": "Var (83)",
+    "594": "Vaucluse (84)",
+    "595": "Vendée (85)",
+    "596": "Vienne (86)",
+    "597": "Haute-Vienne (87)",
+    "598": "Vosges (88)",
+    "599": "Yonne (89)",
+    "600": "Territoire De Belfort (90)",
+    "601": "Essonne (91)",
+    "602": "Hauts-de-Seine (92)",
+    "603": "Seine-Saint-Denis (93)",
+    "604": "Val-de-Marne (94)",
+    "605": "Val-D'Oise (95)",
+    "606": "Guadeloupe (971)",
+    "607": "Martinique (972)",
+    "608": "Guyane (973)",
+    "609": "Réunion (974)",
+    "610": "Mayotte (976)"
+  },
+  "authority": {
+    "201": {
+      "name": "Abbeville",
+      "org": "Communauté d'agglomération de la Baie de Somme",
+      "siren": "200070993"
+    },
+    "267": {
+      "name": "Agde",
+      "org": "Communauté d'agglomération Hérault-Méditerranée",
+      "siren": "243400819"
+    },
+    "301": {
+      "name": "Agen",
+      "org": "Agglomération d'Agen",
+      "siren": "200035459"
+    },
+    "346": {
+      "name": "Aime",
+      "org": "Commune d'Aime-La-Plagne",
+      "siren": "200055762"
+    },
+    "135": {
+      "name": "Aix-Les-Bains",
+      "org": "Communauté d'agglomération du Lac du Bourget",
+      "siren": "247300049"
+    },
+    "3": {
+      "name": "Ajaccio",
+      "org": "Communauté d'agglomération du Pays Ajaccien",
+      "siren": "242010056"
+    },
+    "326": {
+      "name": "Albertville",
+      "org": "Communauté d'agglomération Arlysère",
+      "siren": "200068997"
+    },
+    "4": {
+      "name": "Albi",
+      "org": "Communauté d'agglomération de L'albigeois",
+      "siren": "248100737"
+    },
+    "5": {
+      "name": "Alençon",
+      "org": "Communauté Urbaine d'Alençon",
+      "siren": "246100663"
+    },
+    "111": {
+      "name": "Alès",
+      "org": "Syndicat Mixte des Transports Publics du Bassin d'Alès (Smtba)",
+      "siren": "200003325"
+    },
+    "362": {
+      "name": "Ambérieu-en-Bugey",
+      "org": "Ville d'Ambérieu-en-Bugey",
+      "siren": "210100046"
+    },
+    "6": {
+      "name": "Amiens",
+      "org": "Amiens Métropole",
+      "siren": "248000531"
+    },
+    "7": {
+      "name": "Angers",
+      "org": "Angers Loire Métropole",
+      "siren": "244900015"
+    },
+    "8": {
+      "name": "Angoulême",
+      "org": "Communauté d'agglomération du Grand Angoulême (Comaga)",
+      "siren": "200071827"
+    },
+    "9": {
+      "name": "Annecy",
+      "org": "Grand Annecy Agglomération",
+      "siren": "200066793"
+    },
+    "10": {
+      "name": "Annemasse",
+      "org": "Annemasse-Les Voirons Agglomération",
+      "siren": "200011773"
+    },
+    "136": {
+      "name": "Annonay",
+      "org": "Ca Annonay Rhône Agglo",
+      "siren": "200072015"
+    },
+    "281": {
+      "name": "Antibes",
+      "org": "Communauté d'agglomération de Sophia Antipolis",
+      "siren": "240600585"
+    },
+    "205": {
+      "name": "Arcachon",
+      "org": "Communauté d'agglomération du Bassin d'Arcachon Sud (COBAS)",
+      "siren": "243300563"
+    },
+    "407": {
+      "name": "Argelés-sur-Mer",
+      "org": "Commune d'Argelès-sur-Mer",
+      "siren": "216600080"
+    },
+    "237": {
+      "name": "Argentan",
+      "org": "Ville d'Argentan",
+      "siren": "216100065"
+    },
+    "236": {
+      "name": "Arles",
+      "org": "Communauté d'agglomération Arles, Crau, Camargue, Montagnette",
+      "siren": "241300417"
+    },
+    "11": {
+      "name": "Arras",
+      "org": "Communauté Urbaine d'Arras",
+      "siren": "200033579"
+    },
+    "337": {
+      "name": "Aubenas",
+      "org": "Syndicat Intercommunal de Transport Tout'enbus",
+      "siren": "200016632"
+    },
+    "112": {
+      "name": "Auch",
+      "org": "Grand Auch Cœur de Gascogne Agglomération",
+      "siren": "200066926"
+    },
+    "402": {
+      "name": "Auray",
+      "org": "Auray Quiberon Terre-Atlantique",
+      "siren": "200043123"
+    },
+    "137": {
+      "name": "Aurillac",
+      "org": "Communauté d'agglomération du Bassin d'Aurillac",
+      "siren": "241500230"
+    },
+    "138": {
+      "name": "Autun",
+      "org": "Communauté de Communes du Grand Autunois Morvan",
+      "siren": "200070530"
+    },
+    "139": {
+      "name": "Auxerre",
+      "org": "Communauté de l'Auxerrois",
+      "siren": "248900532"
+    },
+    "329": {
+      "name": "Avanchers (Les)",
+      "org": "Commune des Avanchers-Valmorel",
+      "siren": "217300243"
+    },
+    "13": {
+      "name": "Avignon",
+      "org": "Communauté d'agglomération du Grand Avignon",
+      "siren": "248400251"
+    },
+    "432": {
+      "name": "Ay",
+      "org": "Communauté de Communes de la Grande Vallée de la Marne",
+      "siren": "245100615"
+    },
+    "406": {
+      "name": "Bagnoles de l'Orne",
+      "org": "Ville de Bagnoles de L'Orne Normandie",
+      "siren": "200055812"
+    },
+    "424": {
+      "name": "Bagnols-sur-Cèze",
+      "org": "Communauté d'agglomération du Gard Rhodanien",
+      "siren": "200034692"
+    },
+    "166": {
+      "name": "Bar-Le-Duc",
+      "org": "Communauté d'agglomération de Bar Le duc Sud Meuse",
+      "siren": "200033025"
+    },
+    "14": {
+      "name": "Bastia",
+      "org": "Communauté d'agglomération de Bastia",
+      "siren": "242000354"
+    },
+    "286": {
+      "name": "Baule (La)",
+      "org": "Sredict de de Transpora collectis Routiers de la",
+      "siren": "254402738"
+    },
+    "320": {
+      "name": "Bayeux",
+      "org": "SIVU Transport Urbain de Bayeux Et des Communes Associées",
+      "siren": "200022358"
+    },
+    "15": {
+      "name": "Bayonne",
+      "org": "Syndicat des mobilités Pays Basque Adour",
+      "siren": "256401605"
+    },
+    "104": {
+      "name": "Beaune",
+      "org": "Coamunauté d'agglomération de Beaune-Chagny-Nolay",
+      "siren": "200006682"
+    },
+    "141": {
+      "name": "Beaupreau-En-Mauges",
+      "org": "Mauges Communauté",
+      "siren": "200060010"
+    },
+    "16": {
+      "name": "Beauvais",
+      "org": "Communauté d'agglomération du Beauvaisis",
+      "siren": "200067999"
+    },
+    "17": {
+      "name": "Belfort",
+      "org": "Sentaire de Bees Transports en Commun du Territoire de Belfort",
+      "siren": "259000016"
+    },
+    "224": {
+      "name": "Bellegarde-sur-Valserine",
+      "org": "Ville de Bellegarde-sur-Valserine",
+      "siren": "210100335"
+    },
+    "309": {
+      "name": "Berck-sur-Mer",
+      "org": "Communauté d'agglomération des deux Baies en Montreuillois",
+      "siren": "200069029"
+    },
+    "207": {
+      "name": "Bergerac",
+      "org": "Communauté d'agglomération Bergeracoise",
+      "siren": "200070647"
+    },
+    "366": {
+      "name": "Bernay",
+      "org": "Ville de Bernay",
+      "siren": "212700561"
+    },
+    "18": {
+      "name": "Besançon",
+      "org": "Communauté d'agglomération du Grand Besançon",
+      "siren": "242500361"
+    },
+    "19": {
+      "name": "Béziers",
+      "org": "Communauté d'agglomération Béziers Méditerranée",
+      "siren": "243400769"
+    },
+    "20": {
+      "name": "Blois",
+      "org": "Communauté d'agglomération de Blois - Agglopolys",
+      "siren": "200030385"
+    },
+    "239": {
+      "name": "Bolbec",
+      "org": "Communauté d'agglomération Caux Vallée de Seine",
+      "siren": "200010700"
+    },
+    "199": {
+      "name": "Bollène",
+      "org": "Ville de Bollène",
+      "siren": "218400190"
+    },
+    "417": {
+      "name": "Bonneville",
+      "org": "Syndicat Mixte des 4 Communautés de Communes",
+      "siren": "200031268"
+    },
+    "21": {
+      "name": "Bordeaux",
+      "org": "Bordeaux Métropole",
+      "siren": "243300316"
+    },
+    "22": {
+      "name": "Boulogne-sur-Mer",
+      "org": "Communauté d'agglomération du Boulonnais",
+      "siren": "246200729"
+    },
+    "23": {
+      "name": "Bourg-en-Bresse",
+      "org": "Communauté d'agglomération du Bassin de Bourg-en-Bresse",
+      "siren": "200071751"
+    },
+    "24": {
+      "name": "Bourges",
+      "org": "Syndicat Mixte Intercommunal à Vocation de Transports Urbains Agglomération de Bourges (Agglobus)",
+      "siren": "251801239"
+    },
+    "347": {
+      "name": "Bourg-Saint-Maurice",
+      "org": "Commune de Bourg-Saint-Maurice",
+      "siren": "217300540"
+    },
+    "325": {
+      "name": "Bouzonville",
+      "org": "Commune de Bouzonville",
+      "siren": "215701061"
+    },
+    "421": {
+      "name": "Bressuire",
+      "org": "Communauté d'agglomération du Bocage Bressuirais",
+      "siren": "200040244"
+    },
+    "25": {
+      "name": "Brest",
+      "org": "Brest Métropole",
+      "siren": "242900314"
+    },
+    "105": {
+      "name": "Briançon",
+      "org": "Ville de Briançon",
+      "siren": "210500237"
+    },
+    "451": {
+      "name": "Brignoles",
+      "org": "Communauté d'agglomération Provence Verte",
+      "siren": "200068104"
+    },
+    "26": {
+      "name": "Brive-La-Gaillarde",
+      "org": "Collanauté d'agglomération du Bassin de Brive-La-Gaillarde",
+      "siren": "200043172"
+    },
+    "27": {
+      "name": "Caen",
+      "org": "Communauté Urbaine Caen la Mer",
+      "siren": "200065597"
+    },
+    "132": {
+      "name": "Cahors",
+      "org": "Grand Cahors",
+      "siren": "200023737"
+    },
+    "28": {
+      "name": "Calais",
+      "org": "Syndicat Intercommunal des Transports Urbains de l'agglomération du Calaisis",
+      "siren": "256204033"
+    },
+    "29": {
+      "name": "Cambrai",
+      "org": "Communauté d'agglomération de Cambrai",
+      "siren": "200068500"
+    },
+    "30": {
+      "name": "Cannes",
+      "org": "Communauté d'agglomération du Pays de Lerins",
+      "siren": "200039915"
+    },
+    "429": {
+      "name": "Capbreton",
+      "org": "Sommunauté de Communes Maremne Adour Côte-Sud",
+      "siren": "244000865"
+    },
+    "113": {
+      "name": "Carcassonne",
+      "org": "Communauté d'agglomération du Carcassonnais",
+      "siren": "200035715"
+    },
+    "440": {
+      "name": "Carhaix",
+      "org": "Communauté de Communes du Poher",
+      "siren": "242900744"
+    },
+    "268": {
+      "name": "Carpentras",
+      "org": "Cenaisiauté d'aglomération Ventoux - Contat Venaissin",
+      "siren": "248400053"
+    },
+    "126": {
+      "name": "Castres",
+      "org": "Communauté d'agglomération de Castres-Mazamet",
+      "siren": "248100430"
+    },
+    "436": {
+      "name": "Cavaillon",
+      "org": "Communauté d'agglomération Luberon - Monts de Vaucluse",
+      "siren": "200040442"
+    },
+    "185": {
+      "name": "Cayenne",
+      "org": "Communauté d'agglomération du Centre Littoral",
+      "siren": "249730045"
+    },
+    "430": {
+      "name": "Challans",
+      "org": "Commune de Challans",
+      "siren": "218500478"
+    },
+    "32": {
+      "name": "Châlons-en-Champagne",
+      "org": "Communauté d'agglomération de Châlons-en-Champagne",
+      "siren": "200043008"
+    },
+    "31": {
+      "name": "Chalon-sur-Saône",
+      "org": "Communauté d'agglomération Le Grand Chalon",
+      "siren": "247100589"
+    },
+    "33": {
+      "name": "Chambéry",
+      "org": "Chambéry Métropole - Cœur des Bauges",
+      "siren": "200069110"
+    },
+    "274": {
+      "name": "Chamonix",
+      "org": "Commonix Mone Canmunes de la Valle de Chamonix-Mont-Blanc",
+      "siren": "200023372"
+    },
+    "321": {
+      "name": "Chantilly",
+      "org": "Ville de Chantilly",
+      "siren": "216001404"
+    },
+    "34": {
+      "name": "Charleville-Mézières",
+      "org": "Communauté d'agglomération Ardenne Métropole",
+      "siren": "200041630"
+    },
+    "35": {
+      "name": "Chartres",
+      "org": "Chartres Métropole",
+      "siren": "200033181"
+    },
+    "249": {
+      "name": "Châteaudun",
+      "org": "Ville de Châteaudun",
+      "siren": "212800882"
+    },
+    "414": {
+      "name": "Chateaurenard",
+      "org": "Communauté d'agglomération Terre de Provence",
+      "siren": "200035087"
+    },
+    "240": {
+      "name": "Châteauroux",
+      "org": "Communauté d'agglomération Châteauroux Métropole",
+      "siren": "243600327"
+    },
+    "277": {
+      "name": "Château-Thierry",
+      "org": "Communauté d'agglomération de La Région de Château-Thierry",
+      "siren": "200072031"
+    },
+    "36": {
+      "name": "Châtellerault",
+      "org": "Commerant d'agglomération du Pays",
+      "siren": "248600413"
+    },
+    "127": {
+      "name": "Chaumont",
+      "org": "Communauté d'agglomération de Chaumont du Jassin Nogentais et du Bassin de Bologne Vignory Froncles",
+      "siren": "200068658"
+    },
+    "155": {
+      "name": "Chauny",
+      "org": "Coremunauté d'agglomération Chauny-Tergnier-La",
+      "siren": "200071785"
+    },
+    "252": {
+      "name": "Cherbourg",
+      "org": "Communauté d'agglomération du Cotentin",
+      "siren": "200067205"
+    },
+    "37": {
+      "name": "Cholet",
+      "org": "Communauté d'agglomération du Choletais",
+      "siren": "200071678"
+    },
+    "422": {
+      "name": "Clermont",
+      "org": "Sandion interoton des Transports Coletis de l'agglomération Clermontoise",
+      "siren": "200038917"
+    },
+    "39": {
+      "name": "Clermont-Ferrand",
+      "org": "Syndicat Mixte des Transports en Commun de l'agglomération Clermontoise",
+      "siren": "256300120"
+    },
+    "447": {
+      "name": "Clisson",
+      "org": "Clisson Sèvre et Maine Agglo",
+      "siren": "200067635"
+    },
+    "142": {
+      "name": "Cluses",
+      "org": "Communauté de Communes de Cluses Arve et Montagnes",
+      "siren": "200033116"
+    },
+    "297": {
+      "name": "Cognac",
+      "org": "Grand Cognac Communauté d'agglomération",
+      "siren": "200070514"
+    },
+    "40": {
+      "name": "Colmar",
+      "org": "Communauté d'agglomération de Colmar",
+      "siren": "246800726"
+    },
+    "209": {
+      "name": "Compiègne",
+      "org": "Comprenant de astrald la Région de Compiegne et de la Basse Automne",
+      "siren": "200067965"
+    },
+    "167": {
+      "name": "Concarneau",
+      "org": "Concarneau Cornouaille Agglomération",
+      "siren": "242900769"
+    },
+    "41": {
+      "name": "Creil",
+      "org": "Communauté de l'agglomération Creil - Sud Oise",
+      "siren": "200068047"
+    },
+    "323": {
+      "name": "Crépy-en-Valois",
+      "org": "Ville de Crépy-en-Valois",
+      "siren": "216001750"
+    },
+    "42": {
+      "name": "Creusot-Montceau-Les-Mines",
+      "org": "Communauté Urbaine Le Creusot-Montceau-Les-Mines",
+      "siren": "247100290"
+    },
+    "125": {
+      "name": "Dax",
+      "org": "Communauté d'agglomération du Grand Dax",
+      "siren": "244000675"
+    },
+    "355": {
+      "name": "Decazeville-Aubin",
+      "org": "Communauté de Communes Decazeville Communauté",
+      "siren": "200067064"
+    },
+    "409": {
+      "name": "Deux-Alpes (Les)",
+      "org": "Commune Nouvelle les Deux Alpes",
+      "siren": "200064434"
+    },
+    "176": {
+      "name": "Dieppe",
+      "org": "ommunauté d'agglomération de la Région Dieppois Dieppe Maritim",
+      "siren": "247600786"
+    },
+    "241": {
+      "name": "Digne-Les-Bains",
+      "org": "Provence Alpes Agglomération",
+      "siren": "200067437"
+    },
+    "43": {
+      "name": "Dijon",
+      "org": "Communauté Urbaine du Grand Dijon",
+      "siren": "242100410"
+    },
+    "319": {
+      "name": "Dinan",
+      "org": "Dinan Agglomération",
+      "siren": "200068989"
+    },
+    "143": {
+      "name": "Dole",
+      "org": "Communauté d'agglomération du Grand Dole",
+      "siren": "200010650"
+    },
+    "44": {
+      "name": "Douai",
+      "org": "Syndicat Mixte des Transports du Douaisis",
+      "siren": "255900441"
+    },
+    "242": {
+      "name": "Douarnenez",
+      "org": "Ville de Douarnenez",
+      "siren": "212900468"
+    },
+    "115": {
+      "name": "Draguignan",
+      "org": "Communauté de L'agglomération Dracenoise",
+      "siren": "248300493"
+    },
+    "177": {
+      "name": "Dreux",
+      "org": "Communauté d'agglomération du Pays de Dreux",
+      "siren": "200040277"
+    },
+    "45": {
+      "name": "Dunkerque",
+      "org": "Dunkerque Grand Littoral",
+      "siren": "245900428"
+    },
+    "156": {
+      "name": "Épernay",
+      "org": "Communauté d'agglomération Épernay, Coteaux et Plaine de Champagne",
+      "siren": "200067684"
+    },
+    "46": {
+      "name": "Épinal",
+      "org": "Communauté d'agglomération d'Épinal",
+      "siren": "200068757"
+    },
+    "47": {
+      "name": "Évreux",
+      "org": "Évreux Portes de Normandie",
+      "siren": "200071454"
+    },
+    "179": {
+      "name": "Fécamp",
+      "org": "Communauté d'agglomération de Fécamp Caux Littoral",
+      "siren": "200069821"
+    },
+    "283": {
+      "name": "Figeac",
+      "org": "Commune de Figeac",
+      "siren": "214601023"
+    },
+    "202": {
+      "name": "Flers",
+      "org": "Communauté d'agglomération Flers Agglo",
+      "siren": "200035814"
+    },
+    "449": {
+      "name": "Foix",
+      "org": "Communauté d'agglomération du Pays de Foix-Varillhes",
+      "siren": "200067791"
+    },
+    "250": {
+      "name": "Fontenay-Le-Comte",
+      "org": "Ville de Fontenay-Le-Comte",
+      "siren": "218500924"
+    },
+    "48": {
+      "name": "Forbach",
+      "org": "Communauté d'agglomération de Forbach Porte de France",
+      "siren": "245700372"
+    },
+    "170": {
+      "name": "Fougères",
+      "org": "Fougères Agglomération",
+      "siren": "200072452"
+    },
+    "204": {
+      "name": "Fréjus - Saint-Raphaël",
+      "org": "Communauté d'agglomération Var Estérel Méditerranée",
+      "siren": "200035319"
+    },
+    "410": {
+      "name": "Gaillac",
+      "org": "Communauté d'agglomération du Rabastinois - Tari st Dadou - Vère-Grésigne et Pays Salvagnacois",
+      "siren": "200066124"
+    },
+    "116": {
+      "name": "Gap",
+      "org": "Communauté d'agglomération Gap - Tallard - Durance",
+      "siren": "200067825"
+    },
+    "453": {
+      "name": "Gex",
+      "org": "Communauté de Communes du Pays de Gex",
+      "siren": "240100750"
+    },
+    "428": {
+      "name": "Granville",
+      "org": "Commune de Granville",
+      "siren": "215002189"
+    },
+    "212": {
+      "name": "Grasse",
+      "org": "Communauté d'agglomération du Pays de Grasse",
+      "siren": "200039857"
+    },
+    "49": {
+      "name": "Grenoble",
+      "org": "Syndicat Mixte des Transports en Commun de l'agglomération Grenobloise",
+      "siren": "253800825"
+    },
+    "338": {
+      "name": "Grésivaudan",
+      "org": "Communauté de Communes du Pays du Grésivaudan",
+      "siren": "200018166"
+    },
+    "413": {
+      "name": "Guéret",
+      "org": "Communauté d'agglomération du Grand Guéret",
+      "siren": "200034825"
+    },
+    "382": {
+      "name": "Guingamp",
+      "org": "Guingamp Paimpol Armor Argoat Agglomération",
+      "siren": "200067981"
+    },
+    "315": {
+      "name": "Haguenau",
+      "org": "Communauté d'agglomération de Haguenau",
+      "siren": "200067874"
+    },
+    "50": {
+      "name": "Le Havre",
+      "org": "Communauté de l'agglomération Havraise (CODAH)",
+      "siren": "247600596"
+    },
+    "180": {
+      "name": "Honfleur",
+      "org": "Ville de Honfleur",
+      "siren": "211403332"
+    },
+    "310": {
+      "name": "Île d'Yeu",
+      "org": "Ville de l'ile d'Yeu",
+      "siren": "218501138"
+    },
+    "144": {
+      "name": "Isle-d'Abeau (L)",
+      "org": "Communauté d'agglomération Porte de l'Isère",
+      "siren": "243800604"
+    },
+    "275": {
+      "name": "Issoudun",
+      "org": "Communauté de Communes du Pays d'Issoudun",
+      "siren": "243600236"
+    },
+    "427": {
+      "name": "Jarny",
+      "org": "Syndicat Mixte des Transports du Pays du Bassin de Briey",
+      "siren": "200041846"
+    },
+    "369": {
+      "name": "Joigny",
+      "org": "Ville de Joigny",
+      "siren": "218902062"
+    },
+    "426": {
+      "name": "Kourou",
+      "org": "Ville de Kourou",
+      "siren": "219733045"
+    },
+    "287": {
+      "name": "Lamballe",
+      "org": "Communauté de Communes Lamballe Terre-Mer",
+      "siren": "200069391"
+    },
+    "288": {
+      "name": "Landerneau",
+      "org": "Ville de Landerneau",
+      "siren": "212901037"
+    },
+    "159": {
+      "name": "Langres",
+      "org": "Ville de Langres",
+      "siren": "215201922"
+    },
+    "194": {
+      "name": "Lannion",
+      "org": "Communauté d'agglomération Lannion-Trégor Communauté",
+      "siren": "200065928"
+    },
+    "51": {
+      "name": "Laon",
+      "org": "Communauté d'agglomération du Pays de Laon",
+      "siren": "200043495"
+    },
+    "52": {
+      "name": "Laval",
+      "org": "Communauté d'agglomération de Laval",
+      "siren": "245300330"
+    },
+    "134": {
+      "name": "Lens-Béthune",
+      "org": "Syndicat Mixte des Transports Artois Gohelle",
+      "siren": "256204165"
+    },
+    "343": {
+      "name": "Les Belleville",
+      "org": "Communauté de Communes Cœur de Tarentaise",
+      "siren": "200023299"
+    },
+    "395": {
+      "name": "Liancourt",
+      "org": "Commune de Liancourt",
+      "siren": "216003574"
+    },
+    "103": {
+      "name": "Libourne",
+      "org": "Communauté d'agglomération du Libournais",
+      "siren": "200070092"
+    },
+    "53": {
+      "name": "Lille",
+      "org": "Métropole Européenne de Lille",
+      "siren": "245900410"
+    },
+    "54": {
+      "name": "Limoges",
+      "org": "Communauté d'agglomération Limoges Métropole",
+      "siren": "248719312"
+    },
+    "181": {
+      "name": "Lisieux",
+      "org": "Communauté d'agglomération Lisieux Normandie",
+      "siren": "200069532"
+    },
+    "55": {
+      "name": "Longwy",
+      "org": "yndicat Mixte Intercommunal des Transports de l'agglomération de Longwy (SMITRAL",
+      "siren": "200071694"
+    },
+    "154": {
+      "name": "Lons-le-Saunier",
+      "org": "Espace Communautaire Lons Agglomération",
+      "siren": "243900339"
+    },
+    "56": {
+      "name": "Lorient",
+      "org": "Lorient Agglomération",
+      "siren": "200042174"
+    },
+    "214": {
+      "name": "Louviers",
+      "org": "Communauté d'agglomération Seine-Bure",
+      "siren": "200035665"
+    },
+    "351": {
+      "name": "Luc En Provence - Cannet des Maures,",
+      "org": "Syndicat Intercommunal de Transports en Commun de l'agglomération Le-Luc-en-Provence / Le-Cannet-des-Maures",
+      "siren": "200008613"
+    },
+    "419": {
+      "name": "Luçon",
+      "org": "Ville de Luçon",
+      "siren": "218501286"
+    },
+    "269": {
+      "name": "Lunéville",
+      "org": "ommunauté de Communes du Territoire de unéville à Baccarat",
+      "siren": "200070324"
+    },
+    "358": {
+      "name": "Luxeuil Les Bains",
+      "org": "Ville de Luxeuil les Bains",
+      "siren": "217003110"
+    },
+    "57": {
+      "name": "Lyon",
+      "org": "syndicat Mixte des Transports Pour le Rhône e l'agglomération Lyonnaise",
+      "siren": "256900994"
+    },
+    "145": {
+      "name": "Mâcon",
+      "org": "Mâconnais Beaujolais Agglomération",
+      "siren": "200070308"
+    },
+    "437": {
+      "name": "Mamoudzou",
+      "org": "Communauté d'agglomération Mamoudzou-Dembeni",
+      "siren": "200060457"
+    },
+    "318": {
+      "name": "Manosque",
+      "org": "Communauté d'agglomération Durance Luberon Verdon",
+      "siren": "200034700"
+    },
+    "58": {
+      "name": "Mans (Le)",
+      "org": "Le Mans Métropole Communauté Urbaine",
+      "siren": "247200132"
+    },
+    "416": {
+      "name": "Marie-Galante",
+      "org": "Communauté de Communes de Marie-Galante",
+      "siren": "249710047"
+    },
+    "313": {
+      "name": "Marmande",
+      "org": "Val de Garonne Agglomération",
+      "siren": "200030674"
+    },
+    "902": {
+      "name": "Marseille",
+      "org": "Métropole Aix-Marseille-Provence",
+      "siren": "200054807"
+    },
+    "454": {
+      "name": "Martinique",
+      "org": "Martinique Transport",
+      "siren": "200075356"
+    },
+    "60": {
+      "name": "Maubenge",
+      "org": "Syndicat Mixte des Transports Urbains de la Sambre",
+      "siren": "255902827"
+    },
+    "408": {
+      "name": "Mauguio Carnon",
+      "org": "Agglomération du Pays de L'or",
+      "siren": "243400470"
+    },
+    "248": {
+      "name": "Mayenne",
+      "org": "Ville de Mayenne",
+      "siren": "215301474"
+    },
+    "282": {
+      "name": "Mende",
+      "org": "Ville de Mende",
+      "siren": "214800955"
+    },
+    "120": {
+      "name": "Menton",
+      "org": "Communauté d'agglomération de La Riviera Française",
+      "siren": "240600551"
+    },
+    "299": {
+      "name": "Meru - Les Sablons",
+      "org": "Communauté de Communes des Sablons",
+      "siren": "246000582"
+    },
+    "61": {
+      "name": "Metz.",
+      "org": "Communauté d'agglomération de Metz Métropole",
+      "siren": "200039865"
+    },
+    "215": {
+      "name": "Millau",
+      "org": "Communauté de Communes de Millau-Grands-Causses",
+      "siren": "241200567"
+    },
+    "327": {
+      "name": "Miribel",
+      "org": "Communauté de Communes de Miribel Et du Plateau",
+      "siren": "240100800"
+    },
+    "182": {
+      "name": "Montargis",
+      "org": "Agglomération Montargoise et Rives du Loing",
+      "siren": "244500203"
+    },
+    "128": {
+      "name": "Montauban",
+      "org": "Communauté d'agglomération du Grand Montauban",
+      "siren": "248200099"
+    },
+    "62": {
+      "name": "Montbéliard",
+      "org": "Communauté d'agglomération du Pays de Montbéliard",
+      "siren": "200065647"
+    },
+    "314": {
+      "name": "Montbrison",
+      "org": "Communauté d'agglomération Loire Forez",
+      "siren": "200065886"
+    },
+    "129": {
+      "name": "Mont-De-Marsan",
+      "org": "Communauté d'agglomération du Marsan",
+      "siren": "244000808"
+    },
+    "108": {
+      "name": "Montélimar",
+      "org": "Montélimar Agglomération",
+      "siren": "200040459"
+    },
+    "63": {
+      "name": "Montluçon",
+      "org": "Montluçon Communauté",
+      "siren": "200071082"
+    },
+    "399": {
+      "name": "Montluel",
+      "org": "Communauté de Communes de La Côtière",
+      "siren": "240100610"
+    },
+    "342": {
+      "name": "Montmélian",
+      "org": "Commune de Montmélian",
+      "siren": "217301712"
+    },
+    "64": {
+      "name": "Montpellier",
+      "org": "Montpellier Méditerranée Métropole",
+      "siren": "243400017"
+    },
+    "172": {
+      "name": "Morlaix",
+      "org": "Morlaix Communauté",
+      "siren": "242900835"
+    },
+    "117": {
+      "name": "Moulins",
+      "org": "Moulins Communauté",
+      "siren": "200071140"
+    },
+    "65": {
+      "name": "Mulhouse",
+      "org": "Mulhouse Alsace Agglomération",
+      "siren": "200066009"
+    },
+    "66": {
+      "name": "Nancy",
+      "org": "Métropole du Grand Nancy",
+      "siren": "245400676"
+    },
+    "67": {
+      "name": "Nantes",
+      "org": "Nantes Métropole",
+      "siren": "244400404"
+    },
+    "121": {
+      "name": "Narbonne",
+      "org": "Communauté d'agglomération du Grand Narbonne",
+      "siren": "241100593"
+    },
+    "398": {
+      "name": "Neufchâteau",
+      "org": "Ville de Neufchâteau",
+      "siren": "218803211"
+    },
+    "295": {
+      "name": "Neuves-Maisons",
+      "org": "Communauté de Communes Moselle et Madon",
+      "siren": "245400171"
+    },
+    "68": {
+      "name": "Nevers",
+      "org": "Communauté d'agglomération de Nevers",
+      "siren": "245804406"
+    },
+    "69": {
+      "name": "Nice",
+      "org": "Métropole Nice-Côte-d'Azur",
+      "siren": "200030195"
+    },
+    "70": {
+      "name": "Nimes",
+      "org": "Communauté d'agglomération Nîmes Métropole",
+      "siren": "243000643"
+    },
+    "71": {
+      "name": "Niort",
+      "org": "Communauté d'agglomération du Niortais",
+      "siren": "200041317"
+    },
+    "290": {
+      "name": "Nogent-Le-Rotrou",
+      "org": "Ville de Nogent-Le-Rotrou",
+      "siren": "212802805"
+    },
+    "412": {
+      "name": "Nord Basse-Terre",
+      "org": "Communauté d'agglomération de Nord Basse-Terre",
+      "siren": "249710062"
+    },
+    "216": {
+      "name": "Nouméa",
+      "org": "Syndicat Mixte des Transports Urbains du Grand Nouméa",
+      "siren": "200026615"
+    },
+    "340": {
+      "name": "Noyon",
+      "org": "Commune de Noyon",
+      "siren": "216004655"
+    },
+    "397": {
+      "name": "Nyons",
+      "org": "Ville de Nyons",
+      "siren": "212602205"
+    },
+    "298": {
+      "name": "Obernai",
+      "org": "Ville d'Obernai",
+      "siren": "216703488"
+    },
+    "192": {
+      "name": "Olonne",
+      "org": "Les Sables d'Olonne Agglomération",
+      "siren": "200071165"
+    },
+    "384": {
+      "name": "Oloron-Sainte-Marie",
+      "org": "Ville d'Oloron-Sainte-Marie",
+      "siren": "216404228"
+    },
+    "217": {
+      "name": "Orange",
+      "org": "Ville d'Orange",
+      "siren": "218400877"
+    },
+    "303": {
+      "name": "Orléans",
+      "org": "Orléans Métropole",
+      "siren": "244500468"
+    },
+    "146": {
+      "name": "Oyonnax",
+      "org": "Communauté de Communes du Haut Bugey",
+      "siren": "200042935"
+    },
+    "393": {
+      "name": "Paray-Le-Monial",
+      "org": "Commune de Paray Le Monial",
+      "siren": "217103423"
+    },
+    "73": {
+      "name": "Pau",
+      "org": "Syndicat Mixte des Transports Urbains (SMTU) Pau Porte des Pyrénées",
+      "siren": "200024883"
+    },
+    "74": {
+      "name": "Périgueux",
+      "org": "Communauté d'agglomération du Grand Périgueux",
+      "siren": "200040392"
+    },
+    "388": {
+      "name": "Péronne",
+      "org": "Commune de Péronne",
+      "siren": "218005858"
+    },
+    "75": {
+      "name": "Perpignan",
+      "org": "ommunauté Urbaine Perpignan Méditerrané létropol",
+      "siren": "200027183"
+    },
+    "345": {
+      "name": "Plagne-Tarentaise",
+      "org": "Commune Nouvelle de La Plagne-Tarentaise",
+      "siren": "200055499"
+    },
+    "339": {
+      "name": "Pointe-à-Pitre",
+      "org": "Syndicat Mixte du Petit Cul de Sac Marin",
+      "siren": "259710218"
+    },
+    "76": {
+      "name": "Poitiers",
+      "org": "Communauté d'agglomération de Grand Poitiers",
+      "siren": "200069854"
+    },
+    "261": {
+      "name": "Pompey",
+      "org": "Communauté de Communes du Bassin de Pompey",
+      "siren": "245400601"
+    },
+    "324": {
+      "name": "Pont Ste Maxence",
+      "org": "Ville de Pont Ste Maxence",
+      "siren": "216005033"
+    },
+    "218": {
+      "name": "Pont-à-Mousson",
+      "org": "Communauté de Communes du Bassin de Pont-à-Mousson",
+      "siren": "200041515"
+    },
+    "251": {
+      "name": "Pontarlier",
+      "org": "Ville de Pontarlier",
+      "siren": "212504625"
+    },
+    "370": {
+      "name": "Pont-Audemer",
+      "org": "Ville de Pont-Audemer",
+      "siren": "212704670"
+    },
+    "448": {
+      "name": "Pornic",
+      "org": "Pornic Agglo Pays de Retz",
+      "siren": "200067346"
+    },
+    "423": {
+      "name": "Privas",
+      "org": "Communauté d'agglomération Privas Centre Ardèche",
+      "siren": "200071413"
+    },
+    "148": {
+      "name": "Puy-En-Velay (Le)",
+      "org": "Communauté d'agglomération du Puy-En-Velay",
+      "siren": "200073419"
+    },
+    "77": {
+      "name": "Quimper",
+      "org": "Quimper Bretagne Occidentale",
+      "siren": "200068120"
+    },
+    "389": {
+      "name": "Quimperlé",
+      "org": "Communauté d'agglomération Quimperie Communauté",
+      "siren": "242900694"
+    },
+    "78": {
+      "name": "Reims",
+      "org": "Communauté Urbaine du Grand Reims",
+      "siren": "200067213"
+    },
+    "296": {
+      "name": "Remiremont",
+      "org": "Ville de Remiremont",
+      "siren": "218803831"
+    },
+    "903": {
+      "name": "Rennes",
+      "org": "Rennes Métropole",
+      "siren": "243500139"
+    },
+    "187": {
+      "name": "Riom",
+      "org": "Cormunauté de Communes de Riom - Limagne et Volcans",
+      "siren": "200070753"
+    },
+    "80": {
+      "name": "Roanne",
+      "org": "Roannais Agglomération",
+      "siren": "200035731"
+    },
+    "270": {
+      "name": "Rochefort",
+      "org": "Communauté d'agglomération Rochefort Océan",
+      "siren": "200041762"
+    },
+    "82": {
+      "name": "Rochelle (La)",
+      "org": "Communauté d'agglomération de La Rochelle",
+      "siren": "241700434"
+    },
+    "81": {
+      "name": "Roche-sur-Yon (La)",
+      "org": "La Roche-sur-Yon Agglomération",
+      "siren": "248500589"
+    },
+    "130": {
+      "name": "Rodez",
+      "org": "Rodez Agglomération",
+      "siren": "241200187"
+    },
+    "445": {
+      "name": "Romilly-sur-Seine",
+      "org": "Communauté de Communes des Portes de Romilly-sur-Seine",
+      "siren": "200000545"
+    },
+    "83": {
+      "name": "Rouen",
+      "org": "Métropole Rouen Normandie",
+      "siren": "200023414"
+    },
+    "381": {
+      "name": "Roussillon",
+      "org": "Communauté de Communes du Pays Roussillonnais",
+      "siren": "243800778"
+    },
+    "271": {
+      "name": "Royan",
+      "org": "Communauté d'agglomération Royan Atlantique",
+      "siren": "241700640"
+    },
+    "435": {
+      "name": "Remilly",
+      "org": "Communauté de Communes du Canton de Rumilly",
+      "siren": "247400740"
+    },
+    "173": {
+      "name": "Sablé-sur-Sarthe",
+      "org": "Ville de Sablé-sur-Sarthe",
+      "siren": "217202647"
+    },
+    "263": {
+      "name": "Saint-Amand-Montrond",
+      "org": "Ville de Saint-Amand-Montrond",
+      "siren": "211801972"
+    },
+    "219": {
+      "name": "Saint-André-de-la-Réunion",
+      "org": "Communauté Intercommunale Réunion Est",
+      "siren": "249740093"
+    },
+    "191": {
+      "name": "Saint-Avold",
+      "org": "Moselanauté de Communes Agglo Saint-Avold Centre Mosellan",
+      "siren": "200067502"
+    },
+    "365": {
+      "name": "Saint-Brevin-Les-Pins",
+      "org": "Commune de Saint-Brevin-Les-Pins",
+      "siren": "214401549"
+    },
+    "84": {
+      "name": "Saint-Brieuc",
+      "org": "Saint-Brieuc Armor Agglomération",
+      "siren": "200069409"
+    },
+    "150": {
+      "name": "Saint-Claude",
+      "org": "Ville de Saint-Claude",
+      "siren": "213904782"
+    },
+    "109": {
+      "name": "Saint-Denis de la Réunion",
+      "org": "Cord dena Ré d'aglomération intercommunale du",
+      "siren": "249740119"
+    },
+    "160": {
+      "name": "Saint-Dié-Des-Vosges",
+      "org": "Communauté d'agglomération de Saint-Dié-des-Vosges",
+      "siren": "200071066"
+    },
+    "161": {
+      "name": "Saint-Dizier",
+      "org": "Communauté d'agglomération de Saint-Dizier, Der et Blaise",
+      "siren": "200068666"
+    },
+    "162": {
+      "name": "Sainte-Marie-aux-Mines",
+      "org": "Ville de Sainte-Marie-aux-Mines",
+      "siren": "216802983"
+    },
+    "193": {
+      "name": "Sainte-Menehould",
+      "org": "Ville de Sainte-Menehould",
+      "siren": "215104712"
+    },
+    "110": {
+      "name": "Saintes",
+      "org": "Communauté d'agglomération de Saintes",
+      "siren": "200036473"
+    },
+    "85": {
+      "name": "Saint-Étienne",
+      "org": "Saint-Étienne Métropole",
+      "siren": "244200770"
+    },
+    "431": {
+      "name": "Saint-Gilles-Croix-De-Vie",
+      "org": "Commune de Saint-Gilles-Croix-de-Vie",
+      "siren": "218502227"
+    },
+    "443": {
+      "name": "Saint-Hilaire-De-Riez",
+      "org": "Commune de Saint-Hilaire-de-Riez",
+      "siren": "218502268"
+    },
+    "385": {
+      "name": "Saint-Jean-De-Maurienr",
+      "org": "Cormunaé de Communes Cour de Maurienne Arvan",
+      "siren": "200070464"
+    },
+    "401": {
+      "name": "Saint-Julien-En-Genevois",
+      "org": "Communauté de Communes du Genevois",
+      "siren": "247400690"
+    },
+    "183": {
+      "name": "Saint-Lô-Agneaux",
+      "org": "Communauté d'agglomération Saint-Lô Agglo",
+      "siren": "200066389"
+    },
+    "163": {
+      "name": "Saint-Louis",
+      "org": "Saint-Louis Agglomération",
+      "siren": "200066058"
+    },
+    "86": {
+      "name": "Saint-Malo",
+      "org": "Saint-Malo Agglomération",
+      "siren": "243500782"
+    },
+    "312": {
+      "name": "Saint-Martin",
+      "org": "Collectivité d'outre-Mer de Saint-Martin",
+      "siren": "219711272"
+    },
+    "87": {
+      "name": "Saint-Nazaire",
+      "org": "Communauté d'agglomération de la Région Nazairienne et de l'Estuaire (CARENE)",
+      "siren": "244400644"
+    },
+    "279": {
+      "name": "Saint-Omer",
+      "org": "Communauté d'agglomération de Saint-Omer",
+      "siren": "246200455"
+    },
+    "221": {
+      "name": "Saint-Paul-de-la-Réunion",
+      "org": "Communauté d'agglomération Territoire de La Cote Ouest (TCO)",
+      "siren": "249740101"
+    },
+    "114": {
+      "name": "Saint-Pierre-de-la-Réunion",
+      "org": "La Runauté Intercommunale des Villes Solidaires de la Réunion",
+      "siren": "249740077"
+    },
+    "88": {
+      "name": "Saint-Quentin",
+      "org": "Communauté d'agglomération du Saint-Quentinois",
+      "siren": "200071892"
+    },
+    "434": {
+      "name": "Sanary-sur-Mer",
+      "org": "Communauté d'agglomération Sud Sainte Baume",
+      "siren": "248300394"
+    },
+    "245": {
+      "name": "Sarlat-la-Canéda",
+      "org": "Ville de Sarlat-la-Canéda",
+      "siren": "212405203"
+    },
+    "357": {
+      "name": "Sarrebourg",
+      "org": "Sommunauté de Communes de Sarrebourg Moselle Sud",
+      "siren": "200068146"
+    },
+    "164": {
+      "name": "Sarreguemines",
+      "org": "Communauté d'agglomération Sarreguemines Confluences",
+      "siren": "200070746"
+    },
+    "89": {
+      "name": "Saumur",
+      "org": "Communauté d'agglomération Saumur-Val de Loire",
+      "siren": "200071876"
+    },
+    "254": {
+      "name": "Sélestat",
+      "org": "Communauté de Communes de Sélestat",
+      "siren": "246700967"
+    },
+    "317": {
+      "name": "Senlis",
+      "org": "Ville de Senlis",
+      "siren": "216006031"
+    },
+    "151": {
+      "name": "Sens",
+      "org": "Communauté d'agglomération du Grand Sénonais",
+      "siren": "248900334"
+    },
+    "90": {
+      "name": "Sète",
+      "org": "Communauté d'agglomération du Bassin de Thau",
+      "siren": "200066355"
+    },
+    "133": {
+      "name": "Soissons",
+      "org": "Syndicat Intercommunal des Transports Urbains Soissonnais (SITUS)",
+      "siren": "250204120"
+    },
+    "438": {
+      "name": "Sorède",
+      "org": "Commune de Sorède",
+      "siren": "216601963"
+    },
+    "364": {
+      "name": "Sorgues",
+      "org": "Ville de Sorgues",
+      "siren": "218401297"
+    },
+    "91": {
+      "name": "Strasbourg",
+      "org": "Strasbourg Eurométropole",
+      "siren": "246700488"
+    },
+    "306": {
+      "name": "Sud Basse-Terre",
+      "org": "Communauté d'agglomération Grand Sud Caraïbe",
+      "siren": "249710070"
+    },
+    "304": {
+      "name": "Tampon (Le)",
+      "org": "Communauté d'agglomération du Sud (CASUD)",
+      "siren": "249740085"
+    },
+    "442": {
+      "name": "Tarare",
+      "org": "Communauté d'agglomération de l'Ouest Rhodanien",
+      "siren": "200040566"
+    },
+    "92": {
+      "name": "Tarbes",
+      "org": "Tarbes Lourdes Pyrénées",
+      "siren": "200069300"
+    },
+    "188": {
+      "name": "Thiers",
+      "org": "yndicat Intercommunal des Transports En Commu e L'agglomération de Thiers-Peschadoires",
+      "siren": "256303801"
+    },
+    "93": {
+      "name": "Thionville",
+      "org": "Syndicat Mixte des Transports Urbains de Thionville-Val de Fensch",
+      "siren": "255701880"
+    },
+    "152": {
+      "name": "Thonon-Les-Bains",
+      "org": "Syndicat Intercommunal des Bus de l'agglomération de Thonon-Les-Bains",
+      "siren": "200074383"
+    },
+    "371": {
+      "name": "Tignes",
+      "org": "Commune de Tignes",
+      "siren": "217302967"
+    },
+    "165": {
+      "name": "Toul",
+      "org": "Syndicat des Transports de l'agglomération Touloise",
+      "siren": "255403917"
+    },
+    "94": {
+      "name": "Toulon",
+      "org": "Communauté d'agglomération Toulon-Provence-Méditerranée (TPM)",
+      "siren": "248300543"
+    },
+    "95": {
+      "name": "Toulouse",
+      "org": "Sagime Mitodes Transports en Commun de l'agglomération Toulousaine",
+      "siren": "253100986"
+    },
+    "328": {
+      "name": "Tour-Du-Pin",
+      "org": "Ville de La Tour du Pin",
+      "siren": "213805096"
+    },
+    "450": {
+      "name": "Tournon-sur-Rhône",
+      "org": "Communauté d'agglomération de l'Hermitage-Tournonais",
+      "siren": "200073096"
+    },
+    "96": {
+      "name": "Tours",
+      "org": "Tours Métropole Val de Loire",
+      "siren": "243700754"
+    },
+    "391": {
+      "name": "Trévoux",
+      "org": "Communauté de Communes Dombes Saône Vallée",
+      "siren": "200042497"
+    },
+    "97": {
+      "name": "Troyes",
+      "org": "Metropoauté d'agglomération Troyes Champagne Métropole",
+      "siren": "200069250"
+    },
+    "131": {
+      "name": "Tulle",
+      "org": "Tulle Agglo",
+      "siren": "241927201"
+    },
+    "348": {
+      "name": "Val d'isère",
+      "org": "Commune de Val d'Isère",
+      "siren": "217303049"
+    },
+    "98": {
+      "name": "Valence",
+      "org": "Valence Romans déplacement (Syndicat)",
+      "siren": "200024818"
+    },
+    "1": {
+      "name": "Valenciennes",
+      "org": "Syndicat Intercommunal de Mobilité et d'organisation Urbaine du Valenciennois (SIMOUV)",
+      "siren": "200046639"
+    },
+    "174": {
+      "name": "Vannes",
+      "org": "Golfe du Morbihan - Vannes Agglomération",
+      "siren": "200067932"
+    },
+    "292": {
+      "name": "Vendome",
+      "org": "Communauté d'agglomération Territoire Vendomois",
+      "siren": "200072072"
+    },
+    "123": {
+      "name": "Verdun",
+      "org": "Communauté d'agglomération du Grand Verdun",
+      "siren": "200049187"
+    },
+    "293": {
+      "name": "Vernon",
+      "org": "Communauté d'agglomération des Portes de l'Eure",
+      "siren": "242700649"
+    },
+    "200": {
+      "name": "Vesoul",
+      "org": "Communauté d'agglomération de Vesoul",
+      "siren": "247000011"
+    },
+    "100": {
+      "name": "Vichy",
+      "org": "Vichy Communauté",
+      "siren": "200071363"
+    },
+    "101": {
+      "name": "Vienne",
+      "org": "Vienne Agglo",
+      "siren": "243800455"
+    },
+    "184": {
+      "name": "Vierzon",
+      "org": "Ville de Vierzon",
+      "siren": "211802798"
+    },
+    "444": {
+      "name": "Ville-Aux-Dames",
+      "org": "Syndicat Intercommunal à Vocation Unique Les 3 V",
+      "siren": "200055010"
+    },
+    "285": {
+      "name": "Villeneuve-sur-Lot",
+      "org": "Communauté d'agglomération du Grand Villeneuvois",
+      "siren": "200023307"
+    },
+    "396": {
+      "name": "Villers-Cotterêts",
+      "org": "Communauté de Communes de Retz-en-Valois",
+      "siren": "200071991"
+    },
+    "305": {
+      "name": "Vire",
+      "org": "Commune Nouvelle de Vire Normandie",
+      "siren": "200060176"
+    },
+    "175": {
+      "name": "Vitré",
+      "org": "Vitré Communauté",
+      "siren": "200039022"
+    },
+    "272": {
+      "name": "Voiron",
+      "org": "Communauté d'agglomération du Pays Voironnais",
+      "siren": "243800984"
+    },
+    "330": {
+      "name": "Yvetot",
+      "org": "Ville d'Yvetot",
+      "siren": "217607589"
+    }
+  }
+}

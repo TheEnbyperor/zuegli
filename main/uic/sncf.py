@@ -7,6 +7,7 @@ from . import util
 
 ROOT = pathlib.Path(__file__).parent
 INTERCODE_DATA = None
+AFNOR_IDS = None
 ASN1_SPEC_V1 = asn1tools.compile_files([ROOT / "asn1" / "sncf_transport_v1.asn"], codec="uper")
 
 @dataclasses.dataclass
@@ -38,3 +39,21 @@ def get_intercode_data():
         INTERCODE_DATA = json.load(f)
 
     return INTERCODE_DATA
+
+
+def get_afnor_ids():
+    global AFNOR_IDS
+
+    if AFNOR_IDS:
+        return AFNOR_IDS
+
+    with open(ROOT / "data" / "afnor_ids.json") as f:
+        AFNOR_IDS = json.load(f)
+
+    for k, v in AFNOR_IDS.items():
+        new = {}
+        for k2, v2 in v.items():
+            new[int(k2)] = v2
+        AFNOR_IDS[k] = new
+
+    return AFNOR_IDS
