@@ -141,15 +141,17 @@ class CDRecordUT:
                 except ValueError as e:
                     raise CDException(f"Invalid validity end date") from e
             elif block_id == "SZ":
-                try:
-                    origin_uic = 5400000 + int(block_data[:-1], 10)
-                except ValueError as e:
-                    raise CDException(f"Invalid origin station ID") from e
+                if block_data[:-1]:
+                    try:
+                        origin_uic = 5400000 + int(block_data[:-1], 10)
+                    except ValueError as e:
+                        raise CDException(f"Invalid origin station ID") from e
             elif block_id == "SD":
-                try:
-                    destination_uic = 5400000 + int(block_data[:-1], 10)
-                except ValueError as e:
-                    raise CDException(f"Invalid destination station ID") from e
+                if block_data[:-1]:
+                    try:
+                        destination_uic = 5400000 + int(block_data[:-1], 10)
+                    except ValueError as e:
+                        raise CDException(f"Invalid destination station ID") from e
             elif block_id == "RT":
                 reservations = cls.parse_reservations(block_data)
             elif block_id == "RZ":
