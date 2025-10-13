@@ -8,7 +8,7 @@ def parse_bitmap(validity_zones: bytes) -> typing.Set[int]:
     out = set()
     for b in range(len(validity_zones) * 8):
         if validity_zones_int & (1 << b):
-            out.add(b)
+            out.add(b + 1)
     return out
 
 
