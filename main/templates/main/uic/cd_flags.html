@@ -1,0 +1,93 @@
+{% load i18n %}
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Check passenger ID</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.check_passenger_id %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Check passenger rail pass</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.check_passenger_rail_pass %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Check fare discounts</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.check_fare_discounts %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Secure paper</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.secure_paper %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Check IN card</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.check_in_card %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Zone travel document</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.zone_travel_document %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Contains zone component</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.contains_zone_component %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Additional payment ticket</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.additional_payment_ticket %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Reservation only ticket</dt>
+        <dd class="govuk-summary-list__value">
+            {% if flags.reservation_only_ticket %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+</dl>

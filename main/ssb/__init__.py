@@ -4,4 +4,4 @@ from .irt import IntegratedReservationTicket
 from .nrt import NonReservationTicket
 from .grt import GroupTicket
 from .pss import Pass
-from . import ns_keycard, sz
+from . import ns_keycard, sz, cd

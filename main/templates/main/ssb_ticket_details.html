@@ -72,4 +72,6 @@
     {% include "main/ssb/ns_kc.html" %}
 {% elif ticket.data.type == "SZ_TK" %}
     {% include "main/ssb/sz.html" %}
+{% elif ticket.data.type == "CD" %}
+    {% include "main/ssb/cd.html" %}
 {% endif %}

@@ -1,4 +1,4 @@
-{% load tz rics %}
+{% load tz rics i18n %}
 <h2 class="govuk-heading-m">České dráhy data</h2>
 <dl class="govuk-summary-list">
     {% if cd.pnr %}
@@ -17,6 +17,12 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Traveller name</dt>
             <dd class="govuk-summary-list__value">{{ cd.name }}</dd>
+        </div>
+    {% endif %}
+    {% if cd.date_of_birth %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Date of birth</dt>
+            <dd class="govuk-summary-list__value">{{ cd.date_of_birth|date:"F d, Y" }}</dd>
         </div>
     {% endif %}
     {% if cd.validity_start %}
@@ -173,6 +179,62 @@
             <dd class="govuk-summary-list__value">
                 <code>{{ cd.email_hash_hex }}</code>
                 {% if cd.email %}({{ cd.email }}){% endif %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if cd.one_ticket_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Ticket type" %}</dt>
+            <dd class="govuk-summary-list__value">{{ cd.one_ticket_type.name }}</dd>
+        </div>
+    {% endif %}
+    {% if cd.travel_type %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Travel type" %}</dt>
+            <dd class="govuk-summary-list__value">{{ cd.travel_type.name }}</dd>
+        </div>
+    {% endif %}
+    {% if cd.one_ticket_flags %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Flags" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% include "main/uic/cd_flags.html" with flags=cd.one_ticket_flags %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if cd.linked_validation_required is not None %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Linked validation required" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% if cd.linked_validation_required %}
+                    <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                {% endif %}
+            </dd>
+        </div>
+    {% endif %}
+    {% if cd.tariffs %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Tariffs" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% for tariff in cd.tariffs %}
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h2 class="govuk-summary-card__title">
+                                Tariff <code>{{ tariff.tariff_code }}</code>
+                            </h2>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Number of passengers</dt>
+                                    <dd class="govuk-summary-list__value">{{ tariff.number_passengers }}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                {% endfor %}
             </dd>
         </div>
     {% endif %}
