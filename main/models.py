@@ -523,6 +523,8 @@ class SSBTicketInstance(models.Model):
             data = ssb.ns_keycard.Keycard.parse(envelope.data)
         elif envelope.issuer_rics == 1179 and envelope.ticket_type == 21:
             data = ssb.sz.Ticket.parse(envelope.data, envelope.version)
+        elif envelope.issuer_rics == 1154 and envelope.ticket_type == 24:
+            data = ssb.cd.Ticket.parse(envelope.data)
         else:
             raise NotImplementedError()
 

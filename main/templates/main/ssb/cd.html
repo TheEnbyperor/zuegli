@@ -1,0 +1,100 @@
+{% load i18n rics %}
+<h2 class="govuk-heading-m">České dráhy ticket</h2>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">PNR</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.pnr }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Issuing date" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.issuing_date|date:"F d, Y" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Specimen" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.specimen %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Return included" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% if ticket.data.return_included %}
+                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+            {% else %}
+                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+            {% endif %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Number of adults" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.number_adults }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Number of children" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.number_children }}</dd>
+    </div>
+    {% if ticket.data.travel_class %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Travel class" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% if ticket.data.travel_class == 1 %}
+                    {% trans "First" %}
+                {% elif ticket.data.travel_class == 2 %}
+                    {% trans "Second" %}
+                {% elif ticket.data.travel_class == 1 and ticket.envelope.issuer_rics == 1187 %}
+                    {% trans "First" %}
+                {% elif ticket.data.travel_class == 5 and ticket.envelope.issuer_rics == 1187 %}
+                    {% trans "Second" %}
+                {% else %}
+                    <code>{{ ticket.data.travel_class }}</code>
+                {% endif %}
+            </dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Valid from" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.validity_start|date:"F d, Y" }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Valid until" %}</dt>
+        <dd class="govuk-summary-list__value">{{ ticket.data.validity_end|date:"F d, Y" }}</dd>
+    </div>
+    {% if ticket.data.station_code_table is not None %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Station code table" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.station_code_table }}</code></dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "From station" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/ssb/station.html" with station=ticket.data.departure_station %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "To station" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/ssb/station.html" with station=ticket.data.arrival_station %}
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "SJT Timestamp" %}</dt>
+        <dd class="govuk-summary-list__value"><code>{{ ticket.data.sjt_timestamp }}</code></dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{% trans "Flags" %}</dt>
+        <dd class="govuk-summary-list__value">
+            {% include "main/uic/cd_flags.html" with flags=ticket.data.flags %}
+        </dd>
+    </div>
+    {% if ticket.data.extra_text %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Extra text" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.extra_text }}</dd>
+        </div>
+    {% endif %}
+</dl>

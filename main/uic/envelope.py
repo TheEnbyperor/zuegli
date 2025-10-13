@@ -4,6 +4,7 @@ import ber_tlv.tlv
 import cryptography.x509
 import cryptography.exceptions
 import cryptography.hazmat.primitives.hashes
+import cryptography.hazmat.primitives.asymmetric.ec
 import cryptography.hazmat.primitives.asymmetric.dsa
 import zlib
 
@@ -96,6 +97,7 @@ class Envelope:
         else:
             meta = None
 
+        is_ecdsa = False
         if self.version == 1:
             sig_data = ber_tlv.tlv.Tlv.parse(self.signature, True)
             sig = ber_tlv.tlv.Tlv.build(sig_data)
@@ -122,7 +124,10 @@ class Envelope:
             sig = bytes(sig)
             
             if meta:
-                if meta["signature_algorithm"] == "SHA224withDSA":
+                if meta["signature_algorithm"] == "SHA256withECDSA":
+                    hasher = cryptography.hazmat.primitives.hashes.SHA256()
+                    is_ecdsa = True
+                elif meta["signature_algorithm"] == "SHA224withDSA":
                     hasher = cryptography.hazmat.primitives.hashes.SHA224()
                 else:
                     hasher = cryptography.hazmat.primitives.hashes.SHA256()
@@ -131,9 +136,15 @@ class Envelope:
         else:
             return False
 
-        if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey):
+        if isinstance(pk, cryptography.hazmat.primitives.asymmetric.dsa.DSAPublicKey) and not is_ecdsa:
             try:
                 pk.verify(sig, self.signed_data, hasher)
+                return True
+            except cryptography.exceptions.InvalidSignature:
+                return False
+        elif isinstance(pk, cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey) and is_ecdsa:
+            try:
+                pk.verify(sig, self.signed_data, cryptography.hazmat.primitives.asymmetric.ec.ECDSA(hasher))
                 return True
             except cryptography.exceptions.InvalidSignature:
                 return False

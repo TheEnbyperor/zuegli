@@ -1,5 +1,6 @@
 import dataclasses
 import decimal
+import enum
 import typing
 import datetime
 import base64
@@ -17,11 +18,90 @@ class Reservation:
     carriage: str
     seat: str
 
+@dataclasses.dataclass
+class Tariff:
+    tariff_code: str
+    number_passengers: int
+
+class OneTicketType(enum.Enum):
+    OpenTicket = 22
+    Reservation = 23
+    SingleTicket = 24
+    GroupTicket = 25
+    Subscription = 27
+    DisabilityCard = 29
+
+    def name(self):
+        if self == self.OpenTicket:
+            return "Open ticket"
+        elif self == self.Reservation:
+            return "Reservation"
+        elif self == self.SingleTicket:
+            return "Single ticket"
+        elif self == self.GroupTicket:
+            return "Group ticket"
+        elif self == self.Subscription:
+            return "Subscription"
+        elif self == self.DisabilityCard:
+            return "Disability card"
+
+
+class OneTicketTravelType(enum.Enum):
+    Network = 0
+    Route = 1
+    Zone = 2
+    ZonePlusSingle = 3
+    ZonePlusNetwork = 4
+    ZonePlusRoute = 5
+
+    def name(self):
+        if self == self.Network:
+            return "Network ticket"
+        elif self == self.Route:
+            return "Route ticket"
+        elif self == self.Zone:
+            return "Zonal ticket"
+        elif self == self.ZonePlusSingle:
+            return "Zonal ticket plus single ticket"
+        elif self == self.ZonePlusNetwork:
+            return "Zonal ticket plus network ticket"
+        elif self == self.ZonePlusRoute:
+            return "Zonal ticket plus route ticket"
+
+
+@dataclasses.dataclass
+class OneTicketFlags:
+    check_passenger_id: bool
+    check_passenger_rail_pass: bool
+    check_fare_discounts: bool
+    secure_paper: bool
+    check_in_card: bool
+    zone_travel_document: bool
+    contains_zone_component: bool
+    additional_payment_ticket: bool
+    reservation_only_ticket: bool
+
+    @classmethod
+    def from_int(cls, value: int) -> "OneTicketFlags":
+        return cls(
+            check_passenger_id=bool(value & 0b0000000000000001),
+            check_passenger_rail_pass=bool(value & 0b0000000000000010),
+            check_fare_discounts=bool(value & 0b0000000010000000),
+            secure_paper=bool(value & 0b0000000100000000),
+            check_in_card=bool(value & 0b0000001000000000),
+            zone_travel_document=bool(value & 0b0000010000000000),
+            contains_zone_component=bool(value & 0b0000100000000000),
+            additional_payment_ticket=bool(value & 0b0001000000000000),
+            reservation_only_ticket=bool(value & 0b0010000000000000),
+        )
+
 
 @dataclasses.dataclass
 class CDRecordUT:
     ticket_type: typing.Optional[str]
+    one_ticket_type: typing.Optional[OneTicketType]
     name: typing.Optional[str]
+    date_of_birth: typing.Optional[datetime.date]
     validity_start: typing.Optional[datetime.datetime]
     validity_end: typing.Optional[datetime.datetime]
     pnr: typing.Optional[str]
@@ -35,6 +115,10 @@ class CDRecordUT:
     seller_id: typing.Optional[str]
     email_hash: typing.Optional[bytes]
     email: typing.Optional[str]
+    travel_type: typing.Optional[OneTicketTravelType]
+    linked_validation_required: typing.Optional[bool]
+    tariffs: typing.List[Tariff]
+    one_ticket_flags: typing.Optional[OneTicketFlags]
     other_blocks: typing.Dict[str, str]
 
     @staticmethod
@@ -59,12 +143,14 @@ class CDRecordUT:
         tz = pytz.timezone("Europe/Prague")
 
         name = None
+        date_of_birth = None
         validity_start = None
         validity_end = None
         pnr = None
         reference = None
         distance = None
         ticket_type = None
+        one_ticket_type = None
         reservations = []
         return_reservations = []
         route_uic = None
@@ -73,6 +159,10 @@ class CDRecordUT:
         seller_id = None
         email_hash = None
         email = None
+        travel_type = None
+        linked_validation_required = None
+        one_ticket_flags = None
+        tariffs = []
         blocks = {}
 
         offset = 0
@@ -106,7 +196,7 @@ class CDRecordUT:
                     distance = decimal.Decimal(block_data)
                 except ValueError as e:
                     raise CDException(f"Invalid distance") from e
-            elif block_id == "KS":
+            elif block_id in ("KS", "SP"):
                 if block_data != "0":
                     try:
                         route_uic = [int(v) for v in block_data.split("|")]
@@ -152,7 +242,7 @@ class CDRecordUT:
                         destination_uic = 5400000 + int(block_data[:-1], 10)
                     except ValueError as e:
                         raise CDException(f"Invalid destination station ID") from e
-            elif block_id == "RT":
+            elif block_id in ("RT", "RE"):
                 reservations = cls.parse_reservations(block_data)
             elif block_id == "RZ":
                 return_reservations = cls.parse_reservations(block_data)
@@ -168,17 +258,42 @@ class CDRecordUT:
                     if c.email and hashlib.sha512(c.email.encode("utf-8")).digest()[:8] == email_hash:
                         email = c.email
                         break
+            elif block_id == "DJ":
+                one_ticket_type = OneTicketType(int(block_data, 10))
+            elif block_id == "CT":
+                travel_type = OneTicketTravelType(int(block_data, 10))
+            elif block_id == "DN":
+                date_of_birth = datetime.datetime.strptime(block_data, "%d%m%Y").date()
+            elif block_id == "OT":
+                if block_data == "1":
+                    linked_validation_required = True
+                elif block_data == "0":
+                    linked_validation_required = False
+                else:
+                    raise CDException(f"Invalid linked validation required flag")
+            elif block_id == "TF":
+                for t in block_data.split("|"):
+                    if len(t) != 4:
+                        raise CDException(f"Invalid tariff")
+                    tariffs.append(Tariff(
+                        tariff_code=t[0:2],
+                        number_passengers=int(t[2:4], 10),
+                    ))
+            elif block_id == "IZ":
+                one_ticket_flags = OneTicketFlags.from_int(int(block_data, 10))
             elif block_data:
                 blocks[block_id] = block_data
 
         return cls(
             name=name,
+            date_of_birth=date_of_birth,
             validity_start=validity_start,
             validity_end=validity_end,
             pnr=pnr,
             reference=reference,
             distance=distance,
             ticket_type=ticket_type,
+            one_ticket_type=one_ticket_type,
             reservations=reservations,
             return_reservations=return_reservations,
             route_uic=route_uic,
@@ -187,6 +302,10 @@ class CDRecordUT:
             seller_id=seller_id,
             email_hash=email_hash,
             email=email,
+            travel_type=travel_type,
+            linked_validation_required=linked_validation_required,
+            tariffs=tariffs,
+            one_ticket_flags=one_ticket_flags,
             other_blocks=blocks,
         )
 

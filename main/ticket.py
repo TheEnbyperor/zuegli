@@ -670,7 +670,7 @@ class SSBTicket:
     data: typing.Union[
         ssb.NonReservationTicket, ssb.IntegratedReservationTicket,
         ssb.GroupTicket, ssb.ns_keycard.Keycard,
-        ssb.sz.Ticket
+        ssb.sz.Ticket, ssb.cd.Ticket,
     ]
 
     @property
@@ -687,6 +687,8 @@ class SSBTicket:
         elif isinstance(self.data, ssb.ns_keycard.Keycard):
             return models.Ticket.TYPE_KEYCARD
         elif isinstance(self.data, ssb.sz.Ticket):
+            return models.Ticket.TYPE_FAHRKARTE
+        elif isinstance(self.data, ssb.cd.Ticket):
             return models.Ticket.TYPE_FAHRKARTE
         else:
             return models.Ticket.TYPE_UNKNOWN
@@ -1644,6 +1646,8 @@ def parse_ticket_ssb(ticket_bytes: bytes, context: TicketContexts) -> SSBTicket:
         data = ssb.ns_keycard.Keycard.parse(envelope.data)
     elif envelope.issuer_rics == 1179 and envelope.ticket_type == 21:
         data = ssb.sz.Ticket.parse(envelope.data, envelope.version)
+    elif envelope.issuer_rics == 1154 and envelope.ticket_type == 24:
+        data = ssb.cd.Ticket.parse(envelope.data)
     else:
         raise TicketError(
             title="Unsupported SSB ticket type",
