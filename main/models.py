@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 from . import ticket as t
 from . import vdv_nm
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2, sncb_train_plus
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif
 
 
 def make_pass_token():
@@ -263,6 +263,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.sncb_trainplus_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.adif_instances.first():
             return ticket_instance
 
         return None
@@ -657,6 +660,29 @@ class SNCBTrainPlusInstance(models.Model):
         return t.SNCBTrainPlus(
             raw_ticket=bytes(self.barcode_data),
             data=sncb_train_plus.TrainPlusCode.parse(bytes(self.barcode_data))
+        )
+
+
+class ADIFInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="adif_instances", db_index=True)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    barcode_data = models.BinaryField()
+
+    class Meta:
+        verbose_name = "ADIF Ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    @cached_property
+    def as_ticket(self) -> t.ADIFTicket:
+        d = adif.Ticket.parse(bytes(self.barcode_data))
+        return t.ADIFTicket(
+            ticket_ref=d.ticket_ref,
+            issuer_id=d.issuer_id,
+            data=d,
+            raw_ticket=bytes(self.barcode_data),
         )
 
 

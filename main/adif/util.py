@@ -1,0 +1,2 @@
+class ADIFException(Exception):
+    pass
