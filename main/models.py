@@ -655,7 +655,7 @@ class SNCBTrainPlusInstance(models.Model):
     @cached_property
     def as_ticket(self) -> t.SNCBTrainPlus:
         return t.SNCBTrainPlus(
-            raw_ticket=self.barcode_data,
+            raw_ticket=bytes(self.barcode_data),
             data=sncb_train_plus.TrainPlusCode.parse(bytes(self.barcode_data))
         )
 
