@@ -606,11 +606,11 @@ msgstr "SSB - Einige Fernverkehrsunternehmen (z.B. SNCB, VR), NS/DB Keycards"
 
 #: templates/main/index.html:19
 msgid "RSP6 - UK train tickets"
-msgstr "RSP6 - Britanische Fahrkarten"
+msgstr "RSP6 - Britische Fahrkarten"
 
 #: templates/main/index.html:20
 msgid "RSP8 - UK Railcards"
-msgstr "RSP8 - Britanische Railcards"
+msgstr "RSP8 - Britische Railcards"
 
 #: templates/main/index.html:21
 msgid "SNCF domestic tickets"
