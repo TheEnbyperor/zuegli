@@ -1478,7 +1478,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             },
         }
         obj["barcode"] = {
-            "type": "AZTEC",
+            "type": "QR_CODE",
             "value": bytes(ticket_instance.barcode_data).decode("utf-8"),
         }
 
