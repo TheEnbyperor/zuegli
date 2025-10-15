@@ -5,7 +5,7 @@ from .util import SNCBTrainPlusException
 def is_sncb_train_plus_code(code: bytes) -> bool:
     try:
         return "advantageCardNumber" in json.loads(code)
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return False
 
 
@@ -17,7 +17,7 @@ class TrainPlusCode:
     def parse(cls, code: bytes) -> "TrainPlusCode":
         try:
             d = json.loads(code)
-        except json.JSONDecodeError as e:
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
             raise SNCBTrainPlusException("Invalid train plus barcode") from e
 
         if "advantageCardNumber" not in d:
