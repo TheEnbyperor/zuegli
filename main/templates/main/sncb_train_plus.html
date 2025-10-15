@@ -1,0 +1,11 @@
+{% load tz %}
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Card number</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.card_number }}</dd>
+        </div>
+    </dl>
+    <h2 class="govuk-heading-m">Raw Data</h2>
+    <p class="govuk-body"><code style="word-break: break-all">{{ ticket.raw_ticket_str }}</code></p>
+{% endlocaltime %}

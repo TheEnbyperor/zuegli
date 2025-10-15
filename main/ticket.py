@@ -1,6 +1,4 @@
 import base64
-from copy import deepcopy
-
 import base45
 import dataclasses
 import traceback
@@ -13,7 +11,7 @@ import binascii
 import ber_tlv.tlv
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, \
-    bahnbonus, flexi_ticket, ts2
+    bahnbonus, flexi_ticket, ts2, sncb_train_plus
 
 
 class TicketError(Exception):
@@ -817,6 +815,31 @@ class BahnBonusCode:
 
         hd.update(b"bahnbonus")
         hd.update(self.data.barcode_id.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class SNCBTrainPlus:
+    raw_ticket: bytes
+    data: sncb_train_plus.TrainPlusCode
+
+    @property
+    def ticket_type(self) -> str:
+        return "SNCBTrainPlus"
+
+    @property
+    def raw_ticket_str(self):
+        return self.raw_ticket.decode("utf-8", "replace")
+
+    @staticmethod
+    def type() -> str:
+        return models.Ticket.TYPE_BAHNCARD
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"sncb-train-plus")
+        hd.update(self.data.card_number.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
 
@@ -1746,12 +1769,29 @@ def parse_bahn_bonus(ticket_bytes: bytes) -> BahnBonusCode:
     )
 
 
+def parse_sncb_train_plus(ticket_bytes: bytes) -> SNCBTrainPlus:
+    try:
+        data = sncb_train_plus.TrainPlusCode.parse(ticket_bytes)
+    except sncb_train_plus.SNCBTrainPlusException:
+        raise TicketError(
+            title="This doesn't look like a valid SNCB train plus barcode",
+            message="You may have scanned something that is not a SNCB train plus barcode, "
+                    "the code is corrupted, or there is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return SNCBTrainPlus(
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(
         ticket_bytes: bytes, account: typing.Optional["models.Account"]
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
-    FlexiTicket, TS2Ticket,
+    FlexiTicket, TS2Ticket, SNCBTrainPlus
 ]:
     context = account.ticket_contexts() if account else TicketContexts([])
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
@@ -1808,6 +1848,9 @@ def parse_ticket(
 
     if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
         return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
+
+    if sncb_train_plus.is_sncb_train_plus_code(ticket_bytes):
+        return parse_sncb_train_plus(ticket_bytes)
 
     try:
         ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
@@ -2029,6 +2072,14 @@ def create_ticket_obj(
                 "decoded_data": {
                     "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
                 }
+            }
+        )
+    elif isinstance(ticket_data, SNCBTrainPlus):
+        _, created = models.SNCBTrainPlusInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
             }
         )
     return created
