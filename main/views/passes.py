@@ -170,7 +170,7 @@ def view_ticket(request, pk):
 
     photo_upload_forms = {}
     if rsp_obj := ticket_obj.rsp_instances.first():
-        td = rsp_obj.as_ticket # type: ticket.RSPTicket
+        td = rsp_obj.as_ticket  # type: ticket.RSPTicket
         if isinstance(td.data, rsp.RailcardData):
             photo_upload_forms["first"] = {
                 "name": td.data.passenger_1_name(),
@@ -1293,7 +1293,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "value": f"class-code-{pass_document['classCode']}-label",
                         })
 
-                    if validity_start.date() == validity_end.date() and validity_start.time() == datetime.time(0, 0, 0) and validity_end.time() == datetime.time(23, 59, 59):
+                    if validity_start.date() == validity_end.date() and validity_start.time() == datetime.time(0, 0,
+                                                                                                               0) and validity_end.time() == datetime.time(
+                        23, 59, 59):
                         pass_fields["auxiliaryFields"].append({
                             "key": "validity-on",
                             "label": "validity-on-label",
@@ -1308,7 +1310,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium" if validity_start.time() != datetime.time(0, 0, 0) else "PKDateStyleNone",
+                            "timeStyle": "PKDateStyleMedium" if validity_start.time() != datetime.time(0, 0,
+                                                                                                       0) else "PKDateStyleNone",
                             "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime(
                                 "%Y-%m-%dT%H:%M:%SZ"),
                             "ignoresTimeZone": True
@@ -1317,7 +1320,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium" if validity_end.time() != datetime.time(23, 59, 59) else "PKDateStyleNone",
+                            "timeStyle": "PKDateStyleMedium" if validity_end.time() != datetime.time(23, 59,
+                                                                                                     59) else "PKDateStyleNone",
                             "value": validity_end.isoformat() if validity_end.tzinfo else validity_end.strftime(
                                 "%Y-%m-%dT%H:%M:%SZ"),
                             "changeMessage": "validity-end-change",
@@ -3623,7 +3627,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "altText": ticket_data.data.vvt_ticket_id,
         }]
 
-        pass_json["expirationDate"] = datetime.datetime.combine(ticket_data.data.valid_to, datetime.time.max)\
+        pass_json["expirationDate"] = datetime.datetime.combine(ticket_data.data.valid_to, datetime.time.max) \
             .strftime("%Y-%m-%dT%H:%M:%SZ")
         pass_fields = {
             "primaryFields": [{
@@ -3856,7 +3860,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
             })
             if gtfs_trip:
-                if departure_stop := next(filter(lambda s: s.uic_station_id == from_station["uic"], gtfs_trip.stops), None):
+                if departure_stop := next(filter(lambda s: s.uic_station_id == from_station["uic"], gtfs_trip.stops),
+                                          None):
                     departure_time_str = departure_stop.departure.isoformat()
                     pass_fields["secondaryFields"].append({
                         "key": "departure-time",
@@ -5412,6 +5417,153 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         })
         pass_type = "storeCard"
 
+    elif isinstance(ticket_instance, models.ADIFInstance):
+        ticket_data: ticket.ADIFTicket = ticket_instance.as_ticket
+
+        if ticket_data.issuer_id in RICS_LOGO:
+            add_pkp_img(pkp, RICS_LOGO[ticket_data.issuer_id], "logo.png")
+            have_logo = True
+        if ticket_data.issuer_id in RICS_BG:
+            pass_json["backgroundColor"] = RICS_BG[ticket_data.issuer_id]
+        if ticket_data.issuer_id in RICS_DARK_BG:
+            is_dark_bg = True
+        if ticket_data.issuer_id in RICS_FG:
+            pass_json["foregroundColor"] = RICS_FG[ticket_data.issuer_id]
+        if ticket_data.issuer_id in RICS_FG_SECONDARY:
+            pass_json["labelColor"] = RICS_FG_SECONDARY[ticket_data.issuer_id]
+
+        pass_type = "boardingPass"
+
+        from_station = templatetags.rics.get_station(ticket_data.data.origin_station, "uic")
+        to_station = templatetags.rics.get_station(ticket_data.data.destination_station, "uic")
+
+        tz = pytz.timezone('Europe/Madrid')
+        travel_datetime = tz.localize(ticket_data.data.departure)
+        pass_json["relevantDate"] = travel_datetime.isoformat()
+
+        pass_json["locations"].append({
+            "latitude": float(from_station["latitude"]),
+            "longitude": float(from_station["longitude"]),
+            "relevantText": from_station["name"]
+        })
+        pass_json["locations"].append({
+            "latitude": float(to_station["latitude"]),
+            "longitude": float(to_station["longitude"]),
+            "relevantText": to_station["name"]
+        })
+        from_station_maps_link = urllib.parse.urlencode({
+            "q": from_station["name"],
+            "ll": f"{from_station['latitude']},{from_station['longitude']}"
+        })
+        to_station_maps_link = urllib.parse.urlencode({
+            "q": to_station["name"],
+            "ll": f"{to_station['latitude']},{to_station['longitude']}"
+        })
+
+        pass_fields = {
+            "transitType": "PKTransitTypeTrain",
+            "headerFields": [{
+                "key": "train-number",
+                "label": "train-number-label",
+                "value": str(ticket_data.data.train_number),
+                "semantics": {
+                    "vehicleNumber": str(ticket_data.data.train_number)
+                }
+            }],
+            "primaryFields": [{
+                "key": "from-station",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "semantics": {
+                    "departureLocation": {
+                        "latitude": float(from_station["latitude"]),
+                        "longitude": float(from_station["longitude"]),
+                    },
+                    "departureStationName": from_station["name"]
+                }
+            }, {
+                "key": "to-station",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "semantics": {
+                    "destinationLocation": {
+                        "latitude": float(to_station["latitude"]),
+                        "longitude": float(to_station["longitude"]),
+                    },
+                    "destinationStationName": to_station["name"]
+                }
+            }],
+            "auxiliaryFields": [],
+            "secondaryFields": [{
+                "key": "departure-time",
+                "label": "departure-time-label",
+                "dateStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
+                "value": travel_datetime.isoformat(),
+                "ignoresTimeZone": True,
+            }],
+            "backFields": [{
+                "key": "from-station-back",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
+            }, {
+                "key": "to-station-back",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
+            }, {
+                "key": "ticket-id",
+                "label": "ticket-id-label",
+                "value": str(ticket_data.ticket_ref),
+            }]
+        }
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatAztec",
+            "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            "messageEncoding": "iso-8859-1",
+        }]
+
+        if ticket_data.data.carriage:
+            pass_fields["auxiliaryFields"].append({
+                "key": f"reservation-coach",
+                "label": "coach-number-label",
+                "value": str(ticket_data.data.carriage)
+            })
+        if ticket_data.data.seat:
+            pass_fields["auxiliaryFields"].append({
+                "key": f"reservation-seat",
+                "label": "seat-number-label",
+                "value": ticket_data.data.seat
+            })
+
+        if distributor := ticket_data.distributor():
+            pass_json["organizationName"] = distributor["full_name"]
+            if distributor["url"]:
+                pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
+                return_pass_fields["backFields"].append({
+                    "key": "issuing-org",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                    "attributedValue": f"<a href=\"{distributor['url']}\">{distributor['full_name']}</a>",
+                })
+            else:
+                pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
+                return_pass_fields["backFields"].append({
+                    "key": "distributor",
+                    "label": "issuing-organisation-label",
+                    "value": distributor["full_name"],
+                })
+
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
         "key": "view-link",
@@ -5806,6 +5958,7 @@ RICS_LOGO = {
     60: "pass/logo-ir.png",
     80: "pass/logo-db.png",
     83: "pass/logo-trenitalia.png",
+    1071: "pass/logo-renfe.png",
     1073: "pass/logo-hellenic.png",
     1080: "pass/logo-db.png",
     1088: "pass/logo-sncb.png",
@@ -5903,6 +6056,7 @@ RICS_FG_SECONDARY = {
     10: "rgb(0, 161, 73)",
     60: "rgb(61, 165, 53)",
     83: "rgb(0, 106, 106)",
+    1071: "#830065",
     1073: "#bd0d2e",
     1084: "rgb(32, 32, 55)",
     1154: "#ffffff",

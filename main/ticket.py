@@ -11,7 +11,7 @@ import binascii
 import ber_tlv.tlv
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, \
-    bahnbonus, flexi_ticket, ts2, sncb_train_plus
+    bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif
 
 
 class TicketError(Exception):
@@ -841,6 +841,33 @@ class SNCBTrainPlus:
         hd.update(b"sncb-train-plus")
         hd.update(self.data.card_number.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
+
+
+@dataclasses.dataclass
+class ADIFTicket:
+    raw_ticket: bytes
+    ticket_ref: int
+    issuer_id: int
+    data: adif.Ticket
+
+    @property
+    def ticket_type(self) -> str:
+        return "ADIF"
+
+    @staticmethod
+    def type() -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"adif")
+        hd.update(self.data.issuer_id.to_bytes(8, "big"))
+        hd.update(self.data.ticket_ref.to_bytes(8, "big"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+    def distributor(self):
+        return uic.rics.get_rics(self.issuer_id)
 
 
 def parse_ticket_vdv(ticket_bytes: bytes, context: "TicketContexts") -> VDVTicket:
@@ -1786,6 +1813,25 @@ def parse_sncb_train_plus(ticket_bytes: bytes) -> SNCBTrainPlus:
     )
 
 
+def parse_ticket_adif(ticket_bytes: bytes) -> ADIFTicket:
+    try:
+        data = adif.Ticket.parse(ticket_bytes)
+    except adif.ADIFException:
+        raise TicketError(
+            title="This doesn't look like a valid ADIF ticket",
+            message="You may have scanned something that is not a ADIF ticket, "
+                    "the ticket is corrupted, or there is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return ADIFTicket(
+        ticket_ref=data.ticket_ref,
+        issuer_id=data.issuer_id,
+        raw_ticket=ticket_bytes,
+        data=data
+    )
+
+
 def parse_ticket(
         ticket_bytes: bytes, account: typing.Optional["models.Account"]
 ) -> typing.Union[
@@ -1843,9 +1889,6 @@ def parse_ticket(
     if ticket_bytes[0] == 0x0a:
         return parse_ticket_swiss_pass(ticket_bytes)
 
-    if len(ticket_bytes) == 42:
-        return parse_ticket_rsp_11(ticket_bytes)
-
     if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
         return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
 
@@ -1854,13 +1897,21 @@ def parse_ticket(
 
     try:
         ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
+        return parse_ticket_vdv(ticket_bytes, context)
     except Exception:
-        raise TicketError(
-            title="This doesn't look like a ticket type we support.",
-            message="If you'd like to see support for this added, please forward your original ticket to us.",
-        )
+        pass
 
-    return parse_ticket_vdv(ticket_bytes, context)
+    if len(ticket_bytes) == 42:
+        return parse_ticket_rsp_11(ticket_bytes)
+
+    if len(ticket_bytes) == 516:
+        return parse_ticket_adif(ticket_bytes)
+
+    raise TicketError(
+        title="This doesn't look like a ticket type we support.",
+        message="If you'd like to see support for this added, please forward your original ticket to us.",
+    )
+
 
 
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
@@ -2079,6 +2130,15 @@ def create_ticket_obj(
             barcode_hash=barcode_hash,
             defaults={
                 "ticket": ticket_obj,
+                "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, ADIFTicket):
+        _, created = models.ADIFInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "distributor_rics": ticket_data.issuer_id,
                 "barcode_data": ticket_bytes,
             }
         )

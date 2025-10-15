@@ -1,0 +1,105 @@
+{% load rics tz i18n %}
+
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Distributing RICS" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.issuer_id }}</code></dd>
+        </div>
+        {% with org=ticket.distributor %}
+            {% if org %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{% trans "Distributor" %}</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include 'main/rics.html' with org=org %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Ticket ID" %}</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.ticket_ref }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Train number" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.train_number }}</dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Departure time" %}</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.departure|date:"F d, Y H:i" }}</dd>
+        </div>
+        {% with station=ticket.data.origin_station|get_station:"uic" %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Origin station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Origin station ID</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.data.origin_station }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% with station=ticket.data.destination_station|get_station:"uic" %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Destination station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% else %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Destination station ID</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.data.destination_station }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if ticket.data.via_station %}
+            {% with station=ticket.data.via_station|get_station:"uic" %}
+                {% if station %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Via station</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include "main/uic/station.html" with station=station %}
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Via station ID</dt>
+                        <dd class="govuk-summary-list__value">
+                            <code>{{ ticket.data.via_station }}</code>
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+        {% if ticket.data.carriage %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Carriage</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.carriage }}</dd>
+            </div>
+        {% endif %}
+        {% if ticket.data.seat %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Seat</dt>
+                <dd class="govuk-summary-list__value">{{ ticket.data.seat }}</dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Operator data</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.operator_data }}</code></dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Signature</dt>
+            <dd class="govuk-summary-list__value"><code>{{ ticket.data.signature_hex }}</code></dd>
+        </div>
+    </dl>
+{% endlocaltime %}
