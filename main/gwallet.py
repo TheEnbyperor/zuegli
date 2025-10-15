@@ -1492,7 +1492,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     "value": "Kartennummer"
                 }, {
                     "language": "nl",
-                    "value": "Kaart-ID"
+                    "value": "Kaartnummer"
                 }, {
                     "language": "cy",
                     "value": "Rhif cerdyn"
