@@ -27,4 +27,5 @@ app.conf.task_routes = {
     "main.saarvv.update_all": { "queue": "bg" },
     "main.saarvv.update_saarvv_tickets": { "queue": "bg" },
     "gtfs.tasks.process_all_gtfs_rt": { "queue": "bg" },
+    "gtfs.tasks.process_gtfs_rt": { "queue": "bg" },
 }
