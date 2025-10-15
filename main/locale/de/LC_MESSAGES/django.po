@@ -49,7 +49,7 @@ msgstr "Ihre Karte"
 
 #: forms.py:60
 msgid "Please upload a ticket image or PDF"
-msgstr ""
+msgstr "Bitte laden Sie ein Bild oder PDF ihrer Karte hoch"
 
 #: forms.py:67 templates/main/index.html:125
 msgid "Upload"
@@ -77,7 +77,7 @@ msgstr "Geburtsdatum"
 
 #: forms.py:109
 msgid "One of surname or date of birth must be provided"
-msgstr "Vor- oder Nachname muss angegeben werden"
+msgstr "Nachname oder Geburtsdatum muss angegeben werden"
 
 #: forms.py:111 forms.py:131 forms.py:141
 msgid "Add"
@@ -295,7 +295,7 @@ msgstr "Anmelden mit SaarVV"
 
 #: templates/main/account/index.html:129
 msgid "DB Regio NRW Account"
-msgstr "DB Region NRW Konto"
+msgstr "DB Regio NRW Konto"
 
 #: templates/main/account/index.html:144
 msgid "Vestische Account"
@@ -307,12 +307,12 @@ msgstr "Anmelden mit Vestische"
 
 #: templates/main/account/index.html:160
 msgid "Raileasy Account"
-msgstr "Konto"
+msgstr "Raileasy-Konto"
 
 #: templates/main/account/index.html:170
 #: templates/main/account/raileasy_login.html:8
 msgid "Login with Raileasy"
-msgstr "Anmelden mit SaarVV"
+msgstr "Anmelden mit Raileasy"
 
 #: templates/main/account/index.html:175
 msgid "HVV Account"
@@ -342,11 +342,11 @@ msgstr "Karten"
 
 #: templates/main/account/index.html:234
 msgid "Subscribe to your trains as a calendar:"
-msgstr "Abboniere deine Zugfahrten als Kalender"
+msgstr "Abbonieren Sie Ihre Zugfahrten als Kalender:"
 
 #: templates/main/account/mvv_login.html:4
 msgid "MVV Login"
-msgstr "HVV Anmelden"
+msgstr "MVV Anmelden"
 
 #: templates/main/account/new_alternate_expansion.html:4
 #: templates/main/account/new_alternate_expansion.html:9
@@ -355,11 +355,11 @@ msgstr ""
 
 #: templates/main/account/new_alternate_expansion.html:10
 msgid "All fields are optional"
-msgstr ""
+msgstr "Alle Felder sind optional"
 
 #: templates/main/account/nrway_login.html:4
 msgid "DB Regio NRWay Login"
-msgstr "DB Region NRWay Anmeldung"
+msgstr "DB Regio NRWay Anmeldung"
 
 #: templates/main/account/raileasy_login.html:4
 msgid "Raileasy Login"
@@ -380,7 +380,7 @@ msgstr "Geburtsdatum"
 
 #: templates/main/account/sbahn_berlin.html:29
 msgid "Address"
-msgstr "Addresse"
+msgstr "Adresse"
 
 #: templates/main/account/sbahn_berlin_login.html:4
 msgid "S-Bahn Berlin Login"
@@ -444,8 +444,8 @@ msgid ""
 "of their respective members."
 msgstr ""
 "Nicht verbunden mit dem Verband Deutscher Verkehrsunternehmen (VDV), der "
-"Union Internationale des Chemins de fer (UIC), dem Rail Delivery Group "
-"(RDG), und keines ihrer jeweiligen Mitglieder."
+"Union Internationale des Chemins de fer (UIC), der Rail Delivery Group "
+"(RDG), oder ihren jeweiligen Mitgliedern."
 
 #: templates/main/base.html:224
 msgid ""
@@ -496,7 +496,7 @@ msgstr "Minuten"
 #, fuzzy
 #| msgid "Unknown signing key, can't verify ticket"
 msgid "Unknown signing key, can't read main ticket body"
-msgstr "Unbekannte Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
+msgstr "Unbekannter Sicherheitsschlüssel, Hauptinformationen der Karte konnten nicht gelesen werden"
 
 #: templates/main/ft_ticket_details.html:245
 #: templates/main/hzpp_ticket_details.html:29
@@ -553,7 +553,7 @@ msgstr "Prüfung der Signatur"
 #: templates/main/uic/ticket_details.html:57
 #: templates/main/uic/ticket_details.html:174
 msgid "Unknown signing key, can't verify ticket"
-msgstr "Unbekannte Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
+msgstr "Unbekannter Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
 
 #: templates/main/iata_ticket_details.html:298
 #: templates/main/ssb_ticket_details.html:37
@@ -577,7 +577,7 @@ msgstr ""
 
 #: templates/main/impressum.html:12
 msgid "This service is provided by:"
-msgstr "Dieser Dienst ist bereitgestellt von:"
+msgstr "Dieser Dienst wird bereitgestellt von:"
 
 #: templates/main/index.html:10
 msgid "Turn your public transport tickets into Apple/Google Wallet passes."
@@ -682,7 +682,7 @@ msgid ""
 "of your ticket usually works better. The decoder on the server is better "
 "than the one in your browser."
 msgstr ""
-"Wenn Sie Probleme beim Einscannen Ihres Barcodes haben, laden Sie bitte  ein "
+"Wenn Sie Probleme beim Einscannen Ihres Barcodes haben, laden Sie bitte ein "
 "Bild hoch, das klappt meist besser. Der Decoder auf dem Server ist besser "
 "als der in Ihrem Browser."
 
@@ -692,7 +692,7 @@ msgstr "Laden Sie stattdessen ein Bild oder ein PDF hoch"
 
 #: templates/main/index.html:128
 msgid "Paste your ticket as hex/text"
-msgstr "Setzen Sie Ihre Karte als Text oder Hex ein"
+msgstr "Fügen Sie Ihre Karte als Text oder Hex ein"
 
 #: templates/main/index.html:136
 msgid "Submit"
@@ -710,7 +710,7 @@ msgstr ""
 #: templates/main/index.html:148
 msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
-msgstr "Momentan, es ist nicht möglich, Karten aus Chipkarten umwandeln."
+msgstr "Momentan ist es nicht möglich, Karten aus Chipkarten umzuwandeln."
 
 #: templates/main/index.html:154
 msgid "Read your Smartcard"
@@ -736,7 +736,7 @@ msgid ""
 "this information is not processed except to generate the pass. Ticket data "
 "may be inspected by a human if you ask for help."
 msgstr ""
-"Ihr Karte-Barcode wird gespeichert, um automatische Aktualisierungen Ihrer "
+"Der Barcode Ihrer Karte wird gespeichert, um automatische Aktualisierungen Ihrer "
 "Abo-Karten zu ermöglichen. Karten enthalten üblicherweise Ihren Namen und "
 "Ihr Geburtsdatum – diese Informationen werden nur zur Erstellung des Passes "
 "gespeichert. Auf Anfrage können wir Ihre Kartedaten einsehen."
@@ -776,7 +776,7 @@ msgstr "Version des Barcodes"
 
 #: templates/main/ssb_ticket_details.html:10
 msgid "Issuer RICS"
-msgstr "Herausgeber RICS"
+msgstr "RICS des Herausgebers"
 
 #: templates/main/ssb_ticket_details.html:16
 msgid "Issuer"
@@ -914,7 +914,7 @@ msgstr "Gültig bis"
 
 #: templates/main/ssb_ticket_details.html:276
 msgid "SNCB Data"
-msgstr "SNCB Datei"
+msgstr "SNCB-Daten"
 
 #: templates/main/ssb_ticket_details.html:280
 #: templates/main/vdv_elements.html:193 templates/main/vdv_elements.html:498
@@ -924,9 +924,9 @@ msgid ""
 "link\">Add your name to your account</a> to have your full name on your "
 "ticket."
 msgstr ""
-"Namen teilweise geschwärzt? <a href=\"%(account_edit_url)s\" class=\"govuk-"
-"link\">Fügen Sie Ihren Namen zu Ihrem Konto hinzu</a>, um Ihren Vollnamen an "
-"Ihrer Karte anzuzeigen"
+"Name teilweise geschwärzt? <a href=\"%(account_edit_url)s\" class=\"govuk-"
+"link\">Fügen Sie Ihren Namen zu Ihrem Konto hinzu</a>, um Ihren vollständigen "
+"Namen auf Ihrer Karte anzuzeigen"
 
 #: templates/main/ssb_ticket_details.html:289
 #: templates/main/vdv_ticket_details.html:50
@@ -938,10 +938,8 @@ msgid "Product code"
 msgstr "Produkt"
 
 #: templates/main/ssb_ticket_details.html:331
-#, fuzzy
-#| msgid "Data"
 msgid "ČD Data"
-msgstr "Datei"
+msgstr "ČD-Daten"
 
 #: templates/main/ssb_ticket_details.html:336
 #: templates/main/vdv_elements.html:125
@@ -953,12 +951,13 @@ msgid "Distance"
 msgstr ""
 
 #: templates/main/ticket.html:4
-#, fuzzy, python-format
-#| msgid "Ticket %(id)s"
+#, python-format
 msgid ""
 "Ticket\n"
 "    %(id)s"
-msgstr "Karte %(id)s"
+msgstr ""
+"Karte\n"
+"    %(id)s"
 
 #: templates/main/ticket.html:18 templates/main/ticket.html:258
 #: templates/main/ticket.html:298 templates/main/ticket.html:317
@@ -992,7 +991,7 @@ msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
 msgstr ""
-"Deine Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
+"Ihre Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
 "zu Ihren Apple- und Google-Wallet-Pässe hinzufügen."
 
 #: templates/main/ticket.html:57
@@ -1000,12 +999,12 @@ msgid ""
 "Your ticket has been updated; it has been sent to your Apple and Google "
 "devices in the background."
 msgstr ""
-"Deine Karte wurde aktualisiert; sie wurde im Hintergrund an Ihre Apple- und "
+"Ihre Karte wurde aktualisiert; sie wurde im Hintergrund an Ihre Apple- und "
 "Google-Geräte gesendet."
 
 #: templates/main/ticket.html:72
 msgid "This appears to be a SaarVV ticket."
-msgstr "Dies scheint eine SaarVV-Karte sein."
+msgstr "Dies scheint eine SaarVV-Karte zu sein."
 
 #: templates/main/ticket.html:75
 #, python-format
@@ -1027,7 +1026,7 @@ msgstr ""
 
 #: templates/main/ticket.html:95
 msgid "This appears to be an S-Bahn Berlin ticket."
-msgstr "Dies scheint eine S-Bahn Berlin Karte sein."
+msgstr "Dies scheint eine S-Bahn Berlin Karte zu sein."
 
 #: templates/main/ticket.html:98
 #, python-format
@@ -1096,7 +1095,7 @@ msgstr "Laden Ihren Pass herunter"
 
 #: templates/main/ticket.html:220
 msgid "Add to Calendar"
-msgstr "Hinzufügen zu Kalendar"
+msgstr "Zu Kalender hinzufügen"
 
 #: templates/main/ticket.html:248
 msgid "Ticket details"
@@ -1131,14 +1130,13 @@ msgid "Type"
 msgstr "Typ"
 
 #: templates/main/ticket.html:332
-#, fuzzy, python-format
-#| msgid ""
-#| "Spacial validity - variant\n"
-#| "                            %(variant)s"
+#, python-format
 msgid ""
 "Ticket #\n"
 "                                        %(id)s"
-msgstr "Gültigkeitsraum - variante %(variant)s"
+msgstr ""
+"Karte #\n"
+"                                        %(id)s"
 
 #: templates/main/ticket.html:369 templates/main/ticket.html:452
 #, python-format
@@ -1151,7 +1149,7 @@ msgstr ""
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
 msgid "Delete ticket"
-msgstr "Fahrkarte"
+msgstr "Fahrkarte löschen"
 
 #: templates/main/ticket_delete.html:14
 msgid "Are you sure you want to delete this ticket?"
@@ -1167,7 +1165,7 @@ msgstr "Sie haben keine Berechtigung, dieses Ticket zu löschen."
 
 #: templates/main/ticket_delete.html:35 templates/main/ticket_edit.html:20
 msgid "Go back"
-msgstr "Züruck"
+msgstr "Zurück"
 
 #: templates/main/ticket_edit.html:4 templates/main/ticket_edit.html:9
 msgid "Edit ticket"
@@ -1180,7 +1178,7 @@ msgstr "Sie haben keine Berechtigung, dieses Ticket zu bearbeiten."
 #: templates/main/ts2_ticket_details.html:10
 #: templates/main/uic/ticket_details.html:12
 msgid "Signing RICS"
-msgstr "RICS des Unterzeichneres"
+msgstr "RICS des Unterzeichners"
 
 #: templates/main/ts2_ticket_details.html:16
 #: templates/main/uic/ticket_details.html:18
@@ -1189,12 +1187,12 @@ msgstr "Unterzeichner"
 
 #: templates/main/uic/ticket_details.html:72
 msgid "Security provider RICS"
-msgstr "RICS des Sicherheits Anbieteres"
+msgstr "RICS des Sicherheitsanbieters"
 
 #: templates/main/uic/ticket_details.html:80
 #: templates/main/uic/ticket_details.html:90
 msgid "Security provider"
-msgstr "Sicherheits Anbieter"
+msgstr "Sicherheitsanbieter"
 
 #: templates/main/uic/ticket_details.html:102
 msgid "Expiry"
@@ -1202,7 +1200,7 @@ msgstr "Gültig bis"
 
 #: templates/main/uic/ticket_details.html:108
 msgid "Validity duration"
-msgstr "Gültigkeitszeit"
+msgstr "Gültigkeitsdauer"
 
 #: templates/main/uic/ticket_details.html:111
 msgid "seconds"
@@ -1262,11 +1260,11 @@ msgstr "Kopfzeilen"
 
 #: templates/main/uic/ticket_details.html:242
 msgid "Distributing RICS"
-msgstr "RICS des Ausgaberes"
+msgstr "RICS des Ausgabers"
 
 #: templates/main/uic/ticket_details.html:248
 msgid "Distributor"
-msgstr "Ausgaber"
+msgstr "Ausgeber"
 
 #: templates/main/uic/ticket_details.html:256
 #: templates/main/vdv_ticket_details.html:10
@@ -1414,7 +1412,7 @@ msgstr "Starthaltestelle"
 
 #: templates/main/vdv_elements.html:266
 msgid "End stations"
-msgstr "Starthaltestelle"
+msgstr "Endhaltestelle"
 
 #: templates/main/vdv_elements.html:278
 msgid "Origin tariff point"
@@ -1447,7 +1445,7 @@ msgstr "Unbekannter Gültigkeitsraum"
 
 #: templates/main/vdv_elements.html:367
 msgid "Data"
-msgstr "Datei"
+msgstr "Daten"
 
 #: templates/main/vdv_elements.html:378
 msgid "Private-use data"
@@ -1523,7 +1521,7 @@ msgstr "Bis"
 
 #: templates/main/vdv_ticket_details.html:110
 msgid "Product Data"
-msgstr "Produktsdaten"
+msgstr "Produktdaten"
 
 #: templates/main/vdv_ticket_details.html:113
 msgid "Transaction Data"
@@ -1585,7 +1583,7 @@ msgstr ""
 
 #: templates/main/vdv_ticket_details.html:286
 msgid "Signature algorithm"
-msgstr "Signatursalgorithmus"
+msgstr "Signaturalgorithmus"
 
 #: templates/main/vdv_ticket_details.html:291
 msgid "Random data"
@@ -1613,7 +1611,7 @@ msgstr "Ausgabe-CA"
 
 #: templates/main/vdv_ticket_details.html:334
 msgid "Envelope Certificate"
-msgstr "Umschlag-CA"
+msgstr "Umschlag-Zertifikat"
 
 #: templates/registration/login.html:17
 #: templates/registration/magic_login.html:24
