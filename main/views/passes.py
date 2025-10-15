@@ -5386,6 +5386,32 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
 
+    elif isinstance(ticket_instance, models.SNCBTrainPlusInstance):
+        ticket_data: ticket.SNCBTrainPlus = ticket_instance.as_ticket
+
+        pass_json["barcodes"] = [{
+            "format": "PKBarcodeFormatQR",
+            "message": bytes(ticket_instance.barcode_data).decode("utf-8"),
+            "messageEncoding": "utf-8",
+        }]
+        pass_json["backgroundColor"] = "#000000"
+        pass_json["foregroundColor"] = "#ffffff"
+        pass_json["labelColor"] = "#8c8c8c"
+
+        add_pkp_img(pkp, "pass/logo-sncb.png", "logo.png")
+        have_logo = True
+
+        pass_fields["primaryFields"].append({
+            "key": "card-id",
+            "label": "card-id-label",
+            "value": ticket_data.data.card_number,
+        })
+        pass_fields["headerFields"].append({
+            "key": "product",
+            "value": "Train+"
+        })
+        pass_type = "storeCard"
+
     ticket_url = reverse('ticket', kwargs={"pk": ticket_obj.pk})
     pass_fields["backFields"].append({
         "key": "view-link",

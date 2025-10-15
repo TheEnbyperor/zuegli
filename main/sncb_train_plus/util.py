@@ -1,0 +1,2 @@
+class SNCBTrainPlusException(Exception):
+    pass

@@ -82,12 +82,12 @@ def create_jwt_link(ticket: "models.Ticket") -> typing.Optional[str]:
     if obj_type == "generic":
         claims["payload"]["genericObjects"] = [{
             "id": object_id,
-            "classId": obj_class,
+            "classId": f"{settings.GWALLET_CONF['issuer_id']}.{obj_class}",
         }]
     elif obj_type == "transit":
         claims["payload"]["transitObjects"] = [{
             "id": object_id,
-            "classId": obj_class,
+            "classId": f"{settings.GWALLET_CONF['issuer_id']}.{obj_class}",
         }]
 
     token = google.auth.jwt.encode(settings.GOOGLE_SIGNER, claims).decode("utf-8")
@@ -134,6 +134,8 @@ def ticket_class(ticket: "models.Ticket") -> typing.Optional[typing.Tuple[str, s
             return "transit", settings.GWALLET_CONF["train_ticket_pass_class"]
         elif isinstance(ticket_data.data, rsp.RailcardData):
             return "generic", settings.GWALLET_CONF["railcard_pass_class"]
+    elif isinstance(ticket_instance, models.SNCBTrainPlusInstance):
+        return "generic", settings.GWALLET_CONF["bahncard_pass_class"]
 
     return None
 
@@ -1453,5 +1455,56 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 })
 
             return obj, "generic"
+
+    elif isinstance(ticket_instance, models.SNCBTrainPlusInstance):
+        obj["genericType"] = "GENERIC_LOYALTY_CARD"
+        obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['bahncard_pass_class']}"
+
+        obj["cardTitle"] = {
+            "defaultValue": {
+                "language": "en",
+                "value": "SNCB/NMBS"
+            }
+        }
+        obj["header"] = {
+            "defaultValue": {
+                "language": "en",
+                "value": "Train+"
+            }
+        }
+        obj["logo"] = {
+            "sourceUri": {
+                "uri": urllib.parse.urljoin(settings.EXTERNAL_URL_BASE, static("pass/logo-sncb.png"))
+            },
+        }
+        obj["barcode"] = {
+            "type": "AZTEC",
+            "value": bytes(ticket_instance.barcode_data).decode("utf-8"),
+        }
+
+        ticket_data = ticket_instance.as_ticket
+
+        obj["textModulesData"].append({
+            "id": "card-id",
+            "localizedHeader": {
+                "translatedValues": [{
+                    "language": "de",
+                    "value": "Kartennummer"
+                }, {
+                    "language": "nl",
+                    "value": "Kaart-ID"
+                }, {
+                    "language": "cy",
+                    "value": "Rhif cerdyn"
+                }],
+                "defaultValue": {
+                    "language": "en-gb",
+                    "value": "Card ID"
+                }
+            },
+            "body": ticket_data.data.card_number
+        })
+
+        return obj, "generic"
 
     return obj, None
