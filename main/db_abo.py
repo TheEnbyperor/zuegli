@@ -47,7 +47,8 @@ def update_abo_tickets(abo_id):
         }]
     }, headers={
         "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
-        "X-Api-Version": "9"
+        "X-Api-Version": "9",
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
 
     if r.status_code == 404:
