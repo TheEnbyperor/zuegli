@@ -193,7 +193,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         "id": object_id,
         "state": "active",
         "passConstraints": {
-            "screenshotEligibility": "INELIGIBLE",
             "nfcConstraint": [
                 "BLOCK_PAYMENT",
                 "BLOCK_CLOSED_LOOP_TRANSIT"
