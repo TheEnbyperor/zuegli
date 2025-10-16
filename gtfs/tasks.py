@@ -7,6 +7,7 @@ import google.protobuf.json_format
 import niquests.adapters
 import pytz
 import urllib3.util
+import django.db
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.db import transaction
@@ -620,6 +621,8 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
 
     generation_time = datetime.datetime.fromtimestamp(data.header.timestamp, tz=datetime.timezone.utc)
     with transaction.atomic():
+        with django.db.connection.cursor() as dc:
+            dc.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED;")
         if f := models.GtfsRtFeed.objects.filter(feed_id=feed_id).first():
             if f.last_updated >= generation_time:
                 logger.info("Feed not updated since last fetch")
