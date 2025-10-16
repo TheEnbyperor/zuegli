@@ -7,7 +7,7 @@ from . import models, gwallet
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def notify_device(device_id):
@@ -30,7 +30,7 @@ def notify_device(device_id):
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def notify_android_pass_device(device_id):
@@ -45,7 +45,7 @@ def notify_android_pass_device(device_id):
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def notify_attido_device(device_id):
@@ -58,7 +58,7 @@ def notify_attido_device(device_id):
     r.raise_for_status()
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def notify_ticket(ticket_id):

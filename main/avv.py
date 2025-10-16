@@ -16,7 +16,7 @@ retry_strategy = urllib3.util.Retry(
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def update_all():
@@ -32,7 +32,7 @@ def update_all():
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def update_avv_tickets(account_id):

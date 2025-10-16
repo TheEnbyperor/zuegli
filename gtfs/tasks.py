@@ -27,7 +27,7 @@ TIME_RE = re.compile(r"^(\d{2}):(\d{2}):(\d{2})$")
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=3, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=3, default_retry_delay=3,
     ignore_result=True
 )
 def process_gtfs(feed_id: str, feed_url: str):
@@ -598,7 +598,7 @@ def process_gtfs(feed_id: str, feed_url: str):
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def process_gtfs_rt(feed_id: str, feed_url: str):
@@ -698,7 +698,7 @@ def process_gtfs_rt(feed_id: str, feed_url: str):
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def process_all_gtfs():
@@ -706,7 +706,7 @@ def process_all_gtfs():
         process_gtfs.delay(feed_id, feed_url)
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def process_all_gtfs_rt():
