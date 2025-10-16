@@ -17,6 +17,7 @@ import cryptography.x509
 import cryptography.hazmat.primitives.serialization
 import google.oauth2.service_account
 import google.auth.crypt
+import psycopg2
 from django.utils.translation import gettext_lazy as _
 from pathlib import Path
 
@@ -100,7 +101,7 @@ DATABASES = {
         "PORT": '26257',
         "OPTIONS": {
             "application_name": os.getenv("APP_NAME", "zuegli"),
-            "isolation_level": "read committed",
+            "isolation_level": psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED,
         }
     }
 }
