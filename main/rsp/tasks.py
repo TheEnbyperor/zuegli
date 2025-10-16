@@ -21,7 +21,7 @@ serializer = xsdata.formats.dataclass.serializers.JsonSerializer()
 
 
 @shared_task(
-    autoretry_for=(Exception,), retry_backoff=1, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def download_rsp_data():
