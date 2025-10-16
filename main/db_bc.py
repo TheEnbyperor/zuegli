@@ -57,8 +57,9 @@ def update_account(account_id):
     else:
         bb_status = r.json()
 
-        barcode_data = f"{bahnbonus.products.BAHNBONUS};{bb_status['loyaltyNumber']}".encode("utf-8")
-        ticket.update_from_barcode(barcode_data, account=account)
+        if "loyaltyNumber" in bb_status:
+            barcode_data = f"{bahnbonus.products.BAHNBONUS};{bb_status['loyaltyNumber']}".encode("utf-8")
+            ticket.update_from_barcode(barcode_data, account=account)
 
     try:
         r = session.get(f"https://app.vendo.noncd.db.de/mob/emobilebahncards", headers={
