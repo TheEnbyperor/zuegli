@@ -100,6 +100,7 @@ DATABASES = {
         "PORT": '26257',
         "OPTIONS": {
             "application_name": os.getenv("APP_NAME", "zuegli"),
+            "default_transaction_isolation": "read committed",
         }
     }
 }
