@@ -226,11 +226,11 @@
                     </dl>
                 </div>
             </div>
-        {% elif elm.TYPE == "spacial-validity" %}
+        {% elif elm.TYPE == "spatial-validity" %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
                     <h2 class="govuk-summary-card__title">
-                        {% blocktrans with variant=elm.variant %}Spacial validity - variant
+                        {% blocktrans with variant=elm.variant %}Spatial validity - variant
                             {{ variant }}{% endblocktrans %}
                     </h2>
                 </div>
@@ -336,11 +336,11 @@
                     </dl>
                 </div>
             </div>
-        {% elif elm.TYPE == "unknown-spacial-validity" %}
+        {% elif elm.TYPE == "unknown-spatial-validity" %}
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
                     <h2 class="govuk-summary-card__title">
-                        {% trans "Unknown spacial validity" %}
+                        {% trans "Unknown spatial validity" %}
                         <code>{{ elm.type_hex }}</code>
                     </h2>
                 </div>
