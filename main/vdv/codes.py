@@ -87,7 +87,7 @@ def saarvv_tariff(code: int):
         return None
 
 
-SPACIAL_VALIDITY = {
+SPATIAL_VALIDITY = {
     36: {
         100: "Biedenkopf",
         200: "Wetter",
