@@ -1,20 +1,16 @@
-import niquests
 import typing
 import bs4
 import urllib.parse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import forms, eos, sbahn_berlin, models
+from .. import forms, eos, sbahn_berlin, models, session
 
 
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
     device_id = eos.get_device_id()
 
-    s = niquests.Session()
-    s.proxies.update(socks_proxies)
-
-    r = s.get("https://sso.uptrade.de/realms/sbb/protocol/openid-connect/auth", params={
+    r = session.get("https://sso.uptrade.de/realms/sbb/protocol/openid-connect/auth", params={
         "client_id": "eos-ts-sbahn-ber",
         "response_type": "code",
         "scope": "openid profile email offline_access",
@@ -27,7 +23,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
     form = soup.find("form", id="kc-form-login")
     action = form.attrs["action"]
 
-    r = s.post(action, data={
+    r = session.post(action, data={
         "username": username,
         "password": password,
     }, allow_redirects=False)
@@ -36,7 +32,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
     loc = urllib.parse.urlparse(r.headers["Location"])
     qs = urllib.parse.parse_qs(loc.query)
 
-    r = s.post("https://sbahn-ber.tickeos.de/index.php/mobileService/connect/authorize", json={
+    r = session.post("https://sbahn-ber.tickeos.de/index.php/mobileService/connect/authorize", json={
         "id": 1,
         "code": qs["code"][0],
     }, hooks={
