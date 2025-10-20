@@ -4,8 +4,8 @@ from django.conf import settings
 
 if settings.HTTP_PROXY_URL:
     socks_proxies = {
-        'http': 'socks5h://cf-warp:1080',
-        'https': 'socks5h://cf-warp:1080',
+        'http': settings.HTTP_PROXY_URL,
+        'https': settings.HTTP_PROXY_URL,
     }
 else:
     socks_proxies = {}
