@@ -1,9 +1,8 @@
-import niquests
 import datetime
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import oauth, models
+from .. import oauth, models, session
 
 AVV_CLIENT_TOKEN = None
 AVV_CLIENT_TOKEN_EXPIRY = None
@@ -16,7 +15,7 @@ def get_avv_client_token():
     if AVV_CLIENT_TOKEN and AVV_CLIENT_TOKEN_EXPIRY and AVV_CLIENT_TOKEN_EXPIRY > now:
         return AVV_CLIENT_TOKEN
 
-    r = niquests.post(oauth.PROVIDERS["avv"].token_url, data={
+    r = session.post(oauth.PROVIDERS["avv"].token_url, data={
         "grant_type": "client_credentials",
         "client_id": oauth.PROVIDERS["avv"].client_id,
         "client_secret": oauth.PROVIDERS["avv"].client_secret,
@@ -46,7 +45,7 @@ def avv_account(request):
     account_oauth = models.AccountOAuth.objects.get(account=request.user.account, provider="avv")
     client_token = get_avv_client_token()
 
-    r = niquests.get("https://zvp-hgs.avv.de/cxf/mobile_api/customer_rest/v2/customers/personal_data", headers={
+    r = session.get("https://zvp-hgs.avv.de/cxf/mobile_api/customer_rest/v2/customers/personal_data", headers={
         "Authorization": f"Bearer {avv_token}",
         "ClientToken": client_token,
         "deviceId": account_oauth.device_id,

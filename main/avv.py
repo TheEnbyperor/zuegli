@@ -1,28 +1,18 @@
 import datetime
 import niquests
 import niquests.exceptions
-import niquests.adapters
-import urllib3.util
 from django.utils import timezone
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from . import models, ticket, views, oauth, apn
+from . import models, ticket, views, oauth, apn, session
 
 logger = get_task_logger(__name__)
-retry_strategy = urllib3.util.Retry(
-    total=10,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
-
 
 @shared_task(
     autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
     ignore_result=True
 )
 def update_all():
-    adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    session = niquests.Session()
-    session.mount("https://", adapter)
 
     for account in models.Account.objects.all():
         if not account.is_avv_authenticated():
@@ -47,7 +37,7 @@ def update_avv_tickets(account_id):
     account_oauth = models.AccountOAuth.objects.get(account=account, provider="avv")
     now = timezone.now()
 
-    r = niquests.post("https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements", headers={
+    r = session.post("https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements", headers={
         "Authorization": f"Bearer {avv_token}",
         "ClientToken": client_token,
         "deviceId": account_oauth.device_id,
@@ -71,7 +61,7 @@ def update_avv_tickets(account_id):
 
     for entitlement in data["entitlements"]:
         eid = entitlement["entitlementId"]
-        r = niquests.get(f"https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements/{eid}", headers={
+        r = session.get(f"https://zvp-hgs.avv.de/cxf/mobile_api/entitlement_rest/v2/entitlements/{eid}", headers={
             "Authorization": f"Bearer {avv_token}",
             "ClientToken": client_token,
             "deviceId": entitlement["deviceId"] or account_oauth.device_id,

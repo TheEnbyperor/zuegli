@@ -65,6 +65,7 @@ def download_ft_data():
     ft_storage = django.core.files.storage.storages["ft-data"]
     adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
     session = niquests.Session()
+    session.proxies.update(socks_proxies)
     session.mount("https://", adapter)
 
     for brand in BRANDS:

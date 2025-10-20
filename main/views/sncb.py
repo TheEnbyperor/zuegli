@@ -1,11 +1,9 @@
-import niquests
 import json
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .. import forms, aztec, ticket
+from .. import forms, aztec, ticket, session
 
 
 @login_required
@@ -19,7 +17,7 @@ def sncb_add_ticket(request):
         if form.is_valid():
             pnr = form.cleaned_data["pnr"]
             email = form.cleaned_data["email"]
-            r = niquests.get(f"https://api.b-europe.com/dossier-details/{pnr}", params={
+            r = session.get(f"https://api.b-europe.com/dossier-details/{pnr}", params={
                 "Context": "Upload",
                 "Control": email
             }, headers={
@@ -36,7 +34,7 @@ def sncb_add_ticket(request):
                 for segment in data["Dossier"]["TravelSegments"]:
                     for t in segment["Tickets"]:
                         barcode_url = f"https://www.bene-system.com{t['BarcodeURL']}"
-                        br = niquests.get(barcode_url)
+                        br = session.get(barcode_url)
                         if not br.ok:
                             messages.warning(request, "Failed to fetch ticket barcode, ticket segment skipped")
                             continue

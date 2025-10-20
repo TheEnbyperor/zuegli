@@ -6,6 +6,8 @@ import sys
 import django
 import niquests
 
+from gtfs.tasks import session
+
 ROOT_DIR = pathlib.Path(__file__).parent.parent
 sys.path.append(str(ROOT_DIR))
 django.setup()
@@ -34,13 +36,13 @@ def process_key(key):
         }, f)
 
 def main():
-    r = niquests.get("https://api.test.oneticket.cz/system/codelist/3")
+    r = session.get("https://api.test.oneticket.cz/system/codelist/3")
     r.raise_for_status()
     data = xml_parser.from_string(r.text, bar_code_key_exchange.Keys)
     for key in data.key:
         process_key(key)
 
-    r = niquests.get("https://api.oneticket.cz/system/codelist/3")
+    r = session.get("https://api.oneticket.cz/system/codelist/3")
     r.raise_for_status()
     data = xml_parser.from_string(r.text, bar_code_key_exchange.Keys)
     for key in data.key:

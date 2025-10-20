@@ -1,11 +1,10 @@
 import secrets
 import base64
-import niquests
 import bs4
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import models, forms, db_ticket, oauth
+from .. import models, forms, db_ticket, oauth, session
 
 DB_AUTH_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/auth"
 DB_TOKEN_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/token"
@@ -30,7 +29,7 @@ def db_account(request):
     account_id = account_oauth.extra_data["account_id"]
 
     context = {}
-    r = niquests.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
+    r = session.post(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}", headers={
         "Authorization": f"Bearer {db_token}",
         "Accept": "application/x.db.vendo.mob.kundenkonto.v7+json",
         "X-Correlation-ID": secrets.token_hex(16),
@@ -42,7 +41,7 @@ def db_account(request):
         data = r.json()
         context["db_account"] = data
 
-    r = niquests.get(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}/bbStatus", headers={
+    r = session.get(f"https://app.vendo.noncd.db.de/mob/kundenkonten/{account_id}/bbStatus", headers={
         "Authorization": f"Bearer {db_token}",
         "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
         "X-Correlation-ID": secrets.token_hex(16),
@@ -67,7 +66,7 @@ def db_add_ticket(request):
         if form.is_valid():
             booking_number = form.cleaned_data["booking_number"]
             surname = form.cleaned_data["surname"]
-            r = niquests.post(f"https://app.vendo.noncd.db.de/mob/auftrag/{booking_number}/manuellLaden", headers={
+            r = session.post(f"https://app.vendo.noncd.db.de/mob/auftrag/{booking_number}/manuellLaden", headers={
                 "Accept": "application/x.db.vendo.mob.auftraege.v9+json",
                 "Content-Type": "application/x.db.vendo.mob.auftraege.v9+json",
                 "X-Correlation-ID": secrets.token_hex(16),
