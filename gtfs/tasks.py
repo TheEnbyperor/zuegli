@@ -4,9 +4,7 @@ import zipfile
 import io
 import datetime
 import google.protobuf.json_format
-import niquests.adapters
 import pytz
-import urllib3.util
 import django.db
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -14,16 +12,9 @@ from django.db import transaction
 from django.db.models import Q
 from . import models, data
 from .proto.gtfs.proto import gtfs_rt_pb2
+from main import session
 
 logger = get_task_logger(__name__)
-retry_strategy = urllib3.util.Retry(
-    total=10,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
-adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-session = niquests.Session()
-session.proxies.update(socks_proxies)
-session.mount("https://", adapter)
 
 TIME_RE = re.compile(r"^(\d{2}):(\d{2}):(\d{2})$")
 
