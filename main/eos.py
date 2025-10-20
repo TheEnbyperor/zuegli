@@ -10,7 +10,7 @@ import bs4
 import urllib.parse
 from Crypto.Cipher import AES
 from django.core.files.storage import storages
-from . import models, aztec, ticket, apn
+from . import models, aztec, ticket, apn, session
 
 
 logger = logging.getLogger(__name__)
@@ -90,7 +90,7 @@ def map_customer_field(f):
 def login(account: "models.Account", operator: str, username: str, password: str) -> bool:
     _, license_info = get_eos_instance(operator)
     device_id = get_device_id()
-    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/login", json={
+    r = session.post(f"{license_info['url_base']}/index.php/mobileService/login", json={
         "credentials": {
             "password": password,
             "username": username,
@@ -121,7 +121,7 @@ def get_customer_account(account: "models.Account", operator: str):
     _, license_info = get_eos_instance(operator)
     account_token = models.AccountOAuth.objects.get(account=account, provider=operator)
 
-    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/customer/fields", json={}, hooks={
+    r = session.post(f"{license_info['url_base']}/index.php/mobileService/customer/fields", json={}, hooks={
         "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
@@ -140,7 +140,7 @@ def update_eos_tickets(account: "models.Account", operator: str):
 
     logger.info(f"Updating EOS {account_token.device_id}")
 
-    r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/sync", json={}, hooks={
+    r = session.post(f"{license_info['url_base']}/index.php/mobileService/sync", json={}, hooks={
         "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
@@ -152,7 +152,7 @@ def update_eos_tickets(account: "models.Account", operator: str):
     data = r.json()
 
     if data["tickets"]:
-        r = niquests.post(f"{license_info['url_base']}/index.php/mobileService/ticket", json={
+        r = session.post(f"{license_info['url_base']}/index.php/mobileService/ticket", json={
             "details": True,
             "tickets": data["tickets"],
             "provide_aztec_content": True,

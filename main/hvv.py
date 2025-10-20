@@ -8,7 +8,7 @@ import niquests
 import jwt
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from . import models, ticket
+from . import models, ticket, session
 
 logger = get_task_logger(__name__)
 
@@ -22,7 +22,7 @@ def get_auth_token(account: "models.Account"):
     if oauth.token and oauth.token_expires_at and oauth.token_expires_at - datetime.timedelta(minutes=3) > now:
         return oauth.token
     elif oauth.refresh_token:
-        r = niquests.get("https://api.hochbahn.cloud/auth/token/refresh", headers={
+        r = session.get("https://api.hochbahn.cloud/auth/token/refresh", headers={
             "x-beam-refresh-token": f"Bearer {settings.HVV_APPLICATION_KEY}/{oauth.refresh_token}"
         })
         if r.status_code != 200:
@@ -65,7 +65,7 @@ def update_hvv_tickets(account_id):
     if not token:
         return
 
-    r = niquests.get("https://api.hochbahn.cloud/orders", params={
+    r = session.get("https://api.hochbahn.cloud/orders", params={
         "pageSize": "0",
     }, headers={
         "Authorization": f"Bearer {token}"
@@ -80,7 +80,7 @@ def update_hvv_tickets(account_id):
         if "ticketPublicUUID" not in order:
             continue
         token = get_auth_token(account)
-        r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
+        r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
         if not r.ok:
@@ -97,7 +97,7 @@ def update_hvv_tickets(account_id):
             logger.error("Error decoding barcode ticket: %s", e)
 
     token = get_auth_token(account)
-    r = niquests.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
+    r = session.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
         "Authorization": f"Bearer {token}"
     })
     if not r.ok:
@@ -108,7 +108,7 @@ def update_hvv_tickets(account_id):
 
     for sub in data["content"]:
         token = get_auth_token(account)
-        r = niquests.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
+        r = session.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
             "Authorization": f"Bearer {token}"
         })
         if not r.ok:

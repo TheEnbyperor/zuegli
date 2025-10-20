@@ -2,7 +2,6 @@ import dataclasses
 import base64
 import typing
 import urllib.parse
-import niquests
 import datetime
 import secrets
 import hashlib
@@ -10,7 +9,7 @@ import jwt
 from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import redirect
-from . import models
+from . import models, session
 
 DB_CERTS_URL = "https://accounts.bahn.de/auth/realms/db/protocol/openid-connect/certs"
 DB_ISSUER = "https://accounts.bahn.de/auth/realms/db"
@@ -101,7 +100,7 @@ def login_callback(request, provider: str, url: str):
     if PROVIDERS[provider].client_secret:
         data["client_secret"] = PROVIDERS[provider].client_secret
 
-    r = niquests.post(PROVIDERS[provider].token_url, data=data, headers={
+    r = session.post(PROVIDERS[provider].token_url, data=data, headers={
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
     data = r.json()
@@ -155,7 +154,7 @@ def get_token(account: "models.Account", provider: str):
             }
             if PROVIDERS[provider].client_secret:
                 data["client_secret"] = PROVIDERS[provider].client_secret
-            r = niquests.post(PROVIDERS[provider].token_url, data=data, headers={
+            r = session.post(PROVIDERS[provider].token_url, data=data, headers={
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)"
             })
             if not r.ok:

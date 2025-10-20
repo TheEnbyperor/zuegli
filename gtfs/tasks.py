@@ -22,6 +22,7 @@ retry_strategy = urllib3.util.Retry(
 )
 adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
 session = niquests.Session()
+session.proxies.update(socks_proxies)
 session.mount("https://", adapter)
 
 TIME_RE = re.compile(r"^(\d{2}):(\d{2}):(\d{2})$")

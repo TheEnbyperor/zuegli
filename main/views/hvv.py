@@ -2,8 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.conf import settings
-from .. import forms, models, hvv
-import niquests
+from .. import forms, models, hvv, session
 import datetime
 import jwt
 
@@ -13,7 +12,7 @@ def hvv_login(request):
     if request.method == "POST":
         form = forms.EOSLoginForm(request.POST)
         if form.is_valid():
-            r = niquests.get("https://api.hochbahn.cloud/auth/token", auth=(
+            r = session.get("https://api.hochbahn.cloud/auth/token", auth=(
                 f"{settings.HVV_APPLICATION_KEY}/{form.cleaned_data["username"]}", form.cleaned_data["password"]
             ))
             if r.status_code != 200:

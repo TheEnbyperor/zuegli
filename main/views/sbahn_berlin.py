@@ -12,6 +12,7 @@ def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str
     device_id = eos.get_device_id()
 
     s = niquests.Session()
+    s.proxies.update(socks_proxies)
 
     r = s.get("https://sso.uptrade.de/realms/sbb/protocol/openid-connect/auth", params={
         "client_id": "eos-ts-sbahn-ber",

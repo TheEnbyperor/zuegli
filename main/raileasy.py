@@ -1,22 +1,13 @@
 import typing
-import niquests.adapters
 import datetime
-import urllib3.util
 import pymupdf
 from django.utils import timezone
 from django.conf import settings
 from celery import shared_task
 from celery.utils.log import get_task_logger
-from . import models, apn, aztec, ticket
+from . import models, aztec, ticket, session
 
 logger = get_task_logger(__name__)
-retry_strategy = urllib3.util.Retry(
-    total=10,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
-adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-session = niquests.Session()
-session.mount("https://", adapter)
 
 
 def get_token(account: "models.Account") -> typing.Optional[str]:

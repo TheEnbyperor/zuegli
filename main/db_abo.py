@@ -1,22 +1,13 @@
 import base64
 import json
-import niquests.adapters
 import datetime
 import bs4
-import urllib3.util
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from django.utils import timezone
-from . import models, aztec, ticket, apn
+from . import models, aztec, ticket, apn, session
 
 logger = get_task_logger(__name__)
-retry_strategy = urllib3.util.Retry(
-    total=10,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
-adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-session = niquests.Session()
-session.mount("https://", adapter)
 
 
 @shared_task(

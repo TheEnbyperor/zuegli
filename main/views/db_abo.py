@@ -3,7 +3,7 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .. import forms, models, db_abo
+from .. import forms, models, db_abo, session
 
 
 @login_required
@@ -33,7 +33,7 @@ def new_abo(request):
             if form.cleaned_data["date_of_birth"]:
                 abo_data["geburtsdatum"] = form.cleaned_data["date_of_birth"].strftime("%d.%m.%Y")
             if request.POST.get("action") == "remove":
-                r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json=abo_data, headers={
+                r = session.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
                     "X-Api-Version": "9"
                 })
@@ -42,7 +42,7 @@ def new_abo(request):
                 else:
                     messages.error(request, f"Error occurred with removal request")
             else:
-                r = niquests.get("https://dig-aboprod.noncd.db.de/aboticket", params=abo_data, headers={
+                r = session.get("https://dig-aboprod.noncd.db.de/aboticket", params=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
                     "X-Api-Version": "9"
                 })
@@ -83,7 +83,7 @@ def delete_abo(request, abo_id):
         return redirect("db_abo")
 
     if request.method == "POST" and request.POST.get("action") == "remove":
-        r = niquests.post("https://dig-aboprod.noncd.db.de/aboticket/logout", json={
+        r = session.post("https://dig-aboprod.noncd.db.de/aboticket/logout", json={
             "deviceToken": subscription.device_token,
         }, headers={
             "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",

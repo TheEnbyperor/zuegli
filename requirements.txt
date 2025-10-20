@@ -9,7 +9,7 @@ dacite
 cryptography
 pytz
 asn1tools
-niquests
+niquests[socks]
 django-storages
 boto3
 django-cockroachdb
