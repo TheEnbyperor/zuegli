@@ -480,18 +480,19 @@ class Mitnahme:
 class IdentificationMedium:
     TYPE = "identification-medium"
 
-    id_type: int
+    id_type: str
     id_number: str
     phone_number: typing.Optional[phonenumbers.phonenumber.PhoneNumber] = None
 
     @classmethod
     def parse(cls, data: bytes) -> "IdentificationMedium":
+        data = data.decode("iso-8859-15", "replace")
         out = cls(
             id_type=data[0],
-            id_number=data[1:].decode("iso-8859-15", "replace"),
+            id_number=data[1:]
         )
 
-        if out.id_type == 84:
+        if out.id_type == "T":
             try:
                 n = phonenumbers.parse(out.id_number, "DE")
                 if phonenumbers.is_valid_number(n):
@@ -502,18 +503,32 @@ class IdentificationMedium:
         return out
 
     def type_name_opt(self):
-        if self.id_type == 69:
+        if self.id_type == "E":
             return "Girocard der deutschen Kreditwirtschaft (EC-Karte)"
-        elif self.id_type == 75:
+        elif self.id_type == "K":
             return "Kreditkarte"
-        elif self.id_type == 80:
+        elif self.id_type == "Ö":
+            return "ÖPNV-Kundenkarte"
+        elif self.id_type == "P":
             return "Personalausweis"
-        elif self.id_type == 84:
+        elif self.id_type == "R":
+            return "Reisepass"
+        elif self.id_type == "T":
             return "Telefonnummer"
-        elif self.id_type == 90:
+        elif self.id_type == "Z":
             return "Sozialpass"
-        elif self.id_type == 83:
-            return "Schüler-/Studentenausweis"
+        elif self.id_type == "S":
+            return "Schülerausweis"
+        elif self.id_type == "A":
+            return "Studentenausweis"
+        elif self.id_type == "C":
+            return "Client_ID (klassifiziert das Client-Gerät selbst als Medium)"
+        elif self.id_type == "G":
+            return "Geräte_ID (IMEI-Nummer)"
+        elif self.id_type == "X":
+            return "Nur gültig auf Sicherheitspapier"
+        elif self.id_type == "Y":
+            return "Nur gültig auf Sicherheitspapier (bei entwertbaren Tickets)"
         else:
             return None
 

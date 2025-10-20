@@ -173,7 +173,7 @@
                                 <dt class="govuk-summary-list__key">{% trans "Phone number" %}</dt>
                                 <dd class="govuk-summary-list__value">{{ elm.phone_number_description }}</dd>
                             </div>
-                        {% else %}
+                        {% elif elm.id_number %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">{% trans "Number" %}</dt>
                                 <dd class="govuk-summary-list__value"><code>{{ elm.id_number }}</code></dd>
