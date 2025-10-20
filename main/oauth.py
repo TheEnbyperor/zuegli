@@ -177,8 +177,15 @@ def avv_login_done(oauth: "models.AccountOAuth"):
     oauth.device_id = secrets.token_hex(16)
     oauth.save()
 
+
+class JWKClient(jwt.PyJWKClient):
+    def fetch_data(self):
+        r = session.get(self.uri, headers=self.headers)
+        r.raise_for_status()
+        return r.json()
+
 def db_login_done(oauth: "models.AccountOAuth"):
-    jwks_client = jwt.PyJWKClient(DB_CERTS_URL)
+    jwks_client = JWKClient(DB_CERTS_URL)
     header = jwt.get_unverified_header(oauth.token)
     key = jwks_client.get_signing_key(header["kid"]).key
     auth_data = jwt.decode(
