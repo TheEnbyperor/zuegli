@@ -25,6 +25,7 @@ data:
   GOOGLE_CREDS_LOCATION: "/google-creds/google-creds.json"
   MAPKIT_KEY_LOCATION: "/mapkit/AuthKey_4QWM89M6AT.p8"
   MAPKIT_KEY_ID: "4QWM89M6AT"
+  HTTP_PROXY_URL: "socks5h://cf-warp:1080"
 ---
 apiVersion: apps/v1
 kind: Deployment
