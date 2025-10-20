@@ -489,7 +489,7 @@ class IdentificationMedium:
         data = data.decode("iso-8859-15", "replace")
         out = cls(
             id_type=data[0],
-            id_number=data[1:]
+            id_number=data[1:].strip()
         )
 
         if out.id_type == "T":
