@@ -1,5 +1,6 @@
+import random
 from celery import shared_task
-from . import models, eos, apn
+from . import models, eos
 
 @shared_task(
     autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
@@ -7,7 +8,7 @@ from . import models, eos, apn
 )
 def update_all():
     for oauth in models.AccountOAuth.objects.filter(provider="sbahn_berlin", device_id__isnull=False):
-        update_sbahn_berlin_tickets.delay(oauth.account_id)
+        update_sbahn_berlin_tickets.apply_async(args=(oauth.account_id,), countdown=random.randint(0, 240))
 
 
 @shared_task(
