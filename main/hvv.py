@@ -82,6 +82,12 @@ def update_hvv_tickets(account_id):
     for order in data["content"]:
         if "ticketPublicUUID" not in order:
             continue
+        try:
+            valid_to = datetime.datetime.fromisoformat(order.get("validTo", ""))
+            if valid_to < timezone.now():
+                continue
+        except ValueError:
+            continue
         token = get_auth_token(account)
         try:
             r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
