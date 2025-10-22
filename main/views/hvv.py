@@ -14,7 +14,9 @@ def hvv_login(request):
         if form.is_valid():
             r = session.get("https://api.hochbahn.cloud/auth/token", auth=(
                 f"{settings.HVV_APPLICATION_KEY}/{form.cleaned_data["username"]}", form.cleaned_data["password"]
-            ))
+            ), headers={
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+            })
             if r.status_code != 200:
                 messages.error(request, "Login failed")
             else:

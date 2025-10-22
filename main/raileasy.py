@@ -84,7 +84,9 @@ def update_tickets(account_id):
         })
         for t in r.json()["tickets"]:
             for d in t["passengerDetails"]:
-                pdf_r = session.get(d["pdfUrl"])
+                pdf_r = session.get(d["pdfUrl"], headers={
+                    "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+                })
                 if not pdf_r.ok:
                     logger.warning(f"Could not fetch {d['pdfUrl']}")
                 else:

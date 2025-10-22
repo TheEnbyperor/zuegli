@@ -180,7 +180,10 @@ def avv_login_done(oauth: "models.AccountOAuth"):
 
 class JWKClient(jwt.PyJWKClient):
     def fetch_data(self):
-        r = session.get(self.uri, headers=self.headers)
+        r = session.get(self.uri, headers={
+            **self.headers,
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+        })
         r.raise_for_status()
         return r.json()
 
