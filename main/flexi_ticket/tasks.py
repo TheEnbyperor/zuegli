@@ -1,16 +1,9 @@
 import secrets
 from celery import shared_task
 import django.core.files.storage
-import niquests
-import niquests.adapters
-import urllib3.util
 import json
 import main.flexi_ticket.crypto
-
-retry_strategy = urllib3.util.Retry(
-    total=10,
-    status_forcelist=[429, 500, 502, 503, 504],
-)
+from main import session
 
 BRANDS = [{
     "id": "MBTA",
@@ -63,10 +56,6 @@ def make_request(session, url: str, data: dict, key: dict) -> dict:
 )
 def download_ft_data():
     ft_storage = django.core.files.storage.storages["ft-data"]
-    adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    session = niquests.Session()
-    session.proxies.update(socks_proxies)
-    session.mount("https://", adapter)
 
     for brand in BRANDS:
         install = make_request(
