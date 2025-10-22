@@ -1,3 +1,5 @@
+import time
+
 import niquests
 import secrets
 import hashlib
@@ -152,6 +154,7 @@ def update_eos_tickets(account: "models.Account", operator: str):
     data = r.json()
 
     if data["tickets"]:
+        time.sleep(2)
         r = session.post(f"{license_info['url_base']}/index.php/mobileService/ticket", json={
             "details": True,
             "tickets": data["tickets"],

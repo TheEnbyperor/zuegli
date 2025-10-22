@@ -1,3 +1,4 @@
+import random
 from celery import shared_task
 from . import models, eos
 
@@ -7,7 +8,7 @@ from . import models, eos
 )
 def update_all():
     for oauth in models.AccountOAuth.objects.filter(provider="mvv", device_id__isnull=False):
-        update_mvv_tickets.delay(oauth.account_id)
+        update_mvv_tickets.apply_async(args=(oauth.account_id,), countdown=random.randint(0, 240))
 
 
 @shared_task(
