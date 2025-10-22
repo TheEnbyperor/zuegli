@@ -25,6 +25,7 @@ def sncb_add_ticket(request):
                 "API-Key": settings.SNCB_API_KEY,
                 "Accept-Language": "EN_GB",
                 "Content-Type": "application/json",
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             })
             if not r.ok:
                 messages.error(request, "Failed to fetch ticket - check the PNR and email")
@@ -34,7 +35,9 @@ def sncb_add_ticket(request):
                 for segment in data["Dossier"]["TravelSegments"]:
                     for t in segment["Tickets"]:
                         barcode_url = f"https://www.bene-system.com{t['BarcodeURL']}"
-                        br = session.get(barcode_url)
+                        br = session.get(barcode_url, headers={
+                            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+                        })
                         if not br.ok:
                             messages.warning(request, "Failed to fetch ticket barcode, ticket segment skipped")
                             continue

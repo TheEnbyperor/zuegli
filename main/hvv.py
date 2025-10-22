@@ -23,7 +23,8 @@ def get_auth_token(account: "models.Account"):
         return oauth.token
     elif oauth.refresh_token:
         r = session.get("https://api.hochbahn.cloud/auth/token/refresh", headers={
-            "x-beam-refresh-token": f"Bearer {settings.HVV_APPLICATION_KEY}/{oauth.refresh_token}"
+            "x-beam-refresh-token": f"Bearer {settings.HVV_APPLICATION_KEY}/{oauth.refresh_token}",
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
         })
         if r.status_code != 200:
             return None
@@ -68,7 +69,8 @@ def update_hvv_tickets(account_id):
     r = session.get("https://api.hochbahn.cloud/orders", params={
         "pageSize": "0",
     }, headers={
-        "Authorization": f"Bearer {token}"
+        "Authorization": f"Bearer {token}",
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
     })
     if not r.ok:
         logger.error(f"Failed to get HVV orders for {account}: {r.text}")
@@ -81,7 +83,8 @@ def update_hvv_tickets(account_id):
             continue
         token = get_auth_token(account)
         r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
-            "Authorization": f"Bearer {token}"
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
         })
         if not r.ok:
             continue
@@ -98,7 +101,8 @@ def update_hvv_tickets(account_id):
 
     token = get_auth_token(account)
     r = session.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
-        "Authorization": f"Bearer {token}"
+        "Authorization": f"Bearer {token}",
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
     })
     if not r.ok:
         logger.error(f"Failed to get HVV subscriptions for {account}: {r.text}")
@@ -109,7 +113,8 @@ def update_hvv_tickets(account_id):
     for sub in data["content"]:
         token = get_auth_token(account)
         r = session.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
-            "Authorization": f"Bearer {token}"
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
         })
         if not r.ok:
             continue
