@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.conf import settings
 import datetime
 import niquests
+import niquests.exceptions
 import jwt
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -82,10 +83,13 @@ def update_hvv_tickets(account_id):
         if "ticketPublicUUID" not in order:
             continue
         token = get_auth_token(account)
-        r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
-            "Authorization": f"Bearer {token}",
-            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-        })
+        try:
+            r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
+                "Authorization": f"Bearer {token}",
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+            })
+        except niquests.exceptions.RetryError:
+            continue
         if not r.ok:
             continue
         f = zipfile.ZipFile(io.BytesIO(r.content))
@@ -112,10 +116,13 @@ def update_hvv_tickets(account_id):
 
     for sub in data["content"]:
         token = get_auth_token(account)
-        r = session.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
-            "Authorization": f"Bearer {token}",
-            "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-        })
+        try:
+            r = session.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
+                "Authorization": f"Bearer {token}",
+                "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+            })
+        except niquests.exceptions.RetryError:
+            continue
         if not r.ok:
             continue
         f = zipfile.ZipFile(io.BytesIO(r.content))
