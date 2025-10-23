@@ -1837,7 +1837,7 @@ def parse_ticket(
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
-    FlexiTicket, TS2Ticket, SNCBTrainPlus
+    FlexiTicket, TS2Ticket, SNCBTrainPlus, ADIFTicket
 ]:
     context = account.ticket_contexts() if account else TicketContexts([])
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
@@ -1871,6 +1871,9 @@ def parse_ticket(
     if ticket_bytes[:4] == b"UIC:":
         return parse_ticket_uic_qr(ticket_bytes, context)
 
+    if len(ticket_bytes) == 516:
+        return parse_ticket_adif(ticket_bytes)
+
     if ticket_bytes[:2] in (b"06", b"08"):
         return parse_ticket_rsp(ticket_bytes)
 
@@ -1903,9 +1906,6 @@ def parse_ticket(
 
     if len(ticket_bytes) == 42:
         return parse_ticket_rsp_11(ticket_bytes)
-
-    if len(ticket_bytes) == 516:
-        return parse_ticket_adif(ticket_bytes)
 
     raise TicketError(
         title="This doesn't look like a ticket type we support.",
