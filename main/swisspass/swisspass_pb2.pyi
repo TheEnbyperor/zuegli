@@ -7,100 +7,285 @@ import builtins
 import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
+import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
+import sys
 import typing
 
+if sys.version_info >= (3, 10):
+    import typing as typing_extensions
+else:
+    import typing_extensions
+
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+
+class _TravelClass:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _TravelClassEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_TravelClass.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownTravelClass: _TravelClass.ValueType  # 0
+    First: _TravelClass.ValueType  # 1
+    Second: _TravelClass.ValueType  # 2
+    Upgrade: _TravelClass.ValueType  # 3
+
+class TravelClass(_TravelClass, metaclass=_TravelClassEnumTypeWrapper): ...
+
+UnknownTravelClass: TravelClass.ValueType  # 0
+First: TravelClass.ValueType  # 1
+Second: TravelClass.ValueType  # 2
+Upgrade: TravelClass.ValueType  # 3
+global___TravelClass = TravelClass
+
+class _JourneyType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _JourneyTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_JourneyType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownJourneyType: _JourneyType.ValueType  # 0
+    OneWay: _JourneyType.ValueType  # 1
+    Return: _JourneyType.ValueType  # 2
+    TwoWay: _JourneyType.ValueType  # 3
+
+class JourneyType(_JourneyType, metaclass=_JourneyTypeEnumTypeWrapper): ...
+
+UnknownJourneyType: JourneyType.ValueType  # 0
+OneWay: JourneyType.ValueType  # 1
+Return: JourneyType.ValueType  # 2
+TwoWay: JourneyType.ValueType  # 3
+global___JourneyType = JourneyType
+
+class _ValidityType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _ValidityTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ValidityType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownValidityType: _ValidityType.ValueType  # 0
+    SpaceAndTime: _ValidityType.ValueType  # 1
+    Validation: _ValidityType.ValueType  # 2
+
+class ValidityType(_ValidityType, metaclass=_ValidityTypeEnumTypeWrapper): ...
+
+UnknownValidityType: ValidityType.ValueType  # 0
+SpaceAndTime: ValidityType.ValueType  # 1
+Validation: ValidityType.ValueType  # 2
+global___ValidityType = ValidityType
+
+class _RouteType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _RouteTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_RouteType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownRouteType: _RouteType.ValueType  # 0
+    Undefined: _RouteType.ValueType  # 1
+    RouteTicket: _RouteType.ValueType  # 2
+    ZoneTicket: _RouteType.ValueType  # 3
+
+class RouteType(_RouteType, metaclass=_RouteTypeEnumTypeWrapper): ...
+
+UnknownRouteType: RouteType.ValueType  # 0
+Undefined: RouteType.ValueType  # 1
+RouteTicket: RouteType.ValueType  # 2
+ZoneTicket: RouteType.ValueType  # 3
+global___RouteType = RouteType
+
+class _Language:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _LanguageEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Language.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownLanguage: _Language.ValueType  # 0
+    DE: _Language.ValueType  # 1
+    FR: _Language.ValueType  # 2
+    IT: _Language.ValueType  # 3
+    EN: _Language.ValueType  # 4
+
+class Language(_Language, metaclass=_LanguageEnumTypeWrapper): ...
+
+UnknownLanguage: Language.ValueType  # 0
+DE: Language.ValueType  # 1
+FR: Language.ValueType  # 2
+IT: Language.ValueType  # 3
+EN: Language.ValueType  # 4
+global___Language = Language
+
+class _TransportType:
+    ValueType = typing.NewType("ValueType", builtins.int)
+    V: typing_extensions.TypeAlias = ValueType
+
+class _TransportTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_TransportType.ValueType], builtins.type):
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+    UnknownTransportType: _TransportType.ValueType  # 0
+    Railway: _TransportType.ValueType  # 1
+    Bus: _TransportType.ValueType  # 2
+    Tram: _TransportType.ValueType  # 3
+    Boat: _TransportType.ValueType  # 4
+    MountainRailway: _TransportType.ValueType  # 5
+
+class TransportType(_TransportType, metaclass=_TransportTypeEnumTypeWrapper): ...
+
+UnknownTransportType: TransportType.ValueType  # 0
+Railway: TransportType.ValueType  # 1
+Bus: TransportType.ValueType  # 2
+Tram: TransportType.ValueType  # 3
+Boat: TransportType.ValueType  # 4
+MountainRailway: TransportType.ValueType  # 5
+global___TransportType = TransportType
+
+@typing.final
+class SignedTicket(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    TICKET_DATA_FIELD_NUMBER: builtins.int
+    METADATA_FIELD_NUMBER: builtins.int
+    KEY_FIELD_NUMBER: builtins.int
+    KEY_META_FIELD_NUMBER: builtins.int
+    SIGNATURE_FIELD_NUMBER: builtins.int
+    key: builtins.bytes
+    signature: builtins.bytes
+    """ASN.1"""
+    @property
+    def ticket_data(self) -> global___Ticket: ...
+    @property
+    def metadata(self) -> global___Metadata: ...
+    @property
+    def key_meta(self) -> global___KeyMeta: ...
+    def __init__(
+        self,
+        *,
+        ticket_data: global___Ticket | None = ...,
+        metadata: global___Metadata | None = ...,
+        key: builtins.bytes = ...,
+        key_meta: global___KeyMeta | None = ...,
+        signature: builtins.bytes = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["key_meta", b"key_meta", "metadata", b"metadata", "ticket_data", b"ticket_data"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["key", b"key", "key_meta", b"key_meta", "metadata", b"metadata", "signature", b"signature", "ticket_data", b"ticket_data"]) -> None: ...
+
+global___SignedTicket = SignedTicket
+
+@typing.final
+class KeyMeta(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    RICS_FIELD_NUMBER: builtins.int
+    KEY_ID_FIELD_NUMBER: builtins.int
+    rics: builtins.str
+    key_id: builtins.str
+    def __init__(
+        self,
+        *,
+        rics: builtins.str = ...,
+        key_id: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["key_id", b"key_id", "rics", b"rics"]) -> None: ...
+
+global___KeyMeta = KeyMeta
+
+@typing.final
+class Metadata(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    VERSION_FIELD_NUMBER: builtins.int
+    version: builtins.int
+    def __init__(
+        self,
+        *,
+        version: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["version", b"version"]) -> None: ...
+
+global___Metadata = Metadata
 
 @typing.final
 class Ticket(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TICKET_DATA_FIELD_NUMBER: builtins.int
-    SIGNING_KEY_FIELD_NUMBER: builtins.int
-    SIGNATURE_FIELD_NUMBER: builtins.int
-    signature: builtins.bytes
-    """ASN.1"""
-    @property
-    def ticket_data(self) -> global___TicketData: ...
-    @property
-    def signing_key(self) -> global___SigningKey: ...
-    def __init__(
-        self,
-        *,
-        ticket_data: global___TicketData | None = ...,
-        signing_key: global___SigningKey | None = ...,
-        signature: builtins.bytes = ...,
-    ) -> None: ...
-    def HasField(self, field_name: typing.Literal["signing_key", b"signing_key", "ticket_data", b"ticket_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["signature", b"signature", "signing_key", b"signing_key", "ticket_data", b"ticket_data"]) -> None: ...
-
-global___Ticket = Ticket
-
-@typing.final
-class TicketData(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
     TICKET_ID_FIELD_NUMBER: builtins.int
-    TRIP_DATA_FIELD_NUMBER: builtins.int
+    TARIFF_FIELD_NUMBER: builtins.int
     TRAVELER_FIELD_NUMBER: builtins.int
-    TICKET_ISSUE_FIELD_NUMBER: builtins.int
+    SALE_FIELD_NUMBER: builtins.int
     PAYMENT_FIELD_NUMBER: builtins.int
-    TRAIN_DATA_FIELD_NUMBER: builtins.int
-    TRAIN_DATA_COUNT_FIELD_NUMBER: builtins.int
+    EXTRA_FIELD_NUMBER: builtins.int
+    TRANSPORT_FIELD_NUMBER: builtins.int
+    TRANSPORT_DATA_COUNT_FIELD_NUMBER: builtins.int
     TARIFFS_FIELD_NUMBER: builtins.int
     ticket_id: builtins.int
-    train_data_count: builtins.int
+    transport_data_count: builtins.int
     @property
-    def trip_data(self) -> global___TripData: ...
+    def tariff(self) -> global___Tariff: ...
     @property
     def traveler(self) -> global___TravelerData: ...
     @property
-    def ticket_issue(self) -> global___TicketIssue: ...
+    def sale(self) -> global___SaleData: ...
     @property
     def payment(self) -> global___PaymentData: ...
     @property
-    def train_data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___TrainData]: ...
+    def extra(self) -> global___ExtraData: ...
     @property
-    def tariffs(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Tariff]: ...
+    def transport(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___TransportData]: ...
+    @property
+    def tariffs(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___TariffExtra]: ...
     def __init__(
         self,
         *,
         ticket_id: builtins.int = ...,
-        trip_data: global___TripData | None = ...,
+        tariff: global___Tariff | None = ...,
         traveler: global___TravelerData | None = ...,
-        ticket_issue: global___TicketIssue | None = ...,
+        sale: global___SaleData | None = ...,
         payment: global___PaymentData | None = ...,
-        train_data: collections.abc.Iterable[global___TrainData] | None = ...,
-        train_data_count: builtins.int = ...,
-        tariffs: collections.abc.Iterable[global___Tariff] | None = ...,
+        extra: global___ExtraData | None = ...,
+        transport: collections.abc.Iterable[global___TransportData] | None = ...,
+        transport_data_count: builtins.int = ...,
+        tariffs: collections.abc.Iterable[global___TariffExtra] | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["payment", b"payment", "ticket_issue", b"ticket_issue", "traveler", b"traveler", "trip_data", b"trip_data"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["payment", b"payment", "tariffs", b"tariffs", "ticket_id", b"ticket_id", "ticket_issue", b"ticket_issue", "train_data", b"train_data", "train_data_count", b"train_data_count", "traveler", b"traveler", "trip_data", b"trip_data"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["extra", b"extra", "payment", b"payment", "sale", b"sale", "tariff", b"tariff", "traveler", b"traveler"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["extra", b"extra", "payment", b"payment", "sale", b"sale", "tariff", b"tariff", "tariffs", b"tariffs", "ticket_id", b"ticket_id", "transport", b"transport", "transport_data_count", b"transport_data_count", "traveler", b"traveler"]) -> None: ...
 
-global___TicketData = TicketData
+global___Ticket = Ticket
 
 @typing.final
-class TripData(google.protobuf.message.Message):
+class Tariff(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TICKET_TYPE_FIELD_NUMBER: builtins.int
+    PRODUCT_FIELD_NUMBER: builtins.int
     DEPARTURE_STATION_FIELD_NUMBER: builtins.int
     ARRIVAL_STATION_FIELD_NUMBER: builtins.int
     TRAVEL_CLASS_FIELD_NUMBER: builtins.int
+    JOURNEY_TYPE_FIELD_NUMBER: builtins.int
     ROUTE_FIELD_NUMBER: builtins.int
+    NUMBER_ROUTES_FIELD_NUMBER: builtins.int
     VALID_FROM_FIELD_NUMBER: builtins.int
     VALID_UNTIL_FIELD_NUMBER: builtins.int
-    ARTICLE_NUMBER_FIELD_NUMBER: builtins.int
-    ZONE_INFO_FIELD_NUMBER: builtins.int
+    RETURN_VALID_FROM_FIELD_NUMBER: builtins.int
+    RETURN_VALID_UNTIL_FIELD_NUMBER: builtins.int
+    PRODUCT_NUMBER_FIELD_NUMBER: builtins.int
+    ZONES_FIELD_NUMBER: builtins.int
+    NUMBER_ZONES_FIELD_NUMBER: builtins.int
     TARIFF_FIELD_NUMBER: builtins.int
+    REDUCED_TARIFF_FIELD_NUMBER: builtins.int
+    NIGHT_SURCHARGE_FIELD_NUMBER: builtins.int
+    VALIDITY_TYPE_FIELD_NUMBER: builtins.int
+    ROUTE_TYPE_FIELD_NUMBER: builtins.int
     departure_station: builtins.str
     arrival_station: builtins.str
-    travel_class: builtins.int
-    article_number: builtins.int
+    travel_class: global___TravelClass.ValueType
+    journey_type: global___JourneyType.ValueType
+    number_routes: builtins.int
+    product_number: builtins.int
+    number_zones: builtins.int
     tariff: builtins.str
+    reduced_tariff: builtins.bool
+    night_surcharge: builtins.bool
+    validity_type: global___ValidityType.ValueType
+    route_type: global___RouteType.ValueType
     @property
-    def ticket_type(self) -> global___TicketType: ...
+    def product(self) -> global___Product: ...
     @property
     def route(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     @property
@@ -108,134 +293,169 @@ class TripData(google.protobuf.message.Message):
     @property
     def valid_until(self) -> global___Time: ...
     @property
-    def zone_info(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ZoneInformation]: ...
+    def return_valid_from(self) -> global___Time: ...
+    @property
+    def return_valid_until(self) -> global___Time: ...
+    @property
+    def zones(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Zone]: ...
     def __init__(
         self,
         *,
-        ticket_type: global___TicketType | None = ...,
+        product: global___Product | None = ...,
         departure_station: builtins.str = ...,
         arrival_station: builtins.str = ...,
-        travel_class: builtins.int = ...,
+        travel_class: global___TravelClass.ValueType = ...,
+        journey_type: global___JourneyType.ValueType = ...,
         route: collections.abc.Iterable[builtins.str] | None = ...,
+        number_routes: builtins.int = ...,
         valid_from: global___Time | None = ...,
         valid_until: global___Time | None = ...,
-        article_number: builtins.int = ...,
-        zone_info: collections.abc.Iterable[global___ZoneInformation] | None = ...,
+        return_valid_from: global___Time | None = ...,
+        return_valid_until: global___Time | None = ...,
+        product_number: builtins.int = ...,
+        zones: collections.abc.Iterable[global___Zone] | None = ...,
+        number_zones: builtins.int = ...,
         tariff: builtins.str = ...,
+        reduced_tariff: builtins.bool = ...,
+        night_surcharge: builtins.bool = ...,
+        validity_type: global___ValidityType.ValueType = ...,
+        route_type: global___RouteType.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["ticket_type", b"ticket_type", "valid_from", b"valid_from", "valid_until", b"valid_until"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["arrival_station", b"arrival_station", "article_number", b"article_number", "departure_station", b"departure_station", "route", b"route", "tariff", b"tariff", "ticket_type", b"ticket_type", "travel_class", b"travel_class", "valid_from", b"valid_from", "valid_until", b"valid_until", "zone_info", b"zone_info"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["product", b"product", "return_valid_from", b"return_valid_from", "return_valid_until", b"return_valid_until", "valid_from", b"valid_from", "valid_until", b"valid_until"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["arrival_station", b"arrival_station", "departure_station", b"departure_station", "journey_type", b"journey_type", "night_surcharge", b"night_surcharge", "number_routes", b"number_routes", "number_zones", b"number_zones", "product", b"product", "product_number", b"product_number", "reduced_tariff", b"reduced_tariff", "return_valid_from", b"return_valid_from", "return_valid_until", b"return_valid_until", "route", b"route", "route_type", b"route_type", "tariff", b"tariff", "travel_class", b"travel_class", "valid_from", b"valid_from", "valid_until", b"valid_until", "validity_type", b"validity_type", "zones", b"zones"]) -> None: ...
 
-global___TripData = TripData
+global___Tariff = Tariff
 
 @typing.final
-class TicketType(google.protobuf.message.Message):
+class Product(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    ID_FIELD_NUMBER: builtins.int
+    LANGUAGE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
-    id: builtins.int
+    language: global___Language.ValueType
     name: builtins.str
     def __init__(
         self,
         *,
-        id: builtins.int = ...,
+        language: global___Language.ValueType = ...,
         name: builtins.str = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["id", b"id", "name", b"name"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["language", b"language", "name", b"name"]) -> None: ...
 
-global___TicketType = TicketType
+global___Product = Product
 
 @typing.final
-class ZoneInformation(google.protobuf.message.Message):
+class Zone(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
+    ALL_ZONES_FIELD_NUMBER: builtins.int
     ZONE_ID_FIELD_NUMBER: builtins.int
     ZONE_ORG_FIELD_NUMBER: builtins.int
+    all_zones: builtins.bool
     zone_id: builtins.int
     zone_org: builtins.int
     def __init__(
         self,
         *,
+        all_zones: builtins.bool = ...,
         zone_id: builtins.int = ...,
         zone_org: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["zone_id", b"zone_id", "zone_org", b"zone_org"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["all_zones", b"all_zones", "zone_id", b"zone_id", "zone_org", b"zone_org"]) -> None: ...
 
-global___ZoneInformation = ZoneInformation
+global___Zone = Zone
 
 @typing.final
 class TravelerData(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    SBB_ID_FIELD_NUMBER: builtins.int
+    CUSTOMER_NUMBER_FIELD_NUMBER: builtins.int
     SWISSPASS_ID_FIELD_NUMBER: builtins.int
     SURNAME_FIELD_NUMBER: builtins.int
     FORENAME_FIELD_NUMBER: builtins.int
     BIRTHDAY_FIELD_NUMBER: builtins.int
+    MOBILE_NUMBER_FIELD_NUMBER: builtins.int
     TARIFF_FIELD_NUMBER: builtins.int
-    sbb_id: builtins.str
+    REDUCTION_FIELD_NUMBER: builtins.int
+    customer_number: builtins.str
     swisspass_id: builtins.str
     surname: builtins.str
     forename: builtins.str
+    mobile_number: builtins.str
     tariff: builtins.str
+    reduction: builtins.str
     @property
     def birthday(self) -> global___Time: ...
     def __init__(
         self,
         *,
-        sbb_id: builtins.str = ...,
+        customer_number: builtins.str = ...,
         swisspass_id: builtins.str = ...,
         surname: builtins.str = ...,
         forename: builtins.str = ...,
         birthday: global___Time | None = ...,
+        mobile_number: builtins.str = ...,
         tariff: builtins.str = ...,
+        reduction: builtins.str = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["birthday", b"birthday"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["birthday", b"birthday", "forename", b"forename", "sbb_id", b"sbb_id", "surname", b"surname", "swisspass_id", b"swisspass_id", "tariff", b"tariff"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["birthday", b"birthday", "customer_number", b"customer_number", "forename", b"forename", "mobile_number", b"mobile_number", "reduction", b"reduction", "surname", b"surname", "swisspass_id", b"swisspass_id", "tariff", b"tariff"]) -> None: ...
 
 global___TravelerData = TravelerData
 
 @typing.final
-class TicketIssue(google.protobuf.message.Message):
+class TransportData(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    ISSUE_TIME_FIELD_NUMBER: builtins.int
-    ISSUING_ORG_FIELD_NUMBER: builtins.int
-    issuing_org: builtins.int
+    JOURNEY_NUMBER_FIELD_NUMBER: builtins.int
+    CARRIAGE_FIELD_NUMBER: builtins.int
+    SEATS_FIELD_NUMBER: builtins.int
+    NUMBER_SEATS_FIELD_NUMBER: builtins.int
+    TYPE_FIELD_NUMBER: builtins.int
+    journey_number: builtins.str
+    carriage: builtins.str
+    number_seats: builtins.int
+    type: global___TransportType.ValueType
     @property
-    def issue_time(self) -> global___Time: ...
+    def seats(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]: ...
     def __init__(
         self,
         *,
-        issue_time: global___Time | None = ...,
-        issuing_org: builtins.int = ...,
+        journey_number: builtins.str = ...,
+        carriage: builtins.str = ...,
+        seats: collections.abc.Iterable[builtins.str] | None = ...,
+        number_seats: builtins.int = ...,
+        type: global___TransportType.ValueType = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["issue_time", b"issue_time"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["issue_time", b"issue_time", "issuing_org", b"issuing_org"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["carriage", b"carriage", "journey_number", b"journey_number", "number_seats", b"number_seats", "seats", b"seats", "type", b"type"]) -> None: ...
 
-global___TicketIssue = TicketIssue
+global___TransportData = TransportData
 
 @typing.final
-class TrainData(google.protobuf.message.Message):
+class SaleData(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    TRAIN_ID_FIELD_NUMBER: builtins.int
-    COACH_FIELD_NUMBER: builtins.int
-    SEAT_FIELD_NUMBER: builtins.int
-    train_id: builtins.str
-    coach: builtins.str
-    seat: builtins.str
+    SELLING_TIME_FIELD_NUMBER: builtins.int
+    LANGUAGE_FIELD_NUMBER: builtins.int
+    SALE_POINT_FIELD_NUMBER: builtins.int
+    ISSUING_ORG_FIELD_NUMBER: builtins.int
+    language: global___Language.ValueType
+    sale_point: builtins.int
+    issuing_org: builtins.int
+    @property
+    def selling_time(self) -> global___Time: ...
     def __init__(
         self,
         *,
-        train_id: builtins.str = ...,
-        coach: builtins.str = ...,
-        seat: builtins.str = ...,
+        selling_time: global___Time | None = ...,
+        language: global___Language.ValueType = ...,
+        sale_point: builtins.int = ...,
+        issuing_org: builtins.int = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["coach", b"coach", "seat", b"seat", "train_id", b"train_id"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["selling_time", b"selling_time"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["issuing_org", b"issuing_org", "language", b"language", "sale_point", b"sale_point", "selling_time", b"selling_time"]) -> None: ...
 
-global___TrainData = TrainData
+global___SaleData = SaleData
 
 @typing.final
 class PaymentData(google.protobuf.message.Message):
@@ -259,7 +479,28 @@ class PaymentData(google.protobuf.message.Message):
 global___PaymentData = PaymentData
 
 @typing.final
-class Tariff(google.protobuf.message.Message):
+class ExtraData(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    FALLBACK_FIELD_NUMBER: builtins.int
+    EXTRA_FIELD_NUMBER: builtins.int
+    SPECIMEN_FIELD_NUMBER: builtins.int
+    fallback: builtins.bool
+    extra: builtins.str
+    specimen: builtins.bool
+    def __init__(
+        self,
+        *,
+        fallback: builtins.bool = ...,
+        extra: builtins.str = ...,
+        specimen: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["extra", b"extra", "fallback", b"fallback", "specimen", b"specimen"]) -> None: ...
+
+global___ExtraData = ExtraData
+
+@typing.final
+class TariffExtra(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     NAME_FIELD_NUMBER: builtins.int
@@ -274,25 +515,7 @@ class Tariff(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing.Literal["name", b"name", "passenger_count", b"passenger_count"]) -> None: ...
 
-global___Tariff = Tariff
-
-@typing.final
-class SigningKey(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
-
-    RICS_FIELD_NUMBER: builtins.int
-    KEY_ID_FIELD_NUMBER: builtins.int
-    rics: builtins.str
-    key_id: builtins.str
-    def __init__(
-        self,
-        *,
-        rics: builtins.str = ...,
-        key_id: builtins.str = ...,
-    ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["key_id", b"key_id", "rics", b"rics"]) -> None: ...
-
-global___SigningKey = SigningKey
+global___TariffExtra = TariffExtra
 
 @typing.final
 class Time(google.protobuf.message.Message):

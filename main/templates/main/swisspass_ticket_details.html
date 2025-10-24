@@ -1,11 +1,11 @@
-{% load rics protobuf tz %}
+{% load rics protobuf tz i18n %}
 {% localtime off %}
     <h2 class="govuk-heading-m">Security</h2>
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Signing RICS</dt>
             <dd class="govuk-summary-list__value">
-                {{ ticket.data.ticket.signing_key.rics }}
+                {{ ticket.data.ticket.key_meta.rics }}
             </dd>
         </div>
         {% with org=ticket.data.issuer %}
@@ -21,7 +21,16 @@
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Key ID</dt>
             <dd class="govuk-summary-list__value">
-                {{ ticket.data.ticket.signing_key.key_id }}
+                {{ ticket.data.ticket.key_meta.key_id }}
+            </dd>
+        </div>
+    </dl>
+    <h2 class="govuk-heading-m">Metadata</h2>
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Specification version</dt>
+            <dd class="govuk-summary-list__value">
+                {{ ticket.data.ticket.metadata.version }}
             </dd>
         </div>
     </dl>
@@ -34,62 +43,82 @@
             </dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Trip</dt>
+            <dt class="govuk-summary-list__key">Tariff</dt>
             <dd class="govuk-summary-list__value">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Ticket Type</dt>
+                        <dt class="govuk-summary-list__key">Product</dt>
                         <dd class="govuk-summary-list__value">
                             <dl class="govuk-summary-list">
                                 <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">ID</dt>
+                                    <dt class="govuk-summary-list__key">Language</dt>
                                     <dd class="govuk-summary-list__value">
-                                        {{ ticket.data.ticket.ticket_data.trip_data.ticket_type.id }}
+                                        {% if ticket.data.ticket.ticket_data.tariff.product.language == 1 %}
+                                            German
+                                        {% elif ticket.data.ticket.ticket_data.tariff.product.language == 2 %}
+                                            French
+                                        {% elif ticket.data.ticket.ticket_data.tariff.product.language == 3 %}
+                                            Italian
+                                        {% elif ticket.data.ticket.ticket_data.tariff.product.language == 4 %}
+                                            English
+                                        {% endif %}
                                     </dd>
                                 </div>
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">Name</dt>
                                     <dd class="govuk-summary-list__value">
-                                        {{ ticket.data.ticket.ticket_data.trip_data.ticket_type.name }}
+                                        {{ ticket.data.ticket.ticket_data.tariff.product.name }}
                                     </dd>
                                 </div>
                             </dl>
                         </dd>
                     </div>
-                    {% if ticket.data.ticket.ticket_data.trip_data.departure_station %}
+                    {% if ticket.data.ticket.ticket_data.tariff.departure_station %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">From station</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ ticket.data.ticket.ticket_data.trip_data.departure_station }}
+                                {{ ticket.data.ticket.ticket_data.tariff.departure_station }}
                             </dd>
                         </div>
                     {% endif %}
-                    {% if ticket.data.ticket.ticket_data.trip_data.arrival_station %}
+                    {% if ticket.data.ticket.ticket_data.tariff.arrival_station %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">To station</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ ticket.data.ticket.ticket_data.trip_data.arrival_station }}
+                                {{ ticket.data.ticket.ticket_data.tariff.arrival_station }}
                             </dd>
                         </div>
                     {% endif %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Travel class</dt>
                         <dd class="govuk-summary-list__value">
-                            {% if ticket.data.ticket.ticket_data.trip_data.travel_class == 1 %}
+                            {% if ticket.data.ticket.ticket_data.tariff.travel_class == 1 %}
                                 First
-                            {% elif ticket.data.ticket.ticket_data.trip_data.travel_class == 2 %}
+                            {% elif ticket.data.ticket.ticket_data.tariff.travel_class == 2 %}
                                 Second
-                            {% else %}
-                                <code>{{ ticket.data.ticket.ticket_data.trip_data.travel_class }}</code>
+                            {% elif ticket.data.ticket.ticket_data.tariff.travel_class == 3 %}
+                                Class upgrade
                             {% endif %}
                         </dd>
                     </div>
-                    {% if ticket.data.ticket.ticket_data.trip_data.route %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Journey type</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.tariff.journey_type == 1 %}
+                                One-way
+                            {% elif ticket.data.ticket.ticket_data.tariff.journey_type == 2 %}
+                                Return half
+                            {% elif ticket.data.ticket.ticket_data.tariff.journey_type == 3 %}
+                                Round-trip
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% if ticket.data.ticket.ticket_data.tariff.route %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Routes</dt>
                             <dd class="govuk-summary-list__value">
                                 <ul class="govuk-list govuk-list--bullet">
-                                    {% for r in ticket.data.ticket.ticket_data.trip_data.route %}
+                                    {% for r in ticket.data.ticket.ticket_data.tariff.route %}
                                         <li>{{ r }}</li>
                                     {% endfor %}
                                 </ul>
@@ -109,16 +138,16 @@
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Article number</dt>
+                        <dt class="govuk-summary-list__key">Product number</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ ticket.data.ticket.ticket_data.trip_data.article_number }}
+                            {{ ticket.data.ticket.ticket_data.tariff.product_number }}
                         </dd>
                     </div>
-                    {% if ticket.data.ticket.ticket_data.trip_data.zone_info %}
+                    {% if ticket.data.ticket.ticket_data.tariff.zones %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Zones</dt>
                             <dd class="govuk-summary-list__value">
-                                {% for zone in ticket.data.ticket.ticket_data.trip_data.zone_info %}
+                                {% for zone in ticket.data.ticket.ticket_data.tariff.zones %}
                                     <div class="govuk-summary-card">
                                         <div class="govuk-summary-card__title-wrapper">
                                             <h2 class="govuk-summary-card__title">Zone #{{ forloop.counter }}</h2>
@@ -126,7 +155,17 @@
                                         <div class="govuk-summary-card__content">
                                             <dl class="govuk-summary-list">
                                                 <div class="govuk-summary-list__row">
-                                                    <dt class="govuk-summary-list__key">ID</dt>
+                                                    <dt class="govuk-summary-list__key">All zones</dt>
+                                                    <dd class="govuk-summary-list__value">
+                                                        {% if zone.all_zones %}
+                                                            <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                        {% else %}
+                                                            <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                        {% endif %}
+                                                    </dd>
+                                                </div>
+                                                <div class="govuk-summary-list__row">
+                                                    <dt class="govuk-summary-list__key">Zone ID</dt>
                                                     <dd class="govuk-summary-list__value">
                                                         {{ zone.zone_id }}
                                                     </dd>
@@ -153,15 +192,60 @@
                                         </div>
                                     </div>
                                 {% endfor %}
-
                             </dd>
                         </div>
                     {% endif %}
-                    {% if ticket.data.ticket.ticket_data.trip_data.tariff %}
+                    {% if ticket.data.ticket.ticket_data.tariff.tariff %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Tariff</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ ticket.data.ticket.ticket_data.trip_data.tariff }}
+                                {{ ticket.data.ticket.ticket_data.tariff.tariff }}
+                            </dd>
+                        </div>
+                    {% endif %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reduced tariff</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.tariff.reduced_tariff %}
+                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Night surcharge</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.tariff.night_surcharge %}
+                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% if ticket.data.ticket.ticket_data.tariff.validity_type %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Validity type</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if ticket.data.ticket.ticket_data.tariff.validity_type == 1 %}
+                                    Space and time
+                                {% elif ticket.data.ticket.ticket_data.tariff.validity_type == 2 %}
+                                    Validation stamp required
+                                {% endif %}
+                            </dd>
+                        </div>
+                    {% endif %}
+                    {% if ticket.data.ticket.ticket_data.tariff.route_type %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Route type</dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if ticket.data.ticket.ticket_data.tariff.route_type == 1 %}
+                                    Undefined
+                                {% elif ticket.data.ticket.ticket_data.tariff.route_type == 2 %}
+                                    Route ticket
+                                {% elif ticket.data.ticket.ticket_data.tariff.route_type == 3 %}
+                                    Zonal ticket
+                                {% endif %}
                             </dd>
                         </div>
                     {% endif %}
@@ -172,11 +256,11 @@
             <dt class="govuk-summary-list__key">Traveller</dt>
             <dd class="govuk-summary-list__value">
                 <dl class="govuk-summary-list">
-                    {% if ticket.data.ticket.ticket_data.traveler.sbb_id %}
+                    {% if ticket.data.ticket.ticket_data.traveler.customer_number %}
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">SBB ID</dt>
+                            <dt class="govuk-summary-list__key">Customer ID</dt>
                             <dd class="govuk-summary-list__value">
-                                {{ ticket.data.ticket.ticket_data.traveler.sbb_id }}
+                                {{ ticket.data.ticket.ticket_data.traveler.customer_number }}
                             </dd>
                         </div>
                     {% endif %}
@@ -208,6 +292,14 @@
                             </dd>
                         </div>
                     {% endif %}
+                    {% if ticket.data.ticket.ticket_data.traveler.mobile_number %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Mobile number</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.ticket.ticket_data.traveler.mobile_number }}
+                            </dd>
+                        </div>
+                    {% endif %}
                     {% if ticket.data.ticket.ticket_data.traveler.tariff %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Tariff</dt>
@@ -216,11 +308,19 @@
                             </dd>
                         </div>
                     {% endif %}
+                    {% if ticket.data.ticket.ticket_data.traveler.reduction %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Reduction</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.ticket.ticket_data.traveler.reduction }}
+                            </dd>
+                        </div>
+                    {% endif %}
                 </dl>
             </dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Ticket issue</dt>
+            <dt class="govuk-summary-list__key">Sale data</dt>
             <dd class="govuk-summary-list__value">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
@@ -229,20 +329,40 @@
                             {{ ticket.data.issuing_time|date:"F d, Y H:i:s e" }}
                         </dd>
                     </div>
-                    {% with org=ticket.data.ticket.ticket_data.ticket_issue.issuing_org|swisspass_org_id %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Sale language</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.sale.language == 1 %}
+                                German
+                            {% elif ticket.data.ticket.ticket_data.sale.language == 2 %}
+                                French
+                            {% elif ticket.data.ticket.ticket_data.sale.language == 3 %}
+                                Italian
+                            {% elif ticket.data.ticket.ticket_data.sale.language == 4 %}
+                                English
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Sale point ID</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ ticket.data.ticket.ticket_data.sale.sale_point }}
+                        </dd>
+                    </div>
+                    {% with org=ticket.data.ticket.ticket_data.sale.issuing_org|swisspass_org_id %}
                         {% if org %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Organisation</dt>
                                 <dd class="govuk-summary-list__value">
                                     {{ org.short_name }} - {{ org.name }}
-                                    (<code>{{ ticket.data.ticket.ticket_data.ticket_issue.issuing_org }}</code>)
+                                    (<code>{{ ticket.data.ticket.ticket_data.sale.issuing_org }}</code>)
                                 </dd>
                             </div>
                         {% else %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">Organisation ID</dt>
                                 <dd class="govuk-summary-list__value">
-                                    <code>{{ ticket.data.ticket.ticket_data.ticket_issue.issuing_org }}</code>
+                                    <code>{{ ticket.data.ticket.ticket_data.sale.issuing_org }}</code>
                                 </dd>
                             </div>
                         {% endif %}
@@ -276,33 +396,37 @@
                 </dd>
             </div>
         {% endif %}
-        {% if ticket.data.ticket.ticket_data.train_data %}
+        {% if ticket.data.ticket.ticket_data.transport %}
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Trains</dt>
+                <dt class="govuk-summary-list__key">Transport data</dt>
                 <dd class="govuk-summary-list__value">
-                    {% for train in ticket.data.ticket.ticket_data.train_data %}
+                    {% for journey in ticket.data.ticket.ticket_data.transport %}
                         <div class="govuk-summary-card">
                             <div class="govuk-summary-card__title-wrapper">
                                 <h2 class="govuk-summary-card__title">
-                                    Train {{ train.train_id }}
+                                    Journey {{ journey.journey_number }}
                                 </h2>
                             </div>
                             <div class="govuk-summary-card__content">
-                                {% if train.coach or train.seat %}
+                                {% if journey.coach or journey.seat %}
                                     <dl class="govuk-summary-list">
-                                        {% if train.coach %}
+                                        {% if journey.coach %}
                                             <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Coach</dt>
+                                                <dt class="govuk-summary-list__key">Carriage</dt>
                                                 <dd class="govuk-summary-list__value">
                                                     {{ train.coach }}
                                                 </dd>
                                             </div>
                                         {% endif %}
-                                        {% if train.seat %}
+                                        {% if journey.seats %}
                                             <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Seat</dt>
+                                                <dt class="govuk-summary-list__key">Seats</dt>
                                                 <dd class="govuk-summary-list__value">
-                                                    {{ train.seat }}
+                                                    <ul>
+                                                        {% for seat in journey.seats %}
+                                                            <li>{{ seat }}</li>
+                                                        {% endfor %}
+                                                    </ul>
                                                 </dd>
                                             </div>
                                         {% endif %}
@@ -342,5 +466,40 @@
                 </dd>
             </div>
         {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Extra data</dt>
+            <dd class="govuk-summary-list__value">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Fallback</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.extra.fallback %}
+                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% if ticket.data.ticket.ticket_data.extra.extra %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Extra text</dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ ticket.data.ticket.ticket_data.extra.extra }}
+                            </dd>
+                        </div>
+                    {% endif %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Specimen</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if ticket.data.ticket.ticket_data.extra.specimen %}
+                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                            {% else %}
+                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </dd>
+        </div>
     </dl>
 {% endlocaltime %}

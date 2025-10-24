@@ -1,73 +1,138 @@
 syntax = "proto3";
 package swisspass;
 
-message Ticket {
-  TicketData ticket_data = 1;
-  reserved 2;
-  SigningKey signing_key = 4;
+message SignedTicket {
+  Ticket ticket_data = 1;
+  Metadata metadata = 2;
+  bytes key = 3;
+  KeyMeta key_meta = 4;
   bytes signature = 5; // ASN.1
 }
 
-message TicketData {
-  uint64 ticket_id = 1;
-  TripData trip_data = 2;
-  TravelerData traveler = 3;
-  TicketIssue ticket_issue = 5;
-  PaymentData payment = 6;
-  reserved 7;
-  repeated TrainData train_data = 8;
-  uint32 train_data_count = 9;
-  repeated Tariff tariffs = 10;
+message KeyMeta {
+  string rics = 1;
+  string key_id = 2;
 }
 
-message TripData {
-  TicketType ticket_type = 1;
+message Metadata {
+  uint32 version = 1;
+}
+
+message Ticket {
+  uint64 ticket_id = 1;
+  Tariff tariff = 2;
+  TravelerData traveler = 3;
+  reserved 4; // Deprecated field
+  SaleData sale = 5;
+  PaymentData payment = 6;
+  ExtraData extra = 7;
+  repeated TransportData transport = 8;
+  uint32 transport_data_count = 9;
+  repeated TariffExtra tariffs = 10;
+}
+
+enum TravelClass {
+  UnknownTravelClass = 0;
+  First = 1;
+  Second = 2;
+  Upgrade = 3;
+}
+
+enum JourneyType {
+  UnknownJourneyType = 0;
+  OneWay = 1;
+  Return = 2;
+  TwoWay = 3;
+}
+
+enum ValidityType {
+  UnknownValidityType = 0;
+  SpaceAndTime = 1;
+  Validation = 2;
+}
+
+enum RouteType {
+  UnknownRouteType = 0;
+  Undefined = 1;
+  RouteTicket = 2;
+  ZoneTicket = 3;
+}
+
+message Tariff {
+  Product product = 1;
   string departure_station = 2;
   string arrival_station = 3;
-  uint32 travel_class = 4;
-  reserved 5;
+  TravelClass travel_class = 4;
+  JourneyType journey_type = 5;
   repeated string route = 6;
-  reserved 7;
+  uint32 number_routes = 7;
   Time valid_from = 8;
   Time valid_until = 9;
-  uint32 article_number = 12;
-  repeated ZoneInformation zone_info = 13;
+  Time return_valid_from = 10;
+  Time return_valid_until = 11;
+  uint32 product_number = 12;
+  repeated Zone zones = 13;
+  uint32 number_zones = 14;
   string tariff = 15;
-  reserved 17;
-  reserved 19;
+  bool reduced_tariff = 16;
+  bool night_surcharge = 17;
+  ValidityType validity_type = 18;
+  RouteType route_type = 19;
   reserved 20;
 }
 
-message TicketType {
-  uint32 id = 1;
+enum Language {
+  UnknownLanguage = 0;
+  DE = 1;
+  FR = 2;
+  IT = 3;
+  EN = 4;
+}
+
+message Product {
+  Language language = 1;
   string name = 2;
 }
 
-message ZoneInformation {
+message Zone {
+  bool all_zones = 1;
   uint32 zone_id = 2;
   uint32 zone_org = 3;
 }
 
 message TravelerData {
-  string sbb_id = 1;
+  string customer_number = 1;
   string swisspass_id = 2;
   string surname = 3;
   string forename = 4;
   Time birthday = 5;
+  string mobile_number = 6;
   string tariff = 7;
+  string reduction = 8;
 }
 
-message TicketIssue {
-  Time issue_time = 1;
-  reserved 2;
-  reserved 3;
+enum TransportType {
+  UnknownTransportType = 0;
+  Railway = 1;
+  Bus = 2;
+  Tram = 3;
+  Boat = 4;
+  MountainRailway = 5;
+}
+
+message TransportData {
+  string journey_number = 11;
+  string carriage = 12;
+  repeated string seats = 13;
+  uint32 number_seats = 14;
+  TransportType type = 15;
+}
+
+message SaleData {
+  Time selling_time = 1;
+  Language language = 2;
+  uint32 sale_point = 3;
   uint32 issuing_org = 4;
-}
-
-message TrainData {
-  string train_id = 11;
-  string coach = 12;
-  string seat = 13;
 }
 
 message PaymentData {
@@ -76,15 +141,16 @@ message PaymentData {
   string price = 3;
 }
 
-message Tariff {
+message ExtraData {
+  bool fallback = 1;
+  string extra = 2;
+  bool specimen = 3;
+}
+
+message TariffExtra {
   string name = 1;
   uint32 passenger_count = 2;
   reserved 3;
-}
-
-message SigningKey {
-  string rics = 1;
-  string key_id = 2;
 }
 
 message Time {
