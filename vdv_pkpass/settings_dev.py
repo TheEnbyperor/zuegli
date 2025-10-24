@@ -343,6 +343,8 @@ DEFAULT_FROM_EMAIL = "Zügli <noreply@magicalcodewit.ch>"
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://vdv-pkpass.eu.ngrok.io"]
 
+HTTP_PROXY_URL = ""
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

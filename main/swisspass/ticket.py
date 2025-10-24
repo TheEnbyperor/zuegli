@@ -14,11 +14,11 @@ class SwissPassException(Exception):
 
 @dataclasses.dataclass
 class SwissPassTicket:
-    ticket: swisspass_pb2.Ticket
+    ticket: swisspass_pb2.SignedTicket
 
     @classmethod
     def parse(cls, data: bytes) -> "SwissPassTicket":
-        msg = swisspass_pb2.Ticket()
+        msg = swisspass_pb2.SignedTicket()
         try:
             msg.ParseFromString(data)
         except google.protobuf.message.DecodeError as e:
@@ -33,13 +33,13 @@ class SwissPassTicket:
         return False
 
     def issuer(self):
-        return rics.get_rics(self.ticket.signing_key.rics)
+        return rics.get_rics(self.ticket.key_meta.rics)
 
     @property
     def valid_from(self):
         try:
             return datetime.datetime.fromtimestamp(
-                self.ticket.ticket_data.trip_data.valid_from.msecs / 1000,
+                self.ticket.ticket_data.tariff.valid_from.msecs / 1000,
                 tz=TZ
             )
         except ValueError:
@@ -49,7 +49,7 @@ class SwissPassTicket:
     def valid_until(self):
         try:
             return datetime.datetime.fromtimestamp(
-                self.ticket.ticket_data.trip_data.valid_until.msecs / 1000,
+                self.ticket.ticket_data.tariff.valid_until.msecs / 1000,
                 tz=TZ
             )
         except ValueError:
@@ -69,7 +69,7 @@ class SwissPassTicket:
     def issuing_time(self):
         try:
             return datetime.datetime.fromtimestamp(
-                self.ticket.ticket_data.ticket_issue.issue_time.msecs / 1000,
+                self.ticket.ticket_data.sale.selling_time.msecs / 1000,
                 tz=TZ
             )
         except ValueError:

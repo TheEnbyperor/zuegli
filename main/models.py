@@ -196,6 +196,8 @@ class Ticket(models.Model):
             return f"RSP:{active_instance.issuer_id}"
         elif isinstance(active_instance, ADIFInstance):
             return f"ADIF:{active_instance.distributor_rics}"
+        elif isinstance(active_instance, SwissPassTicketInstance):
+            return f"SwissPass"
         else:
             return ""
 
