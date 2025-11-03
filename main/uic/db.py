@@ -32,6 +32,7 @@ class DBRecordBL:
     bahncard_type: typing.Optional[str]
     service_class: typing.Optional[str]
     price_level: typing.Optional[str]
+    identity_document: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
@@ -88,6 +89,7 @@ class DBRecordBL:
         bahncard_type = None
         service_class = None
         price_level = None
+        identity_document = None
 
         for _ in range(num_sub_blocks):
             try:
@@ -166,6 +168,8 @@ class DBRecordBL:
                     price_level = "Rail&Fly"
                 else:
                     raise DBException(f"Invalid price level {block_data}")
+            elif block_id == "S027":
+                identity_document = block_data
             elif block_id == "S028":
                 traveller_forename, traveller_surname = block_data.split("#", 1)
             elif block_id == "S031":
@@ -226,6 +230,7 @@ class DBRecordBL:
             bahncard_type=bahncard_type,
             service_class=service_class,
             price_level=price_level,
+            identity_document=identity_document,
         )
 
 
