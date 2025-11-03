@@ -642,7 +642,7 @@ msgstr "MBTA Fahrkarten"
 
 #: templates/main/index.html:30
 msgid ""
-"If you want your tickets to automatically update when they are renewed you "
+"If you want your tickets to automatically update when they are renewed, you "
 "can create an account and add the subscription. Currently, DB, SaarVV, S-"
 "Bahn Berlin, AVV (Aachen), MVV, and HVV Switch are supported."
 msgstr ""
@@ -678,7 +678,7 @@ msgstr "Scannen Sie Ihre Fahrkarte"
 
 #: templates/main/index.html:100
 msgid ""
-"If you're having trouble scanning your ticket uploading a picture/screenshot "
+"If you're having trouble scanning your ticket, uploading a picture/screenshot "
 "of your ticket usually works better. The decoder on the server is better "
 "than the one in your browser."
 msgstr ""
@@ -1118,7 +1118,7 @@ msgid ""
 "version</a>."
 msgstr ""
 "Der Signaturschlüssel dieses Tickets wurde wegen Misbrauch zurückgerufen. "
-"Das Fahren mit diesem Ticket führt vermutlich zu einer Strafe. Mehr Infos:: "
+"Das Fahren mit diesem Ticket führt vermutlich zu einer Strafe. Mehr Infos: "
 "<a href=\"https://www.heise.de/news/Vorsicht-vor-ungueltigen-"
 "Deutschlandtickets-Schwarzfahrer-wider-Willen-10279694.html\" "
 "target=\"_blank\">Deutsche Version</a>."
@@ -1386,7 +1386,7 @@ msgstr "Geschlecht"
 #: templates/main/vdv_elements.html:233
 #, python-format
 msgid ""
-"Spacial validity - variant\n"
+"Spatial validity - variant\n"
 "                            %(variant)s"
 msgstr "Gültigkeitsraum - variante %(variant)s"
 
@@ -1440,7 +1440,7 @@ msgid "Validity"
 msgstr "Gültigkeit"
 
 #: templates/main/vdv_elements.html:343
-msgid "Unknown spacial validity"
+msgid "Unknown spatial validity"
 msgstr "Unbekannter Gültigkeitsraum"
 
 #: templates/main/vdv_elements.html:367

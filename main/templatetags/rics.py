@@ -254,7 +254,7 @@ def swisspass_org_id(value):
 def validity_zone_names(value):
     if value.get("carrierIA5", "").startswith("VDV"):
         org_id = int(value["carrierIA5"][3:])
-        return vdv.ticket.SpacialValidity.map_names(org_id, value["zoneId"])
+        return vdv.ticket.SpatialValidity.map_names(org_id, value["zoneId"])
     else:
         out = []
         for zone_id in value["zoneId"]:
