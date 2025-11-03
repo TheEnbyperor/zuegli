@@ -433,7 +433,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         if ticket_data.flex:
             issued_at = ticket_data.flex.issuing_time()
-            pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"]
+            pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"] and not ticket_data.dtvg_revoked()
 
             if ticket_data.flex.data["issuingDetail"].get("issuerName") in UIC_NAME_LOGO:
                 add_pkp_img(pkp, UIC_NAME_LOGO[ticket_data.flex.data["issuingDetail"]["issuerName"]], "logo.png")

@@ -382,6 +382,12 @@ class UICTicket:
 
         return None
 
+    def dtvg_revoked(self) -> bool:
+        return models.DTVGBlocklistItem.objects.filter(
+            rics=self.issuing_rics(),
+            ticket_id=self.ticket_id(),
+        ).count() != 0
+
     @classmethod
     def from_envelope(
             cls, ticket_bytes: bytes, ticket_envelope: uic.Envelope,
