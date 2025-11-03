@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from celery import shared_task
 from django.conf import settings
+from django.utils import timezone
 import django.core.files.storage
 import niquests
 import xsdata.formats.dataclass.parsers
@@ -8,9 +9,17 @@ import xsdata.models.datatype
 import json
 import csv
 import datetime
+import tempfile
+import zipfile
+import io
 import main.uic.gen.bar_code_key_exchange
+from .. import models
 
 xml_parser = xsdata.formats.dataclass.parsers.XmlParser()
+
+
+DTVG_BLOCKLIST_VERSION_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/versionuic.txt"
+DTVG_BLOCKLIST_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/blacklistuic.zip"
 
 
 @shared_task(
@@ -181,3 +190,71 @@ def download_db_stations():
 
     with storage.open("db-stations.json", "w") as f:
         json.dump(out, f)
+
+@shared_task(
+    autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=None, default_retry_delay=3,
+    ignore_result=True
+)
+def sync_dtvg_blocklist():
+    blocklist_meta = models.DTVGBlocklistMeta.get_solo()
+
+    r = niquests.get(DTVG_BLOCKLIST_VERSION_URL, headers={
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+    })
+    r.raise_for_status()
+    latest_blocklist_version = int(r.json()["blacklistId"])
+
+    if blocklist_meta.current_version >= latest_blocklist_version:
+        print("Blocklist already up to date")
+        return
+
+    db_file = tempfile.NamedTemporaryFile(delete_on_close=False)
+
+    r = niquests.get(DTVG_BLOCKLIST_URL, headers={
+        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+    }, stream=True)
+    r.raise_for_status()
+
+    for chunk in r.iter_content(chunk_size=128):
+        db_file.write(chunk)
+
+    db_file.seek(0)
+    zip_file = zipfile.ZipFile(db_file)
+    blocklist = csv.DictReader(io.TextIOWrapper(zip_file.open("blacklistuic.csv"), "utf-8-sig"))
+    now = timezone.now()
+    total_entries = 0
+    new_entries_count = 0
+    for chunk in batch(blocklist, 2500):
+        total_entries += len(chunk)
+        values = [(int(block["rics"]), block["ticketId"], now) for block in chunk]
+        value_placeholders = ", ".join(["(%s, %s, %s)" for _ in chunk])
+        query = f"""
+            INSERT INTO {models.DTVGBlocklistItem._meta.db_table} (rics, ticket_id, timestamp)
+            VALUES {value_placeholders}
+            ON CONFLICT DO NOTHING
+            RETURNING rics, ticket_id
+        """
+        with django.db.connection.cursor() as dc:
+            dc.execute(query, [c for v in values for c in v])
+            new_entries = dc.fetchall()
+            new_entries_count += len(new_entries)
+
+        for rics, ticket_id in new_entries:
+            print(f"New blocklist entry for {rics}: #{ticket_id}")
+            # TODO: send updates to Wallets
+
+    print(f"Processed {total_entries} items - {new_entries_count} new", flush=True)
+
+    blocklist_meta.current_version = latest_blocklist_version
+    blocklist_meta.save()
+
+
+def batch(iterable, n=1):
+    chunk = []
+    for block in iterable:
+        chunk.append(block)
+        if len(chunk) >= 1:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk

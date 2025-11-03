@@ -905,6 +905,31 @@ class VDVSmartcardAuthorization(models.Model):
         return vdv_nm.authorization.Authorization.parse(bytes(self.authorization))
 
 
+class DTVGBlocklistMeta(SingletonModel):
+    current_version = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"DTVG Blocklist - version {self.current_version}"
+
+    class Meta:
+        verbose_name = "DTVG Blocklist Meta"
+
+
+class DTVGBlocklistItem(models.Model):
+    rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="RICS", db_index=True)
+    ticket_id = models.CharField(max_length=64, verbose_name="Ticket ID", db_index=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "DTVG Blocklist Item"
+        verbose_name_plural = "DTVG Blocklist Items"
+        unique_together = [("rics", "ticket_id")]
+        index_together = [("rics", "ticket_id")]
+
+    def __str__(self):
+        return f"Blocklist Item RICS {self.rics} #{self.ticket_id}"
+
+
 class VDVBlocklistMeta(SingletonModel):
     current_version = models.DateTimeField(blank=True, null=True)
 

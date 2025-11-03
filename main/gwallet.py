@@ -269,11 +269,18 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["hexBackgroundColor"] = passes.RICS_BG[issuing_rics]
         else:
             obj["hexBackgroundColor"] = "#ffffff"
-        obj["barcode"] = {
-            "type": "AZTEC",
-            "alternateText": ticket_data.ticket_id(),
-            "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
-        }
+        if ticket_data.dtvg_revoked():
+            obj["state"] = "COMPLETED"
+            obj["barcode"] = {
+                "type": "TEXT_ONLY",
+                "value": f"VOID - #{ticket_data.ticket.ticket_id}"
+            }
+        else:
+            obj["barcode"] = {
+                "type": "AZTEC",
+                "alternateText": ticket_data.ticket_id(),
+                "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            }
 
         if ticket_id := ticket_data.ticket_id():
             obj["ticketNumber"] = ticket_id

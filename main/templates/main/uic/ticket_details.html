@@ -60,6 +60,18 @@
                     </dd>
                 </div>
             {% endif %}
+            {% if perms.main.view_revocation %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{% trans "Revoked ticket" %}</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if ticket.dtvg_revoked %}
+                            <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                        {% else %}
+                            <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                        {% endif %}
+                    </dd>
+                </div>
+            {% endif %}
         </dl>
     {% elif ticket.dosipas_envelope %}
         <dl class="govuk-summary-list">
@@ -228,6 +240,18 @@
                                 {% trans "Level 2 signature missing, this ticket has likely been tampered with" %}
                             </strong>
                         </div>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if perms.main.view_revocation %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{% trans "Revoked ticket" %}</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% if ticket.dtvg_revoked %}
+                            <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                        {% else %}
+                            <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                        {% endif %}
                     </dd>
                 </div>
             {% endif %}
