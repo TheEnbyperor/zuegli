@@ -321,6 +321,7 @@ class VDVSmartcardAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(models.VDVBlocklistMeta, SingletonModelAdmin)
+admin.site.register(models.DTVGBlocklistMeta, SingletonModelAdmin)
 
 @admin.register(models.VDVBlocklistItem)
 class VDVBlocklistItemAdmin(admin.ModelAdmin):
@@ -338,6 +339,22 @@ class VDVBlocklistItemAdmin(admin.ModelAdmin):
         "lock_mode"
     ]
     search_fields = ["item_id"]
+    readonly_fields = [
+        "timestamp"
+    ]
+
+@admin.register(models.DTVGBlocklistItem)
+class DTVGBlocklistItemAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "rics",
+        "ticket_id",
+        "timestamp"
+    ]
+    list_filter = [
+        "rics",
+    ]
+    search_fields = ["ticket_id"]
     readonly_fields = [
         "timestamp"
     ]
