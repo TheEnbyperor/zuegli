@@ -189,6 +189,11 @@
                         <img src="{% static 'main/add-to-apple-wallet-nl.svg' %}" alt="Voeg toe aan Apple Wallet"
                              class="apple-wallet-button">
                     </a>
+                {% elif LANGUAGE == "fr" %}
+                    <a href="{% url 'ticket_pkpass' ticket.id %}" style="text-decoration: none;">
+                        <img src="{% static 'main/add-to-apple-wallet-fr.svg' %}" alt="Ajouter à Cartes Apple"
+                             class="apple-wallet-button">
+                    </a>
                 {% else %}
                     <a href="{% url 'ticket_pkpass' ticket.id %}" style="text-decoration: none;">
                         <img src="{% static 'main/add-to-apple-wallet.svg' %}" alt="Add to Apple Wallet"
@@ -204,6 +209,11 @@
                     {% elif LANGUAGE == "nl" %}
                         <a href="{{ gwallet_url }}" style="text-decoration: none;" target="_blank">
                             <img src="{% static 'main/add-to-google-wallet-nl.svg' %}" alt="Toevoegen aan Google Wallet"
+                                 class="g-wallet-button">
+                        </a>
+                    {% elif LANGUAGE == "fr" %}
+                        <a href="{{ gwallet_url }}" style="text-decoration: none;" target="_blank">
+                            <img src="{% static 'main/add-to-google-wallet-fr.svg' %}" alt="Ajouter à Google Wallet"
                                  class="g-wallet-button">
                         </a>
                     {% else %}

@@ -282,7 +282,7 @@ class VDVTicket:
         elif elm[0] == 0xDB:
             return PassengerData.parse(elm[1], context)
         elif elm[0] == 0xDC:
-            return SpacialValidity.parse(elm[1], product_org_id)
+            return SpatialValidity.parse(elm[1], product_org_id)
         elif elm[0] == 0xDE and product_org_id == 36:
             return RMVPrivateData.parse(elm[1])
         elif elm[0] == 0xDE:
@@ -681,8 +681,8 @@ class PassengerData:
 
 
 @dataclasses.dataclass
-class SpacialValidity:
-    TYPE = "spacial-validity"
+class SpatialValidity:
+    TYPE = "spatial-validity"
 
     variant: str
     organization_id: int
@@ -696,7 +696,7 @@ class SpacialValidity:
     validity_ids: typing.List[int] = dataclasses.field(default_factory=list)
 
     def __str__(self):
-        return f"Spacial validity: org_id={self.organization_id}"
+        return f"Spatial validity: org_id={self.organization_id}"
 
     @classmethod
     def parse(cls, data: bytes, product_org_id: int):
@@ -848,7 +848,7 @@ class SpacialValidity:
                 validity_ids=[a for a in area_ids if a != 0]
             )
         else:
-            return UnknownSpacialValidity(
+            return UnknownSpatialValidity(
                 definition_type=data[0],
                 organization_id=area_org_id,
                 value=data[3:]
@@ -908,15 +908,15 @@ class SpacialValidity:
 
 
 @dataclasses.dataclass
-class UnknownSpacialValidity:
-    TYPE = "unknown-spacial-validity"
+class UnknownSpatialValidity:
+    TYPE = "unknown-spatial-validity"
 
     definition_type: int
     organization_id: int
     value: bytes
 
     def __str__(self):
-        return f"Unknown spacial validity: type=0x{self.definition_type:02X}, value={self.value.hex()}"
+        return f"Unknown spatial validity: type=0x{self.definition_type:02X}, value={self.value.hex()}"
 
     def type_hex(self):
         return f"0x{self.definition_type:02X}"
@@ -1003,10 +1003,10 @@ class RMVProductData:
         return f"{self.vat_rate:.2f}%"
 
     def start_tariff_point_name(self):
-        return SpacialValidity.map_names(36, [self.start_tariff_point])[0]
+        return SpatialValidity.map_names(36, [self.start_tariff_point])[0]
 
     def end_tariff_point_name(self):
-        return SpacialValidity.map_names(36, [self.end_tariff_point])[0]
+        return SpatialValidity.map_names(36, [self.end_tariff_point])[0]
 
 
 @dataclasses.dataclass
@@ -1050,8 +1050,8 @@ class UnknownElement:
 
 
 ELEMENT = typing.Union[
-    BasicData, PassengerData, SpacialValidity, IdentificationMedium,
-    UnknownSpacialValidity, SEId, UnknownElement
+    BasicData, PassengerData, SpatialValidity, IdentificationMedium,
+    UnknownSpatialValidity, SEId, UnknownElement
 ]
 
 def map_org_id(code: int, opt=False):

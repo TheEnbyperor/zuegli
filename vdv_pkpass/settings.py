@@ -126,6 +126,7 @@ LANGUAGES = [
     ("en", _("English")),
     ("de", _("German")),
     ("nl", _("Dutch")),
+    ("fr", _("French")),
 ]
 
 USE_TZ = True
