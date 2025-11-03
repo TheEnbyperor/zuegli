@@ -863,8 +863,8 @@ class SpatialValidity:
     @staticmethod
     def map_names(organization_id: int, ids: typing.List[int]):
         out = []
-        if organization_id in codes.SPACIAL_VALIDITY:
-            mapping = codes.SPACIAL_VALIDITY[organization_id]
+        if organization_id in codes.SPATIAL_VALIDITY:
+            mapping = codes.SPATIAL_VALIDITY[organization_id]
             if isinstance(mapping, dict):
                 for area in ids:
                     if name := mapping.get(area):
