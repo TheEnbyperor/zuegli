@@ -52,9 +52,9 @@ spec:
               
               gost -L :1080 -F=127.0.0.1:40000
           livenessProbe:
-            exec:
-              command: ["pgrep", "warp-svc"]
-            initialDelaySeconds: 30
+            tcpSocket:
+              port: 1080
+            initialDelaySeconds: 60
             periodSeconds: 5
 ---
 apiVersion: v1
