@@ -21,7 +21,6 @@ class TicketError(Exception):
         self.exception = exception
 
 
-
 @dataclasses.dataclass
 class TicketContext:
     forename: typing.Optional[str]
@@ -1039,30 +1038,40 @@ def parse_ticket_vdv(ticket_bytes: bytes, context: "TicketContexts") -> VDVTicke
             exception=traceback.format_exc()
         )
 
-    try:
-        ticket_data = envelope.decrypt_with_cert(envelope_certificate_data)
-    except vdv.util.VDVException:
-        raise TicketError(
-            title="Unable to decrypt ticket",
-            message="The ticket data couldn't be decrypted - the ticket is likely invalid.",
-            exception=traceback.format_exc()
-        )
+    tickets = []
+    for authorization in envelope.authorizations:
+        try:
+            ticket_data = authorization.decrypt_with_cert(envelope_certificate_data)
+        except vdv.util.VDVException:
+            raise TicketError(
+                title="Unable to decrypt ticket",
+                message="The ticket data couldn't be decrypted - the ticket is likely invalid.",
+                exception=traceback.format_exc()
+            )
 
-    try:
-        ticket = vdv.VDVTicket.parse(ticket_data, context)
-    except vdv.util.VDVException:
+        try:
+            ticket = vdv.VDVTicket.parse(ticket_data, context)
+        except vdv.util.VDVException:
+            raise TicketError(
+                title="Unable to parse ticket",
+                message="The ticket data is invalid - this is likely a bug.",
+                exception=traceback.format_exc()
+            )
+
+        tickets.append((ticket_data, ticket))
+
+    if not tickets:
         raise TicketError(
-            title="Unable to parse ticket",
-            message="The ticket data is invalid - this is likely a bug.",
-            exception=traceback.format_exc()
+            title="No tickets found",
+            message="This barcode contains no tickets.",
         )
 
     return VDVTicket(
         root_ca=root_ca_data,
         issuing_ca=issuing_ca_data,
         envelope_certificate=envelope_certificate_data,
-        raw_ticket=ticket_data,
-        ticket=ticket,
+        raw_ticket=tickets[0][0],
+        ticket=tickets[0][1],
         motics=motics,
     )
 
@@ -1325,7 +1334,7 @@ def parse_ticket_uic_bravo(ticket_envelope: uic.Envelope) -> typing.Optional["ui
 
 
 def parse_ticket_uic_pretix(ticket_envelope: uic.Envelope) -> typing.Optional["uic.pretix.Pretix"]:
-    pretix_record = next(filter(lambda r: r.id == "5101PX" and r.version == 1, ticket_envelope.records),None)
+    pretix_record = next(filter(lambda r: r.id == "5101PX" and r.version == 1, ticket_envelope.records), None)
     if not pretix_record:
         return None
 
@@ -1340,7 +1349,7 @@ def parse_ticket_uic_pretix(ticket_envelope: uic.Envelope) -> typing.Optional["u
 
 
 def parse_ticket_uic_dosipas_pretix(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.Pretix"]:
-    pretix_record = next(filter(lambda r: r.format == "_5101PTIX", ticket_envelope.records),None)
+    pretix_record = next(filter(lambda r: r.format == "_5101PTIX", ticket_envelope.records), None)
     if not pretix_record:
         return None
 
@@ -1355,7 +1364,7 @@ def parse_ticket_uic_dosipas_pretix(ticket_envelope: uic.DOSIPASEnvelope) -> typ
 
 
 def parse_ticket_uic_pretix_wallet(ticket_envelope: uic.Envelope) -> typing.Optional["uic.pretix.PretixWallet"]:
-    pretix_record = next(filter(lambda r: r.id == "5101PW" and r.version == 1, ticket_envelope.records),None)
+    pretix_record = next(filter(lambda r: r.id == "5101PW" and r.version == 1, ticket_envelope.records), None)
     if not pretix_record:
         return None
 
@@ -1369,8 +1378,9 @@ def parse_ticket_uic_pretix_wallet(ticket_envelope: uic.Envelope) -> typing.Opti
         )
 
 
-def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.PretixWallet"]:
-    pretix_record = next(filter(lambda r: r.format == "_5101PXW", ticket_envelope.records),None)
+def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[
+    "uic.pretix.PretixWallet"]:
+    pretix_record = next(filter(lambda r: r.format == "_5101PXW", ticket_envelope.records), None)
     if not pretix_record:
         return None
 
@@ -1384,7 +1394,8 @@ def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope)
         )
 
 
-def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.PretixWallet"]:
+def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[
+    "uic.pretix.PretixWallet"]:
     if not ticket_envelope.level_2_record or not ticket_envelope.level_2_record.format == "_5101TOTP":
         return None
 
@@ -1919,7 +1930,6 @@ def parse_ticket(
     )
 
 
-
 def to_dict_json(elements: typing.List[typing.Tuple[str, typing.Any]]) -> dict:
     def encode_value(v):
         if isinstance(v, bytes) or isinstance(v, bytearray):
@@ -1988,8 +1998,10 @@ def create_ticket_obj(
             docs = ticket_data.flex.data.get("transportDocument")
             if docs:
                 if docs[0]["ticket"][0] in ("openTicket", "pass"):
-                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1], ticket_data.flex.issuing_time())
-                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1], ticket_data.flex.issuing_time())
+                    validity_start = templatetags.rics.rics_valid_from(docs[0]["ticket"][1],
+                                                                       ticket_data.flex.issuing_time())
+                    validity_end = templatetags.rics.rics_valid_until(docs[0]["ticket"][1],
+                                                                      ticket_data.flex.issuing_time())
                 elif docs[0]["ticket"][0] == "customerCard":
                     validity_start = templatetags.rics.rics_valid_from_date(docs[0]["ticket"][1])
                     validity_end = templatetags.rics.rics_valid_until_date(docs[0]["ticket"][1])
