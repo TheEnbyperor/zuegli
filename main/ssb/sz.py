@@ -139,7 +139,7 @@ class Ticket:
             valid_to=cls.parse_dt(data.read_int(224, 256)),
             service_provider=data.read_int(256, 272),
             stations=stations,
-            distance=decimal.Decimal(data.read_int(432, 448)) / decimal.Decimal(100),
+            distance=decimal.Decimal(data.read_int(432, 448)) / decimal.Decimal(10),
             one_way=bool(data.read_int(448, 456)),
             reprint_number=data.read_int(456, 464),
             extras=extras,
