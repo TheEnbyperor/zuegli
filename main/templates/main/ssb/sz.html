@@ -41,10 +41,12 @@
         <dt class="govuk-summary-list__key">Number of travellers</dt>
         <dd class="govuk-summary-list__value">{{ ticket.data.num_travellers }}</dd>
     </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">Discount ID</dt>
-        <dd class="govuk-summary-list__value">{{ ticket.data.discount_id }}</dd>
-    </div>
+    {% if ticket.data.discount_id %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Discount ID</dt>
+            <dd class="govuk-summary-list__value">{{ ticket.data.discount_id }}</dd>
+        </div>
+    {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Valid from</dt>
         <dd class="govuk-summary-list__value">{{ ticket.data.valid_from|date:"F d, Y H:i:s e" }}</dd>
