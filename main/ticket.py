@@ -1212,7 +1212,9 @@ def parse_ticket_uic_db_bl(ticket_envelope: uic.Envelope) -> typing.Optional["ui
         return None
 
     try:
-        return uic.db.DBRecordBL.parse(bl_record.data, bl_record.version)
+        r = uic.db.DBRecordBL.parse(bl_record.data, bl_record.version)
+        print(r)
+        return r
     except uic.db.DBException:
         raise TicketError(
             title="Invalid DB BL record",

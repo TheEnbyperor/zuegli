@@ -7,7 +7,8 @@ class DBException(Exception):
 
 @dataclasses.dataclass
 class DBRecordBL:
-    unknown: str
+    ticket_type: str
+    rides: typing.List["DBRideBlock"]
     certs: typing.List["DBCertBlock"]
     product: typing.Optional[str]
     product_class: typing.Optional[str]
@@ -32,30 +33,34 @@ class DBRecordBL:
     bahncard_type: typing.Optional[str]
     service_class: typing.Optional[str]
     price_level: typing.Optional[str]
-    identity_document: typing.Optional[str]
+    payment_card: typing.Optional[str]
     other_blocks: typing.Dict[str, str]
 
     @classmethod
     def parse(cls, data: bytes, version: int):
         try:
-            unknown_data = data[0:2].decode("utf-8")
+            ticket_type = data[0:2].decode("utf-8")
         except UnicodeDecodeError as e:
             raise DBException(f"Invalid DB BL record") from e
 
-        if version == 3:
-            try:
-                num_cert_blocks = int(data[2:3].decode("utf-8"), 10)
-            except (ValueError, UnicodeDecodeError) as e:
-                raise DBException(f"Invalid DB BL record") from e
+        try:
+            num_blocks = int(data[2:3].decode("utf-8"), 10)
+        except (ValueError, UnicodeDecodeError) as e:
+            raise DBException(f"Invalid DB BL record") from e
 
-            offset = 3
+        rides = []
+        certs = []
+        offset = 3
+
+        if version == 3:
             certs = []
-            for _ in range(num_cert_blocks):
-                certs.append(DBCertBlock(data[offset:offset+26]))
+            for _ in range(num_blocks):
+                certs.append(DBRideBlock.parse(data[offset:offset+26]))
                 offset += 26
         elif version == 2:
-            offset = 3 + 11 + 11 + 8 + 8 + 8
-            certs = []
+            for _ in range(num_blocks):
+                certs.append(DBCertBlock.parse(data[offset:offset+46]))
+                offset += 46
         else:
             raise DBException(f"Unsupported record version {version}")
 
@@ -89,7 +94,7 @@ class DBRecordBL:
         bahncard_type = None
         service_class = None
         price_level = None
-        identity_document = None
+        payment_card = None
 
         for _ in range(num_sub_blocks):
             try:
@@ -169,7 +174,7 @@ class DBRecordBL:
                 else:
                     raise DBException(f"Invalid price level {block_data}")
             elif block_id == "S027":
-                identity_document = block_data
+                payment_card = block_data
             elif block_id == "S028":
                 traveller_forename, traveller_surname = block_data.split("#", 1)
             elif block_id == "S031":
@@ -204,8 +209,9 @@ class DBRecordBL:
 
 
         return cls(
-            unknown=unknown_data,
+            ticket_type=ticket_type,
             certs=certs,
+            rides=rides,
             product=product,
             product_class=product_class,
             product_class_outbound=product_class_outbound,
@@ -230,10 +236,61 @@ class DBRecordBL:
             bahncard_type=bahncard_type,
             service_class=service_class,
             price_level=price_level,
-            identity_document=identity_document,
+            payment_card=payment_card,
         )
 
 
 @dataclasses.dataclass
 class DBCertBlock:
-    data: bytes
+    certificate: bytes
+    valid_from: datetime.date
+    valid_to: datetime.date
+    flott_id: bytes
+
+    @classmethod
+    def parse(cls, data: bytes) -> "DBCertBlock":
+        cert = data[0:22]
+        flott_id = data[38:46]
+        try:
+            valid_from = datetime.datetime.strptime(data[22:30].decode("utf-8"), "%d%m%Y").date()
+        except (ValueError, UnicodeDecodeError) as e:
+            raise DBException(f"Invalid DB BL certificate validity start date") from e
+        try:
+            valid_until = datetime.datetime.strptime(data[30:38].decode("utf-8"), "%d%m%Y").date()
+        except (ValueError, UnicodeDecodeError) as e:
+            raise DBException(f"Invalid DB BL certificate validity end date") from e
+
+        return cls(
+            certificate=cert,
+            valid_from=valid_from,
+            valid_to=valid_until,
+            flott_id=flott_id,
+        )
+
+
+@dataclasses.dataclass
+class DBRideBlock:
+    id: str
+    valid_from: datetime.date
+    valid_to: datetime.date
+
+    @classmethod
+    def parse(cls, data: bytes) -> "DBRideBlock":
+        try:
+            valid_from = datetime.datetime.strptime(data[0:8].decode("utf-8"), "%d%m%Y").date()
+        except (ValueError, UnicodeDecodeError) as e:
+            raise DBException(f"Invalid DB BL ride validity start date") from e
+        try:
+            valid_until = datetime.datetime.strptime(data[8:16].decode("utf-8"), "%d%m%Y").date()
+        except (ValueError, UnicodeDecodeError) as e:
+            raise DBException(f"Invalid DB BL ride validity end date") from e
+        try:
+            ride_id = data[16:26].decode("utf-8")
+        except UnicodeDecodeError as e:
+            raise DBException(f"Invalid DB BL ride ID") from e
+        return cls(
+            id=ride_id,
+            valid_from=valid_from,
+            valid_to=valid_until,
+        )
+
