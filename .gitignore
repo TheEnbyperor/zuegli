@@ -21,3 +21,4 @@ media/
 main/management/commands/dticket-fraud.py
 data/sz
 scripts/convert-sz-data.py
+scripts/download-oebb-keys.py

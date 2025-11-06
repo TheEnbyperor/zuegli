@@ -5441,24 +5441,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         travel_datetime = tz.localize(ticket_data.data.departure)
         pass_json["relevantDate"] = travel_datetime.isoformat()
 
-        pass_json["locations"].append({
-            "latitude": float(from_station["latitude"]),
-            "longitude": float(from_station["longitude"]),
-            "relevantText": from_station["name"]
-        })
-        pass_json["locations"].append({
-            "latitude": float(to_station["latitude"]),
-            "longitude": float(to_station["longitude"]),
-            "relevantText": to_station["name"]
-        })
-        from_station_maps_link = urllib.parse.urlencode({
-            "q": from_station["name"],
-            "ll": f"{from_station['latitude']},{from_station['longitude']}"
-        })
-        to_station_maps_link = urllib.parse.urlencode({
-            "q": to_station["name"],
-            "ll": f"{to_station['latitude']},{to_station['longitude']}"
-        })
+        if from_station:
+            pass_json["locations"].append({
+                "latitude": float(from_station["latitude"]),
+                "longitude": float(from_station["longitude"]),
+                "relevantText": from_station["name"]
+            })
+        if to_station:
+            pass_json["locations"].append({
+                "latitude": float(to_station["latitude"]),
+                "longitude": float(to_station["longitude"]),
+                "relevantText": to_station["name"]
+            })
 
         pass_fields = {
             "transitType": "PKTransitTypeTrain",
@@ -5473,25 +5467,25 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "primaryFields": [{
                 "key": "from-station",
                 "label": "from-station-label",
-                "value": from_station["name"],
+                "value": from_station["name"] if from_station else "",
                 "semantics": {
                     "departureLocation": {
                         "latitude": float(from_station["latitude"]),
                         "longitude": float(from_station["longitude"]),
                     },
                     "departureStationName": from_station["name"]
-                }
+                } if from_station else {},
             }, {
                 "key": "to-station",
                 "label": "to-station-label",
-                "value": to_station["name"],
+                "value": to_station["name"] if to_station else "",
                 "semantics": {
                     "destinationLocation": {
                         "latitude": float(to_station["latitude"]),
                         "longitude": float(to_station["longitude"]),
                     },
                     "destinationStationName": to_station["name"]
-                }
+                } if to_station else {},
             }],
             "auxiliaryFields": [],
             "secondaryFields": [{
@@ -5503,16 +5497,6 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "ignoresTimeZone": True,
             }],
             "backFields": [{
-                "key": "from-station-back",
-                "label": "from-station-label",
-                "value": from_station["name"],
-                "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
-            }, {
-                "key": "to-station-back",
-                "label": "to-station-label",
-                "value": to_station["name"],
-                "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
-            }, {
                 "key": "ticket-id",
                 "label": "ticket-id-label",
                 "value": str(ticket_data.ticket_ref),
@@ -5523,6 +5507,29 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
             "messageEncoding": "iso-8859-1",
         }]
+
+        if from_station:
+            from_station_maps_link = urllib.parse.urlencode({
+                "q": from_station["name"],
+                "ll": f"{from_station['latitude']},{from_station['longitude']}"
+            })
+            pass_fields["backFields"].append({
+                "key": "from-station-back",
+                "label": "from-station-label",
+                "value": from_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{from_station_maps_link}\">{from_station['name']}</a>",
+            })
+        if to_station:
+            to_station_maps_link = urllib.parse.urlencode({
+                "q": to_station["name"],
+                "ll": f"{to_station['latitude']},{to_station['longitude']}"
+            })
+            pass_fields["backFields"].append({
+                "key": "to-station-back",
+                "label": "to-station-label",
+                "value": to_station["name"],
+                "attributedValue": f"<a href=\"https://maps.apple.com/?{to_station_maps_link}\">{to_station['name']}</a>",
+            })
 
         if ticket_data.data.carriage:
             pass_fields["auxiliaryFields"].append({
