@@ -87,5 +87,7 @@ class SwissPassTicket:
             return "Halbtax Plus"
         elif self.ticket.ticket_data.payment.payment_method == "PCD":
             return "Postcard Debit"
+        elif self.ticket.ticket_data.payment.payment_method == "FAK":
+            return "Invoice"
         else:
             return f"Unknown - {self.ticket.ticket_data.payment.payment_method}"
