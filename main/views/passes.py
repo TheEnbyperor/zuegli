@@ -876,10 +876,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 0] == "trainLink":
                                 train_link = return_document["validReturnRegion"][0][1]
                                 departure_time = templatetags.rics.rics_departure_time(train_link, issued_at)
-                                return_pass_json["relevantDate"] = departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
                                 train_number = train_link.get("trainIA5") or str(train_link.get("trainNum"))
                                 departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime(
                                     "%Y-%m-%dT%H:%M:%SZ")
+                                return_pass_json["relevantDate"] = departure_time_str
                                 return_pass_fields["headerFields"] = [{
                                     "key": "train-number",
                                     "label": "train-number-label",
