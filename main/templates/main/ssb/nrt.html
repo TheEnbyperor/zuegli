@@ -303,9 +303,9 @@
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">{% trans "One-way ticket" %}</dt>
+                        <dt class="govuk-summary-list__key">{% trans "Route constraint" %}</dt>
                         <dd class="govuk-summary-list__value">
-                            {% if ticket.data.sncf_data.one_way_ticket %}
+                            {% if ticket.data.sncf_data.route_constraint %}
                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
                             {% else %}
                                 <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>

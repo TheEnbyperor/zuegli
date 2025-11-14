@@ -102,7 +102,7 @@ class NonReservationTicket:
                 retail_channel=data.read_string(387, 399),
                 distance_km=data.read_int(399, 415),
                 terminal_id=data.read_string(415, 433),
-                one_way_ticket=data.read_bool(433),
+                route_constraint=data.read_bool(433),
             )
 
         return cls(
