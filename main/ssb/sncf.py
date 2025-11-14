@@ -24,7 +24,7 @@ class SNCFData:
     retail_channel: str
     distance_km: int
     terminal_id: str
-    one_way_ticket: bool
+    route_constraint: bool
 
     def contract_provider_str(self):
         if self.contract_provider == 2:
