@@ -26,6 +26,8 @@ def notify_device(device_id):
     if r.status_code == 410:
         device.delete()
         return
+    if not r.ok:
+        logging.warning(f"Failed to notify {device_id}: {r.text}")
     r.raise_for_status()
 
 

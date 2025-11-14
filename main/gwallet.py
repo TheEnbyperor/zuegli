@@ -792,6 +792,21 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                                     }
                                 }
                             })
+                    else:
+                        obj["ticketLegs"].append({
+                            "originName": {
+                                "defaultValue": {
+                                    "language": "en",
+                                    "value": "N/A"
+                                }
+                            },
+                            "destinationName": {
+                                "defaultValue": {
+                                    "language": "en",
+                                    "value": "N/A"
+                                }
+                            }
+                        })
 
                 if parsed_layout.operator_rics:
                     if carrier := uic.rics.get_rics(parsed_layout.operator_rics):
@@ -1163,12 +1178,26 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         "value": from_station["name"]
                     }
                 }
+            else:
+                obj["ticketLegs"][0]["originName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": "N/A"
+                    }
+                }
 
             if to_station:
                 obj["ticketLegs"][0]["destinationName"] = {
                     "defaultValue": {
                         "language": "en",
                         "value": to_station["name"]
+                    }
+                }
+            else:
+                obj["ticketLegs"][0]["destinationName"] = {
+                    "defaultValue": {
+                        "language": "en",
+                        "value": "N/A"
                     }
                 }
 
