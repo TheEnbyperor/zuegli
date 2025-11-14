@@ -28,6 +28,10 @@ def notify_device(device_id):
         device.delete()
         return
     if not r.ok:
+        data = r.json()
+        if data.get("reason") == "BadDeviceToken":
+            device.delete()
+            return
         logging.warning(f"Failed to notify {device_id}: {r.text}")
     r.raise_for_status()
 
