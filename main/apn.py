@@ -1,4 +1,5 @@
 import niquests
+import logging
 import urllib.parse
 from django.conf import settings
 from django.utils import timezone
