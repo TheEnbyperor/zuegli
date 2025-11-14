@@ -69,7 +69,7 @@ class HeadV1:
             if data[39:41] == b"\x00\x00":
                 second_language = None
             else:
-                second_language = data[39:41].decode("ascii").strip()
+                second_language = data[39:41].decode("ascii").strip() or None
         except UnicodeDecodeError as e:
             raise util.UICException("Invalid UIC ticket language") from e
 
@@ -83,4 +83,4 @@ class HeadV1:
        )
 
     def get_language_mapping(self):
-        return lang.TicketLanguage.from_header(self.language.upper(), self.second_language.upper())
+        return lang.TicketLanguage.from_header(self.language.upper(), self.second_language.upper() if self.second_language else None)
