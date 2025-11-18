@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 def populate_issuer_id(apps, schema_editor):
-    Ticket = apps.get_model("tickets", "Ticket")
+    Ticket = apps.get_model("main", "Ticket")
     for ticket in Ticket.objects.all().iterator():
         ticket.admin_issuer_id = ticket._admin_issuer_id
         ticket.save(update_fields=["admin_issuer_id"])
