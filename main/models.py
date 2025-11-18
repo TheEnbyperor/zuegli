@@ -170,11 +170,16 @@ class Ticket(models.Model):
     photos = models.JSONField(default=dict, blank=True)
     label = models.CharField(max_length=255, null=True, blank=True, verbose_name="Label")
     suspected_fraud = models.BooleanField(default=False, blank=True, null=False)
+    admin_issuer_id = models.CharField(max_length=64, blank=True, default="", verbose_name="Issuer ID")
 
     class Meta:
         permissions = [
             ("view_revocation", "View the revocation status of tickets"),
         ]
+
+    def save(self, *args, **kwargs):
+        self.admin_issuer_id = self._admin_issuer_id
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.get_ticket_type_display()} - {self.id}"
@@ -186,7 +191,7 @@ class Ticket(models.Model):
         return self.pk.upper()[0:8]
 
     @cached_property
-    def admin_issuer_id(self):
+    def _admin_issuer_id(self):
         active_instance = self.active_instance
         if isinstance(active_instance, VDVTicketInstance):
             return f"VDV:{active_instance.ticket_org_id}"
@@ -200,8 +205,6 @@ class Ticket(models.Model):
             return f"SwissPass"
         else:
             return ""
-
-    admin_issuer_id.short_description = "Issuer ID"
 
     @cached_property
     def active_instance(self):
