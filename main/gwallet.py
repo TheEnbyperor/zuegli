@@ -776,22 +776,23 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                         }
                     })
                 else:
-                    for trip in parsed_layout.trips:
-                        if trip.departure_station or trip.arrival_station:
-                            obj["ticketLegs"].append({
-                                "originName": {
-                                    "defaultValue": {
-                                        "language": "en",
-                                        "value": trip.departure_station or "N/A"
+                    if parsed_layout.trips:
+                        for trip in parsed_layout.trips:
+                            if trip.departure_station or trip.arrival_station:
+                                obj["ticketLegs"].append({
+                                    "originName": {
+                                        "defaultValue": {
+                                            "language": "en",
+                                            "value": trip.departure_station or "N/A"
+                                        }
+                                    },
+                                    "destinationName": {
+                                        "defaultValue": {
+                                            "language": "en",
+                                            "value": trip.arrival_station or "N/A"
+                                        }
                                     }
-                                },
-                                "destinationName": {
-                                    "defaultValue": {
-                                        "language": "en",
-                                        "value": trip.arrival_station or "N/A"
-                                    }
-                                }
-                            })
+                                })
                     else:
                         obj["ticketLegs"].append({
                             "originName": {
