@@ -44,7 +44,10 @@ class Record:
             raise util.UICException("Invalid UIC ticket record data length") from e
 
         is_utf8_len = False
-        data_utf8 = data[12:].decode("utf8", "replace")[:data_length]
+        try:
+            data_utf8 = data[12:].decode("utf8")[:data_length]
+        except (UnicodeDecodeError, ValueError) as e:
+            data_utf8 = ""
         if len(data) < data_length:
             if len(data_utf8) + 12 < data_length:
                 raise util.UICException("UIC ticket record data too short")
