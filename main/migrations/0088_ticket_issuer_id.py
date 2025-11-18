@@ -3,13 +3,6 @@
 from django.db import migrations, models
 
 
-def populate_issuer_id(apps, schema_editor):
-    Ticket = apps.get_model("main", "Ticket")
-    for ticket in Ticket.objects.all().iterator():
-        ticket.admin_issuer_id = ticket._admin_issuer_id
-        ticket.save(update_fields=["admin_issuer_id"])
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -22,5 +15,4 @@ class Migration(migrations.Migration):
             name='admin_issuer_id',
             field=models.CharField(blank=True, default='', max_length=64),
         ),
-        migrations.RunPython(populate_issuer_id, migrations.RunPython.noop),
     ]
