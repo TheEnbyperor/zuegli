@@ -685,7 +685,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "validity-start",
                             "label": "validity-start-label",
                             "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleShort",
                             "value": validity_start.isoformat() if validity_start.tzinfo else validity_start.strftime(
                                 "%Y-%m-%dT%H:%M:%SZ"),
                             "ignoresTimeZone": True,
@@ -694,7 +694,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "validity-end",
                             "label": "validity-end-label",
                             "dateStyle": "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleShort",
                             "value": validity_end.isoformat() if validity_end.tzinfo else validity_end.strftime(
                                 "%Y-%m-%dT%H:%M:%SZ"),
                             "changeMessage": "validity-end-change",
@@ -1092,7 +1092,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "departure-time",
                             "label": "departure-time-label",
                             "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleShort",
                             "value": departure_time.isoformat(),
                             "ignoresTimeZone": True
                         })
@@ -1100,7 +1100,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "key": "arrival-time",
                             "label": "arrival-time-label",
                             "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
-                            "timeStyle": "PKDateStyleMedium",
+                            "timeStyle": "PKDateStyleShort",
                             "value": arrival_time.isoformat(),
                             "ignoresTimeZone": True
                         })
@@ -1806,7 +1806,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.cd_ut.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["backFields"].append({
@@ -1824,7 +1824,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.cd_ut.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "changeMessage": "validity-end-change"
                 })
@@ -1891,7 +1891,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "key": "departure-time",
                         "label": "departure-time-label",
                         "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleShort",
                         "value": ticket_data.oebb_99.validity_start.isoformat(),
                         "ignoresTimeZone": True,
                     })
@@ -1900,7 +1900,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "key": "arrival-time",
                         "label": "arrival-time-label",
                         "dateStyle": "PKDateStyleNone" if one_day_ticket else "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleShort",
                         "value": ticket_data.oebb_99.validity_end.isoformat(),
                         "ignoresTimeZone": True,
                     })
@@ -2045,7 +2045,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.bravo.valid_from.isoformat(),
                     "ignoresTimeZone": True,
                 })
@@ -2054,7 +2054,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.bravo.valid_to.isoformat(),
                     "changeMessage": "validity-end-change",
                     "ignoresTimeZone": True,
@@ -2079,7 +2079,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "key": "validity-start",
                         "label": "validity-start-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleShort",
                         "value": ticket_data.dt_ti.validity_start.isoformat(),
                         "ignoresTimeZone": True,
                     })
@@ -2098,7 +2098,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "key": "validity-end",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleShort",
                         "value": ticket_data.dt_ti.validity_end.isoformat(),
                         "changeMessage": "validity-end-change",
                         "ignoresTimeZone": True
@@ -2125,7 +2125,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.vor_fi.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                 })
                 pass_fields["backFields"].append({
@@ -2143,7 +2143,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "key": "validity-end",
                         "label": "validity-end-label",
                         "dateStyle": "PKDateStyleMedium",
-                        "timeStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleShort",
                         "value": ticket_data.vor_fi.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "changeMessage": "validity-end-change"
                     })
@@ -2296,7 +2296,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.db_plai.valid_from.isoformat(),
                     "ignoresTimeZone": True,
                 })
@@ -2315,7 +2315,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": ticket_data.db_plai.valid_to.isoformat(),
                     "changeMessage": "validity-end-change",
                     "ignoresTimeZone": True
@@ -2400,7 +2400,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "key": "departure-time",
                                 "label": "departure-time-label",
                                 "dateStyle": "PKDateStyleMedium",
-                                "timeStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleShort",
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
@@ -2434,7 +2434,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "key": "arrival-time",
                                 "label": "arrival-time-label",
                                 "dateStyle": "PKDateStyleMedium",
-                                "timeStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleShort",
                                 "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
@@ -2471,7 +2471,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "key": "validity-start",
                                 "label": "validity-start-label",
                                 "dateStyle": "PKDateStyleMedium",
-                                "timeStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleShort",
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
@@ -2506,7 +2506,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "key": "validity-end",
                                 "label": "validity-end-label",
                                 "dateStyle": "PKDateStyleMedium",
-                                "timeStyle": "PKDateStyleMedium",
+                                "timeStyle": "PKDateStyleShort",
                                 "value": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
@@ -2710,13 +2710,13 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "validity-start",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": validity_start.isoformat(),
             }, {
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": validity_end.isoformat(),
                 "changeMessage": "validity-end-change"
             }],
@@ -2959,7 +2959,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-start",
                     "label": "validity-start-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": validity_start.isoformat(),
                     "ignoresTimeZone": True,
                 })
@@ -2967,7 +2967,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "key": "validity-end",
                     "label": "validity-end-label",
                     "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleMedium",
+                    "timeStyle": "PKDateStyleShort",
                     "value": validity_end.isoformat(),
                     "changeMessage": "validity-end-change",
                     "ignoresTimeZone": True,
@@ -4073,7 +4073,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "departure-time",
                 "label": "departure-time-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": f"{ticket_data.data.departure.isoformat()}Z",
                 "ignoresTimeZone": True
             })
@@ -4485,14 +4485,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "validity-start",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": ticket_data.data.valid_from.isoformat()
             })
             pass_fields["secondaryFields"].append({
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": ticket_data.data.valid_to.isoformat()
             })
 
@@ -4753,7 +4753,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "key": "validity-start",
             "label": "validity-start-label",
             "dateStyle": "PKDateStyleMedium",
-            "timeStyle": "PKDateStyleMedium",
+            "timeStyle": "PKDateStyleShort",
             "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["backFields"].append({
@@ -4767,7 +4767,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "key": "validity-end",
             "label": "validity-end-label",
             "dateStyle": "PKDateStyleMedium",
-            "timeStyle": "PKDateStyleMedium",
+            "timeStyle": "PKDateStyleShort",
             "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         })
         pass_fields["backFields"].append({
@@ -4793,7 +4793,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "validity-start",
                 "label": "validity-start-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["backFields"].append({
@@ -4807,7 +4807,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 "key": "validity-end",
                 "label": "validity-end-label",
                 "dateStyle": "PKDateStyleMedium",
-                "timeStyle": "PKDateStyleMedium",
+                "timeStyle": "PKDateStyleShort",
                 "value": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             })
             return_pass_fields["backFields"].append({
