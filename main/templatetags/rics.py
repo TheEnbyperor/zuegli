@@ -309,6 +309,14 @@ def oid(value):
         return "Authority key identifier (old)"
     elif value == "1.3.101.112":
         return "Ed25519"
+    elif value == "1.2.840.113549.1.1.11":
+        return "RSA with SHA256"
+    elif value == "1.2.840.113549.1.1.12":
+        return "RSA with SHA384"
+    elif value == "1.2.840.113549.1.1.13":
+        return "RSA with SHA512"
+    elif value == "1.2.840.113549.1.1.14":
+        return "RSA with SHA224"
     else:
         return str(value)
 
