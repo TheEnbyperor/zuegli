@@ -1,4 +1,5 @@
 {% load rics tz %}
+{% localtime off %}
 <dl class="govuk-summary-list">
     {% if addon.productOwnerNum %}
         <div class="govuk-summary-list__row">
@@ -79,13 +80,13 @@
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Valid from</dt>
         <dd class="govuk-summary-list__value">
-            {{ addon|rics_valid_from:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ addon|rics_valid_from:flex.issuing_time|date:"F d, Y H:i:s e" }}
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Valid until</dt>
         <dd class="govuk-summary-list__value">
-            {{ addon|rics_valid_until:flex.issuing_time|utc|date:"F d, Y H:i" }} UTC
+            {{ addon|rics_valid_until:flex.issuing_time|date:"F d, Y H:i:s e" }}
         </dd>
     </div>
     {% if addon.classCode %}
@@ -140,3 +141,4 @@
     {% endif %}
     {% include "main/uic/extension.html" with obj=addon %}
 </dl>
+{% endlocaltime %}
