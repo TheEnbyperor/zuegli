@@ -331,7 +331,7 @@ class VDVTicketInstance(models.Model):
             issuing_ca=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["issuing_ca"], config=config),
             envelope_certificate=dacite.from_dict(data_class=vdv.CertificateData, data=self.decoded_data["envelope_certificate"], config=config),
             raw_ticket=raw_ticket,
-            ticket=vdv.VDVTicket.parse(raw_ticket, self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])),
+            ticket=vdv.VDVTicket.parse(raw_ticket, Account.ticket_contexts(self.ticket.account) if self.ticket.account else t.TicketContexts([])),
             motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if self.decoded_data.get("motics") else None,
         )
 
@@ -366,7 +366,7 @@ class UICTicketInstance(models.Model):
             datetime.datetime: datetime.datetime.fromisoformat,
             datetime.date: datetime.date.fromisoformat,
         })
-        context = self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])
+        context = Account.ticket_contexts(self.ticket.account) if self.ticket.account else t.TicketContexts([])
 
         if self.decoded_data.get("envelope"):
             ticket_envelope = dacite.from_dict(data_class=uic.Envelope, data=self.decoded_data["envelope"], config=config)
