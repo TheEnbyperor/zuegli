@@ -274,7 +274,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["state"] = "COMPLETED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
-                "value": f"VOID - #{ticket_data.ticket.ticket_id}"
+                "value": f"VOID - #{ticket_data.ticket_id()}"
             }
         else:
             obj["barcode"] = {
