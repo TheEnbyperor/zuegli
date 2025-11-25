@@ -13,7 +13,7 @@ import tempfile
 import zipfile
 import io
 import main.uic.gen.bar_code_key_exchange
-from .. import models
+from .. import models, apn, gwallet
 
 xml_parser = xsdata.formats.dataclass.parsers.XmlParser()
 
@@ -241,7 +241,15 @@ def sync_dtvg_blocklist():
 
         for rics, ticket_id in new_entries:
             print(f"New blocklist entry for {rics}: #{ticket_id}")
-            # TODO: send updates to Wallets
+            i = models.UICTicketInstance.objects.filter(distributor_rics=rics, ticket_pnr=ticket_id).first()
+            if not i:
+                continue
+            ticket = i.ticket
+            print(f"Force updating ticket {ticket.public_id()}")
+            ticket.last_updated = timezone.now()
+            ticket.save()
+            apn.notify_ticket.delay(ticket.pk)
+            gwallet.sync_ticket.delay(ticket.pk)
 
     print(f"Processed {total_entries} items - {new_entries_count} new", flush=True)
 

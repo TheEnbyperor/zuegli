@@ -317,8 +317,7 @@ class VDVTicketInstance(models.Model):
     def __str__(self):
         return f"{self.ticket_org_id} - {self.barcode_hash}"
 
-    @cached_property
-    def as_ticket(self) -> t.VDVTicket:
+    def _as_ticket(self) -> t.VDVTicket:
         config = dacite.Config(type_hooks={
             bytes: base64.b64decode,
             datetime.datetime: datetime.datetime.fromisoformat,
@@ -336,11 +335,16 @@ class VDVTicketInstance(models.Model):
             motics=dacite.from_dict(data_class=vdv.Motics, data=self.decoded_data["motics"], config=config) if self.decoded_data.get("motics") else None,
         )
 
+    @cached_property
+    def as_ticket(self) -> t.VDVTicket:
+        return self._as_ticket()
+
 
 class UICTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="uic_instances", db_index=True)
     barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
     distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    ticket_pnr = models.CharField(max_length=255, verbose_name="Ticket ID", db_index=True)
     issuing_time = models.DateTimeField(blank=True, null=True)
     barcode_data = models.BinaryField()
     decoded_data = models.JSONField()
@@ -350,13 +354,13 @@ class UICTicketInstance(models.Model):
 
     class Meta:
         ordering = ["-issuing_time"]
+        index_together = [("distributor_rics", "ticket_pnr")]
         verbose_name = "UIC ticket"
 
     def __str__(self):
         return f"{self.distributor_rics} - {self.barcode_hash}"
 
-    @cached_property
-    def as_ticket(self) -> t.UICTicket:
+    def _as_ticket(self) -> t.UICTicket:
         config = dacite.Config(type_hooks={
             bytes: base64.b64decode,
             datetime.datetime: datetime.datetime.fromisoformat,
@@ -372,6 +376,10 @@ class UICTicketInstance(models.Model):
             return t.UICTicket.from_dosipas(bytes(self.barcode_data), ticket_envelope, context)
         else:
             raise AssertionError("Unreachable code")
+
+    @cached_property
+    def as_ticket(self) -> t.UICTicket:
+        return self._as_ticket()
 
 
 class RSPTicketInstance(models.Model):
@@ -396,8 +404,7 @@ class RSPTicketInstance(models.Model):
     def __str__(self):
         return f"{self.issuer_id} - {self.reference}"
 
-    @cached_property
-    def as_ticket(self) -> t.RSPTicket:
+    def _as_ticket(self) -> t.RSPTicket:
         raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"])
         if self.ticket_type == "08":
             data = rsp.RailcardData.parse(raw_ticket)
@@ -420,6 +427,10 @@ class RSPTicketInstance(models.Model):
             data=data
         )
 
+    @cached_property
+    def as_ticket(self) -> t.RSPTicket:
+        return self._as_ticket()
+
 
 class FlexiTicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ft_instances", db_index=True)
@@ -434,8 +445,7 @@ class FlexiTicketInstance(models.Model):
     def __str__(self):
         return f"{self.issuer_id} - {self.barcode_hash}"
 
-    @cached_property
-    def as_ticket(self) -> t.FlexiTicket:
+    def _as_ticket(self) -> t.FlexiTicket:
         raw_ticket = base64.b64decode(self.decoded_data["raw_ticket"]) if self.decoded_data.get("raw_ticket") else None
         raw_extra_data = base64.b64decode(self.decoded_data["raw_extra_data"]) if self.decoded_data.get("raw_extra_data") else None
         ticket_data = flexi_ticket.Data.parse(raw_ticket, self.issuer_id) if raw_ticket else None
@@ -447,6 +457,10 @@ class FlexiTicketInstance(models.Model):
             raw_ticket=raw_ticket,
             raw_extra_data=raw_extra_data
         )
+
+    @cached_property
+    def as_ticket(self) -> t.FlexiTicket:
+        return self._as_ticket()
 
 
 class SNCFTicketInstance(models.Model):
@@ -460,12 +474,15 @@ class SNCFTicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.SNCFTicket:
+    def _as_ticket(self) -> t.SNCFTicket:
         return t.SNCFTicket(
             raw_ticket=self.barcode_data,
             data=sncf.SNCFTicket.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.SNCFTicket:
+        return self._as_ticket()
 
 
 class HZPPTicketInstance(models.Model):
@@ -479,12 +496,15 @@ class HZPPTicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.HZPPTicket:
+    def _as_ticket(self) -> t.HZPPTicket:
         return t.HZPPTicket(
             raw_ticket=self.barcode_data,
             data=hzpp.HZPPTicket.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.HZPPTicket:
+        return self._as_ticket()
 
 
 class ELBTicketInstance(models.Model):
@@ -498,12 +518,15 @@ class ELBTicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.ELBTicket:
+    def _as_ticket(self) -> t.ELBTicket:
         return t.ELBTicket(
             raw_ticket=bytes(self.barcode_data),
             data=elb.ELBTicket.parse(bytes(self.barcode_data)),
         )
+
+    @cached_property
+    def as_ticket(self) -> t.ELBTicket:
+        return self._as_ticket()
 
 
 class SSBTicketInstance(models.Model):
@@ -519,8 +542,7 @@ class SSBTicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.SSBTicket:
+    def _as_ticket(self) -> t.SSBTicket:
         envelope = ssb.Envelope.parse(bytes(self.ssb_data or self.barcode_data))
         context = self.ticket.account.ticket_contexts() if self.ticket.account else t.TicketContexts([])
 
@@ -547,6 +569,10 @@ class SSBTicketInstance(models.Model):
             data=data
         )
 
+    @cached_property
+    def as_ticket(self) -> t.SSBTicket:
+        return self._as_ticket()
+
 
 class SSB1TicketInstance(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="ssb1_instances", db_index=True)
@@ -560,14 +586,17 @@ class SSB1TicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.SSB1Ticket:
+    def _as_ticket(self) -> t.SSB1Ticket:
         ticket = ssb1.Ticket.parse(bytes(self.barcode_data))
 
         return t.SSB1Ticket(
             raw_ticket=bytes(self.barcode_data),
             ticket=ticket,
         )
+
+    @cached_property
+    def as_ticket(self) -> t.SSB1Ticket:
+        return self._as_ticket()
 
 
 class SwissPassTicketInstance(models.Model):
@@ -581,12 +610,15 @@ class SwissPassTicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.SwissPassTicket:
+    def _as_ticket(self) -> t.SwissPassTicket:
         return t.SwissPassTicket(
             raw_ticket=self.barcode_data,
             data=swisspass.SwissPassTicket.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.SwissPassTicket:
+        return self._as_ticket()
 
 
 class IATATicketInstance(models.Model):
@@ -600,12 +632,15 @@ class IATATicketInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.IATATicket:
+    def _as_ticket(self) -> t.IATATicket:
         return t.IATATicket(
             raw_ticket=self.barcode_data,
             data=iata.Envelope.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.IATATicket:
+        return self._as_ticket()
 
 
 class BahnBonusInstance(models.Model):
@@ -619,12 +654,15 @@ class BahnBonusInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.BahnBonusCode:
+    def _as_ticket(self) -> t.BahnBonusCode:
         return t.BahnBonusCode(
             raw_ticket=self.barcode_data,
             data=bahnbonus.BahnBonusCode.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.BahnBonusCode:
+        return self._as_ticket()
 
 
 class TS2Instance(models.Model):
@@ -640,8 +678,7 @@ class TS2Instance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.TS2Ticket:
+    def _as_ticket(self) -> t.TS2Ticket:
         config = dacite.Config(type_hooks={
             bytes: base64.b64decode,
             datetime.datetime: datetime.datetime.fromisoformat,
@@ -649,6 +686,10 @@ class TS2Instance(models.Model):
         })
         ticket_envelope = dacite.from_dict(data_class=ts2.Envelope, data=self.decoded_data["envelope"], config=config)
         return t.TS2Ticket.from_envelope(bytes(self.barcode_data), ticket_envelope)
+
+    @cached_property
+    def as_ticket(self) -> t.TS2Ticket:
+        return self._as_ticket()
 
 
 class SNCBTrainPlusInstance(models.Model):
@@ -662,12 +703,15 @@ class SNCBTrainPlusInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.SNCBTrainPlus:
+    def _as_ticket(self) -> t.SNCBTrainPlus:
         return t.SNCBTrainPlus(
             raw_ticket=bytes(self.barcode_data),
             data=sncb_train_plus.TrainPlusCode.parse(bytes(self.barcode_data))
         )
+
+    @cached_property
+    def as_ticket(self) -> t.SNCBTrainPlus:
+        return self._as_ticket()
 
 
 class ADIFInstance(models.Model):
@@ -682,8 +726,7 @@ class ADIFInstance(models.Model):
     def __str__(self):
         return str(self.barcode_hash)
 
-    @cached_property
-    def as_ticket(self) -> t.ADIFTicket:
+    def _as_ticket(self) -> t.ADIFTicket:
         d = adif.Ticket.parse(bytes(self.barcode_data))
         return t.ADIFTicket(
             ticket_ref=d.ticket_ref,
@@ -691,6 +734,10 @@ class ADIFInstance(models.Model):
             data=d,
             raw_ticket=bytes(self.barcode_data),
         )
+
+    @cached_property
+    def as_ticket(self) -> t.ADIFTicket:
+        return self._as_ticket()
 
 
 class KnownRailEasyJourney(models.Model):
