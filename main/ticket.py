@@ -2018,6 +2018,7 @@ def create_ticket_obj(
             defaults={
                 "ticket": ticket_obj,
                 "distributor_rics": ticket_data.issuing_rics(),
+                "ticket_pnr": ticket_data.ticket_id(),
                 "issuing_time": ticket_data.issuing_time(),
                 "barcode_data": ticket_bytes,
                 "validity_start": validity_start,
