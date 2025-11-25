@@ -7,7 +7,7 @@ def set_ticket_id(apps, schema_editor):
     model = apps.get_model("main", "VDVTicketInstance")
     for i in model.objects.all():
         try:
-            t = VDVTicketInstance.as_ticket(i)
+            t = VDVTicketInstance._as_ticket(i)
         except Exception as e:
             print(e)
             continue
