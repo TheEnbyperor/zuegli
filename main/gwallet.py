@@ -228,19 +228,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         }
     }
 
-    if ticket.ticket_type == ticket.TYPE_DEUTCHLANDTICKET:
-        obj["imageModulesData"].append({
-            "id": "thumb",
-            "mainImage": {
-                "sourceUri": {
-                    "uri": urllib.parse.urljoin(
-                        settings.EXTERNAL_URL_BASE,
-                        static("pass/logo-dt@3x.png"),
-                    )
-                }
-            }
-        })
-
     ticket_instance = ticket.active_instance
     if isinstance(ticket_instance, models.UICTicketInstance):
         ticket_type = None
@@ -269,6 +256,20 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["hexBackgroundColor"] = passes.RICS_BG[issuing_rics]
         else:
             obj["hexBackgroundColor"] = "#ffffff"
+
+        if ticket.ticket_type == ticket.TYPE_DEUTCHLANDTICKET:
+            obj["imageModulesData"].append({
+                "id": "thumb",
+                "mainImage": {
+                    "sourceUri": {
+                        "uri": urllib.parse.urljoin(
+                            settings.EXTERNAL_URL_BASE,
+                            static("pass/logo-dt-white@3x.png") if issuing_rics in passes.RICS_DARK_BG else static("pass/logo-dt@3x.png"),
+                        )
+                    }
+                }
+            })
+
         if ticket_data.dtvg_revoked():
             obj["state"] = "COMPLETED"
             obj["barcode"] = {
@@ -918,6 +919,19 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         }
         obj["hexBackgroundColor"] = "#ffffff"
         obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
+
+        if ticket.ticket_type == ticket.TYPE_DEUTCHLANDTICKET:
+            obj["imageModulesData"].append({
+                "id": "thumb",
+                "mainImage": {
+                    "sourceUri": {
+                        "uri": urllib.parse.urljoin(
+                            settings.EXTERNAL_URL_BASE,
+                            static("pass/logo-dt@3x.png"),
+                        )
+                    }
+                }
+            })
 
         if ticket_data.revoked_status():
             obj["state"] = "COMPLETED"
