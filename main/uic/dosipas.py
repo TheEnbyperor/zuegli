@@ -33,24 +33,35 @@ class DOSIPASEnvelope:
 
     @property
     def security_provider(self) -> typing.Union[int, str]:
-        return  self.level_2_data["level1Data"]["securityProviderNum"] \
+        return self.level_2_data["level1Data"]["securityProviderNum"] \
             if "securityProviderNum" in self.level_2_data["level1Data"] else \
-            self.level_2_data["level1Data"].get("securityProviderIA5", "")
+            self.level_2_data["level1Data"].get("securityProviderIA5")
 
     def signing_cert(self):
-        return certs.signing_cert(self.security_provider, self.level_2_data["level1Data"]["keyId"])
+        sp = self.security_provider
+        if not sp:
+            return None
+        return certs.signing_cert(sp, self.level_2_data["level1Data"].get("keyId", 0))
 
     def can_verify(self):
+        sp = self.security_provider
+        if not sp:
+            return False
+
         if not self.level_1_signature:
             return False
 
-        return bool(certs.public_key(self.security_provider, self.level_2_data["level1Data"]["keyId"]))
+        return bool(certs.public_key(sp, self.level_2_data["level1Data"].get("keyId", 0)))
 
     def verify_level_1_signature(self):
+        sp = self.security_provider
+        if not sp:
+            return False
+
         if not self.level_1_signature or not self.level_1_signed_data:
             return False
 
-        pk = certs.public_key(self.security_provider, self.level_2_data["level1Data"]["keyId"])
+        pk = certs.public_key(sp, self.level_2_data["level1Data"].get("keyId", 0))
         if not pk:
             return False
 
@@ -167,7 +178,7 @@ class DOSIPASEnvelope:
                     level_2_signed_data=ASN1_SPEC_V2.encode("Level2DataType", data["level2SignedData"]),
                     level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V2.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
-                    level_1_signature=data["level2SignedData"]["level1Signature"],
+                    level_1_signature=data["level2SignedData"].get("level1Signature"),
                     level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
         except (asn1tools.DecodeError, IndexError):
@@ -182,7 +193,7 @@ class DOSIPASEnvelope:
                     level_2_signed_data=ASN1_SPEC_V1.encode("Level2DataType", data["level2SignedData"]),
                     level_2_signature=data.get("level2Signature"),
                     level_1_signed_data=ASN1_SPEC_V1.encode("Level1DataType", data["level2SignedData"]["level1Data"]),
-                    level_1_signature=data["level2SignedData"]["level1Signature"],
+                    level_1_signature=data["level2SignedData"].get("level1Signature"),
                     level_2_public_key=data["level2SignedData"]["level1Data"].get("level2PublicKey"),
                 )
         except (asn1tools.DecodeError, IndexError):
@@ -201,7 +212,7 @@ class DOSIPASEnvelope:
                     data=r["data"],
                 ))
 
-            if out.level_2_data["level1Data"].get("endOfValidityYear"):
+            if "endOfValidityYear" in out.level_2_data["level1Data"]:
                 year = out.level_2_data["level1Data"]["endOfValidityYear"]
                 day = out.level_2_data["level1Data"]["endOfValidityDay"]
                 time = out.level_2_data["level1Data"]["endOfValidityTime"]
