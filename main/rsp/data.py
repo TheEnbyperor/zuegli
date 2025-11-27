@@ -431,6 +431,8 @@ class RailcardData:
             return "Pembrokeshire Railcard"
         elif self.railcard_type == "JCP":
             return "Jobcentre Plus Travel Discount Card"
+        elif self.railcard_type == "PRV":
+            return "Staff Travel Card"
         else:
             return "Unknown Railcard Type"
         
