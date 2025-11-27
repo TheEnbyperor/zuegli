@@ -100,15 +100,19 @@
             {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">{% trans "Security provider" %}</dt>
-                    <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 }}</dd>
+                    <dd class="govuk-summary-list__value">
+                        {{ ticket.dosipas_envelope.level_2_data.level1Data.securityProviderIA5 }}
+                    </dd>
                 </div>
             {% endif %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">{% trans "Signature key ID" %}</dt>
-                <dd class="govuk-summary-list__value">
-                    <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.keyId }}</code>
-                </dd>
-            </div>
+            {% if ticket.dosipas_envelope.level_2_data.level1Data.keyId %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">{% trans "Signature key ID" %}</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.dosipas_envelope.level_2_data.level1Data.keyId }}</code>
+                    </dd>
+                </div>
+            {% endif %}
             {% if ticket.dosipas_envelope.expiry %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">{% trans "Expiry" %}</dt>
@@ -132,7 +136,7 @@
                             {{ ticket.dosipas_envelope.level_2_data.level1Data.level1KeyAlg|oid }}
                         </dd>
                     </div>
-                {% else %}
+                {% elif not ticket.dosipas_envelope.level_2_data.level1Data.level1SigningAlg %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">{% trans "Level 1 key algorithm" %}</dt>
                         <dd class="govuk-summary-list__value">
@@ -191,7 +195,7 @@
                 {% endif %}
             {% else %}
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">{% trans "Level 1 signing key" %}</dt>
+                    <dt class="govuk-summary-list__key">{% trans "Level 1 signature" %}</dt>
                     <dd class="govuk-summary-list__value">
                         <div class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
