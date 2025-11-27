@@ -7,6 +7,13 @@ ROOT_DIR = pathlib.Path(__file__).parent.parent
 
 
 def main():
+    keys_file = ROOT_DIR / "rsp-data" / "keys.json"
+    if keys_file.exists():
+        with open(keys_file, "r") as f:
+            out = json.load(f)
+    else:
+        out = {}
+
     with open(ROOT_DIR / "priv" / "rdg_keys.json") as f:
         login_data = json.load(f)
 
@@ -21,7 +28,6 @@ def main():
     with open(ROOT_DIR / "data" / "extra_rsp_keys.json") as f:
         extra_keys = json.load(f)
 
-    out = {}
     for issuer, issuer_keys in keys["keys"].items():
         if issuer not in out:
             out[issuer] = []
@@ -43,7 +49,7 @@ def main():
 
         out[issuer].extend(issuer_keys)
 
-    with open(ROOT_DIR / "rsp-data" / "keys.json", "w") as f:
+    with open(keys_file, "w") as f:
         json.dump(out, f)
 
 
