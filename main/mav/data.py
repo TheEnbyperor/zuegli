@@ -129,6 +129,9 @@ class TicketData:
         else:
             trip_data = None
 
+        for _ in range(num_class_upgrades):
+            offset += 23
+
         seat_reservations = []
         for _ in range(num_seat_reservations):
             seat_reservations.append(SeatReservation(
