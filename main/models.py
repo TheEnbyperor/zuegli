@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from solo.models import SingletonModel
 from . import ticket as t
 from . import vdv_nm
-from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif
+from . import vdv, uic, rsp, sncf, elb, ssb, ssb1, hzpp, swisspass, iata, bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif, mav
 
 
 def make_pass_token():
@@ -201,6 +201,8 @@ class Ticket(models.Model):
             return f"RSP:{active_instance.issuer_id}"
         elif isinstance(active_instance, ADIFInstance):
             return f"ADIF:{active_instance.distributor_rics}"
+        elif isinstance(active_instance, MavInstance):
+            return f"MAV:{active_instance.distributor_rics}"
         elif isinstance(active_instance, SwissPassTicketInstance):
             return f"SwissPass"
         else:
@@ -273,6 +275,9 @@ class Ticket(models.Model):
             return ticket_instance
 
         if ticket_instance := self.adif_instances.first():
+            return ticket_instance
+
+        if ticket_instance := self.mav_instances.first():
             return ticket_instance
 
         return None
@@ -737,6 +742,33 @@ class ADIFInstance(models.Model):
 
     @cached_property
     def as_ticket(self) -> t.ADIFTicket:
+        return self._as_ticket()
+
+
+class MavInstance(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="mav_instances", db_index=True)
+    distributor_rics = models.PositiveIntegerField(validators=[validators.MaxValueValidator(9999)], verbose_name="Distributor RICS", db_index=True)
+    barcode_hash = models.CharField(unique=True, max_length=64, db_index=True)
+    barcode_data = models.BinaryField()
+    decoded_data = models.JSONField()
+
+    class Meta:
+        verbose_name = "MÁV Ticket"
+
+    def __str__(self):
+        return str(self.barcode_hash)
+
+    def _as_ticket(self) -> t.MavTicket:
+        config = dacite.Config(type_hooks={
+            bytes: base64.b64decode,
+            datetime.datetime: datetime.datetime.fromisoformat,
+            datetime.date: datetime.date.fromisoformat,
+        })
+        ticket_envelope = dacite.from_dict(data_class=mav.Envelope, data=self.decoded_data["envelope"], config=config)
+        return t.MavTicket.from_envelope(bytes(self.barcode_data), ticket_envelope)
+
+    @cached_property
+    def as_ticket(self) -> t.MavTicket:
         return self._as_ticket()
 
 
