@@ -256,7 +256,7 @@
 
     <div class="govuk-!-margin-7">
         <h2 class="govuk-heading-l">{% trans "Ticket details" %}</h2>
-        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count and not ticket.iata_instances.count and not ticket.bahnbonus_instances.count and not ticket.ft_instances.count and not ticket.ts2_instances.count and not ticket.sncb_trainplus_instances.count and not ticket.adif_instances.count %}
+        {% if not ticket.vdv_instances.count and not ticket.uic_instances.count and not ticket.rsp_instances.count and not ticket.sncf_instances.count and not ticket.elb_instances.count and not ticket.ssb_instances.count and not ticket.ssb1_instances.count and not ticket.hzpp_instances.count and not ticket.swisspass_instances.count and not ticket.iata_instances.count and not ticket.bahnbonus_instances.count and not ticket.ft_instances.count and not ticket.ts2_instances.count and not ticket.sncb_trainplus_instances.count and not ticket.adif_instances.count and not ticket.mav_instances.count %}
             <p class="govuk-body">{% trans "No instances found for this ticket." %}</p>
         {% else %}
             {% localtime off %}
@@ -525,6 +525,23 @@
                             </summary>
                             <div class="govuk-details__text">
                                 {% include 'main/adif.html' with ticket=ticket_obj %}
+                            </div>
+                        </details>
+                    {% endwith %}
+                {% endfor %}
+                {% for instance in ticket.mav_instances.all %}
+                    {% with ticket_obj=instance.as_ticket %}
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">{% blocktrans with id=ticket_obj.envelope.ticket_id %}Ticket #{{ id }}{% endblocktrans %}</span>
+                                {% with distributor=ticket_obj.distributor %}
+                                    {% if distributor %}
+                                        <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </summary>
+                            <div class="govuk-details__text">
+                                {% include 'main/mav.html' with ticket=ticket_obj %}
                             </div>
                         </details>
                     {% endwith %}

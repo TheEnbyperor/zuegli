@@ -11,7 +11,7 @@ import binascii
 import ber_tlv.tlv
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, \
-    bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif
+    bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif, mav
 
 
 class TicketError(Exception):
@@ -873,6 +873,44 @@ class ADIFTicket:
 
     def distributor(self):
         return uic.rics.get_rics(self.issuer_id)
+
+
+@dataclasses.dataclass
+class MavTicket:
+    raw_bytes: bytes
+    envelope: mav.Envelope
+    data: mav.TicketData
+
+    @property
+    def ticket_type(self) -> str:
+        return "MAV"
+
+    @staticmethod
+    def type() -> str:
+        return models.Ticket.TYPE_FAHRKARTE
+
+    def pk(self) -> str:
+        hd = Crypto.Hash.TupleHash128.new(digest_bytes=16)
+
+        hd.update(b"mav")
+        hd.update(self.envelope.issuer_rics.to_bytes(4, "big"))
+        hd.update(self.envelope.ticket_id.encode("utf-8"))
+        return base64.b32encode(hd.digest()).decode("utf-8")
+
+    def distributor(self):
+        return uic.rics.get_rics(self.envelope.issuer_rics)
+
+    @classmethod
+    def from_envelope(
+            cls, ticket_bytes: bytes, ticket_envelope: mav.Envelope,
+    ) -> "MavTicket":
+        data = parse_ticket_mav_data(ticket_envelope)
+
+        return cls(
+            raw_bytes=ticket_bytes,
+            envelope=ticket_envelope,
+            data=data,
+        )
 
 
 def parse_ticket_vdv(ticket_bytes: bytes, context: "TicketContexts") -> VDVTicket:
@@ -1851,12 +1889,38 @@ def parse_ticket_adif(ticket_bytes: bytes) -> ADIFTicket:
     )
 
 
+def parse_ticket_mav(ticket_bytes: bytes) -> MavTicket:
+    try:
+        data = mav.Envelope.parse(ticket_bytes)
+    except mav.MavException:
+        raise TicketError(
+            title="This doesn't look like a valid MÁV ticket",
+            message="You may have scanned something that is not an MÁV ticket, the ticket is corrupted, or there "
+                    "is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    return MavTicket.from_envelope(ticket_bytes, data)
+
+
+def parse_ticket_mav_data(ticket_envelope: mav.Envelope) -> mav.TicketData:
+    try:
+        return mav.TicketData.parse(ticket_envelope)
+    except mav.MavException:
+        raise TicketError(
+            title="Invalid MÁV data",
+            message="The MÁV ticket contents can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+
 def parse_ticket(
         ticket_bytes: bytes, account: typing.Optional["models.Account"]
 ) -> typing.Union[
     VDVTicket, UICTicket, RSPTicket, SNCFTicket, ELBTicket, SSBTicket,
     SSB1Ticket, HZPPTicket, SwissPassTicket, IATATicket, BahnBonusCode,
-    FlexiTicket, TS2Ticket, SNCBTrainPlus, ADIFTicket
+    FlexiTicket, TS2Ticket, SNCBTrainPlus, ADIFTicket, MavTicket
 ]:
     context = account.ticket_contexts() if account else TicketContexts([])
     if len(ticket_bytes) == 114 and (ticket_bytes[0] & 0xF0) >> 4 == 3:
@@ -1910,6 +1974,9 @@ def parse_ticket(
 
     if ticket_bytes[0] == 0x0a:
         return parse_ticket_swiss_pass(ticket_bytes)
+
+    if ticket_bytes[0] == 0x06:
+        return parse_ticket_mav(ticket_bytes)
 
     if dosipas := uic.DOSIPASEnvelope.decode(ticket_bytes):
         return UICTicket.from_dosipas(ticket_bytes, dosipas, context)
@@ -2161,6 +2228,18 @@ def create_ticket_obj(
                 "ticket": ticket_obj,
                 "distributor_rics": ticket_data.issuer_id,
                 "barcode_data": ticket_bytes,
+            }
+        )
+    elif isinstance(ticket_data, MavTicket):
+        _, created = models.MavInstance.objects.update_or_create(
+            barcode_hash=barcode_hash,
+            defaults={
+                "ticket": ticket_obj,
+                "distributor_rics": int(ticket_data.envelope.issuer_rics),
+                "barcode_data": ticket_bytes,
+                "decoded_data": {
+                    "envelope": dataclasses.asdict(ticket_data.envelope, dict_factory=to_dict_json),
+                }
             }
         )
     return created
