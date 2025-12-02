@@ -164,7 +164,8 @@ SPATIAL_VALIDITY = {
     },
     6100: vbb_tariff,
     6212: {
-        904001: "eezy.nrw"
+        904001: "eezy.nrw",
+        905001: "NRWweit"
     },
     6262: get_db_station_name,
     6292: {
