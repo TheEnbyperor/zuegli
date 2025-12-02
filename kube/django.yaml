@@ -99,6 +99,8 @@ spec:
                 name: vdv-pkpass-hzpp
             - secretRef:
                 name: vdv-pkpass-hvv
+            - secretRef:
+                name: vdv-pkpass-mav-gtfs
       containers:
         - name: gunicorn
           image: theenbyperor/zuegli-django:(version)
@@ -186,6 +188,8 @@ spec:
                 name: vdv-pkpass-hzpp
             - secretRef:
                 name: vdv-pkpass-hvv
+            - secretRef:
+                name: vdv-pkpass-mav-gtfs
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -259,6 +263,8 @@ spec:
                 name: vdv-pkpass-hzpp
             - secretRef:
                 name: vdv-pkpass-hvv
+            - secretRef:
+                name: vdv-pkpass-mav-gtfs
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -332,6 +338,8 @@ spec:
                 name: vdv-pkpass-hzpp
             - secretRef:
                 name: vdv-pkpass-hvv
+            - secretRef:
+                name: vdv-pkpass-mav-gtfs
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
