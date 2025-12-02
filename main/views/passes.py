@@ -2829,6 +2829,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "label": "valid-region-label",
                             "value": elm.area_name(),
                         })
+                elif elm.variant == "B":
+                    if elm.area:
+                        # edgecase for KVV, they do spatial validity in NRWweit tickets (and D-Ticket?) oddly
+                        if elm.tariff_points[0] == elm.tariff_points[1] and elm.area == elm.tariff_points[0]:
+                            pass_fields["secondaryFields"].append({
+                                "key": "valid-in",
+                                "label": "valid-region-label",
+                                "value": elm.area_name(),
+                            })
             elif isinstance(elm, vdv.ticket.IdentificationMedium):
                 if elm.id_type == 84:
                     pass_fields["secondaryFields"].append({
