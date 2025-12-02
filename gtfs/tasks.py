@@ -5,6 +5,7 @@ import io
 import datetime
 import google.protobuf.json_format
 import pytz
+import typing
 import django.db
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -23,10 +24,15 @@ TIME_RE = re.compile(r"^(\d{2}):(\d{2}):(\d{2})$")
     autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=3, default_retry_delay=3,
     ignore_result=True
 )
-def process_gtfs(feed_id: str, feed_url: str):
-    r = session.get(feed_url, headers={
-        "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-    })
+def process_gtfs(feed_id: str, feed_url: typing.Union[str, typing.Dict[str, str]]):
+    if isinstance(feed_url, str):
+        r = session.get(feed_url, headers={
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)"
+        })
+    elif isinstance(feed_url, dict):
+        r = session.get(feed_url["url"], headers={
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)"
+        }, auth=(feed_url.get("username"), feed_url.get("password")))
     r.raise_for_status()
     gtfs_zip = zipfile.ZipFile(io.BytesIO(r.content))
 
@@ -428,7 +434,7 @@ def process_gtfs(feed_id: str, feed_url: str):
                     raise Exception(f"No calendar found for service ID {row['service_id']}")
 
             direction_id = row.get("direction_id")
-            if direction_id is None:
+            if direction_id is None or direction_id == "":
                 direction_id = models.Trip.DIRECTION_UNSPECIFIED
             elif direction_id == "0":
                 direction_id = models.Trip.DIRECTION_OUTBOUND

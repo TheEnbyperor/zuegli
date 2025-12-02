@@ -1,6 +1,7 @@
 import typing
 import django.core.files.storage
 import json
+import gtfs.models
 
 STATIONS = None
 UIC_STATIONS = None
@@ -109,6 +110,21 @@ def get_station_by_sz(code) -> typing.Optional[dict]:
     code = str(code)
     if uic_code := get_sz_stations_list().get(code):
         return get_station_by_uic(uic_code)
+    return None
+
+
+def get_station_by_mav(code) -> typing.Optional[dict]:
+    code = str(code)
+    if s := gtfs.models.Stop.objects.filter(
+        feed_id="mav",
+        stop_id=code,
+    ).first():
+        return {
+            "name": s.name,
+            "latitude": s.lat,
+            "longitude": s.long,
+            "country": "HU"
+        }
     return None
 
 # DB is stupid and uses the wrong codes sometimes

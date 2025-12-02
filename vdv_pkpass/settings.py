@@ -271,6 +271,9 @@ HZPP_KEY = base64.b64decode(os.getenv("HZPP_KEY"))
 
 HVV_APPLICATION_KEY = os.getenv("HVV_APPLICATION_KEY")
 
+MAV_GTFS_USERNAME = os.getenv("MAV_GTFS_USERNAME")
+MAV_GTFS_PASSWORD = os.getenv("MAV_GTFS_PASSWORD")
+
 try:
     with open(os.getenv("WWDR_CERTIFICATE_LOCATION"), "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())

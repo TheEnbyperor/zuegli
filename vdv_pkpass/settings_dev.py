@@ -224,6 +224,15 @@ except FileNotFoundError:
     HVV_APPLICATION_KEY = None
 
 try:
+    with open(BASE_DIR / "priv" / "mav.json") as f:
+        d = json.load(f)
+        MAV_GTFS_USERNAME = d["username"]
+        MAV_GTFS_PASSWORD = d["password"]
+except FileNotFoundError:
+    MAV_GTFS_USERNAME = None
+    MAV_GTFS_PASSWORD = None
+
+try:
     with open(BASE_DIR / "priv" / "wwdrg4.crt", "rb") as f:
         WWDR_CERTIFICATE = cryptography.x509.load_der_x509_certificate(f.read())
 except FileNotFoundError:
