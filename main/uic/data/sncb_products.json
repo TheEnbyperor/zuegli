@@ -23,5 +23,13 @@
   "VAC": "Vaccination Ticket",
   "LU1": "Standard - Luxembourg",
   "I47": "Summer Deal",
-  "D_O2_AS_YOUTH_AC": "Ticket Off-peak Youth Train+"
+  "D_O2_AS_YOUTH_AC": "Ticket - Off-peak - Youth - Train+",
+  "D_O1_AS_AC": "Ticket - Off-peak - Adult - Train+",
+  "100Q20": "Ticket - Anytime - Adult",
+  "100Q21": "Weekend Ticket - Adult",
+  "100Q22": "Ticket - Anytime - Adult - Train+",
+  "100Q23": "Ticket - Off-peak - Adult - Train+",
+  "100Q24": "Weekend Ticket - Adult - Train+",
+  "100Q42": "Ticket - Anytime - Senior - Train+",
+  "100Q50": "Ticket - Anytime - Preferential Reimbursement"
 }
