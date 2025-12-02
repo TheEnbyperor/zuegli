@@ -49,6 +49,8 @@ def get_station(value, code_type):
             return uic.stations.get_station_by_finland(value)
         elif code_type == "sz":
             return uic.stations.get_station_by_sz(value)
+        elif code_type == "mav":
+            return uic.stations.get_station_by_mav(value)
         elif code_type == "uic":
             return uic.stations.get_station_by_uic(value)
     elif isinstance(code_type, dict):
