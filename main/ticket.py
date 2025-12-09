@@ -9,9 +9,34 @@ import hashlib
 import enum
 import binascii
 import ber_tlv.tlv
+import math
+import re
 from django.utils import timezone
 from . import models, vdv, uic, rsp, templatetags, apn, gwallet, sncf, elb, ssb, ssb1, email, hzpp, swisspass, iata, \
     bahnbonus, flexi_ticket, ts2, sncb_train_plus, adif, mav
+
+def base_encode(data: bytes, alphabet: str) -> str:
+    number = int.from_bytes(data, byteorder="big")
+    output = ""
+    while number != 0:
+        number, i = divmod(number, len(alphabet))
+        output = f"{alphabet[i]}{output}"
+    return output
+
+def base_decode(data: str, alphabet: str) -> bytes:
+    output_len = int(math.ceil((len(data) * math.log2(len(alphabet))) / 8))
+    number = 0
+    for char in data:
+        if char not in alphabet:
+            raise ValueError("Invalid character")
+        i = alphabet.index(char)
+        number *= len(alphabet)
+        number += i
+    return number.to_bytes(output_len, byteorder="big")
+
+
+UIC_URL_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$:*+-."
+UIC_URL_RE = re.compile(r"^(?:https|HTTPS):\/\/[a-zA-Z0-9.-]+\/.*\$UIC:([0-9A-Z$:*+-.]+)$")
 
 
 class TicketError(Exception):
@@ -1536,6 +1561,32 @@ def parse_ticket_uic_qr(ticket_bytes: bytes, context: TicketContexts) -> UICTick
     return parse_ticket_uic(ticket_bytes, context)
 
 
+def parse_ticket_uic_url(ticket_bytes: bytes, context: TicketContexts) -> UICTicket:
+    try:
+        ticket = ticket_bytes.decode("ascii")
+    except UnicodeDecodeError:
+        raise TicketError(
+            title="This doesn't look like a valid UIC URL",
+            message="You may have scanned something that is not a UIC URL, it is corrupted, or there is a bug in this program.",
+            exception=traceback.format_exc()
+        )
+
+    match = UIC_URL_RE.fullmatch(ticket)
+    if not match:
+        raise TicketError(
+            title="This doesn't look like a valid UIC URL",
+            message="You may have scanned something that is not a UIC URL, it is corrupted, or there is a bug in this program.",
+        )
+
+    data = match.group(1)
+    data = base_decode(data, UIC_URL_ALPHABET)
+
+    if dosipas := uic.DOSIPASEnvelope.decode(data):
+        return UICTicket.from_dosipas(data, dosipas, context)
+
+    return parse_ticket_uic(data, context)
+
+
 def parse_ticket_ts2(ticket_bytes: bytes) -> TS2Ticket:
     try:
         ticket_envelope = ts2.Envelope.parse(ticket_bytes)
@@ -2015,6 +2066,9 @@ def parse_ticket(
 
     if sncb_train_plus.is_sncb_train_plus_code(ticket_bytes):
         return parse_sncb_train_plus(ticket_bytes)
+
+    if b"$UIC:" in ticket_bytes:
+        return parse_ticket_uic_url(ticket_bytes, context)
 
     try:
         ber_tlv.tlv.Tlv.Parser.parse(ticket_bytes, False, [], False, 0)
