@@ -1,0 +1,8 @@
+{% load rics %}
+{% if id.0 == "idNum" %}
+    {{ id.1 }}
+{% elif id.0 == "idIA5" %}
+    {{ id.1 }}
+{% elif id.0 == "idOct" %}
+    <code>{{ id.1|as_hex }}</code>
+{% endif %}

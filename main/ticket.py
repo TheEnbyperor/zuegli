@@ -113,6 +113,7 @@ class UICTicket:
     pretix: typing.Optional["uic.pretix.Pretix"] = None
     pretix_wallet: typing.Optional["uic.pretix.PretixWallet"] = None
     pretix_totp: typing.Optional["uic.pretix.PretixWallet"] = None
+    fpd: typing.Optional["uic.fpd.FixedPointData"] = None
     other_records: typing.List["uic.envelope.Record"] = dataclasses.field(default_factory=list)
     other_dosipas_records: typing.List["uic.dosipas.Record"] = dataclasses.field(default_factory=list)
 
@@ -325,6 +326,10 @@ class UICTicket:
         if self.dosipas_envelope and "securityProviderNum" in self.dosipas_envelope.level_2_data["level1Data"]:
             return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderNum"]
 
+        if self.fpd:
+            if "issuer" in self.fpd.data and self.fpd.data["issuer"][0] == "rics":
+                return self.fpd.data["issuer"][1]
+
         return 0
 
     def issuer_id(self) -> bytes:
@@ -333,6 +338,14 @@ class UICTicket:
 
         if self.dosipas_envelope and "securityProviderIA5" in self.dosipas_envelope.level_2_data["level1Data"]:
             return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderIA5"].encode("utf-8")
+
+        if self.fpd:
+            if "issuer" in self.fpd.data:
+                if self.fpd.data["issuer"][0] == "eraCode":
+                    return self.fpd.data["issuer"][1].encode("utf-8")
+                elif self.fpd.data["issuer"][0] == "otherCode":
+                    v = self.fpd.data["issuer"][1]
+                    return f"X{v["codeTable"]}{v["code"]}".encode("utf-8")
 
         return b""
 
@@ -354,6 +367,8 @@ class UICTicket:
             return self.flex.ticket_id()
         elif self.pretix:
             return self.pretix.ticket_id()
+        elif self.fpd:
+            return self.fpd.id()
         else:
             return ""
 
@@ -457,10 +472,12 @@ class UICTicket:
             pretix=parse_ticket_uic_dosipas_pretix(dosipas),
             pretix_wallet=parse_ticket_uic_dosipas_pretix_wallet(dosipas),
             pretix_totp=parse_ticket_uic_dosipas_pretix_totp(dosipas),
+            fpd=parse_ticket_uic_dosipas_fpd(dosipas),
             other_dosipas_records=[r for r in records if not (
                     r.format.startswith("FCB") or r.format.startswith("FDC")
                     or r.format == "_5101PTIX" or r.format == "_5101PXW"
                     or r.format == "_5101TOTP"
+                    or r.format == "_3896FPD0"
             )],
         )
 
@@ -1434,8 +1451,7 @@ def parse_ticket_uic_dosipas_pretix_wallet(ticket_envelope: uic.DOSIPASEnvelope)
         )
 
 
-def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional[
-    "uic.pretix.PretixWallet"]:
+def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.pretix.PretixTOTP"]:
     if not ticket_envelope.level_2_record or not ticket_envelope.level_2_record.format == "_5101TOTP":
         return None
 
@@ -1445,6 +1461,22 @@ def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -
         raise TicketError(
             title="Invalid Pretix TOTP",
             message="The TOTP record can't be parsed - the ticket is likely invalid.",
+            exception=traceback.format_exc()
+        )
+
+
+def parse_ticket_uic_dosipas_fpd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.fpd.FixedPointData"]:
+    # Temp ID until standardised
+    record = next(filter(lambda r: r.format == "_3896FPD0", ticket_envelope.records), None)
+    if not record:
+        return None
+
+    try:
+        return uic.fpd.FixedPointData.parse(record.data)
+    except uic.util.UICException:
+        raise TicketError(
+            title="Invalid UIC Fixed Point Data",
+            message="The FPD can't be parsed - the data is likely invalid.",
             exception=traceback.format_exc()
         )
 
@@ -2244,12 +2276,16 @@ def create_ticket_obj(
         )
     return created
 
-
 def update_from_barcode(
         barcode_data: bytes, account: typing.Optional["models.Account"], force_update: bool = False
-) -> typing.Tuple["models.Ticket", bool]:
+):
     decoded_ticket = parse_ticket(barcode_data, account=account)
+    return update_from_ticket_object(decoded_ticket, barcode_data, account, force_update)
 
+
+def update_from_ticket_object(
+        decoded_ticket, barcode_data: bytes, account: typing.Optional["models.Account"], force_update: bool = False
+) -> typing.Tuple["models.Ticket", bool]:
     should_update = force_update
     created = False
     ticket_pk = decoded_ticket.pk()

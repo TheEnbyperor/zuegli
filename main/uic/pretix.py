@@ -25,16 +25,6 @@ class Pretix:
         except asn1tools.DecodeError as e:
             raise util.UICException("Failed to decode UIC Pretix data") from e
 
-    def issuing_rics(self) -> int:
-        rics = self.data["issuingDetail"].get("issuerNum", 0)
-        sp_rics = self.data["issuingDetail"].get("securityProviderNum", 0)
-        if sp_rics == 3634:
-            return sp_rics
-        if rics:
-            return rics
-        else:
-            return sp_rics
-
     def ticket_id(self) -> str:
         return self.data["uniqueId"]
 

@@ -200,32 +200,35 @@ class DOSIPASEnvelope:
             pass
 
         if out:
-            if d := out.level_2_data.get("level2Data"):
-                out.level_2_record = Record(
-                    format=d["dataFormat"],
-                    data=d["data"],
-                )
-
-            for r in out.level_2_data["level1Data"]["dataSequence"]:
-                out.records.append(Record(
-                    format=r["dataFormat"],
-                    data=r["data"],
-                ))
-
-            if "endOfValidityYear" in out.level_2_data["level1Data"]:
-                year = out.level_2_data["level1Data"]["endOfValidityYear"]
-                day = out.level_2_data["level1Data"]["endOfValidityDay"]
-                time = out.level_2_data["level1Data"]["endOfValidityTime"]
-
-                expiry = datetime.datetime(year=year, month=1, day=1)
-                expiry += datetime.timedelta(days=day - 1)
-                expiry += datetime.timedelta(minutes=time)
-                out.expiry = pytz.utc.localize(expiry)
-
-            return out
+            return cls.from_decode(out)
 
         return None
 
+    @classmethod
+    def from_decode(cls, inst: "DOSIPASEnvelope") -> "DOSIPASEnvelope":
+        if d := inst.level_2_data.get("level2Data"):
+            inst.level_2_record = Record(
+                format=d["dataFormat"],
+                data=d["data"],
+            )
+
+        for r in inst.level_2_data["level1Data"]["dataSequence"]:
+            inst.records.append(Record(
+                format=r["dataFormat"],
+                data=r["data"],
+            ))
+
+        if "endOfValidityYear" in inst.level_2_data["level1Data"]:
+            year = inst.level_2_data["level1Data"]["endOfValidityYear"]
+            day = inst.level_2_data["level1Data"]["endOfValidityDay"]
+            time = inst.level_2_data["level1Data"]["endOfValidityTime"]
+
+            expiry = datetime.datetime(year=year, month=1, day=1)
+            expiry += datetime.timedelta(days=day - 1)
+            expiry += datetime.timedelta(minutes=time)
+            inst.expiry = pytz.utc.localize(expiry)
+
+        return inst
 
 @dataclasses.dataclass
 class Record:
