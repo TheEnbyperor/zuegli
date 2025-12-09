@@ -237,6 +237,8 @@ class Consumer(JsonWebsocketConsumer):
                 data=base64.b64decode(message["data"]),
             )
             self.response_ready.set()
+        elif message_type == "ndef":
+            self.error("Unsupported tag type")
 
     def select_application_by_aid(self, aid: bytes):
         return self.apdu(RequestAPDU(

@@ -13,6 +13,8 @@ urlpatterns = [
     path('vdv_smartcard/', views.vdv.read_smartcard, name='vdv_read'),
     path('vdv_smartcard/<str:pk>/', views.vdv.view_smartcard, name='vdv_smartcard'),
 
+    path('uic_ndef/', views.uic.read_uic_ndef, name='uic_ndef_read'),
+
     path('api/apple/v1/log', views.apple_api.log),
     path('api/apple/v1/devices/<str:device_id>/registrations/<str:pass_type_id>', views.apple_api.pass_status),
     path('api/apple/v1/devices/<str:device_id>/registrations/<str:pass_type_id>/<str:serial_number>', views.apple_api.registration),

@@ -1,0 +1,104 @@
+{% load i18n tz rics %}
+<h2 class="govuk-heading-m">Fixed Point Data</h2>
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "ID" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% include "main/uic/generic_id.html" with id=fpd.data.id %}
+            </dd>
+        </div>
+        {% if fpd.data.issuer.0 == "rics" %}
+            {% with org=fpd.data.issuer.1|rics %}
+                {% if org %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Issuer" %}</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include 'main/rics.html' with org=org %}
+                        </dd>
+                    </div>
+                {% else %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{% trans "Issuer RICS" %}</dt>
+                        <dd class="govuk-summary-list__value"><code>{{ fpd.data.issuer.1 }}</code></dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% elif fpd.data.issuer.0 == "eraCode" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Issuer ERA code" %}</dt>
+                <dd class="govuk-summary-list__value"><code>{{ fpd.data.issuer.1 }}</code></dd>
+            </div>
+        {% elif fpd.data.issuer.0 == "otherCode" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Issuer code" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ fpd.data.issuer.1.codeTable }}</code> -
+                    <code>{{ fpd.data.issuer.1.code }}</code>
+                </dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{% trans "Specimen" %}</dt>
+            <dd class="govuk-summary-list__value">
+                {% if flex.data.specimen %}
+                    <strong class="govuk-tag govuk-tag--green">Yes</strong>
+                {% else %}
+                    <strong class="govuk-tag govuk-tag--red">No</strong>
+                {% endif %}
+            </dd>
+        </div>
+        {% if fpd.data.affixedTo %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Affixed to" %}</dt>
+                <dd class="govuk-summary-list__value">
+                    <!-- TODO: station, shared vehicle, proprietary -->
+                    {% if fpd.data.affixedTo.0 == "railVehicle" %}
+                        <div class="govuk-summary-card">
+                            <div class="govuk-summary-card__title-wrapper">
+                                <h2 class="govuk-summary-card__title">{% trans "Rail vehicle" %}</h2>
+                            </div>
+                            <div class="govuk-summary-card__content">
+                                <dl class="govuk-summary-list">
+                                    {% if fpd.data.affixedTo.1.id.0 == "evn" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">{% trans "European Vehicle Number" %}</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ fpd.data.affixedTo.1.id.1 }}
+                                            </dd>
+                                        </div>
+                                    {% elif fpd.data.affixedTo.1.id.0 == "proprietary" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">{% trans "Proprietary Vehicle Number" %}</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% include "main/uic/generic_id.html" with id=fpd.data.affixedTo.1.id.1 %}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                    <!-- TODO: place -->
+                                    {% if fpd.data.affixedTo.1.subLocationProprietary %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">{% trans "Proprietary Sub-location" %}</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% include "main/uic/generic_id.html" with id=fpd.data.affixedTo.1.subLocationProprietary %}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                </dl>
+                            </div>
+                        </div>
+                    {% endif %}
+                </dd>
+            </div>
+        {% endif %}
+        {% if fpd.data.infoText %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{% trans "Extra info" %}</dt>
+                <dd class="govuk-summary-list__value">{{ fpd.data.infoText }}</dd>
+            </div>
+        {% endif %}
+        {% for ext in fpd.data.extension %}
+            {% include "main/uic/extension_.html" with extension=ext %}
+        {% endfor %}
+    </dl>
+{% endlocaltime %}
