@@ -11,6 +11,7 @@ EXTRA_DATA_VALIDITY_1 = re.compile(r"^(?P<s>\d{2}.\d{2}.\d{4}) TO (?P<e>\d{2}.\d
 EXTRA_DATA_VALIDITY_2 = re.compile(r"^Gueltig von (?P<s>\d{2}.\d{2}.\d{4}) bis (?P<e>\d{2}.\d{2}.\d{4})$")
 BENERAIL_VALIDITY = re.compile(r"^(?:Valid on:|Geldig:|A utiliser:|Gyldig:)(?P<sd>\d{2}).(?P<sm>\d{2}).(?P<sy>\d{4}) - (?P<ed>\d{2}).(?P<em>\d{2}).(?P<ey>\d{4})$")
 NS_VALIDITY = re.compile(r"VALID FROM (?P<sd>\d{2})/(?P<sm>\d{2})/(?P<sy>\d{4}) TO (?P<ed>\d{2})/(?P<em>\d{2})/(?P<ey>\d{4})$")
+NSR_TIME_CONSTRAINT = re.compile(r"^(?:Enkele Reis) (?P<sh>\d\d):(?P<sm>\d\d) - (?P<eh>\d\d):(?P<em>\d\d) uur$")
 
 BENERAIL_DISCOUNT_CARDS = None
 ROOT_DIR = pathlib.Path(__file__).parent.parent
@@ -243,8 +244,13 @@ class RCT2Parser:
                         pass
                 elif m := NS_VALIDITY.fullmatch(extra_data):
                     try:
-                        departure_dt = datetime.date(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")))
-                        arrival_dt = datetime.date(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")))
+                        if constraint_m := NSR_TIME_CONSTRAINT.fullmatch(document_data):
+                            # this is a 'PriceTime Deal' ticket offered by NSR which is only valid between two times in the same day
+                            departure_dt = datetime.datetime(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")), int(constraint_m.group("sh")), int(constraint_m.group("sm")))
+                            arrival_dt = datetime.datetime(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")), int(constraint_m.group("eh")), int(constraint_m.group("em")))
+                        else:
+                            departure_dt = datetime.date(int(m.group("sy").lstrip("0")), int(m.group("sm").lstrip("0")), int(m.group("sd").lstrip("0")))
+                            arrival_dt = datetime.date(int(m.group("ey").lstrip("0")), int(m.group("em").lstrip("0")), int(m.group("ed").lstrip("0")))
                     except ValueError:
                         pass
 
