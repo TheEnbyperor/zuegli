@@ -2374,7 +2374,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
                     })
                     pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    pass_json["expirationDate"] = parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    expiration_date = parsed_layout.trips[0].arrival + datetime.timedelta(days=1, hours=4)
+                    pass_json["expirationDate"] = expiration_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
                 elif parsed_layout.trips[0].departure_station or parsed_layout.trips[0].arrival_station:
                     pass_type = "boardingPass"
@@ -2549,7 +2550,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     if not (parsed_layout.operator_rics == 1084 and parsed_layout.travel_class == 'n'):
                         # NS bike tickets (and other supplement adj things I assume?) set their class as 'n'
                         # needlessly filling up scarce header space, so do not display if that's the case
-                        pass_fields["headerFields"].append({
+                        pass_fields["auxiliaryFields"].append({
                             "key": "class-code",
                             "label": "class-code-label",
                             "value": parsed_layout.travel_class,
