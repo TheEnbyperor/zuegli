@@ -1,0 +1,21 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - root
+
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/docker.yml
+    with:
+      context: .
+      dockerfile: Dockerfile
+      image-authors: TODO
+      image-description: "Zuegli Image"
+      image-name: pstoeckle/zuegli
+      image-registry: ghcr.io
+      image-title: "Zuegli Image"
+    permissions:
+      contents: read
+      packages: write

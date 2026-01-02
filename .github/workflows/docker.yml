@@ -1,0 +1,94 @@
+name: container image building
+
+on:
+  workflow_call:
+    inputs:
+      image-registry:
+        description: The container registry to push the image to
+        required: false
+        type: string
+        default: ghcr.io
+      image-name:
+        description: The name of the image to build and push
+        required: true
+        type: string
+      context:
+        description: The build context for the Docker image
+        required: true
+        type: string
+      dockerfile:
+        description: The path to the Dockerfile
+        required: true
+        type: string
+      image-title:
+        description: The title of the image
+        required: true
+        type: string
+      image-description:
+        description: The description of the image
+        required: true
+        type: string
+      image-authors:
+        description: The authors of the image
+        required: true
+        type: string
+    outputs:
+      image-digest:
+        description: The digest of the built image
+        value: ${{ jobs.build-and-push.outputs.image-digest }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      # Can read the contents of the repository
+      contents: read
+      # Can write to the packages in the repository
+      # This is needed to push the built image to the GitHub Container Registry
+      packages: write
+    outputs:
+      image-digest: ${{ steps.docker_build.outputs.digest }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3.6.0
+        with:
+          registry: ${{ inputs.image-registry }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.7.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.12.0
+      - name: Extract metadata
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: |
+            ${{ inputs.image-registry }}/${{ inputs.image-name }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+          annotations: |
+            org.opencontainers.image.title=${{ inputs.image-title }}
+            org.opencontainers.image.authors=${{ inputs.image-authors }}
+            org.opencontainers.image.description=${{ inputs.image-description }}
+            org.opencontainers.image.vendor=TUM AET
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6.18.0
+        id: docker_build
+        with:
+          context: "${{ inputs.context }}"
+          file: "${{ inputs.dockerfile }}"
+          platforms: "linux/amd64"
+          annotations: ${{ steps.meta.outputs.annotations }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
