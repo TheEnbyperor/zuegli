@@ -13,7 +13,7 @@ jobs:
       dockerfile: Dockerfile
       image-authors: TODO
       image-description: "Zuegli Image"
-      image-name: "{{ github.repository }}"
+      image-name: {{ github.repository }}
       image-registry: ghcr.io
       image-title: "Zuegli Image"
     permissions:
