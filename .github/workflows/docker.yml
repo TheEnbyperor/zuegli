@@ -79,7 +79,6 @@ jobs:
             org.opencontainers.image.title=${{ inputs.image-title }}
             org.opencontainers.image.authors=${{ inputs.image-authors }}
             org.opencontainers.image.description=${{ inputs.image-description }}
-            org.opencontainers.image.vendor=TUM AET
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       - name: Build and push Docker image
