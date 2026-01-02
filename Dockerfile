@@ -50,6 +50,10 @@ RUN set -eux ; \
     apt-get autoremove -y ; \
     apt-get clean ;
 
+COPY entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
+
 USER app:app
 
 COPY --from=barkoder /barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so /usr/local/lib/python3.13/site-packages/Barkoder.cpython-313-x86_64-linux-gnu.so
@@ -62,8 +66,6 @@ COPY vdv_pkpass /app/vdv_pkpass
 ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
-
-COPY entrypoint.sh /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
