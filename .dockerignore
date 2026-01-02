@@ -6,6 +6,7 @@
 !manage.py
 !requirements.txt
 !vdv_pkpass
+!entrypoint.sh
 barkoder/build
 *.pyc
 __pycache__/
