@@ -59,5 +59,12 @@ COPY manage.py /app/manage.py
 COPY vdv_pkpass /app/vdv_pkpass
 # COPY .git_hash /app/git_hash
 
-ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev
+ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+COPY entrypoint.sh /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 EXPOSE 8000
