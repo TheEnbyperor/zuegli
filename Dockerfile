@@ -1,4 +1,4 @@
-FROM python:3.13@sha256:f878b01bbb7c91935220077a3b43f9846b466b14ddc916ce83f30913d077bb36 AS barkoder
+FROM python:3.13 AS barkoder
 
 RUN set -eux ; \
     apt-get update -qq ; \
@@ -17,7 +17,7 @@ WORKDIR /barkoder/build
 
 RUN cmake .. && make
 
-FROM python:3.13-slim@sha256:1f3781f578e17958f55ada96c0a827bf279a11e10d6a458ecb8bde667afbb669
+FROM python:3.13-slim
 
 WORKDIR /app/
 
@@ -61,7 +61,7 @@ COPY gtfs /app/gtfs
 COPY main /app/main
 COPY manage.py /app/manage.py
 COPY vdv_pkpass /app/vdv_pkpass
-# COPY .git_hash /app/git_hash
+COPY .git_hash /app/git_hash
 
 ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev \
     PYTHONUNBUFFERED=1 \
