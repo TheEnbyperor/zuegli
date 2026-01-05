@@ -75,8 +75,6 @@ jobs:
         uses: docker/metadata-action@v5
         id: meta
         with:
-          images: |
-            ${{ inputs.image-registry }}/${{ inputs.image-name }}
           annotations: |
             org.opencontainers.image.title=${{ inputs.image-title }}
             org.opencontainers.image.authors=${{ inputs.image-authors }}
@@ -92,4 +90,4 @@ jobs:
           platforms: "linux/amd64"
           annotations: ${{ steps.meta.outputs.annotations }}
           push: true
-          tags: ${{ steps.get_version.outputs.version }}
+          tags: ${{ inputs.image-registry }}/${{ inputs.image-name }}:${{ steps.get_version.outputs.version }}
