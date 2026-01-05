@@ -597,6 +597,10 @@ class PassengerData:
                     break
         elif "@" in name:
             forename, surname = name.split("@", 1)
+            if forename.endswith("*"):
+                forename = forename[:-1]
+            if surname.startswith("*"):
+                surname = surname[1:]
             new_forename = []
             new_surname = []
             while forename_match := NAME_TYPE_1_RE.match(forename):
