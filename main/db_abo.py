@@ -1,6 +1,8 @@
 import base64
 import json
 import datetime
+import uuid
+
 import bs4
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -38,7 +40,8 @@ def update_abo_tickets(abo_id):
         }]
     }, headers={
         "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
-        "X-Api-Version": "9",
+        "X-Api-Version": "10",
+        "X-Unique-ID": str(uuid.uuid4()),
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
     })
 
