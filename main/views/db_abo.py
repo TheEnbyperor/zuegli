@@ -1,4 +1,4 @@
-import niquests
+import uuid
 import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -35,7 +35,9 @@ def new_abo(request):
             if request.POST.get("action") == "remove":
                 r = session.post("https://dig-aboprod.noncd.db.de/aboticket/changedevice", json=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
-                    "X-Api-Version": "9"
+                    "X-Api-Version": "10",
+                    "X-Unique-ID": str(uuid.uuid4()),
+                    "User-Agent": "Zuegli (q@magicalcodewit.ch)"
                 })
                 if r.status_code == 200:
                     messages.success(request, f"Removal request was successful.")
@@ -44,7 +46,9 @@ def new_abo(request):
             else:
                 r = session.get("https://dig-aboprod.noncd.db.de/aboticket", params=abo_data, headers={
                     "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
-                    "X-Api-Version": "9"
+                    "X-Api-Version": "10",
+                    "X-Unique-ID": str(uuid.uuid4()),
+                    "User-Agent": "Zuegli (q@magicalcodewit.ch)"
                 })
                 if r.status_code == 404:
                     messages.add_message(request, messages.ERROR, "Subscription not found")
@@ -87,7 +91,9 @@ def delete_abo(request, abo_id):
             "deviceToken": subscription.device_token,
         }, headers={
             "X-User-Agent": "com.deutschebahn.abo.navigatorV2.modul",
-            "X-Api-Version": "9"
+            "X-Api-Version": "10",
+            "X-Unique-ID": str(uuid.uuid4()),
+            "User-Agent": "Zuegli (q@magicalcodewit.ch)"
         })
         if r.status_code == 200:
             messages.success(request, "Removal request was successful.")
