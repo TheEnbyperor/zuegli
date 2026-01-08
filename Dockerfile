@@ -50,18 +50,19 @@ RUN set -eux ; \
     apt-get autoremove -y ; \
     apt-get clean ;
 
-USER app:app
-
 COPY --from=barkoder /barkoder/build/Barkoder.cpython-313-x86_64-linux-gnu.so /usr/local/lib/python3.13/site-packages/Barkoder.cpython-313-x86_64-linux-gnu.so
+COPY .git_hash /app/git_hash
+COPY entrypoint.sh /app/entrypoint.sh
 COPY gtfs /app/gtfs
 COPY main /app/main
 COPY manage.py /app/manage.py
 COPY vdv_pkpass /app/vdv_pkpass
-COPY .git_hash /app/git_hash
-COPY entrypoint.sh /app/entrypoint.sh
 
 RUN set -eux ; \
+    chown -R app:app /app ; \
     chmod +x /app/entrypoint.sh ;
+
+USER app:app
 
 ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev \
     PYTHONUNBUFFERED=1 \
