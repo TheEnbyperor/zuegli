@@ -61,7 +61,6 @@ COPY .git_hash /app/git_hash
 COPY entrypoint.sh /app/entrypoint.sh
 
 RUN set -eux ; \
-    chown -R app:app /app/ ; \
     chmod +x /app/entrypoint.sh ;
 
 ENV DJANGO_SETTINGS_MODULE=vdv_pkpass.settings_dev \
