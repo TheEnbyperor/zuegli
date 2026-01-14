@@ -3,8 +3,10 @@ import typing
 
 BORDGASTRONOMIE_30         = "N10001311299"
 BORDGASTRONOMIE_GUTSHEIN_5 = "N00014311299"
+FREIGETRANK                = "N10000311299"
 LOUNGE_PREMIUM             = "LOUUP0010000"
 LOUNGE_STANDARD            = "LOUUS0010000"
+LOUNGE_TAGESPASS           = "LOUTS0010000"
 BAHNBONUS                  = "BB0001661749"
 
 @dataclasses.dataclass
@@ -24,6 +26,11 @@ PRODUCTS = {
         strip_image="bahnbonus/bg-normal.png",
         strip_colour="#ffffff",
     ),
+    FREIGETRANK: Product(
+        name="Freigetränk Bordgastronomie",
+        strip_image="bahnbonus/bg-platinum.png",
+        strip_colour="#000000",
+    ),
     BAHNBONUS: Product(
         name="BahnBonus in der Bordgastronomie",
         strip_image="bahnbonus/bg-normal.png",
@@ -39,4 +46,9 @@ PRODUCTS = {
         strip_image="bahnbonus/bg-gold.png",
         strip_colour="#000000",
     ),
+    LOUNGE_TAGESPASS: Product(
+        name="Lounge Tagespass",
+        strip_image="bahnbonus/bg-silver.png",
+        strip_colour="#000000",
+    )
 }
