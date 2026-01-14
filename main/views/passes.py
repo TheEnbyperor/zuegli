@@ -359,7 +359,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "webServiceURL": idna_encode_url(f"{settings.EXTERNAL_URL_BASE}/api/apple"),
         "authenticationToken": ticket_obj.pkpass_authentication_token,
         "semantics": {},
-        "associatedStoreIdentifiers": [6743959567]
+        "associatedStoreIdentifiers": [6743959567],
+        "voided": False
     }
 
     pass_type = "generic"
@@ -390,6 +391,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         else:
             issued_at = None
         issuing_rics = ticket_data.issuing_rics()
+
+        if issuing_rics in KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+            pass_json["voided"] = True
+        elif ticket_data.dtvg_revoked():
+            pass_json["voided"] = True
 
         if issuing_rics == 1184:
             # NSI occasionally issues domestic tickets. If the signature key ID is not
@@ -435,7 +441,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         if ticket_data.flex:
             issued_at = ticket_data.flex.issuing_time()
-            pass_json["voided"] = not ticket_data.flex.data["issuingDetail"]["activated"] or ticket_data.dtvg_revoked()
+            if not ticket_data.flex.data["issuingDetail"]["activated"]:
+                pass_json["voided"] = True
 
             if ticket_data.flex.data["issuingDetail"].get("issuerName") in UIC_NAME_LOGO:
                 add_pkp_img(pkp, UIC_NAME_LOGO[ticket_data.flex.data["issuingDetail"]["issuerName"]], "logo.png")
@@ -3633,6 +3640,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
     elif isinstance(ticket_instance, models.TS2Instance):
         ticket_data: ticket.TS2Ticket = ticket_instance.as_ticket
 
+        if ticket_data.envelope.issuer_rics in KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+            pass_json["voided"] = True
+
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
             "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
@@ -3955,6 +3965,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
     elif isinstance(ticket_instance, models.SSBTicketInstance):
         ticket_data: ticket.SSBTicket = ticket_instance.as_ticket
+
+        if ticket_data.envelope.issuer_rics in KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+            pass_json["voided"] = True
 
         pass_json["barcodes"] = [{
             "format": "PKBarcodeFormatAztec",
@@ -6408,3 +6421,52 @@ BC_STRIP_IMG = {
     "Senioren BahnCard 25 (1. Klasse)": "bahncard/BAHNCARD251KLASSE.png",
     "Senioren BahnCard 25 (2. Klasse)": "bahncard/BAHNCARD252KLASSE.png",
 }
+
+KNOWN_VALID_SIGNATURE_RICS = [
+    80,   # Deutsche Bahn AG
+    1080, # Deutsche Bahn AG
+    1181, # ÖBB Personenverkehr AG
+    2080, # DB Regio AG Business Unit Bus
+    3076, # Transdev GmbH
+    3135, # HanseCom GmbH
+    3243, # üstra Hannoversche Verkehrsbetriebe AG
+    3316, # AVG Augsburger Verkehrsgesellschaft mbH
+    3348, # Verkehrsverbund Bremen/Niedersachsen GmbH (VBN)
+    3497, # Regensburger Verkehrsverbund GmbH
+    3565, # SWT Stadtwerke Trier Verkehrs-GmbH
+    3591, # AKN Eisenbahn AG
+    3634, # Deutschlandtarifverbund GmbH
+    3703, # Region Grand Est
+    3823, # KMG - Klagenfurt Mobil GmbH
+    3834, # Verkehrsverbund Region Braunschweig GmbH
+    3841, # Hanseatische Eisenbahn GmbH
+    3906, # Mitteldeutscher Verkehrsverbund GmbH
+    3940, # Aachener Verkehrsverbund GmbH
+    3966, # FlixTrain GmbH
+    5008, # Verkehrsverbund Rhein-Neckar GmbH
+    5046, # Verkehrsverbund Steiermark GmbH
+    5062, # Dessauer Verkehrs GmbH
+    5143, # AMCON Software GmbH
+    5167, # Stadtwerke Viernheim GmbH
+    5170, # Aktiv Bus Flensburg GmbH
+    5172, # Koblenzer Verkehrsbetriebe GmbH
+    5173, # Nahverkehrsservice Sachsen-Anhalt GmbH
+    5197, # Augsburger Verkehrs- und Tarifverbund GmbH
+    5203, # Verwaltungsgesellschaft des OPNV Sommerda mbH
+    5211, # Vetter GmbH Omnibus- und Mietwagenbetrieb
+    5217, # Verkehrsgesellschaft Bremerhaven AG
+    5218, # Verkehr und Wasser GmbH
+    5245, # Würzburger Straßenbahn GmbH
+    5294, # bConn GmbH
+    5379, # Mentz GmbH
+    5398, # Verkehrsverbund Kärnten GmbH
+    5651, # Autobus Oberbayern GmbH
+    5671, # Edzards Reisen GmbH & Co. KG
+    5679, # Husmann Reisen GmbH
+    5682, # EBR Busreisen GmbH
+    5684, # Taxi Lehner
+    5685, # Ludwig Meier GmbH
+    9002, # DB Vertrieb GmbH
+    9901, # Eurail B.V.
+    9902, # Eurail Group G.I.E. management
+]

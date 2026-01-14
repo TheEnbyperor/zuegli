@@ -270,7 +270,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                 }
             })
 
-        if ticket_data.dtvg_revoked():
+        revoked = False
+        if issuing_rics in passes.KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+            revoked = True
+        elif ticket_data.dtvg_revoked():
+            revoked = True
+
+        if revoked:
             obj["state"] = "COMPLETED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
@@ -1139,11 +1145,19 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["hexBackgroundColor"] = passes.RICS_BG[ticket_data.envelope.issuer_rics]
         else:
             obj["hexBackgroundColor"] = "#ffffff"
-        obj["barcode"] = {
-            "type": "AZTEC",
-            "alternateText": ticket_data.data.pnr,
-            "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
-        }
+
+        if ticket_data.envelope.issuer_rics in passes.KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+            obj["state"] = "COMPLETED"
+            obj["barcode"] = {
+                "type": "TEXT_ONLY",
+                "value": f"VOID - #{ticket_data.data.pnr}"
+            }
+        else:
+            obj["barcode"] = {
+                "type": "AZTEC",
+                "alternateText": ticket_data.ticket_id(),
+                "value": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
+            }
         obj["ticketNumber"] = ticket_data.data.pnr
 
         if distributor := ticket_data.envelope.issuer():
