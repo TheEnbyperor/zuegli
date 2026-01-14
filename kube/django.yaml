@@ -105,7 +105,7 @@ spec:
         - name: gunicorn
           image: theenbyperor/zuegli-django:(version)
           imagePullPolicy: Always
-          command: ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "4", "-b", "[::]:8000", "--forwarded-allow-ips", "*", "--access-logfile", "-", "--log-level=debug", "--timeout=90", "vdv_pkpass.asgi:application"]
+          command: ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-w", "2", "-b", "[::]:8000", "--forwarded-allow-ips", "*", "--access-logfile", "-", "--log-level=debug", "--timeout=90", "vdv_pkpass.asgi:application"]
           volumeMounts: *volumeMounts
           ports:
             - containerPort: 8000
@@ -227,7 +227,7 @@ spec:
         - name: django
           image: theenbyperor/zuegli-django:(version)
           imagePullPolicy: Always
-          command: ["celery", "-A", "vdv_pkpass", "worker", "--loglevel=INFO", "-c", "8", "-Q", "bg"]
+          command: ["celery", "-A", "vdv_pkpass", "worker", "--loglevel=INFO", "-c", "4", "-Q", "bg"]
           volumeMounts:
             - mountPath: "/certs"
               name: certs
