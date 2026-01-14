@@ -275,14 +275,17 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             revoked = True
         elif ticket_data.dtvg_revoked():
             revoked = True
+        elif ticket_data.flex and not ticket_data.flex.data["issuingDetail"]["activated"]:
+            revoked = True
 
         if revoked:
-            obj["state"] = "COMPLETED"
+            obj["state"] = "EXPIRED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
                 "value": f"VOID - #{ticket_data.ticket_id()}"
             }
         else:
+            obj["state"] = "ACTIVE"
             obj["barcode"] = {
                 "type": "AZTEC",
                 "alternateText": ticket_data.ticket_id(),
@@ -303,8 +306,6 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
         if ticket_data.flex:
             issued_at = ticket_data.flex.issuing_time()
-            obj["state"] = "ACTIVE" if ticket_data.flex.data["issuingDetail"]["activated"] else "INACTIVE"
-
             if len(ticket_data.flex.data["transportDocument"]) >= 1:
                 document_type, document = ticket_data.flex.data["transportDocument"][0]["ticket"]
                 if document_type == "openTicket":
@@ -756,6 +757,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
 
         elif parsed_layout and parsed_layout.trips:
             has_stations = any(t.departure_station or t.arrival_station for t in parsed_layout.trips)
+            ticket_type = "generic"
             if has_stations:
                 ticket_type = "transit"
                 obj["classId"] = \
@@ -868,20 +870,42 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                             }
                         })
 
-                if ticket_data.oebb_99:
-                    if ticket_data.oebb_99.validity_start and ticket_data.oebb_99.validity_end:
-                        obj["validTimeInterval"] = {
-                            "start": {
-                                "date": ticket_data.oebb_99.validity_start.isoformat()
-                            },
-                            "end": {
-                                "date": ticket_data.oebb_99.validity_end.isoformat()
-                            }
-                        }
+                if ticket_data.oebb_99 and ticket_data.oebb_99.trains:
+                    obj["ticketLegs"][0]["carriage"] = ", ".join(
+                        list(map(lambda t: str(t.train_number), ticket_data.oebb_99.trains)))
 
-                    if ticket_data.oebb_99.trains:
-                        obj["ticketLegs"][0]["carriage"] = ", ".join(
-                            list(map(lambda t: str(t.train_number), ticket_data.oebb_99.trains)))
+        if ticket_data.oebb_99:
+            if ticket_data.oebb_99.validity_start and ticket_data.oebb_99.validity_end:
+                obj["validTimeInterval"] = {
+                    "start": {
+                        "date": ticket_data.oebb_99.validity_start.isoformat()
+                    },
+                    "end": {
+                        "date": ticket_data.oebb_99.validity_end.isoformat()
+                    }
+                }
+
+        if parsed_layout.passenger_name:
+            obj["textModulesData"].append({
+                "id": f"traveler",
+                "localizedHeader": {
+                    "translatedValues": [{
+                        "language": "de",
+                        "value": "Fahrgast"
+                    }, {
+                        "language": "nl",
+                        "value": "Reiziger"
+                    }, {
+                        "language": "cy",
+                        "value": "Teithiwr"
+                    }],
+                    "defaultValue": {
+                        "language": "en-gb",
+                        "value": "Traveler"
+                    }
+                },
+                "body": parsed_layout.passenger_name,
+            })
 
         if issued_at:
             obj["textModulesData"].append({
@@ -940,12 +964,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             })
 
         if ticket_data.revoked_status():
-            obj["state"] = "COMPLETED"
+            obj["state"] = "EXPIRED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
                 "value": f"VOID - #{ticket_data.ticket.ticket_id}"
             }
         else:
+            obj["state"] = "ACTIVE"
             barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
             obj["barcode"] = {
                 "type": "AZTEC",
@@ -1147,12 +1172,13 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["hexBackgroundColor"] = "#ffffff"
 
         if ticket_data.envelope.issuer_rics in passes.KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
-            obj["state"] = "COMPLETED"
+            obj["state"] = "EXPIRED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
                 "value": f"VOID - #{ticket_data.data.pnr}"
             }
         else:
+            obj["state"] = "ACTIVE"
             obj["barcode"] = {
                 "type": "AZTEC",
                 "alternateText": ticket_data.ticket_id(),
