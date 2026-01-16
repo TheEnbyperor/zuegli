@@ -56,7 +56,7 @@
                         {% for language in languages %}
                             <li class="govuk-service-navigation__item{% if language.code == LANGUAGE_CODE %} govuk-service-navigation__item--active{% endif %}">
                                 <button class="button-link" type="submit" name="language"
-                                        value="{{ language.code }}">{{ language.name_local }}</button>
+                                        value="{{ language.code }}">{{ language.name_local|capfirst }}</button>
                             </li>
                         {% endfor %}
                     </ul>
