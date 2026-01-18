@@ -4,7 +4,6 @@ import typing
 import zipfile
 import io
 import datetime
-import secrets
 import asn1crypto.core
 import asn1crypto.algos
 import asn1crypto.cms
@@ -22,6 +21,7 @@ import niquests
 from django.conf import settings
 
 TSP_URL = "http://timestamp.apple.com/ts01"
+TSP_CLIENT = niquests.Session(happy_eyeballs=True)
 
 class PKPass:
     def __init__(self):
@@ -99,7 +99,7 @@ class PKPass:
             "cert_req": True,
             "nonce": timestamp_nonce,
         })
-        r = niquests.post(TSP_URL, headers={
+        r = TSP_CLIENT.post(TSP_URL, headers={
             "Content-Type": "application/timestamp-query",
             "User-Agent": "Zuegli (q@magicalcodewit.ch)"
         }, data=timestamp_req.dump())
