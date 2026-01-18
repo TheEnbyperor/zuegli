@@ -355,12 +355,21 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         "suppressHeaderDarkening": True,
         "labelColor": "rgb(75, 75, 75)",
         "foregroundColor": "rgb(0, 0, 0)",
-        "locations": [],
+        "locations": [{
+            "longitude": 0,
+            "latitude": 0,
+            "relevantText": "Null-island"
+        }],
+        "relevantDates": [],
         "webServiceURL": idna_encode_url(f"{settings.EXTERNAL_URL_BASE}/api/apple"),
         "authenticationToken": ticket_obj.pkpass_authentication_token,
         "semantics": {},
         "associatedStoreIdentifiers": [6743959567],
-        "voided": False
+        "voided": False,
+        "beacons": [{
+            "proximityUUID": "00000000-0000-0000-7F00-000000000000",
+            "relevantText": "iBeacon go brrrr",
+        }],
     }
 
     pass_type = "generic"
@@ -728,7 +737,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             ))
                             departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime(
                                 "%Y-%m-%dT%H:%M:%SZ")
-                            pass_json["relevantDate"] = departure_time_str
+                            pass_json["relevantDates"].append({"date": departure_time_str})
                             pass_fields["headerFields"] = [{
                                 "key": "train-number",
                                 "label": "train-number-label",
@@ -888,7 +897,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 train_number = train_link.get("trainIA5") or str(train_link.get("trainNum"))
                                 departure_time_str = departure_time.isoformat() if departure_time.tzinfo else departure_time.strftime(
                                     "%Y-%m-%dT%H:%M:%SZ")
-                                return_pass_json["relevantDate"] = departure_time_str
+                                return_pass_json["relevantDates"].append({"date": departure_time_str})
                                 return_pass_fields["headerFields"] = [{
                                     "key": "train-number",
                                     "label": "train-number-label",
@@ -955,7 +964,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
                         departure_time = templatetags.rics.rics_departure_time(reservation_document, issued_at)
                         arrival_time = templatetags.rics.rics_arrival_time(reservation_document, issued_at)
-                        pass_json["relevantDate"] = departure_time.isoformat()
+                        pass_json["relevantDates"].append({
+                            "startDate": departure_time.isoformat(),
+                            "endDate": arrival_time.isoformat(),
+                        })
                         if not ticket_document:
                             pass_json["expirationDate"] = arrival_time.isoformat()
 
@@ -1617,45 +1629,63 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "value": parsed_layout.travel_class,
                     })
 
-            if ticket_data.db_bl.validity_start:
-                validity_start = tz.localize(
-                    datetime.datetime.combine(ticket_data.db_bl.validity_start, datetime.time.min)) \
-                    .astimezone(pytz.utc)
-                pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
-                pass_fields["secondaryFields"].append({
-                    "key": "validity-start",
-                    "label": "validity-start-label",
-                    "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleNone",
-                    "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                })
-                pass_fields["backFields"].append({
-                    "key": "validity-start-back",
-                    "label": "validity-start-label",
-                    "dateStyle": "PKDateStyleFull",
-                    "timeStyle": "PKDateStyleFull",
-                    "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                })
+            if ticket_data.db_bl.validity_start or ticket_data.db_bl.validity_end:
+                if ticket_data.db_bl.validity_start:
+                    validity_start = tz.localize(
+                        datetime.datetime.combine(ticket_data.db_bl.validity_start, datetime.time.min)) \
+                        .astimezone(pytz.utc)
+                else:
+                    validity_start = None
+                if ticket_data.db_bl.validity_end:
+                    validity_end = tz.localize(
+                        datetime.datetime.combine(ticket_data.db_bl.validity_end, datetime.time.max)) \
+                        .astimezone(pytz.utc)
+                else:
+                    validity_end = None
 
-            if ticket_data.db_bl.validity_end:
-                validity_end = tz.localize(datetime.datetime.combine(ticket_data.db_bl.validity_end, datetime.time.max)) \
-                    .astimezone(pytz.utc)
-                pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-                pass_fields["secondaryFields"].append({
-                    "key": "validity-end",
-                    "label": "validity-end-label",
-                    "dateStyle": "PKDateStyleMedium",
-                    "timeStyle": "PKDateStyleNone",
-                    "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "changeMessage": "validity-end-change"
-                })
-                pass_fields["backFields"].append({
-                    "key": "validity-end-back",
-                    "label": "validity-end-label",
-                    "dateStyle": "PKDateStyleFull",
-                    "timeStyle": "PKDateStyleFull",
-                    "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                })
+                if validity_start and validity_end:
+                    pass_json["relevantDates"].append({
+                        "startDate": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "endDate": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    })
+                elif validity_start:
+                    pass_json["relevantDates"].append({
+                        "date": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+                if validity_start:
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-start",
+                        "label": "validity-start-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleNone",
+                        "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "validity-start-back",
+                        "label": "validity-start-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
+
+                if validity_end:
+                    pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_fields["secondaryFields"].append({
+                        "key": "validity-end",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleMedium",
+                        "timeStyle": "PKDateStyleNone",
+                        "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "changeMessage": "validity-end-change"
+                    })
+                    pass_fields["backFields"].append({
+                        "key": "validity-end-back",
+                        "label": "validity-end-label",
+                        "dateStyle": "PKDateStyleFull",
+                        "timeStyle": "PKDateStyleFull",
+                        "value": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
 
             if ticket_data.db_bl.route:
                 pass_fields["backFields"].append({
@@ -1808,9 +1838,17 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": res.seat,
                 })
 
+            if ticket_data.cd_ut.validity_start and ticket_data.cd_ut.validity_end:
+                pass_json["relevantDates"].append({
+                    "startDate": ticket_data.cd_ut.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "endDate": ticket_data.cd_ut.validity_end.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+            elif ticket_data.cd_ut.validity_start:
+                pass_json["relevantDates"].append({
+                    "date": ticket_data.cd_ut.validity_start.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                })
+
             if ticket_data.cd_ut.validity_start:
-                pass_json["relevantDate"] = ticket_data.cd_ut.validity_start.astimezone(pytz.utc).strftime(
-                    "%Y-%m-%dT%H:%M:%SZ")
                 pass_fields["secondaryFields"].append({
                     "key": "validity-start",
                     "label": "validity-start-label",
@@ -1876,9 +1914,15 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if ticket_data.oebb_99.trains:
-                if ticket_data.oebb_99.validity_start:
-                    pass_json["relevantDate"] = \
-                        ticket_data.oebb_99.validity_start.isoformat()
+                if ticket_data.oebb_99.validity_start and ticket_data.oebb_99.validity_end:
+                    pass_json["relevantDates"].append({
+                        "startDate": ticket_data.oebb_99.validity_start.isoformat(),
+                        "endDate": ticket_data.oebb_99.validity_end.isoformat(),
+                    })
+                elif ticket_data.oebb_99.validity_start:
+                    pass_json["relevantDates"].append({
+                        "date": ticket_data.oebb_99.validity_start.isoformat(),
+                    })
 
                 train_number = ", ".join(list(map(lambda t: str(t.train_number), ticket_data.oebb_99.trains)))
                 pass_fields["headerFields"].append({
@@ -2380,7 +2424,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         "dateStyle": "PKDateStyleMedium",
                         "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
                     })
-                    pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    pass_json["relevantDates"].append({
+                        "startDate": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "endDate": parsed_layout.trips[0].arrival.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    })
                     expiration_date = parsed_layout.trips[0].arrival + datetime.timedelta(days=1, hours=4)
                     pass_json["expirationDate"] = expiration_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -2415,7 +2462,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "ignoresTimeZone": True
                             })
-                            pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ")
+                            pass_json["relevantDates"].append({
+                                "date": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                            })
                         elif isinstance(parsed_layout.trips[0].departure, datetime.date):
                             pass_fields["secondaryFields"].append({
                                 "key": "validity-start",
@@ -2425,7 +2474,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                                 "value": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z"),
                                 "ignoresTimeZone": True
                             })
-                            pass_json["relevantDate"] = parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z")
+                            pass_json["relevantDates"].append({
+                                "date": parsed_layout.trips[0].departure.strftime("%Y-%m-%dT00:00:00Z")
+                            })
                     elif parsed_layout.trips[0].departure_time:
                         pass_fields["secondaryFields"].append({
                             "key": "departure-time",
@@ -2774,7 +2825,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         pass_json["organizationName"] = ticket_data.ticket.kvp_org_name()
 
         if validity_start.date() == validity_end.date():
-            pass_json["relevantDate"] = validity_start.isoformat()
+            pass_json["relevantDates"].append({
+                "startDate": validity_start.isoformat(),
+                "endDate": validity_end.isoformat(),
+            })
 
         barcode_data = ticket_data.motics.application_data if ticket_data.motics else ticket_instance.barcode_data
         pass_json["barcodes"] = [{
@@ -2952,7 +3006,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 show_time = True
 
             if show_time:
-                pass_json["relevantDate"] = validity_start.strftime("%Y-%m-%dT%H:%M:%SZ")
+                pass_json["relevantDates"].append({
+                    "startDate": validity_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "endDate": validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
+                })
             pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
             pass_fields = {
                 "transitType": "PKTransitTypeTrain",
@@ -3710,7 +3767,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             travel_date = travel_date.replace(year=travel_date.year + 1)
         travel_datetime = tz.localize(datetime.datetime.combine(travel_date, datetime.time.min)) \
             .astimezone(pytz.utc)
-        pass_json["relevantDate"] = travel_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_json["relevantDates"].append({
+            "startDate": travel_datetime.strftime("%Y-%m-%dT00:00:00Z"),
+            "endDate": travel_datetime.strftime("%Y-%m-%dT23:59:59Z"),
+        })
 
         pass_json["locations"].append({
             "latitude": float(from_station["latitude"]),
@@ -3827,7 +3887,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         gtfs_trip = ticket_data.data.gtfs_trip()
 
         pass_json["expirationDate"] = validity_end.strftime("%Y-%m-%dT%H:%M:%SZ")
-        pass_json["relevantDate"] = departure_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_json["relevantDates"].append({
+            "startDate": departure_date.strftime("%Y-%m-%dT00:00:00Z"),
+            "endDate": departure_date.strftime("%Y-%m-%dT23:59:59Z"),
+        })
 
         pass_fields = {
             "transitType": "PKTransitTypeTrain",
@@ -4093,7 +4156,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             else:
                 tz = pytz.utc
 
-            pass_json["relevantDate"] = tz.localize(ticket_data.data.departure).isoformat()
+            pass_json["relevantDates"].append({
+                "date": tz.localize(ticket_data.data.departure).isoformat()
+            })
 
             pass_fields["secondaryFields"].append({
                 "key": "departure-time",
@@ -4761,7 +4826,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "altText": str(ticket_data.data.ticket_number)
         }]
 
-        pass_json["relevantDate"] = ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        pass_json["relevantDates"].append({
+            "startDate": ticket_data.data.valid_from.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "endDate": ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        })
         pass_json["expirationDate"] = ticket_data.data.valid_until.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
         if len(ticket_data.data.journey_segments) > 1:
@@ -5465,7 +5533,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         tz = pytz.timezone('Europe/Madrid')
         travel_datetime = tz.localize(ticket_data.data.departure)
-        pass_json["relevantDate"] = travel_datetime.isoformat()
+        pass_json["relevantDates"].append({
+            "date": travel_datetime.isoformat()
+        })
 
         if from_station:
             pass_json["locations"].append({
@@ -5632,7 +5702,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_type = "boardingPass"
             pass_fields["transitType"] = "PKTransitTypeTrain"
 
-            pass_json["relevantDate"] = ticket_data.data.trip_data.valid_from.isoformat()
+            pass_json["relevantDates"].append({
+                "startDate": ticket_data.data.trip_data.valid_from.isoformat(),
+                "endDate": ticket_data.data.trip_data.valid_until.isoformat()
+            })
             pass_json["expirationDate"] = ticket_data.data.trip_data.valid_until.isoformat()
 
             from_station = templatetags.rics.get_station(ticket_data.data.trip_data.origin, "mav")

@@ -9,7 +9,7 @@ import json
 import functools
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=16)
 def signing_cert(security_provider: typing.Union[int, str], key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
     if isinstance(security_provider, int):
@@ -38,7 +38,7 @@ def signing_cert(security_provider: typing.Union[int, str], key_id: str):
     return meta, key
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=16)
 def public_key(security_provider: typing.Union[int, str], key_id: str):
     uic_storage = django.core.files.storage.storages["uic-data"]
     if isinstance(security_provider, int):
