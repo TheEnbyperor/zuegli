@@ -4,6 +4,7 @@ import typing
 import zipfile
 import io
 import datetime
+import secrets
 import asn1crypto.core
 import asn1crypto.algos
 import asn1crypto.cms
