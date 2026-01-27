@@ -4333,6 +4333,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
             if ticket_data.data.extra_text:
                 if ticket_data.data.extra_text == "GATING_ONLY":
+                    pass_json["voided"] = False
                     pass_fields["headerFields"].append({
                         "key": "card-name",
                         "label": "product-label",
