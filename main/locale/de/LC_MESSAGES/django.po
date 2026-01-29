@@ -154,7 +154,7 @@ msgstr "AVV Anmelden"
 
 #: templates/main/account/bahnbonus_login.html:4
 msgid "BahnBonus Login"
-msgstr "BahnBonus"
+msgstr "BahnBonus Anmelden"
 
 #: templates/main/account/db.html:4 templates/main/account/index.html:26
 #: templates/main/base.html:129
@@ -175,11 +175,11 @@ msgstr "Neues DB-Abo"
 
 #: templates/main/account/db_login.html:4
 msgid "DB Login"
-msgstr "Anmelden"
+msgstr "Bei DB Anmelden"
 
 #: templates/main/account/db_ticket.html:4
 msgid "Add DB Ticket"
-msgstr "Neues et"
+msgstr "Neues DB-Ticket"
 
 #: templates/main/account/edit.html:4 templates/main/account/edit.html:9
 msgid "Edit Account"
@@ -249,7 +249,7 @@ msgid ""
 "Logging in with DB isn't required for subscription tickets, or adding "
 "tickets via booking number."
 msgstr ""
-"Anmelden via DB ist nicht nötig für Abo Tickets oder zum hinzufügen von "
+"Anmelden via DB ist nicht erforderlich für Abo-Tickets oder zum Hinzufügen von "
 "Tickets via Buchungsnummer."
 
 #: templates/main/account/index.html:47
@@ -653,7 +653,7 @@ msgstr ""
 
 #: templates/main/index.html:45
 msgid "Full exception"
-msgstr "Vollständiger Fehler"
+msgstr "Ausnahmefehler"
 
 #: templates/main/index.html:54
 msgid "Ticket contents; please send this when asking for support:"
@@ -696,7 +696,7 @@ msgstr "Fügen Sie Ihr Ticket als Text oder Hex ein"
 
 #: templates/main/index.html:136
 msgid "Submit"
-msgstr "Schicken"
+msgstr "Absenden"
 
 #: templates/main/index.html:141
 msgid "Have your ticket on a Smartcard?"
