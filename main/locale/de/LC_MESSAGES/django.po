@@ -1204,7 +1204,7 @@ msgstr "Gültigkeitsdauer"
 
 #: templates/main/uic/ticket_details.html:111
 msgid "seconds"
-msgstr "sekunde"
+msgstr "Sekunden"
 
 #: templates/main/uic/ticket_details.html:118
 #: templates/main/uic/ticket_details.html:125
@@ -1252,7 +1252,7 @@ msgstr "Level 2 Signatur Verifikation"
 
 #: templates/main/uic/ticket_details.html:228
 msgid "Level 2 signature missing, this ticket has likely been tampered with"
-msgstr "Level 2 Signatur fehlt, dieses Ticket wurde vermultich manipuliert"
+msgstr "Level 2 Signatur fehlt, dieses Ticket wurde vermutlich manipuliert"
 
 #: templates/main/uic/ticket_details.html:239
 msgid "Header"
@@ -1260,7 +1260,7 @@ msgstr "Kopfzeilen"
 
 #: templates/main/uic/ticket_details.html:242
 msgid "Distributing RICS"
-msgstr "RICS des Ausgabers"
+msgstr "RICS des Ausgebers"
 
 #: templates/main/uic/ticket_details.html:248
 msgid "Distributor"
