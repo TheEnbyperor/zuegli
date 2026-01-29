@@ -1344,7 +1344,7 @@ msgstr ""
 
 #: templates/main/vdv_elements.html:129
 msgid "VAT"
-msgstr "MwST"
+msgstr "MwSt."
 
 #: templates/main/vdv_elements.html:135
 msgid "Price Level"
@@ -1457,11 +1457,11 @@ msgstr ""
 
 #: templates/main/vdv_elements.html:394
 msgid "Registration authority"
-msgstr "Register Authorität"
+msgstr "Registrierungsstelle"
 
 #: templates/main/vdv_elements.html:401
 msgid "Registration authority ID"
-msgstr "Register Authoritäts-ID"
+msgstr "Registrierungsstellen-ID"
 
 #: templates/main/vdv_elements.html:407
 msgid "End-entity type"
@@ -1611,7 +1611,7 @@ msgstr "Ausgabe-CA"
 
 #: templates/main/vdv_ticket_details.html:334
 msgid "Envelope Certificate"
-msgstr "Umschlag-Zertifikat"
+msgstr "Envelope-Zertifikat"
 
 #: templates/registration/login.html:17
 #: templates/registration/magic_login.html:24
