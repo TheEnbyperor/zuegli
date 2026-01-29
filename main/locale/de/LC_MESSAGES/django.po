@@ -653,7 +653,7 @@ msgstr ""
 
 #: templates/main/index.html:45
 msgid "Full exception"
-msgstr "Ausnahmefehler"
+msgstr "Schwerer Ausnahmefehler"
 
 #: templates/main/index.html:54
 msgid "Ticket contents; please send this when asking for support:"
