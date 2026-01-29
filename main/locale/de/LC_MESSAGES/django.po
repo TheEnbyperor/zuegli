@@ -105,7 +105,7 @@ msgstr "Klimaticket"
 
 #: models.py:146
 msgid "Bahncard"
-msgstr "Bahncard"
+msgstr "BahnCard"
 
 #: models.py:147
 msgid "Travel ticket"
