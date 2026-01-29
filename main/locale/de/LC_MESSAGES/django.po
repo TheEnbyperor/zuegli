@@ -342,7 +342,7 @@ msgstr "Karten"
 
 #: templates/main/account/index.html:234
 msgid "Subscribe to your trains as a calendar:"
-msgstr "Abbonieren Sie Ihre Zugfahrten als Kalender:"
+msgstr "Abonnieren Sie Ihre Zugfahrten als Kalender:"
 
 #: templates/main/account/mvv_login.html:4
 msgid "MVV Login"
