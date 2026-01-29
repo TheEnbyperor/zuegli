@@ -179,7 +179,7 @@ msgstr "Anmelden"
 
 #: templates/main/account/db_ticket.html:4
 msgid "Add DB Ticket"
-msgstr "Neues DB-Ticket"
+msgstr "Neues et"
 
 #: templates/main/account/edit.html:4 templates/main/account/edit.html:9
 msgid "Edit Account"
@@ -1049,7 +1049,7 @@ msgstr ""
 
 #: templates/main/ticket.html:118
 msgid "This appears to be a Deutsche Bahn ticket."
-msgstr "Dies scheint ein DB-Ticket sein."
+msgstr "Dies scheint ein DB-Ticket zu sein."
 
 #: templates/main/ticket.html:122
 #, python-format
