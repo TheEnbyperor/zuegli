@@ -45,11 +45,11 @@ msgstr "Speichern"
 
 #: forms.py:58 templates/main/index.html:111 templates/main/index.html:133
 msgid "Your ticket"
-msgstr "Ihre Karte"
+msgstr "Ihr Ticket"
 
 #: forms.py:60
 msgid "Please upload a ticket image or PDF"
-msgstr "Bitte laden Sie ein Bild oder PDF ihrer Karte hoch"
+msgstr "Bitte laden Sie ein Bild oder PDF ihres Tickets hoch"
 
 #: forms.py:67 templates/main/index.html:125
 msgid "Upload"
@@ -258,7 +258,7 @@ msgstr "BahnBonus Konto"
 
 #: templates/main/account/index.html:64 templates/main/account/index.html:192
 msgid "Add ticket"
-msgstr "Karte hinzufügen"
+msgstr "Ticket hinzufügen"
 
 #: templates/main/account/index.html:68
 #: templates/main/account/sbahn_berlin.html:4
@@ -338,7 +338,7 @@ msgstr ""
 #: templates/main/account/index.html:231
 #: templates/main/account/sbahn_berlin.html:44
 msgid "Tickets"
-msgstr "Karten"
+msgstr "Tickets"
 
 #: templates/main/account/index.html:234
 msgid "Subscribe to your trains as a calendar:"
@@ -402,7 +402,7 @@ msgstr "Vestische Anmeldung"
 #: templates/main/base.html:19 templates/main/base.html:23
 msgid "Turn your public transport tickets into an Apple/Google Wallet pass."
 msgstr ""
-"Erstellen Sie Apple- und Google-Walletpässe für Ihre Fahrkarten für Öffis."
+"Erstellen Sie Apple- und Google-Walletpässe für Ihre ÖPNV-Tickets."
 
 #: templates/main/base.html:53 templates/main/uic/ticket_details.html:303
 msgid "Language"
@@ -496,7 +496,7 @@ msgstr "Minuten"
 #, fuzzy
 #| msgid "Unknown signing key, can't verify ticket"
 msgid "Unknown signing key, can't read main ticket body"
-msgstr "Unbekannter Sicherheitsschlüssel, Hauptinformationen der Karte konnten nicht gelesen werden"
+msgstr "Unbekannter Sicherheitsschlüssel, Hauptinformationen des Tickets konnten nicht gelesen werden"
 
 #: templates/main/ft_ticket_details.html:245
 #: templates/main/hzpp_ticket_details.html:29
@@ -553,7 +553,7 @@ msgstr "Prüfung der Signatur"
 #: templates/main/uic/ticket_details.html:57
 #: templates/main/uic/ticket_details.html:174
 msgid "Unknown signing key, can't verify ticket"
-msgstr "Unbekannter Sicherheitsschlüssel, Karte kann nicht verifiziert werden"
+msgstr "Unbekannter Sicherheitsschlüssel, Ticket kann nicht verifiziert werden"
 
 #: templates/main/iata_ticket_details.html:298
 #: templates/main/ssb_ticket_details.html:37
@@ -582,7 +582,7 @@ msgstr "Dieser Dienst wird bereitgestellt von:"
 #: templates/main/index.html:10
 msgid "Turn your public transport tickets into Apple/Google Wallet passes."
 msgstr ""
-"Erstellen Sie Apple- und Google-Walletpässe für Ihre Fahrkarten für Öffis."
+"Erstellen Sie Apple- und Google-Walletpässe für Ihre ÖPNV-Tickets."
 
 #: templates/main/index.html:13
 msgid "Supported ticket types include:"
@@ -606,7 +606,7 @@ msgstr "SSB - Einige Fernverkehrsunternehmen (z.B. SNCB, VR), NS/DB Keycards"
 
 #: templates/main/index.html:19
 msgid "RSP6 - UK train tickets"
-msgstr "RSP6 - Britische Fahrkarten"
+msgstr "RSP6 - Britische Zugtickets"
 
 #: templates/main/index.html:20
 msgid "RSP8 - UK Railcards"
@@ -614,7 +614,7 @@ msgstr "RSP8 - Britische Railcards"
 
 #: templates/main/index.html:21
 msgid "SNCF domestic tickets"
-msgstr "SNCF inländische Fahrkarten"
+msgstr "SNCF inländische Tickets"
 
 #: templates/main/index.html:22
 msgid "ELB - Eurostar"
@@ -626,7 +626,7 @@ msgstr "SwissPass/NOVA - SBB, ZVV, und andere Schweizerische Unternehmen (VöV)"
 
 #: templates/main/index.html:24
 msgid "HŽPP tickets"
-msgstr "HŽPP Fahrkarten"
+msgstr "HŽPP-Tickets"
 
 #: templates/main/index.html:25
 msgid "IATA Barcoded Boarding Pass"
@@ -638,7 +638,7 @@ msgstr "BahnBonus Gutscheine und Lounge Zugangscodes"
 
 #: templates/main/index.html:27
 msgid "MBTA mTickets"
-msgstr "MBTA Fahrkarten"
+msgstr "MBTA mTickets"
 
 #: templates/main/index.html:30
 msgid ""
@@ -646,7 +646,7 @@ msgid ""
 "can create an account and add the subscription. Currently, DB, SaarVV, S-"
 "Bahn Berlin, AVV (Aachen), MVV, and HVV Switch are supported."
 msgstr ""
-"Wenn Sie möchten, dass Ihre Karten bei Verlängerung automatisch aktualisiert "
+"Wenn Sie möchten, dass Ihre Tickets bei Verlängerung automatisch aktualisiert "
 "werden, können Sie ein Konto erstellen und das Abo hinzufügen. Derzeit "
 "werden DB, SaarVV, S-Bahn Berlin, AVV (Aachen), MVV, und HVV Switch "
 "unterstützt."
@@ -674,7 +674,7 @@ msgstr ""
 
 #: templates/main/index.html:82
 msgid "Scan your ticket"
-msgstr "Scannen Sie Ihre Fahrkarte"
+msgstr "Scannen Sie Ihr Ticket"
 
 #: templates/main/index.html:100
 msgid ""
@@ -692,7 +692,7 @@ msgstr "Laden Sie stattdessen ein Bild oder ein PDF hoch"
 
 #: templates/main/index.html:128
 msgid "Paste your ticket as hex/text"
-msgstr "Fügen Sie Ihre Karte als Text oder Hex ein"
+msgstr "Fügen Sie Ihr Ticket als Text oder Hex ein"
 
 #: templates/main/index.html:136
 msgid "Submit"
@@ -710,7 +710,7 @@ msgstr ""
 #: templates/main/index.html:148
 msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
-msgstr "Momentan ist es nicht möglich, Karten aus Chipkarten umzuwandeln."
+msgstr "Momentan ist es nicht möglich, Tickets aus Chipkarten umzuwandeln."
 
 #: templates/main/index.html:154
 msgid "Read your Smartcard"
@@ -723,7 +723,7 @@ msgstr "Probleme?"
 #: templates/main/index.html:165
 msgid "Get in touch with a picture of your ticket and I'll see what I can do."
 msgstr ""
-"Schicken Sie mir ein Foto Ihrer Karte und ich werde sehen, was ich tun kann."
+"Schicken Sie mir ein Foto Ihres Tickets und ich werde sehen, was ich tun kann."
 
 #: templates/main/index.html:173
 msgid "Privacy"
@@ -736,10 +736,10 @@ msgid ""
 "this information is not processed except to generate the pass. Ticket data "
 "may be inspected by a human if you ask for help."
 msgstr ""
-"Der Barcode Ihrer Karte wird gespeichert, um automatische Aktualisierungen Ihrer "
-"Abo-Karten zu ermöglichen. Karten enthalten üblicherweise Ihren Namen und "
+"Der Barcode Ihres Tickets wird gespeichert, um automatische Aktualisierungen Ihrer "
+"Abo-Tickets zu ermöglichen. Tickets enthalten üblicherweise Ihren Namen und "
 "Ihr Geburtsdatum – diese Informationen werden nur zur Erstellung des Passes "
-"gespeichert. Auf Anfrage können wir Ihre Kartedaten einsehen."
+"gespeichert. Auf Anfrage können wir Ihre Ticketdaten einsehen."
 
 #: templates/main/index.html:184
 msgid "API"
@@ -926,7 +926,7 @@ msgid ""
 msgstr ""
 "Name teilweise geschwärzt? <a href=\"%(account_edit_url)s\" class=\"govuk-"
 "link\">Fügen Sie Ihren Namen zu Ihrem Konto hinzu</a>, um Ihren vollständigen "
-"Namen auf Ihrer Karte anzuzeigen"
+"Namen auf Ihrem Ticket anzuzeigen"
 
 #: templates/main/ssb_ticket_details.html:289
 #: templates/main/vdv_ticket_details.html:50
@@ -956,7 +956,7 @@ msgid ""
 "Ticket\n"
 "    %(id)s"
 msgstr ""
-"Karte\n"
+"Ticket\n"
 "    %(id)s"
 
 #: templates/main/ticket.html:18 templates/main/ticket.html:258
@@ -967,7 +967,7 @@ msgstr ""
 #: templates/main/ticket.html:450
 #, python-format
 msgid "Ticket #%(id)s"
-msgstr "Karte #%(id)s"
+msgstr "Ticket #%(id)s"
 
 #: templates/main/ticket.html:27
 msgid "Edit name"
@@ -980,18 +980,18 @@ msgstr ""
 
 #: templates/main/ticket.html:43
 msgid "Ticket created"
-msgstr "Karte erstellt"
+msgstr "Ticket erstellt"
 
 #: templates/main/ticket.html:45
 msgid "Ticket updated"
-msgstr "Karte aktualisiert"
+msgstr "Ticket aktualisiert"
 
 #: templates/main/ticket.html:52
 msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
 msgstr ""
-"Ihre Karte wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
+"Ihr Ticket wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
 "zu Ihren Apple- und Google-Wallet-Pässe hinzufügen."
 
 #: templates/main/ticket.html:57
@@ -999,12 +999,12 @@ msgid ""
 "Your ticket has been updated; it has been sent to your Apple and Google "
 "devices in the background."
 msgstr ""
-"Ihre Karte wurde aktualisiert; sie wurde im Hintergrund an Ihre Apple- und "
+"Ihr Ticket wurde aktualisiert; es wurde im Hintergrund an Ihre Apple- und "
 "Google-Geräte gesendet."
 
 #: templates/main/ticket.html:72
 msgid "This appears to be a SaarVV ticket."
-msgstr "Dies scheint eine SaarVV-Karte zu sein."
+msgstr "Dies scheint ein SaarVV-Ticket zu sein."
 
 #: templates/main/ticket.html:75
 #, python-format
@@ -1026,7 +1026,7 @@ msgstr ""
 
 #: templates/main/ticket.html:95
 msgid "This appears to be an S-Bahn Berlin ticket."
-msgstr "Dies scheint eine S-Bahn Berlin Karte zu sein."
+msgstr "Dies scheint ein S-Bahn Berlin Ticket zu sein."
 
 #: templates/main/ticket.html:98
 #, python-format
@@ -1049,7 +1049,7 @@ msgstr ""
 
 #: templates/main/ticket.html:118
 msgid "This appears to be a Deutsche Bahn ticket."
-msgstr "Dies scheint eine DB-Karte sein."
+msgstr "Dies scheint ein DB-Ticket sein."
 
 #: templates/main/ticket.html:122
 #, python-format
@@ -1099,7 +1099,7 @@ msgstr "Zu Kalender hinzufügen"
 
 #: templates/main/ticket.html:248
 msgid "Ticket details"
-msgstr "Angaben der Karte"
+msgstr "Angaben des Tickets"
 
 #: templates/main/ticket.html:250
 msgid "No instances found for this ticket."
@@ -1107,7 +1107,7 @@ msgstr "Für dieses Ticket wurden keine Instanzen gefunden"
 
 #: templates/main/ticket.html:274
 msgid "This ticket is invalid"
-msgstr "Diese Karte ist ungültig"
+msgstr "Dieses Ticket ist ungültig"
 
 #: templates/main/ticket.html:279
 msgid ""
@@ -1135,7 +1135,7 @@ msgid ""
 "Ticket #\n"
 "                                        %(id)s"
 msgstr ""
-"Karte #\n"
+"Ticket #\n"
 "                                        %(id)s"
 
 #: templates/main/ticket.html:369 templates/main/ticket.html:452
@@ -1149,7 +1149,7 @@ msgstr ""
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
 msgid "Delete ticket"
-msgstr "Fahrkarte löschen"
+msgstr "Ticket löschen"
 
 #: templates/main/ticket_delete.html:14
 msgid "Are you sure you want to delete this ticket?"
@@ -1169,7 +1169,7 @@ msgstr "Zurück"
 
 #: templates/main/ticket_edit.html:4 templates/main/ticket_edit.html:9
 msgid "Edit ticket"
-msgstr "Karte bearbeiten"
+msgstr "Ticket bearbeiten"
 
 #: templates/main/ticket_edit.html:16
 msgid "You don't have permission to edit this ticket."
@@ -1269,7 +1269,7 @@ msgstr "Ausgeber"
 #: templates/main/uic/ticket_details.html:256
 #: templates/main/vdv_ticket_details.html:10
 msgid "Ticket ID"
-msgstr "Karte ID"
+msgstr "Ticket-ID"
 
 #: templates/main/uic/ticket_details.html:260
 msgid "Issuing time"
@@ -1281,7 +1281,7 @@ msgstr "Eigenschaften"
 
 #: templates/main/uic/ticket_details.html:269
 msgid "International ticket"
-msgstr "Internationale Karte"
+msgstr "Internationales Ticket"
 
 #: templates/main/uic/ticket_details.html:279
 msgid "Edited by agent"
@@ -1490,11 +1490,11 @@ msgstr "Applikation abgebrochen"
 #: templates/main/vdv_smartcard.html:244
 #: templates/main/vdv_ticket_details.html:39
 msgid "Revoked ticket"
-msgstr "Karte abgebrochen"
+msgstr "Ticket abgebrochen"
 
 #: templates/main/vdv_ticket_details.html:3
 msgid "Ticket Data"
-msgstr "Karte ID"
+msgstr "Ticketdaten"
 
 #: templates/main/vdv_ticket_details.html:6
 #: templates/main/vdv_ticket_details.html:246
