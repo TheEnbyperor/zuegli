@@ -77,7 +77,7 @@ msgstr "Geburtsdatum"
 
 #: forms.py:109
 msgid "One of surname or date of birth must be provided"
-msgstr "Nachname oder Geburtsdatum muss angegeben werden"
+msgstr "Nachname oder Geburtsdatum müssen angegeben werden"
 
 #: forms.py:111 forms.py:131 forms.py:141
 msgid "Add"
@@ -85,7 +85,7 @@ msgstr "Hinzufügen"
 
 #: forms.py:118 forms.py:119
 msgid "Either a surname or a date of birth must be given"
-msgstr "Nachname oder Geburtsdatum muss angegeben werden"
+msgstr "Nachname oder Geburtsdatum müssen angegeben werden"
 
 #: forms.py:125
 msgid "Booking Reference"
