@@ -89,7 +89,7 @@ msgstr "Nachname oder Geburtsdatum müssen angegeben werden"
 
 #: forms.py:125
 msgid "Booking Reference"
-msgstr "Buchungs-Referenz"
+msgstr "Buchungsreferenz"
 
 #: forms.py:135
 msgid "Booking number"
@@ -976,7 +976,7 @@ msgstr "Name bearbeiten"
 #: templates/main/ticket.html:35
 msgid "Quote the above ticket number when asking for help."
 msgstr ""
-"Geben Sie die oben genannte Ticket-Nummer an, wenn Sie um Hilfe bitten."
+"Geben Sie die oben genannte Ticketnummer an, wenn Sie um Hilfe bitten."
 
 #: templates/main/ticket.html:43
 msgid "Ticket created"
@@ -1078,7 +1078,7 @@ msgstr "Fotos"
 #: templates/main/ticket.html:141
 msgid "Your pass requires passport style photos. Please upload them below."
 msgstr ""
-"Für Ihren Ausweis werden Pass-Fotos benötigt. Bitte laden Sie diese hier "
+"Für Ihren Ausweis werden Passfotos benötigt. Bitte laden Sie diese hier "
 "hoch."
 
 #: templates/main/ticket.html:148
@@ -1209,7 +1209,7 @@ msgstr "sekunde"
 #: templates/main/uic/ticket_details.html:118
 #: templates/main/uic/ticket_details.html:125
 msgid "Level 1 key algorithm"
-msgstr "Level 1 Schlüssel-Algorithmus"
+msgstr "Level 1 Schlüsselalgorithmus"
 
 #: templates/main/uic/ticket_details.html:127
 msgid "Unspecified - likely DSA1024"
@@ -1218,7 +1218,7 @@ msgstr "Nicht angegeben - vermutlich DSA1024"
 #: templates/main/uic/ticket_details.html:133
 #: templates/main/uic/ticket_details.html:140
 msgid "Level 1 signature algorithm"
-msgstr "Level 1 Signatur-Algorithmus"
+msgstr "Level 1 Signatursalgorithmus"
 
 #: templates/main/uic/ticket_details.html:142
 msgid "Unspecified - likely DSA with SHA224"
@@ -1302,7 +1302,7 @@ msgstr "Version"
 
 #: templates/main/vdv_elements.html:7
 msgid "Basic data"
-msgstr "Grund-Daten"
+msgstr "Grunddaten"
 
 #: templates/main/vdv_elements.html:15
 msgid "Payment Type"
@@ -1310,17 +1310,17 @@ msgstr "Zahlungsmittel"
 
 #: templates/main/vdv_elements.html:22
 msgid "Payment Type Code"
-msgstr "Zahlungsmittel-Code"
+msgstr "Zahlungsmittelcode"
 
 #: templates/main/vdv_elements.html:32 templates/main/vdv_elements.html:53
 #: templates/main/vdv_elements.html:86
 msgid "Passenger Type"
-msgstr "Fahrgast-Typ"
+msgstr "Fahrgasttyp"
 
 #: templates/main/vdv_elements.html:39 templates/main/vdv_elements.html:61
 #: templates/main/vdv_elements.html:94
 msgid "Passenger Type Code"
-msgstr "Fahrgast-Typ Code"
+msgstr "Fahrgasttypencode"
 
 #: templates/main/vdv_elements.html:47
 msgid "Additional Traveler #1"
@@ -1352,17 +1352,17 @@ msgstr "Preisstufe"
 
 #: templates/main/vdv_elements.html:141
 msgid "Internal Product Number"
-msgstr "Interne Produkt-Nummer"
+msgstr "Interne Produktnummer"
 
 #: templates/main/vdv_elements.html:152
 msgid "Identification medium"
-msgstr "Identifikations-Medium"
+msgstr "Identifikationsmedium"
 
 #: templates/main/vdv_elements.html:166
 #: templates/main/vdv_ticket_details.html:156
 #: templates/main/vdv_ticket_details.html:201
 msgid "Type Code"
-msgstr "Typ-Code"
+msgstr "Typencode"
 
 #: templates/main/vdv_elements.html:173
 msgid "Phone number"
@@ -1404,7 +1404,7 @@ msgstr "Organisation"
 #: templates/main/vdv_ticket_details.html:79
 #: templates/main/vdv_ticket_details.html:135
 msgid "Organisation ID"
-msgstr "Organisation-ID"
+msgstr "Organisations-ID"
 
 #: templates/main/vdv_elements.html:258
 msgid "Start station"
@@ -1587,7 +1587,7 @@ msgstr "Signaturalgorithmus"
 
 #: templates/main/vdv_ticket_details.html:291
 msgid "Random data"
-msgstr "Zufalls-Daten"
+msgstr "Zufallsdaten"
 
 #: templates/main/vdv_ticket_details.html:296
 msgid "Signature verifies"
