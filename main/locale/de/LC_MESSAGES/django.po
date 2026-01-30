@@ -1083,7 +1083,7 @@ msgstr ""
 
 #: templates/main/ticket.html:148
 msgid "Current photo"
-msgstr "Aktueles Foto"
+msgstr "Aktuelles Foto"
 
 #: templates/main/ticket.html:165
 msgid "Upload photo"
@@ -1218,7 +1218,7 @@ msgstr "Nicht angegeben - vermutlich DSA1024"
 #: templates/main/uic/ticket_details.html:133
 #: templates/main/uic/ticket_details.html:140
 msgid "Level 1 signature algorithm"
-msgstr "Level 1 Signatursalgorithmus"
+msgstr "Level 1 Signaturalgorithmus"
 
 #: templates/main/uic/ticket_details.html:142
 msgid "Unspecified - likely DSA with SHA224"
