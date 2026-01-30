@@ -249,7 +249,7 @@ msgid ""
 "Logging in with DB isn't required for subscription tickets, or adding "
 "tickets via booking number."
 msgstr ""
-"Anmelden via DB ist nicht erforderlich für Abo-Tickets oder zum Hinzufügen von "
+"Eine Anmeldung via DB ist nicht erforderlich für Abo-Tickets oder zum Hinzufügen von "
 "Tickets via Buchungsnummer."
 
 #: templates/main/account/index.html:47
@@ -445,7 +445,7 @@ msgid ""
 msgstr ""
 "Nicht verbunden mit dem Verband Deutscher Verkehrsunternehmen (VDV), der "
 "Union Internationale des Chemins de fer (UIC), der Rail Delivery Group "
-"(RDG), oder ihren jeweiligen Mitgliedern."
+"(RDG) oder ihren jeweiligen Mitgliedern."
 
 #: templates/main/base.html:224
 msgid ""
@@ -657,20 +657,20 @@ msgstr "Schwerer Ausnahmefehler"
 
 #: templates/main/index.html:54
 msgid "Ticket contents; please send this when asking for support:"
-msgstr "Inhalt des Tickets; Bitte bei Support-Anfragen angeben:"
+msgstr "Inhalt des Tickets bei Support-Anfragen bitte immer angeben:"
 
 #: templates/main/index.html:67
 msgid "JavaScript is required to scan tickets"
-msgstr "Sie müssen JavaScript aktiviert haben um Tickets zu scannen."
+msgstr "Sie müssen JavaScript aktiviert haben, um Tickets zu scannen."
 
 #: templates/main/index.html:71
 msgid ""
 "JavaScript is required to scan tickets in your browser. You can still upload "
 "a picture of your ticket to have it processed server-side."
 msgstr ""
-"Es wird JavaScript benötigt um Tickets direkt im Browser zu scanen. Sie "
-"können jedoch ein Bild des Tickets hochladen und wir verarbeiten das Ticket "
-"wird auf dem Server verarbeitet."
+"Es wird JavaScript benötigt, um Tickets direkt im Browser zu scannen. Sie "
+"können alternativ ein Bild des Tickets hochladen und auf dem Server "
+"verarbeiten lassen."
 
 #: templates/main/index.html:82
 msgid "Scan your ticket"
@@ -688,7 +688,7 @@ msgstr ""
 
 #: templates/main/index.html:106
 msgid "Upload a picture or a PDF instead"
-msgstr "Laden Sie stattdessen ein Bild oder ein PDF hoch"
+msgstr "Laden Sie stattdessen ein Bild oder PDF hoch"
 
 #: templates/main/index.html:128
 msgid "Paste your ticket as hex/text"
@@ -710,7 +710,7 @@ msgstr ""
 #: templates/main/index.html:148
 msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
-msgstr "Momentan ist es nicht möglich, Tickets aus Chipkarten umzuwandeln."
+msgstr "Momentan ist es nicht möglich, aus Chipkarten Walletpässe zu generieren."
 
 #: templates/main/index.html:154
 msgid "Read your Smartcard"
@@ -976,7 +976,7 @@ msgstr "Name bearbeiten"
 #: templates/main/ticket.html:35
 msgid "Quote the above ticket number when asking for help."
 msgstr ""
-"Geben Sie die oben genannte Ticketnummer an, wenn Sie um Hilfe bitten."
+"Geben Sie bei Supportanfragen bitte die oben genannte Ticketnummer an."
 
 #: templates/main/ticket.html:43
 msgid "Ticket created"
@@ -991,15 +991,15 @@ msgid ""
 "Your ticket has been created; download your pass below to add it to your "
 "Apple or Google Wallet."
 msgstr ""
-"Ihr Ticket wurde gespeichert; Laden Sie Ihren Pass unten herunter, um ihn "
-"zu Ihren Apple- und Google-Wallet-Pässe hinzufügen."
+"Ihr Ticket wurde gespeichert. Laden Sie Ihren Pass unten herunter, um ihn "
+"zu Ihren Apple- oder Google-Walletpässen hinzuzufügen."
 
 #: templates/main/ticket.html:57
 msgid ""
 "Your ticket has been updated; it has been sent to your Apple and Google "
 "devices in the background."
 msgstr ""
-"Ihr Ticket wurde aktualisiert; es wurde im Hintergrund an Ihre Apple- und "
+"Ihr Ticket wurde aktualisiert. Es wurde im Hintergrund an Ihre Apple- und "
 "Google-Geräte gesendet."
 
 #: templates/main/ticket.html:72
