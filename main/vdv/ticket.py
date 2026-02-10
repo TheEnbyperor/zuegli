@@ -629,7 +629,7 @@ class PassengerData:
 
             for c in context.contexts:
                 found = False
-                if c.forename and len(c.forename) == len(forename):
+                if c.forename and (len(c.forename) == len(forename) or (len(forename) == 10 and len(c.forname) >= len(forename))):
                     if (
                             c.forename.lower().startswith(forename[0].lower()) and
                             c.forename.lower().endswith(forename[-1].lower())
@@ -644,7 +644,7 @@ class PassengerData:
                         forename = c.forename
                         found = True
 
-                if c.surname and len(c.surname) == len(surname):
+                if c.surname and (len(c.surname) == len(surname) or (len(surname) == 10 and len(c.surname) >= len(surname))):
                     if (
                             c.surname.lower().startswith(surname[0].lower()) and
                             c.surname.lower().endswith(surname[-1].lower())
