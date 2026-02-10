@@ -603,12 +603,15 @@ class PassengerData:
                 surname = surname[1:]
             new_forename = []
             new_surname = []
+            forename_arbitrarylen = False
+            surname_arbitrarylen = False
             while forename_match := NAME_TYPE_1_RE.match(forename):
                 forename = forename[forename_match.end():]
                 forename_start = forename_match.group("start")
                 forename_end = forename_match.group("end")
                 forename_len = int(forename_match.group("len"))
                 if forename_len == 0:
+                    forename_arbitrarylen = True
                     forename_len = 10
                 new_forename.append(f"{forename_start}{'_' * forename_len}{forename_end}")
 
@@ -618,6 +621,7 @@ class PassengerData:
                 surname_end = surname_match.group("end")
                 surname_len = int(surname_match.group("len"))
                 if surname_len == 0:
+                    surname_arbitrarylen = True
                     surname_len = 10
                 new_surname.append(f"{surname_start}{'_' * surname_len}{surname_end}")
 
@@ -629,7 +633,7 @@ class PassengerData:
 
             for c in context.contexts:
                 found = False
-                if c.forename and (len(c.forename) == len(forename) or (len(forename) == 10 and len(c.forname) >= len(forename))):
+                if c.forename and (len(c.forename) == len(forename) or (forename_arbitrarylen and len(c.forname) >= len(forename))):
                     if (
                             c.forename.lower().startswith(forename[0].lower()) and
                             c.forename.lower().endswith(forename[-1].lower())
@@ -644,7 +648,7 @@ class PassengerData:
                         forename = c.forename
                         found = True
 
-                if c.surname and (len(c.surname) == len(surname) or (len(surname) == 10 and len(c.surname) >= len(surname))):
+                if c.surname and (len(c.surname) == len(surname) or (surname_arbitrarylen and len(c.surname) >= len(surname))):
                     if (
                             c.surname.lower().startswith(surname[0].lower()) and
                             c.surname.lower().endswith(surname[-1].lower())
