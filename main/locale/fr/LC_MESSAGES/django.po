@@ -715,7 +715,7 @@ msgid ""
 "Currently, it is not possible to convert Smartcard tickets to Wallet passes."
 msgstr ""
 "Actuellement, il n'est pas possible de convertir des billets sur carte à puce "
-"en titres Wallet."
+"en titres Cartes ou Wallet."
 
 #: templates/main/index.html:154
 msgid "Read your Smartcard"
@@ -739,14 +739,25 @@ msgstr "Protection des données"
 msgid ""
 "Your ticket barcode will be stored to allow automatic updates to "
 "subscription tickets. Tickets commonly include your name and date of birth - "
-"this information is not processed except to generate the pass. Ticket data "
-"may be inspected by a human if you ask for help."
+"this information is not processed except to generate the pass."
 msgstr ""
 "Le code-barres de votre billet sera stocké pour permettre les mises à jour "
-"automatiques à vos abonnements. Les billets incluent généralement votre nom "
+"automatiques de vos abonnements. Les billets incluent généralement votre nom "
 "et votre date de naissance - ces informations ne sont traitées que pour "
-"générer le titre. Les données du billet peuvent être inspectées par un "
-"humain si vous demandez de l'assistance."
+"générer le titre de transport."
+
+#: templates/main/index.html:182
+msgid ""
+"We conduct aggregate analysis on tickets uploaded to better understand how "
+"people use Zügli and as part of efforts to combat ticketing fraud. Individual "
+"detailed ticket data may be inspected by a human if you ask for help, or if "
+"fraud is suspected."
+msgstr ""
+"Nous effectuons une analyse agrégée des billets téléversés pour mieux "
+"comprendre comment les gens utilisent Zügli, ainsi que dans le cadre "
+"d'efforts de lutte contre la fraude billettique. Les données billettiques "
+"individuelles détaillées peuvent être inspectées par un humain si vous "
+"demandez de l'aide, ou en cas de suspicion de fraude."
 
 #: templates/main/index.html:184
 msgid "API"
@@ -1097,7 +1108,7 @@ msgstr "Téléverser une photo"
 
 #: templates/main/ticket.html:178
 msgid "Download your pass"
-msgstr "Télécharger votre titre"
+msgstr "Téléchargez votre titre"
 
 #: templates/main/ticket.html:220
 msgid "Add to Calendar"
