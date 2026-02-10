@@ -935,9 +935,9 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
     elif isinstance(ticket_instance, models.VDVTicketInstance):
         ticket_data = ticket_instance.as_ticket
 
-        validity_start = ticket_data.ticket.validity_start.as_datetime().astimezone(pytz.utc)
-        validity_end = ticket_data.ticket.validity_end.as_datetime().astimezone(pytz.utc)
-        issued_at = ticket_data.ticket.transaction_time.as_datetime().astimezone(pytz.utc)
+        validity_start = ticket_data.ticket.validity_start.as_datetime()
+        validity_end = ticket_data.ticket.validity_end.as_datetime()
+        issued_at = ticket_data.ticket.transaction_time.as_datetime()
 
         obj["logo"] = {
             "sourceUri": {
