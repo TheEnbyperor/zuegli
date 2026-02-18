@@ -16,7 +16,7 @@
   "DP7": "Youth Holidays 1 Week",
   "DW1": "Youth Holidays 1 Week",
   "DWA": "Validated Youth Holidays Ticket",
-  "DW3": "Off-peak Unlimited",
+  "DW3": "Off-peak Unlimited"
   "65P": "Senior Ticket 65+",
   "0040002614": "BruPass",
   "0040002615": "BruPass XL",
@@ -30,6 +30,9 @@
   "100Q22": "Ticket - Anytime - Adult - Train+",
   "100Q23": "Ticket - Off-peak - Adult - Train+",
   "100Q24": "Weekend Ticket - Adult - Train+",
+  "100Q91": "Weekend Ticket - Youth",
   "100Q42": "Ticket - Anytime - Senior - Train+",
-  "100Q50": "Ticket - Anytime - Preferential Reimbursement"
+  "100Q50": "Ticket - Anytime - Preferential Reimbursement",
+  "100UAR": "International Ticket Aachen Hbf via Verviers - Anytime - Youth - Train+",
+  "100UA7": "International Ticket Aachen Hbf via Verviers - Anytime - Adult - Train+"
 }
