@@ -47,11 +47,12 @@ class Authorization:
         product_specific_data = product_specific_data[1]
 
         key_version = next(filter(lambda t: t[0] == 0x92, authorization), None)
-        if not key_version:
-            raise VDVNMException("Missing key version")
-        key_version = key_version[1]
-        if len(key_version) != 3:
-            raise VDVNMException("Invalid key version")
+        if key_version:
+            key_version = key_version[1]
+            if len(key_version) != 3:
+                raise VDVNMException("Invalid key version")
+        else:
+            key_version = b"\x00\x00\x00"
 
         issuing_sam_data = next(filter(lambda t: t[0] == 0x99, authorization), None)
         if not issuing_sam_data:
