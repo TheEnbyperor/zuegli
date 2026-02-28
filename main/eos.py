@@ -99,7 +99,7 @@ def login(account: "models.Account", operator: str, username: str, password: str
         }
     }, hooks={
         "pre_request": [lambda req: sign_request(req, device_id, operator)],
-    })
+    }, timeout=10)
     if not r.ok:
         return False
     auth_data = r.json()
@@ -127,7 +127,7 @@ def get_customer_account(account: "models.Account", operator: str):
         "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
-    })
+    }, timeout=10)
     r.raise_for_status()
     data = r.json()
 
@@ -142,33 +142,39 @@ def update_eos_tickets(account: "models.Account", operator: str):
 
     logger.info(f"Updating EOS {account_token.device_id}")
 
-    r = session.post(f"{license_info['url_base']}/index.php/mobileService/sync", json={}, hooks={
+    r = session.post(f"{license_info['url_base']}f", json={}, hooks={
         "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
-    })
+    }, timeout=10)
     if not r.ok:
         logger.error(f"Failed to update EOS {account_token.device_id}: {r.text}")
         return
 
     data = r.json()
 
-    if data["tickets"]:
-        time.sleep(2)
+    tickets = []
+    for t in data["tickets"]:
+        if models.KnownEOSTicket.objects.filter(operator_id=operator, ticket_id=t).exists():
+            continue
+        else:
+            tickets.append(t)
+
+    if tickets:
         r = session.post(f"{license_info['url_base']}/index.php/mobileService/ticket", json={
             "details": True,
-            "tickets": data["tickets"],
+            "tickets": tickets,
             "provide_aztec_content": True,
             "parameters": True,
         }, hooks={
             "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
         }, headers={
             "Authorization": account_token.token,
-        })
+        }, timeout=10)
         if not r.ok:
             logger.error(f"Failed to update EOS {account_token.device_id}: {r.text}")
         data = r.json()
-        for t in data["tickets"].values():
+        for ticket_id, t in data["tickets"].items():
             if "aztec_content" in t:
                 barcode_data = base64.b64decode(t["aztec_content"])
             else:
@@ -212,6 +218,8 @@ def update_eos_tickets(account: "models.Account", operator: str):
             except ticket.TicketError as e:
                 logger.error("Error decoding barcode ticket: %s", e)
                 continue
+
+            models.KnownEOSTicket.objects.create(operator_id=operator, ticket_id=ticket_id)
 
     for t in account_token.tickets.all():
         apn.notify_ticket_if_renewed(t)
