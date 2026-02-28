@@ -42,7 +42,7 @@ def update_account(account_id):
             "Accept": "application/x.db.vendo.mob.bahnbonus.v1+json",
             "X-Correlation-ID": secrets.token_hex(16),
             "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-        })
+        }, timeout=10)
     if not r.ok:
         logger.error(f"Failed to get BahnBonus information for account {account} - {r.text}")
     else:
@@ -59,7 +59,7 @@ def update_account(account_id):
             "X-Correlation-ID": secrets.token_hex(16),
             "User-Agent": "Zuegli (q@magicalcodewit.ch)",
             "Call-Trigger": "manual"
-        })
+        }, timeout=10)
         if not r.ok:
             logger.error(f"Failed to get BahnCards for account {account} - {r.text}")
             return

@@ -92,7 +92,7 @@ def update_account(account_id):
                 "Accept": "application/x.db.vendo.mob.reisenuebersicht.v5+json",
                 "X-Correlation-ID": secrets.token_hex(16),
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-            })
+            }, timeout=10)
             if not r.ok:
                 logger.error(f"Failed to get bookings for profile {profile_id} - {r.text}")
                 continue
@@ -111,7 +111,7 @@ def update_account(account_id):
                         "Accept": "application/x.db.vendo.mob.auftraege.v9+json",
                         "X-Correlation-ID": secrets.token_hex(16),
                         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-                    })
+                    }, timeout=10)
                     if not r.ok:
                         logger.error(f"Failed to get ticket for booking {auftragsnummer} - {kundenwunsch_id}: {r.text}")
                         continue

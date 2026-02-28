@@ -43,7 +43,7 @@ def update_abo_tickets(abo_id):
         "X-Api-Version": "10",
         "X-Unique-ID": str(uuid.uuid4()),
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-    })
+    }, timeout=10)
 
     if r.status_code == 404:
         abo.delete()
