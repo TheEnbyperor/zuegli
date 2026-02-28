@@ -18,7 +18,7 @@ def update_all():
         if not account.is_avv_authenticated():
             continue
 
-        update_avv_tickets.delay(account.pk)
+        update_avv_tickets.apply_async((account.pk,), expires=14400)
 
 
 @shared_task(

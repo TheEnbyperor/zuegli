@@ -15,7 +15,7 @@ def update_all():
         if not account.is_bahnbonus_authenticated():
             continue
 
-        update_account.delay(account.pk)
+        update_account.apply_async((account.pk,), expires=14400)
 
 
 @shared_task(

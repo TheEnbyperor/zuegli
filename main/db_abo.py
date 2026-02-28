@@ -20,7 +20,7 @@ def update_all():
     now = timezone.now()
     for abo in models.DBSubscription.objects.all():
         if abo.refresh_at <= now:
-            update_abo_tickets.delay(abo.pk)
+            update_abo_tickets.apply_async((abo.pk,), expires=14400)
         else:
             logger.info(f"Not updating DB subscription {abo.device_token} - not due for refresh")
 
