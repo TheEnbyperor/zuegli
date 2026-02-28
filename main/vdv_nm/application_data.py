@@ -26,11 +26,12 @@ class ApplicationData:
         data = data[1]
 
         key_version = next(filter(lambda t: t[0] == 0x91, data), None)
-        if not key_version:
-            raise VDVNMException("Missing key version")
-        key_version = key_version[1]
-        if len(key_version) != 3:
-            raise VDVNMException("Invalid key version")
+        if  key_version:
+            key_version = key_version[1]
+            if len(key_version) != 3:
+                raise VDVNMException("Invalid key version")
+        else:
+            key_version = b"\x00\x00\x00"
 
         issuing_transaction = next(filter(lambda t: t[0] == 0x99, data), None)
         if not issuing_transaction:
