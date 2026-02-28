@@ -76,7 +76,7 @@ class VDVConsumer(iso7816.Consumer):
             application_info_text = vdv_nm.info_text.InfoText.parse(application_info_text_data.data)
 
             log_entries = []
-            for i in range(1, application_directory.application_logbook.sequence_number + 1):
+            for i in range(1, min(application_directory.application_logbook.sequence_number, 10) + 1):
                 application_logbook = self.apdu(iso7816.RequestAPDU(
                     instruction_class=0x00, instruction=0xCA, p1=0x01, p2=0xF0,
                     data=bytes([0xE5, i]),
