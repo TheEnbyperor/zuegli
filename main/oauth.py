@@ -102,7 +102,7 @@ def login_callback(request, provider: str, url: str):
 
     r = session.post(PROVIDERS[provider].token_url, data=data, headers={
         "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-    })
+    }, timeout=10)
     data = r.json()
 
     if not r.ok:
@@ -156,7 +156,7 @@ def get_token(account: "models.Account", provider: str):
                 data["client_secret"] = PROVIDERS[provider].client_secret
             r = session.post(PROVIDERS[provider].token_url, data=data, headers={
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)"
-            })
+            }, timeout=10)
             if not r.ok:
                 return None
 
