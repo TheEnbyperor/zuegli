@@ -23,7 +23,7 @@ def notify_device(device_id):
         "aps": {
             "content-available": 1
         }
-    }, cert=(str(settings.PKPASS_CERTIFICATE_LOCATION), str(settings.PKPASS_KEY_LOCATION)), timeout=30)
+    }, cert=(str(settings.PKPASS_CERTIFICATE_LOCATION), str(settings.PKPASS_KEY_LOCATION)), timeout=10)
     if r.status_code == 410:
         device.delete()
         return
@@ -47,7 +47,7 @@ def notify_android_pass_device(device_id):
         "pushTokens": [device.push_token],
     }, headers={
         "Authorization": settings.WALLET_PASSES_API_KEY
-    }, timeout=30)
+    }, timeout=10)
     r.raise_for_status()
 
 
@@ -61,7 +61,7 @@ def notify_attido_device(device_id):
     r = niquests.post(url, json={
         "passTypeID": settings.PKPASS_CONF["pass_type"],
         "pushToken": device.push_token,
-    }, timeout=30)
+    }, timeout=10)
     r.raise_for_status()
 
 @shared_task(

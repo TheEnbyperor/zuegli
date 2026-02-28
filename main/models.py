@@ -772,6 +772,14 @@ class MavInstance(models.Model):
         return self._as_ticket()
 
 
+class KnownEOSTicket(models.Model):
+    operator_id = models.CharField(max_length=255)
+    ticket_id = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = [("operator_id", "ticket_id")]
+
+
 class KnownRailEasyJourney(models.Model):
     journey_id = models.CharField(max_length=255)
     purchase_id = models.CharField(max_length=255)
