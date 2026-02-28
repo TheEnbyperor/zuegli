@@ -885,7 +885,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
                     }
                 }
 
-        if parsed_layout.passenger_name:
+        if parsed_layout and parsed_layout.passenger_name:
             obj["textModulesData"].append({
                 "id": f"traveler",
                 "localizedHeader": {
