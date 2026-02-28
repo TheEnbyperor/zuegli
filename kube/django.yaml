@@ -200,7 +200,7 @@ metadata:
     app: vdv-pkpass
     part: celery
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: vdv-pkpass
