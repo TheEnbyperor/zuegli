@@ -49,7 +49,7 @@ def update_all():
         if not oauth.get_token(account, "db"):
             continue
 
-        update_account.delay(account.pk)
+        update_account.apply_async((account.pk,), expires=14400)
 
 
 @shared_task(

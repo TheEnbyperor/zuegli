@@ -55,7 +55,7 @@ def update_all():
         if not account.is_hvv_authenticated():
             continue
 
-        update_hvv_tickets.delay(account.pk)
+        update_hvv_tickets.apply_async((account.pk,), expires=14400)
 
 @shared_task(
     autoretry_for=(Exception,), retry_backoff=True, retry_backoff_max=60, max_retries=25, default_retry_delay=3,

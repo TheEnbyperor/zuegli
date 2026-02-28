@@ -8,7 +8,7 @@ from . import models, eos
 )
 def update_all():
     for oauth in models.AccountOAuth.objects.filter(provider="mvv", device_id__isnull=False):
-        update_mvv_tickets.apply_async(args=(oauth.account_id,), countdown=random.randint(0, 240))
+        update_mvv_tickets.apply_async(args=(oauth.account_id,), countdown=random.randint(0, 240), expires=14400)
 
 
 @shared_task(

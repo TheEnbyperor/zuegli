@@ -1,14 +1,20 @@
 import typing
 import bs4
 import urllib.parse
+import niquests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .. import forms, eos, sbahn_berlin, models, session
+from .. import forms, eos, sbahn_berlin, models, adapter, socks_proxies
 
 
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
     device_id = eos.get_device_id()
+
+    session = niquests.Session()
+    session.proxies.update(socks_proxies)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
 
     r = session.get("https://sso.uptrade.de/realms/sbb/protocol/openid-connect/auth", params={
         "client_id": "eos-ts-sbahn-ber",
@@ -62,7 +68,7 @@ def sbahn_berlin_login(request):
                         "device_id": device_id,
                     }
                 )
-                sbahn_berlin.update_sbahn_berlin_tickets.apply_async(args=(request.user.account.id,), queue="celery")
+                sbahn_berlin.update_sbahn_berlin_tickets.apply_async(args=(request.user.account.id,), queue="celery", expires=14400)
                 return redirect("sbahn_berlin_account")
     else:
         form = forms.EOSLoginForm()

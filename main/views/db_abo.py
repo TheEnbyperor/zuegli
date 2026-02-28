@@ -69,7 +69,7 @@ def new_abo(request):
                         "info": data["ticketHuelle"],
                         "account": request.user.account,
                     })
-                    db_abo.update_abo_tickets.apply_async(args=(abo.pk,), queue="celery")
+                    db_abo.update_abo_tickets.apply_async(args=(abo.pk,), queue="celery", expires=14400)
                     return redirect("db_abo")
     else:
         form = forms.DBAboForm(initial=initial)

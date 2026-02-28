@@ -211,6 +211,16 @@ class RCT2Parser:
                             except ValueError:
                                 pass
 
+                if departure_dt and arrival_dt and arrival_dt < departure_dt:
+                    arrival_dt = datetime.datetime(
+                        year=arrival_dt.year + 1,
+                        month=departure_dt.month,
+                        day=departure_dt.day,
+                        hour=arrival_dt.hour,
+                        minute=arrival_dt.minute,
+                        second=arrival_dt.second,
+                    )
+
             if not departure_dt or not arrival_dt:
                 if m := EXTRA_DATA_VALIDITY_1.fullmatch(extra_data):
                     day_from = m.group("s")
