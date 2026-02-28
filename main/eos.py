@@ -142,7 +142,7 @@ def update_eos_tickets(account: "models.Account", operator: str):
 
     logger.info(f"Updating EOS {account_token.device_id}")
 
-    r = session.post(f"{license_info['url_base']}f", json={}, hooks={
+    r = session.post(f"{license_info['url_base']}/index.php/mobileService/sync", json={}, hooks={
         "pre_request": [lambda req: sign_request(req, account_token.device_id, operator)],
     }, headers={
         "Authorization": account_token.token,
