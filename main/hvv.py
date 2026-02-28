@@ -51,7 +51,7 @@ def get_auth_token(account: "models.Account"):
     ignore_result=True
 )
 def update_all():
-    for account in models.Account.objects.all():
+    for account in models.Account.objects.filter(oauth__provider="hvv"):
         if not account.is_hvv_authenticated():
             continue
 

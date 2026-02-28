@@ -14,7 +14,7 @@ logger = get_task_logger(__name__)
 )
 def update_all():
 
-    for account in models.Account.objects.all():
+    for account in models.Account.objects.filter(oauth__provider="avv"):
         if not account.is_avv_authenticated():
             continue
 

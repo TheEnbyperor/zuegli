@@ -30,7 +30,7 @@ PROVIDERS = {
     ignore_result=True
 )
 def update_all():
-    for account in models.Account.objects.all():
+    for account in models.Account.objects.filter(oauth__provider__in=list(PROVIDERS.keys())):
         for provider_id, provider in PROVIDERS.items():
             if not account.is_oauth_authenticated(provider_id):
                 continue
