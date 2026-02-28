@@ -72,7 +72,7 @@ def update_hvv_tickets(account_id):
     }, headers={
         "Authorization": f"Bearer {token}",
         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-    })
+    }, timeout=10)
     if not r.ok:
         logger.error(f"Failed to get HVV orders for {account}: {r.text}")
         return
@@ -93,7 +93,7 @@ def update_hvv_tickets(account_id):
             r = session.get(f"https://api.hochbahn.cloud/ride/wallet/tickets/{order['ticketPublicUUID']}/pkpass", headers={
                 "Authorization": f"Bearer {token}",
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-            })
+            }, timeout=10)
         except niquests.exceptions.RetryError:
             continue
         if not r.ok:
@@ -113,7 +113,7 @@ def update_hvv_tickets(account_id):
     r = session.get("https://api.hochbahn.cloud/subscriptions/orders", headers={
         "Authorization": f"Bearer {token}",
         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-    })
+    }, timeout=10)
     if not r.ok:
         logger.error(f"Failed to get HVV subscriptions for {account}: {r.text}")
         return
@@ -126,7 +126,7 @@ def update_hvv_tickets(account_id):
             r = session.get(f"https://api.hochbahn.cloud/ride/wallet/subscriptions/{sub['subscriptionID']}/pkpass", headers={
                 "Authorization": f"Bearer {token}",
                 "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-            })
+            }, timeout=10)
         except niquests.exceptions.RetryError:
             continue
         if not r.ok:
