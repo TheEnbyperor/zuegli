@@ -13,7 +13,7 @@ logger = get_task_logger(__name__)
     ignore_result=True
 )
 def update_all():
-    for account in models.Account.objects.all():
+    for account in models.Account.objects.filter(oauth__provider="db"):
         if not account.is_db_authenticated:
             continue
 
