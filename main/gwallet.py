@@ -758,6 +758,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
         elif parsed_layout and parsed_layout.trips:
             has_stations = any(t.departure_station or t.arrival_station for t in parsed_layout.trips)
             ticket_type = "generic"
+            obj["classId"] = f"{settings.GWALLET_CONF['issuer_id']}.{settings.GWALLET_CONF['train_pass_class']}"
             if has_stations:
                 ticket_type = "transit"
                 obj["classId"] = \
