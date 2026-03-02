@@ -7,6 +7,8 @@ app = celery.Celery('vdv_pkpass')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 app.conf.task_routes = {
+    "main.vdv.tasks.sync_blocklist": { "queue": "bg" },
+    "main.uic.tasks.download_data": { "queue": "bg" },
     "main.db_abo.update_all": { "queue": "bg" },
     "main.db_abo.update_abo_tickets": { "queue": "bg" },
     "main.db_bc.update_all": { "queue": "bg" },
@@ -26,6 +28,7 @@ app.conf.task_routes = {
     "main.raileasy.update_tickets": { "queue": "bg" },
     "main.saarvv.update_all": { "queue": "bg" },
     "main.saarvv.update_saarvv_tickets": { "queue": "bg" },
+    "gtfs.tasks.process_gtfs": { "queue": "bg" },
     "gtfs.tasks.process_all_gtfs_rt": { "queue": "bg" },
     "gtfs.tasks.process_gtfs_rt": { "queue": "bg" },
 }
