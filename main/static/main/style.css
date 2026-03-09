@@ -2,12 +2,14 @@
     font-family: 'GDS Transport';
     font-weight: 400;
     src: url(db-sans-regular.otf) format('opentype');
+    unicode-range: U+0000-02FF;
 }
 
 @font-face {
     font-family: 'GDS Transport';
     font-weight: 700;
     src: url(db-sans-bold.otf) format('opentype');
+    unicode-range: U+0000-02FF;
 }
 
 @font-face {
@@ -152,4 +154,21 @@ code {
 
 .route-graph svg {
     max-width: 100%;
+}
+
+.summary-list-key-wide {
+    width: 70%;
+}
+
+.summary-list-always-break, .summary-list-always-break > .govuk-summary-list__row, .summary-list-always-break > .govuk-summary-list__row > .govuk-summary-list__key, .summary-list-always-break > .govuk-summary-list__row > .govuk-summary-list__value {
+    display: block;
+}
+
+.summary-list-always-break > .govuk-summary-list__row > .govuk-summary-list__key {
+    width: unset;
+    padding-bottom: 0;
+}
+
+.summary-list-always-break > .govuk-summary-list__row > .govuk-summary-list__value {
+    padding-left: 15px;
 }

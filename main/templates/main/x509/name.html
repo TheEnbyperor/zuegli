@@ -1,0 +1,70 @@
+<dl class="govuk-summary-list">
+    {% for elm in name %}
+        {% if elm.oid.dotted_string == "2.5.4.3" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Common Name</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.4" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Surname</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.5" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Serial Number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ elm.value }}</code></dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.6" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Country</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.7" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Locality</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.8" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">State or Province</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.10" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.11" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation Unit</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.12" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Title</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.42" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Forename</dt>
+                <dd class="govuk-summary-list__value">{{ elm.value }}</dd>
+            </div>
+        {% elif elm.oid.dotted_string == "2.5.4.97" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Organisation Identifier</dt>
+                <dd class="govuk-summary-list__value"><code>{{ elm.value }}</code></dd>
+            </div>
+        {% elif elm.oid.dotted_string == "1.2.840.113549.1.9.1" %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">E-Mail Address</dt>
+                <dd class="govuk-summary-list__value"><code>{{ elm.value }}</code></dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Unknown Attribute: {{ elm.oid.dotted_string }}</dt>
+                <dd class="govuk-summary-list__value"><code>{{ elm.value }}</code></dd>
+            </div>
+        {% endif %}
+    {% endfor %}
+</dl>

@@ -1,9 +1,9 @@
-{% load rics tz i18n %}
+{% load rics x509 tz i18n %}
 
 {% localtime off %}
     <h2 class="govuk-heading-m">{% trans "Security" %}</h2>
     {% if ticket.envelope %}
-        <dl class="govuk-summary-list">
+        <dl class="govuk-summary-list summary-list-always-break">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Barcode version" %}</dt>
                 <dd class="govuk-summary-list__value"><code>{{ ticket.envelope.version }}</code></dd>
@@ -74,7 +74,7 @@
             {% endif %}
         </dl>
     {% elif ticket.dosipas_envelope %}
-        <dl class="govuk-summary-list">
+        <dl class="govuk-summary-list summary-list-always-break">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{% trans "Barcode version" %}</dt>
                 <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.version }}</dd>

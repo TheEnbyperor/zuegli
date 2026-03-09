@@ -1,0 +1,464 @@
+{% load rics x509 tz i18n %}
+{% localtime off %}
+    <div class="govuk-summary-card">
+        <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+                X.509 {{ cert.version.name }} certificate
+            </h2>
+        </div>
+        <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list summary-list-always-break">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Serial number</dt>
+                    <dd class="govuk-summary-list__value"><code>{{ cert.serial_number|as_hex }}</code></dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Valid from</dt>
+                    <dd class="govuk-summary-list__value">{{ cert.not_valid_before_utc|date:"F d, Y H:i:s e" }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Valid until</dt>
+                    <dd class="govuk-summary-list__value">{{ cert.not_valid_after_utc|date:"F d, Y H:i:s e" }}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issuer</dt>
+                    <dd class="govuk-summary-list__value">{% include "main/x509/name.html" with name=cert.issuer %}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Subject</dt>
+                    <dd class="govuk-summary-list__value">{% include "main/x509/name.html" with name=cert.subject %}</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Public key algorithm</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ cert.public_key_algorithm_oid.dotted_string|oid }}
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Signature algorithm</dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ cert.signature_algorithm_oid.dotted_string|oid }}
+                    </dd>
+                </div>
+                {% if cert.extensions %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Extensions</dt>
+                        <dd class="govuk-summary-list__value">
+                            <dl class="govuk-summary-list">
+                                {% for ext in cert.extensions %}
+                                    {% if ext.oid.dotted_string == "2.5.29.9" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Subject Directory Attributes</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <dl class="govuk-summary-list summary-list-always-break">
+                                                    {% for attr in ext.value.value|decode_subject_directory_attributes %}
+                                                        {% if attr.0 == "ua_taxpayer_id" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Ukrainian Taxpayer
+                                                                    ID
+                                                                </dt>
+                                                                <dd class="govuk-summary-list__value">{{ attr.1 }}</dd>
+                                                            </div>
+                                                        {% elif attr.0 == "ua_legal_entity_id" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Unified State
+                                                                    Register of Enterprises and Organisations of Ukraine
+                                                                </dt>
+                                                                <dd class="govuk-summary-list__value">{{ attr.1 }}</dd>
+                                                            </div>
+                                                        {% elif attr.0 == "ua_resident_id" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Unified State
+                                                                    Demographic Register of Ukraine
+                                                                </dt>
+                                                                <dd class="govuk-summary-list__value">{{ attr.1 }}</dd>
+                                                            </div>
+                                                        {% elif attr.0 == "unknown" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Unknown</dt>
+                                                                <dd class="govuk-summary-list__value">{{ attr.1|oid }}</dd>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </dl>
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.14" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Subject Key Identifier</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ ext.value.digest|as_hex }}</code></dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.15" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Key Usage</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <dl class="govuk-summary-list">
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            Digital signature
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.digital_signature %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            Content commitment
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.content_commitment %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Key
+                                                            encipherment
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.key_encipherment %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                        {#                                                    digital_signature=True, content_commitment=True, key_encipherment=False, data_encipherment=False, key_agreement=True, key_cert_sign=False, crl_sign=False, encipher_only=False, decipher_only=False#}
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Data
+                                                            encipherment
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.data_encipherment %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Key
+                                                            agreement
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.key_agreement %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            Certificate signing
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.key_cert_sign %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">CRL
+                                                            Signing
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.crl_sign %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            Encipher only
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.encipher_only %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            Decipher only
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.decipher_only %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                </dl>
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.17" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Subject Alternative Names</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% include "main/x509/general_name.html" with value=ext.value %}
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.19" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Basic Constraints</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <dl class="govuk-summary-list">
+                                                    <div class="govuk-summary-list__row">
+                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            CA
+                                                        </dt>
+                                                        <dd class="govuk-summary-list__value">
+                                                            {% if ext.value.ca %}
+                                                                <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
+                                                            {% else %}
+                                                                <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
+                                                            {% endif %}
+                                                        </dd>
+                                                    </div>
+                                                    {% if ext.value.path_length is not None %}
+                                                        <div class="govuk-summary-list__row">
+                                                            <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                                Path length
+                                                            </dt>
+                                                            <dd class="govuk-summary-list__value">{{ ext.value.path_length }}</dd>
+                                                        </div>
+                                                    {% endif %}
+                                                </dl>
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.31" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">CRL Distribution Points</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% for point in ext.value %}
+                                                    <div class="govuk-summary-card">
+                                                        <div class="govuk-summary-card__content">
+                                                            <dl class="govuk-summary-list summary-list-always-break">
+                                                                {% if point.full_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Full name
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/general_name.html" with value=point.full_name %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% elif point.relative_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Relative
+                                                                            name
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/name.html" with name=point.relative_name %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                                {% if point.crl_issuer %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">CRL Issuer
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/general_name.html" with value=point.crl_issuer %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.32" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Certificate Policies</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% for policy in ext.value %}
+                                                    <div class="govuk-summary-card">
+                                                        <div class="govuk-summary-card__title-wrapper">
+                                                            <h2 class="govuk-summary-card__title">
+                                                                <code>{{ policy.policy_identifier.dotted_string }}</code>
+                                                            </h2>
+                                                        </div>
+                                                        <div class="govuk-summary-card__content">
+                                                            <dl class="govuk-summary-list">
+                                                                <div class="govuk-summary-list__row">
+                                                                    <dt class="govuk-summary-list__key">Qualifiers</dt>
+                                                                    <dd class="govuk-summary-list__value">
+                                                                        <ul>
+                                                                            {% for qual in policy.policy_qualifiers %}
+                                                                                <li>{{ qual }}</li>
+                                                                            {% endfor %}
+                                                                        </ul>
+                                                                    </dd>
+                                                                </div>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.35" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Authority Key Identifier</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ ext.value.key_identifier|as_hex }}</code></dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "2.5.29.46" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Freshest CRL Distribution Points</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% for point in ext.value %}
+                                                    <div class="govuk-summary-card">
+                                                        <div class="govuk-summary-card__content">
+                                                            <dl class="govuk-summary-list summary-list-always-break">
+                                                                {% if point.full_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Full name
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/general_name.html" with value=point.full_name %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% elif point.relative_name %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">Relative
+                                                                            name
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/name.html" with name=point.relative_name %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                                {% if point.crl_issuer %}
+                                                                    <div class="govuk-summary-list__row">
+                                                                        <dt class="govuk-summary-list__key">CRL Issuer
+                                                                        </dt>
+                                                                        <dd class="govuk-summary-list__value">
+                                                                            {% include "main/x509/general_name.html" with value=point.crl_issuer %}
+                                                                        </dd>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "1.3.6.1.5.5.7.1.1" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Authority Information Access</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {% for aia in ext.value %}
+                                                    <div class="govuk-summary-card">
+                                                        <div class="govuk-summary-card__title-wrapper">
+                                                            <h2 class="govuk-summary-card__title">
+                                                                {{ aia.access_method.dotted_string|oid }}
+                                                            </h2>
+                                                        </div>
+                                                        <div class="govuk-summary-card__content">
+                                                            <dl class="govuk-summary-list summary-list-always-break">
+                                                                <div class="govuk-summary-list__row">
+                                                                    {% include "main/x509/_general_name.html" with san=aia.access_location %}
+                                                                </div>
+                                                            </dl>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </dd>
+                                        </div>
+                                    {% elif ext.oid.dotted_string == "1.3.6.1.5.5.7.1.3" %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Qualified Certificate Statements</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <dl class="govuk-summary-list summary-list-always-break">
+                                                    {% for stmt in ext.value.value|decode_qualified_certificate_statements %}
+                                                        {% if stmt.0 == "qc_compliance" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">
+                                                                    Qualified Certificate per Regulation (EU) No 910/2014
+                                                                </dt>
+                                                                <dd class="govuk-summary-list__value"></dd>
+                                                            </div>
+                                                        {% elif stmt.0 == "qc_monetary_value" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Maximum Monetary Value</dt>
+                                                                <dd class="govuk-summary-list__value">
+                                                                    {{ stmt.1.value }} {{ stmt.1.currency_code }}
+                                                                </dd>
+                                                            </div>
+                                                        {% elif stmt.0 == "qc_pds_loc" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">PKI Disclosure Statements</dt>
+                                                                <dd class="govuk-summary-list__value">
+                                                                    <ul>
+                                                                        {% for loc in stmt.1 %}
+                                                                            <li><a href="{{ loc.url }}">{{ loc.url }}</a> {{ loc.lang }}</li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </dd>
+                                                            </div>
+                                                        {% elif stmt.0 == "qc_legislation" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Issued under the legislation of</dt>
+                                                                <dd class="govuk-summary-list__value">
+                                                                    <ul>
+                                                                        {% for cc in stmt.1 %}
+                                                                            <li>{{ cc|iso3166 }}</li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </dd>
+                                                            </div>
+                                                        {% elif stmt.0 == "rfc3739_semantics" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">RFC3739 Semantics</dt>
+                                                                <dd class="govuk-summary-list__value">
+                                                                    {% if stmt.1.id %}
+                                                                        {{ stmt.1.id|oid }}
+                                                                    {% endif %}
+                                                                </dd>
+                                                            </div>
+                                                        {% elif stmt.0 == "ua_digital_sig_law" %}
+                                                            <div class="govuk-summary-list__row">
+                                                                <dt class="govuk-summary-list__key">Issued under the Ukrainian Digital Signature Law</dt>
+                                                                <dd class="govuk-summary-list__value"></dd>
+                                                            </div>
+                                                        {% else %}
+                                                            {{ stmt }}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </dl>
+                                            </dd>
+                                        </div>
+                                    {% else %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">
+                                                Unknown extension: {{ ext.oid.dotted_string }}
+                                            </dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <code>{{ ext.value.value|as_hex }}</code>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </dl>
+                        </dd>
+                    </div>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+{% endlocaltime %}
