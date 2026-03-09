@@ -1,6 +1,6 @@
 import datetime
 import decimal
-
+import math
 import pytz
 import typing
 import uuid
@@ -11,7 +11,10 @@ from .. import uic, vdv, swisspass
 register = template.Library()
 
 @register.filter(name="as_hex")
-def as_hex(value: bytes):
+def as_hex(value: typing.Union[bytes, int]) -> str:
+    if isinstance(value, int):
+        l = int((math.log2(value) + 7) // 8)
+        value = value.to_bytes(l, "big")
     return ":".join(f"{b:02X}" for b in value)
 
 @register.filter(name="to_date")
@@ -279,48 +282,6 @@ def dosipas_timestamp(value: dict):
     out += datetime.timedelta(days=value["day"] - 1)
     out += datetime.timedelta(seconds=value["time"])
     return pytz.utc.localize(out)
-
-
-@register.filter(name="oid")
-def oid(value):
-    if value == "1.2.840.10045.4.3.2":
-        return "ECDSA with SHA256"
-    elif value == "2.16.840.1.101.3.4.3.1":
-        return "DSA with SHA224"
-    elif value == "2.16.840.1.101.3.4.3.2":
-        return "DSA with SHA256"
-    elif value == "1.2.840.10040.4.1":
-        return "DSA"
-    elif value == "1.2.840.10045.2.1":
-        return "Elliptic Curve"
-    elif value == "1.2.840.10045.3.1.7":
-        return "EC secp256r1"
-    elif value == "1.2.840.10040.4.3":
-        return "DSA with SHA1"
-    elif value == "2.5.29.19":
-        return "Basic constraints"
-    elif value == "2.5.29.15":
-        return "Key usage"
-    elif value == "2.5.29.37":
-        return "Extended key usage"
-    elif value == "2.5.29.14":
-        return "Subject key identifier"
-    elif value == "2.5.29.35":
-        return "Authority key identifier"
-    elif value == "2.5.29.1":
-        return "Authority key identifier (old)"
-    elif value == "1.3.101.112":
-        return "Ed25519"
-    elif value == "1.2.840.113549.1.1.11":
-        return "RSA with SHA256"
-    elif value == "1.2.840.113549.1.1.12":
-        return "RSA with SHA384"
-    elif value == "1.2.840.113549.1.1.13":
-        return "RSA with SHA512"
-    elif value == "1.2.840.113549.1.1.14":
-        return "RSA with SHA224"
-    else:
-        return str(value)
 
 
 @register.filter(name="uic_geo")

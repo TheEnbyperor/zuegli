@@ -1,0 +1,24 @@
+{% load x509 rics %}
+{% if san|is_rfc822_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">Email</dt>
+    <dd class="govuk-summary-list__value">{{ san.value }}</dd>
+{% elif san|is_dns_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">Domain name</dt>
+    <dd class="govuk-summary-list__value">{{ san.value }}</dd>
+{% elif san|is_directory_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">Directory name</dt>
+    <dd class="govuk-summary-list__value">{% include "main/x509/name.html" with name=san.value %}</dd>
+{% elif san|is_uri_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">URI</dt>
+    <dd class="govuk-summary-list__value">{{ san.value }}</dd>
+{% elif san|is_ip_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">IP Address</dt>
+    <dd class="govuk-summary-list__value">{{ san.value }}</dd>
+{% elif san|is_rid_name %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">OID</dt>
+    <dd class="govuk-summary-list__value">{{ san.value.dotted_string|oid }}</dd>
+{% else %}
+    <dt class="govuk-summary-list__key summary-list-key-wide">Other
+        name: {{ san.type_id.dotted_string|oid }}</dt>
+    <dd class="govuk-summary-list__value">{{ san.value|as_hex }}</dd>
+{% endif %}

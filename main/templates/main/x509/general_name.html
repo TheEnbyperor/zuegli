@@ -1,0 +1,8 @@
+{% load x509 rics %}
+<dl class="govuk-summary-list summary-list-always-break">
+    {% for san in value %}
+        <div class="govuk-summary-list__row">
+            {% include "main/x509/_general_name.html" with san=san %}
+        </div>
+    {% endfor %}
+</dl>
