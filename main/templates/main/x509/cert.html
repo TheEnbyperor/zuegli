@@ -44,7 +44,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Extensions</dt>
                         <dd class="govuk-summary-list__value">
-                            <dl class="govuk-summary-list">
+                            <dl class="govuk-summary-list summary-list-always-break">
                                 {% for ext in cert.extensions %}
                                     {% if ext.oid.dotted_string == "2.5.29.9" %}
                                         <div class="govuk-summary-list__row">
@@ -95,9 +95,7 @@
                                             <dd class="govuk-summary-list__value">
                                                 <dl class="govuk-summary-list">
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
-                                                            Digital signature
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Digital signature</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.digital_signature %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -107,9 +105,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
-                                                            Content commitment
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Content commitment</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.content_commitment %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -119,9 +115,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Key
-                                                            encipherment
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Key encipherment</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.key_encipherment %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -129,12 +123,9 @@
                                                                 <strong class="govuk-tag govuk-tag--red">{% trans "No" %}</strong>
                                                             {% endif %}
                                                         </dd>
-                                                        {#                                                    digital_signature=True, content_commitment=True, key_encipherment=False, data_encipherment=False, key_agreement=True, key_cert_sign=False, crl_sign=False, encipher_only=False, decipher_only=False#}
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Data
-                                                            encipherment
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Data encipherment</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.data_encipherment %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -144,9 +135,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">Key
-                                                            agreement
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Key agreement</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.key_agreement %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -156,9 +145,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
-                                                            Certificate signing
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Certificate signing</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.key_cert_sign %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -168,9 +155,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">CRL
-                                                            Signing
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">CRL Signing</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.crl_sign %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -180,9 +165,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
-                                                            Encipher only
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Encipher only</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.encipher_only %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -192,9 +175,7 @@
                                                         </dd>
                                                     </div>
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
-                                                            Decipher only
-                                                        </dt>
+                                                        <dt class="govuk-summary-list__key">Decipher only</dt>
                                                         <dd class="govuk-summary-list__value">
                                                             {% if ext.value.decipher_only %}
                                                                 <strong class="govuk-tag govuk-tag--green">{% trans "Yes" %}</strong>
@@ -219,7 +200,7 @@
                                             <dd class="govuk-summary-list__value">
                                                 <dl class="govuk-summary-list">
                                                     <div class="govuk-summary-list__row">
-                                                        <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                        <dt class="govuk-summary-list__key">
                                                             CA
                                                         </dt>
                                                         <dd class="govuk-summary-list__value">
@@ -232,7 +213,7 @@
                                                     </div>
                                                     {% if ext.value.path_length is not None %}
                                                         <div class="govuk-summary-list__row">
-                                                            <dt class="govuk-summary-list__key summary-list-key-wide">
+                                                            <dt class="govuk-summary-list__key">
                                                                 Path length
                                                             </dt>
                                                             <dd class="govuk-summary-list__value">{{ ext.value.path_length }}</dd>
@@ -406,7 +387,7 @@
                                                                 <dd class="govuk-summary-list__value">
                                                                     <ul>
                                                                         {% for loc in stmt.1 %}
-                                                                            <li><a href="{{ loc.url }}">{{ loc.url }}</a> {{ loc.lang }}</li>
+                                                                            <li><a href="{{ loc.url }}">{{ loc.url }}</a> ({{ loc.language }})</li>
                                                                         {% endfor %}
                                                                     </ul>
                                                                 </dd>
