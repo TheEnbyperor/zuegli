@@ -609,11 +609,9 @@ msgstr "VDV - Duitse OV-bedrijven, Deutschlandticket"
 
 #: templates/main/index.html:17
 msgid ""
-"UIC - Deutsche Bahn, NS, ÖBB and other long-distance operators, Klimaticket, "
-"InterRail"
+"UIC - Deutsche Bahn, NS, ÖBB and other long-distance operators, Klimaticket"
 msgstr ""
-"UIC - Deutsche Bahn, NS, ÖBB en andere lange-afstandsbedrijven, Klimaticket, "
-"InterRail"
+"UIC - Deutsche Bahn, NS, ÖBB en andere lange-afstandsbedrijven, Klimaticket"
 
 #: templates/main/index.html:18
 msgid "SSB - Select long-distance operators (e.g. SNCB, VR), NS/DB Keycards"
