@@ -141,6 +141,15 @@ class RCT2Parser:
         else:
             passenger_name = None
 
+        # the passenger name area in benerail tickets is formatted like "LASTNAME FIRSTNAME\n01 PASSENGER"
+        # (where PASSENGER can be replaced with the age category of the passenger, i.e. 'JUGENDLICHER')
+        # perhaps also others, update the below tuple if the same logic can be applied there as well
+        if issuing_rics in (1184, 1088):
+            benerail_name_regex = re.search(r'^(.*)\n(\d\d) (.*)$', traveller_data)
+            if benerail_name_regex:
+                passenger_name = benerail_name_regex.group(1)
+
+
         for line in (6, 7):
             departure_dt = None
             arrival_dt = None
