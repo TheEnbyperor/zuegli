@@ -13,7 +13,7 @@ register = template.Library()
 @register.filter(name="as_hex")
 def as_hex(value: typing.Union[bytes, int]) -> str:
     if isinstance(value, int):
-        l = int((math.log2(value) + 7) // 8)
+        l = (math.ceil(math.log2(value)) + 7) // 8
         value = value.to_bytes(l, "big")
     return ":".join(f"{b:02X}" for b in value)
 
