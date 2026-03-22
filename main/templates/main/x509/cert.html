@@ -10,7 +10,10 @@
             <dl class="govuk-summary-list summary-list-always-break">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Serial number</dt>
-                    <dd class="govuk-summary-list__value"><code>{{ cert.serial_number|as_hex }}</code></dd>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ cert.serial_number|as_hex }}</code><br>
+                        (<code>{{ cert.serial_number }}</code>)
+                    </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Valid from</dt>
