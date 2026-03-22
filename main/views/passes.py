@@ -2629,7 +2629,9 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                 })
 
             if parsed_layout.passenger_name:
-                if pass_fields["primaryFields"]:
+                if pass_fields["primaryFields"] and parsed_layout.operator_rics not in (1084, 1184):
+                    # passenger name can be on primaryFields if we know the parsing of the RCT2 ticket to be reliable
+                    # (this is the case for at least SNCB internationaal and NSI)
                     pass_fields["auxiliaryFields"].append({
                         "key": "passenger",
                         "label": "passenger-label",
