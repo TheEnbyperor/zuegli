@@ -1,0 +1,61 @@
+{% load rics %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+            Ticket {% if ticket.referenceIA5 %}{{ ticket.referenceIA5 }}{% else %}
+            {{ ticket.referenceNum }}{% endif %}
+        </h2>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Link mode</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.linkMode }}</code>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Ticket type</dt>
+                <dd class="govuk-summary-list__value">
+                    <code>{{ ticket.ticketType }}</code>
+                </dd>
+            </div>
+            {% if ticket.issuerName %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issuer name</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.issuerName }}</dd>
+                </div>
+            {% endif %}
+            {% if ticket.issuerPNR %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Issuer PNR</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.issuerPNR }}</dd>
+                </div>
+            {% endif %}
+            {% if ticket.productOwnerNum %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product owner RICS</dt>
+                    <dd class="govuk-summary-list__value">
+                        <code>{{ ticket.productOwnerNum }}</code>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if ticket.productOwnerIA5 %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Product owner ID</dt>
+                    <dd class="govuk-summary-list__value">{{ ticket.productOwnerIA5 }}</dd>
+                </div>
+            {% endif %}
+            {% with org=ticket.productOwnerNum|rics %}
+                {% if org %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Product owner</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% include 'main/rics.html' with org=org %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endwith %}
+        </dl>
+    </div>
+</div>

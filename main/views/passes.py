@@ -494,6 +494,12 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                         lambda d: d["ticket"][0] == "pass", ticket_data.flex.data["transportDocument"]
                     ),
                 ), None)
+                delay_conf_document = next(map(
+                    lambda d: d["ticket"][1],
+                    filter(
+                        lambda d: d["ticket"][0] == "delayConfirmation", ticket_data.flex.data["transportDocument"]
+                    ),
+                ), None)
                 if ticket_document or reservation_document:
                     if ticket_document:
                         validity_start = templatetags.rics.rics_valid_from(ticket_document, issued_at)
@@ -1367,6 +1373,86 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                             "%Y-%m-%dT%H:%M:%SZ"),
                         "ignoresTimeZone": True
                     })
+
+                elif delay_conf_document:
+                    pass_fields["headerFields"].append({
+                        "key": "delay-conf",
+                        "value": "delay-conf-label"
+                    })
+
+                    train_num = delay_conf_document.get("trainIA5") or delay_conf_document.get("trainNum")
+                    if train_num:
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "train-number",
+                            "label": "train-number-label",
+                            "value": str(train_num),
+                            "semantics": {
+                                "vehicleNumber": str(train_num)
+                            }
+                        })
+
+                    if departure_time := templatetags.rics.rics_delay_departure_time(delay_conf_document):
+                        departure_time_str = departure_time.isoformat() if departure_time.tzinfo else \
+                            departure_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                        pass_fields["auxiliaryFields"].append({
+                            "key": "time",
+                            "label": "original-time-label",
+                            "value": departure_time_str,
+                            "dateStyle": "PKDateStyleShort",
+                            "timeStyle": "PKDateStyleShort",
+                            "ignoresTimeZone": True
+                        })
+
+                    if "stationNum" in delay_conf_document:
+                        station = templatetags.rics.get_station(delay_conf_document["stationNum"], ticket_document)
+                        if station:
+                            pass_fields["secondaryFields"].append({
+                                "key": "station",
+                                "label": "station-label",
+                                "value": station["name"],
+                            })
+                            maps_link = urllib.parse.urlencode({
+                                "q": station["name"],
+                                "ll": f"{station['latitude']},{station['longitude']}"
+                            })
+                            pass_fields["backFields"].append({
+                                "key": "station-back",
+                                "label": "station-label",
+                                "value": station["name"],
+                                "attributedValue": f"<a href=\"https://maps.apple.com/?{maps_link}\">{station['name']}</a>",
+                            })
+                        elif "stationIA5" in delay_conf_document:
+                            pass_fields["secondaryFields"].append({
+                                "key": "station",
+                                "label": "station-label",
+                                "value": delay_conf_document["stationIA5"],
+                            })
+
+                    if delay_conf_document["trainCancelled"]:
+                        pass_fields["secondaryFields"].append({
+                            "key": "train-cancelled",
+                            "value": "train-cancelled-label"
+                        })
+                    else:
+                        pass_fields["secondaryFields"].append({
+                            "key": "train-delay",
+                            "label": "train-delay-label",
+                            "value": f"{delay_conf_document['delay']} min"
+                        })
+
+                    if "infoText" in delay_conf_document:
+                        pass_fields["backFields"].append({
+                            "key": "info-text",
+                            "label": "info-label",
+                            "value": delay_conf_document["infoText"],
+                        })
+
+                    for i, t in enumerate(delay_conf_document.get("affectedTickets", [])):
+                        pass_fields["backFields"].append({
+                            "key": f"affected-ticket-{i}",
+                            "label": f"for-ticket-{t['ticketType']}-label",
+                            "value": t.get("issuerPNR", "")
+                        })
 
             if len(ticket_data.flex.data.get("travelerDetail", {}).get("traveler", [])) >= 1:
                 passenger = ticket_data.flex.data["travelerDetail"]["traveler"][0]
@@ -6006,6 +6092,13 @@ PASS_STRINGS = {
 "compartment-code-premium-economy-label" = "Premium Economy";
 "compartment-code-economy-label" = "Economy";
 "fast-track-label" = "Fast-track";
+"delay-conf-label" = "Delay";
+"train-delay-label" = "Delayed";
+"train-cancelled-label" = "Cancelled";
+"original-time-label" = "Original time";
+"for-ticket-openTicket-label" = "For ticket no.";
+"for-ticket-pass-label" = "For pass no.";
+"for-ticket-reservation-label" = "For reservation no.";
 """,
     "cy": """
 "product-label" = "Cynnyrch";
@@ -6081,6 +6174,13 @@ PASS_STRINGS = {
 "compartment-code-premium-economy-label" = "Economi Premiwm";
 "compartment-code-economy-label" = "Economi";
 "fast-track-label" = "Llywbr carlam";
+"delay-conf-label" = "Oediad";
+"train-delay-label" = "Wedi'i ohirio gan";
+"train-cancelled-label" = "Wedi'i ganslo";
+"original-time-label" = "Amer gwreiddiol";
+"for-ticket-openTicket-label" = "Ar gyfer tocyn rhif";
+"for-ticket-pass-label" = "Ar gyfer pás rhif";
+"for-ticket-reservation-label" = "Ar gyfer archeb rhif";
 """,
     "de": """
 "product-label" = "Produkt";
@@ -6156,6 +6256,13 @@ PASS_STRINGS = {
 "compartment-code-premium-economy-label" = "Premium-Economy";
 "compartment-code-economy-label" = "Economy";
 "fast-track-label" = "Schelleinsteig";
+"delay-conf-label" = "Verspätung";
+"train-delay-label" = "Verspätet";
+"train-cancelled-label" = "Fällt aus";
+"original-time-label" = "Ursprüngliche Zeit";
+"for-ticket-openTicket-label" = "Für Fahrkarte Nr.";
+"for-ticket-pass-label" = "Für Pass Nr.";
+"for-ticket-reservation-label" = "Für Resevierung Nr.";
 """,
     "nl": """
 "product-label" = "Product";
@@ -6499,50 +6606,50 @@ BC_STRIP_IMG = {
 }
 
 KNOWN_VALID_SIGNATURE_RICS = [
-    80,   # Deutsche Bahn AG
-    1080, # Deutsche Bahn AG
-    1181, # ÖBB Personenverkehr AG
-    2080, # DB Regio AG Business Unit Bus
-    3076, # Transdev GmbH
-    3135, # HanseCom GmbH
-    3243, # üstra Hannoversche Verkehrsbetriebe AG
-    3316, # AVG Augsburger Verkehrsgesellschaft mbH
-    3348, # Verkehrsverbund Bremen/Niedersachsen GmbH (VBN)
-    3497, # Regensburger Verkehrsverbund GmbH
-    3565, # SWT Stadtwerke Trier Verkehrs-GmbH
-    3591, # AKN Eisenbahn AG
-    3634, # Deutschlandtarifverbund GmbH
-    3703, # Region Grand Est
-    3823, # KMG - Klagenfurt Mobil GmbH
-    3834, # Verkehrsverbund Region Braunschweig GmbH
-    3841, # Hanseatische Eisenbahn GmbH
-    3906, # Mitteldeutscher Verkehrsverbund GmbH
-    3940, # Aachener Verkehrsverbund GmbH
-    3966, # FlixTrain GmbH
-    5008, # Verkehrsverbund Rhein-Neckar GmbH
-    5046, # Verkehrsverbund Steiermark GmbH
-    5062, # Dessauer Verkehrs GmbH
-    5143, # AMCON Software GmbH
-    5167, # Stadtwerke Viernheim GmbH
-    5170, # Aktiv Bus Flensburg GmbH
-    5172, # Koblenzer Verkehrsbetriebe GmbH
-    5173, # Nahverkehrsservice Sachsen-Anhalt GmbH
-    5197, # Augsburger Verkehrs- und Tarifverbund GmbH
-    5203, # Verwaltungsgesellschaft des OPNV Sommerda mbH
-    5211, # Vetter GmbH Omnibus- und Mietwagenbetrieb
-    5217, # Verkehrsgesellschaft Bremerhaven AG
-    5218, # Verkehr und Wasser GmbH
-    5245, # Würzburger Straßenbahn GmbH
-    5294, # bConn GmbH
-    5379, # Mentz GmbH
-    5398, # Verkehrsverbund Kärnten GmbH
-    5651, # Autobus Oberbayern GmbH
-    5671, # Edzards Reisen GmbH & Co. KG
-    5679, # Husmann Reisen GmbH
-    5682, # EBR Busreisen GmbH
-    5684, # Taxi Lehner
-    5685, # Ludwig Meier GmbH
-    9002, # DB Vertrieb GmbH
-    9901, # Eurail B.V.
-    9902, # Eurail Group G.I.E. management
+    80,  # Deutsche Bahn AG
+    1080,  # Deutsche Bahn AG
+    1181,  # ÖBB Personenverkehr AG
+    2080,  # DB Regio AG Business Unit Bus
+    3076,  # Transdev GmbH
+    3135,  # HanseCom GmbH
+    3243,  # üstra Hannoversche Verkehrsbetriebe AG
+    3316,  # AVG Augsburger Verkehrsgesellschaft mbH
+    3348,  # Verkehrsverbund Bremen/Niedersachsen GmbH (VBN)
+    3497,  # Regensburger Verkehrsverbund GmbH
+    3565,  # SWT Stadtwerke Trier Verkehrs-GmbH
+    3591,  # AKN Eisenbahn AG
+    3634,  # Deutschlandtarifverbund GmbH
+    3703,  # Region Grand Est
+    3823,  # KMG - Klagenfurt Mobil GmbH
+    3834,  # Verkehrsverbund Region Braunschweig GmbH
+    3841,  # Hanseatische Eisenbahn GmbH
+    3906,  # Mitteldeutscher Verkehrsverbund GmbH
+    3940,  # Aachener Verkehrsverbund GmbH
+    3966,  # FlixTrain GmbH
+    5008,  # Verkehrsverbund Rhein-Neckar GmbH
+    5046,  # Verkehrsverbund Steiermark GmbH
+    5062,  # Dessauer Verkehrs GmbH
+    5143,  # AMCON Software GmbH
+    5167,  # Stadtwerke Viernheim GmbH
+    5170,  # Aktiv Bus Flensburg GmbH
+    5172,  # Koblenzer Verkehrsbetriebe GmbH
+    5173,  # Nahverkehrsservice Sachsen-Anhalt GmbH
+    5197,  # Augsburger Verkehrs- und Tarifverbund GmbH
+    5203,  # Verwaltungsgesellschaft des OPNV Sommerda mbH
+    5211,  # Vetter GmbH Omnibus- und Mietwagenbetrieb
+    5217,  # Verkehrsgesellschaft Bremerhaven AG
+    5218,  # Verkehr und Wasser GmbH
+    5245,  # Würzburger Straßenbahn GmbH
+    5294,  # bConn GmbH
+    5379,  # Mentz GmbH
+    5398,  # Verkehrsverbund Kärnten GmbH
+    5651,  # Autobus Oberbayern GmbH
+    5671,  # Edzards Reisen GmbH & Co. KG
+    5679,  # Husmann Reisen GmbH
+    5682,  # EBR Busreisen GmbH
+    5684,  # Taxi Lehner
+    5685,  # Ludwig Meier GmbH
+    9002,  # DB Vertrieb GmbH
+    9901,  # Eurail B.V.
+    9902,  # Eurail Group G.I.E. management
 ]

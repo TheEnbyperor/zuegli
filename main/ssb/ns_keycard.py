@@ -64,8 +64,16 @@ class Keycard:
 
     @property
     def product_name(self):
-        if 1 <= self.product_code <= 5:
-            return f"KeyCard (type {self.product_code})"
+        if self.product_code == 1:
+            return "Keycard"
+        elif self.product_code == 2:
+            return "Jaarpas passage"
+        elif self.product_code == 3:
+            return "Kwartlalpas passage"
+        elif self.product_code == 4:
+            return "Dagpas"
+        elif self.product_code == 5:
+            return "Dagpas groep"
         elif self.product_code == 6:
             return "Preprinted ATB"
         elif self.product_code == 7:
@@ -74,7 +82,39 @@ class Keycard:
             return "Meereiskaart Spoordeelweken"
         elif self.product_code == 9:
             return "Landencoupon"
+        elif self.product_code == 12:
+            return "Thalys Employee Pass"
+        elif self.product_code == 14:
+            return "Eurail Pass Cover"
         elif self.product_code == 15:
             return "Interrail Pass Cover"
+        elif self.product_code == 16:
+            return "Boekenweekgeschenk"
+        elif self.product_code == 17:
+            return "Dagpas Speciaal"
+        elif self.product_code == 18:
+            return "Keycard Speciaal"
+        elif self.product_code == 19:
+            return "Weekend passage"
+        elif self.product_code == 20:
+            return "Charter Dagpas RPR"
+        elif self.product_code == 21:
+            return "NMBS Trainkaarten"
+        elif self.product_code == 20:
+            return "NMBS Internet Uitgifte"
+        elif self.product_code == 25:
+            return "Exit recht"
+        elif self.product_code == 26:
+            return "Evenement"
+        elif self.product_code == 27:
+            return "Maandpas passage"
+        elif self.product_code == 28:
+            return "Halfjaarpas passage"
+        elif self.product_code == 29:
+            return "Dagpas groep (dynamisch)"
+        elif self.product_code == 30:
+            return "Weekpas"
+        elif self.product_code == 33:
+            return "Dagpas avond"
         else:
             return f"Unknown - {self.product_code}"

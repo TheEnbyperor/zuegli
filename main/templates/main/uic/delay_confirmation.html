@@ -1,0 +1,99 @@
+{% load rics tz i18n %}
+{% localtime off %}
+    <dl class="govuk-summary-list">
+        {% if conf.referenceNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ conf.referenceNum }}</code></dd>
+            </div>
+        {% endif %}
+        {% if conf.referenceIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Reference</dt>
+                <dd class="govuk-summary-list__value"><code>{{ conf.referenceIA5 }}</code></dd>
+            </div>
+        {% endif %}
+        {% if conf.trainIA5 %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Delayed train</dt>
+                <dd class="govuk-summary-list__value">{{ conf.trainIA5 }}</dd>
+            </div>
+        {% endif %}
+        {% if conf.trainNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Delayed train</dt>
+                <dd class="govuk-summary-list__value">{{ conf.trainNum }}</dd>
+            </div>
+        {% endif %}
+        {% with departure_time=conf|rics_delay_departure_time %}
+            {% if departure_time %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Original time</dt>
+                    <dd class="govuk-summary-list__value">{{ departure_time|date:"F d, Y H:i:s e" }}</dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if conf.trainCancelled %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Delay</dt>
+                <dd class="govuk-summary-list__value">
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            {% trans "Train cancelled" %}
+                        </strong>
+                    </div>
+                </dd>
+            </div>
+        {% else %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Delay</dt>
+                <dd class="govuk-summary-list__value">{{ conf.delay }} minutes</dd>
+            </div>
+        {% endif %}
+        {% with station=conf.stationNum|get_station:conf %}
+            {% if station %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">At station</dt>
+                    <dd class="govuk-summary-list__value">
+                        {% include "main/uic/station.html" with station=station %}
+                    </dd>
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if conf.stationNum %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">At station number</dt>
+                <dd class="govuk-summary-list__value"><code>{{ conf.stationNum }}</code></dd>
+            </div>
+        {% endif %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Confirmation type</dt>
+            <dd class="govuk-summary-list__value">
+                {% if conf.confirmationType == "trainDelayConfirmation" %}
+                    The train was delayed, whether the traveler was on board in unconfirmed.
+                {% elif conf.confirmationType == "travelerDelayConfirmation" %}
+                    The traveler was on board of the delayed train.
+                {% elif conf.confirmationType == "trainLinkedTicketDelay" %}
+                    A ticket linked to the delayed train was issued.
+                {% endif %}
+            </dd>
+        </div>
+        {% if conf.infoText %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Extra info</dt>
+                <dd class="govuk-summary-list__value">{{ conf.infoText }}</dd>
+            </div>
+        {% endif %}
+        {% if conf.affectedTickets %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Linked tickets</dt>
+                <dd class="govuk-summary-list__value">
+                    {% for ticket in conf.affectedTickets %}
+                        {% include "main/uic/linked_ticket.html" with ticket=ticket %}
+                    {% endfor %}
+                </dd>
+            </div>
+        {% endif %}
+    </dl>
+{% endlocaltime %}
