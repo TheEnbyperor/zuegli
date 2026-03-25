@@ -190,6 +190,17 @@ def rics_arrival_time(value, issuing_time: datetime.datetime):
         travel_time = travel_time.replace(tzinfo=tz)
     return travel_time
 
+@register.filter(name="rics_delay_departure_time")
+def rics_delay_departure_time(value):
+    if "departureYear" not in value:
+        return None
+    departure_time = datetime.datetime(value["departureYear"], 1, 1, 0, 0, 0)
+    departure_time += datetime.timedelta(days=value["departureDay"]-1, minutes=value.get("departureTime", 0))
+    if "departureUTCOffset" in value:
+        tz = datetime.timezone(-datetime.timedelta(minutes=15 * value["departureUTCOffset"]))
+        departure_time = departure_time.replace(tzinfo=tz)
+    return departure_time
+
 
 @register.filter(name="nuts_region_name")
 def nuts_region_name(value):

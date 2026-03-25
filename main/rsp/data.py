@@ -191,6 +191,8 @@ class TicketData:
                 seat=f"{seat_2}{seat_1}" if seat_2 else "",
             ))
             offset += 45
+            if (offset + 45) >= 692:
+                break
 
         free_use = d.read_string(offset, offset+172)
 
