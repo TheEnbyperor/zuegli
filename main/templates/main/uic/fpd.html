@@ -8,7 +8,7 @@
                 {% include "main/uic/generic_id.html" with id=fpd.data.id %}
             </dd>
         </div>
-        {% if fpd.data.issuer.0 == "rics" %}
+        {% if fpd.data.issuer.0 == "rics" or fpd.data.issuer.0 == "orgCode" %}
             {% with org=fpd.data.issuer.1|rics %}
                 {% if org %}
                     <div class="govuk-summary-list__row">
@@ -19,7 +19,7 @@
                     </div>
                 {% else %}
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">{% trans "Issuer RICS" %}</dt>
+                        <dt class="govuk-summary-list__key">{% trans "Issuer organisation code" %}</dt>
                         <dd class="govuk-summary-list__value"><code>{{ fpd.data.issuer.1 }}</code></dd>
                     </div>
                 {% endif %}
@@ -53,10 +53,10 @@
                 <dt class="govuk-summary-list__key">{% trans "Affixed to" %}</dt>
                 <dd class="govuk-summary-list__value">
                     <!-- TODO: station, shared vehicle, proprietary -->
-                    {% if fpd.data.affixedTo.0 == "railVehicle" %}
+                    {% if fpd.data.affixedTo.0 == "vehicle" %}
                         <div class="govuk-summary-card">
                             <div class="govuk-summary-card__title-wrapper">
-                                <h2 class="govuk-summary-card__title">{% trans "Rail vehicle" %}</h2>
+                                <h2 class="govuk-summary-card__title">{% trans "Vehicle" %}</h2>
                             </div>
                             <div class="govuk-summary-card__content">
                                 <dl class="govuk-summary-list">
@@ -64,7 +64,7 @@
                                         <div class="govuk-summary-list__row">
                                             <dt class="govuk-summary-list__key">{% trans "European Vehicle Number" %}</dt>
                                             <dd class="govuk-summary-list__value">
-                                                {{ fpd.data.affixedTo.1.id.1 }}
+                                                {{ fpd.data.affixedTo.1.id.1|format_evn }}
                                             </dd>
                                         </div>
                                     {% elif fpd.data.affixedTo.1.id.0 == "proprietary" %}
@@ -87,6 +87,9 @@
                                 </dl>
                             </div>
                         </div>
+                    {% elif fpd.data.affixedTo.0 == "proprietary" %}
+                        <b>{% trans "Proprietary ID" %}:</b>
+                        {{ fpd.data.affixedTo.1.1 }}
                     {% endif %}
                 </dd>
             </div>

@@ -352,8 +352,14 @@ class UICTicket:
             return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderNum"]
 
         if self.fpd:
-            if "issuer" in self.fpd.data and self.fpd.data["issuer"][0] == "rics":
-                return self.fpd.data["issuer"][1]
+            if "issuer" in self.fpd.data:
+                if self.fpd.data["issuer"][0] == "rics":
+                    return self.fpd.data["issuer"][1]
+                elif self.fpd.data["issuer"][0] == "orgCode":
+                    try:
+                        return int(self.fpd.data["issuer"][1], 10)
+                    except ValueError:
+                        pass
 
         return 0
 
@@ -367,6 +373,8 @@ class UICTicket:
         if self.fpd:
             if "issuer" in self.fpd.data:
                 if self.fpd.data["issuer"][0] == "eraCode":
+                    return self.fpd.data["issuer"][1].encode("utf-8")
+                elif self.fpd.data["issuer"][0] == "orgCode":
                     return self.fpd.data["issuer"][1].encode("utf-8")
                 elif self.fpd.data["issuer"][0] == "otherCode":
                     v = self.fpd.data["issuer"][1]
@@ -502,7 +510,7 @@ class UICTicket:
                     r.format.startswith("FCB") or r.format.startswith("FDC")
                     or r.format == "_5101PTIX" or r.format == "_5101PXW"
                     or r.format == "_5101TOTP"
-                    or r.format == "_3896FPD0"
+                    or r.format == "_3896FPD0" or r.format == "FPD1"
             )],
         )
 
@@ -1493,17 +1501,28 @@ def parse_ticket_uic_dosipas_pretix_totp(ticket_envelope: uic.DOSIPASEnvelope) -
 def parse_ticket_uic_dosipas_fpd(ticket_envelope: uic.DOSIPASEnvelope) -> typing.Optional["uic.fpd.FixedPointData"]:
     # Temp ID until standardised
     record = next(filter(lambda r: r.format == "_3896FPD0", ticket_envelope.records), None)
-    if not record:
-        return None
+    if record:
+        try:
+            return uic.fpd.FixedPointData.parse_tcs(record.data)
+        except uic.util.UICException:
+            raise TicketError(
+                title="Invalid UIC Fixed Point Data",
+                message="The FPD can't be parsed - the data is likely invalid.",
+                exception=traceback.format_exc()
+            )
 
-    try:
-        return uic.fpd.FixedPointData.parse(record.data)
-    except uic.util.UICException:
-        raise TicketError(
-            title="Invalid UIC Fixed Point Data",
-            message="The FPD can't be parsed - the data is likely invalid.",
-            exception=traceback.format_exc()
-        )
+    record = next(filter(lambda r: r.format == "FPD1", ticket_envelope.records), None)
+    if record:
+        try:
+            return uic.fpd.FixedPointData.parse(record.data)
+        except uic.util.UICException:
+            raise TicketError(
+                title="Invalid UIC Fixed Point Data",
+                message="The FPD can't be parsed - the data is likely invalid.",
+                exception=traceback.format_exc()
+            )
+
+    return None
 
 
 def parse_ticket_uic(ticket_bytes: bytes, context: TicketContexts) -> UICTicket:

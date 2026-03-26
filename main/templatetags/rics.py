@@ -466,3 +466,9 @@ def intercode_retail_server_id(value: int):
 def intercode_retailer_id(value: int):
     intercode_data = uic.sncf.get_intercode_data()
     return intercode_data["retailer_id"].get(str(value))
+
+
+@register.filter(name="format_evn")
+def format_evn(value: int):
+    value = f"{value}:012"
+    return f"{value[0:2]} {value[2:4]} {value[4:8]} {value[8:11]}-{value[11:12]}"
