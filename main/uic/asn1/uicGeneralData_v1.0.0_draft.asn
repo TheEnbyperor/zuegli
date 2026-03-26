@@ -1,0 +1,301 @@
+ASN-Module-GeneralData { iso(1) identified-organization(3) dod(6)
+    internet(1) private(4) enterprise(1) uic(17218) fcb(1) modules(0) general(5) v1(1) 0 }
+    DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+-- ##############################################################################################
+-- #  Generic definitions for common elements shared across many UIC ASN.1 modules.
+-- #  Version 1.0.0
+-- #
+-- #  ISO Country codes are used to code countries.
+-- #    As Kosovo does not have an official ISO Country Code the following codes are used:
+-- #      926 for Kosovo as numeric ISO Country Code
+-- #      XK  for Kosovo as alphanumeric 2-character ISO Country Code
+-- #
+-- #  Encoding and handling of text:
+-- #    Text fields in this specification are OCTET STRINGS.
+-- #    The contents of these fields MUST be encoded according to the Standard Compression Scheme for Unicode (SCSU, https://www.unicode.org/reports/tr6/tr6-4.html).
+-- #    For encoders than only ever output US-ASCII and ISO 8859-1 (Latin-1) between U+0020 and U+00FF, no special handling is required to generate SCSU data,
+-- #     the Latin-1 encoding is already valid SCSU.
+-- #    All decoders MUST be able to handle the full SCSU specification on reading and parsing data.
+-- #    The International Components for Unicode (https://icu.unicode.org/) is the recommended implementation of SCSU,
+-- #     if you are unsure which implementation to use, although it is by no means required.
+-- #
+-- #    Systems dealing with the contained data MUST be compliant to DIN 91379.
+-- #    That is, they can handle (store, transfer, recall, and represent) all characters as specified in DIN 91379 without error.
+-- #    Additionally, all Unicode text, before being fed into the SCSU compressor, MUST be in Normalisation Form C.
+-- #    When comparing names with identity documents, or when a Latinized representation of a name is required,
+-- #      the system MUST transliterate according to ICAO 9303 Part 3, specifically sections 4.6 and 6.
+-- #    The text stored in the ticket SHOULD be in its original script, with transliteration performed by the reading device.
+-- #    The reading device SHOULD show both the original script, and the Latinized form.
+-- #
+-- #    The "language" field, if present, MUST be used to select to correct Latinization of Cyrillic characters.
+-- #    The relevant languages for special considerations in ICAO 9303 Latinization are:
+-- #      - be: Belarusian
+-- #      - bg: Bulgarian
+-- #      - uk: Ukrainian
+-- #      - mk: Macedonian
+-- #      - sr: Serbian
+-- #
+-- #  Encoding of time:
+-- #    Time is encoded as the number of minutes of the day from 0 = 00:00 to 1439 = 23:59.
+-- #    Time data elements end with "time" in their name.
+-- ##############################################################################################
+
+EXPORTS ALL;
+
+-- Identification of any element using a numerical, alphanumerical or binary ID, according to the code list defined in the container object.
+GenericId ::= CHOICE {
+    idNum   INTEGER,        -- for numerical IDs
+    idIA5   VisibleString,  -- for alphanumerical IDs
+    idOct   OCTET STRING    -- for binary IDs such as UUIDs
+}
+
+GenericCode{IdType} ::= SEQUENCE {
+    codeTable CHOICE {
+        issuer          NULL,             -- Bilaterally agreed code table of the 'issuer' defined in issuingDetail.
+        productOwner    NULL,             -- Bilaterally agreed code table provided by the product owner.
+        carrier         NULL,             -- Bilaterally agreed code table provided by the carrier(s) participating in the related route segment.
+        area            NULL,             -- Bilaterally agreed code table for the area defined by the element 'concernedArea' defined in the container object.
+        national        INTEGER (0..999), -- National code list of the national authority the country defined by its ISO 3166-1 numeric code.
+        company         CompanyCode       -- Bilaterally agreed code table provided by the company defined according to its CompanyCodeType.
+    },
+    codeTableVersion INTEGER (0..255) OPTIONAL,
+    id IdType
+}
+
+-- A STOP PLACE in Transmodel (EN 12896-2:2016 § 5.4.3)
+Station ::= SEQUENCE {
+    station             CHOICE {
+        -- ERA TEL TSI Primary Location Code, as per https://teleref.era.europa.eu
+        --   A 7 digit code (country code + 5 digit local code) rail station codes.
+        --   A 9 digit code (2-digit scope code + country code + 5 digit local code) equates to non-rail station codes.
+        era         INTEGER (1..999999999),
+        generic     GenericCode{GenericId}
+    },
+    stationNameUTF8     UnicodeText OPTIONAL
+}
+
+StationSet ::= SEQUENCE {
+    set CHOICE {
+        -- Where a station group is defined a number of stations grouped together with a primary station
+        groupPrimary    Station,
+        -- Explicitly listing all stations in a group
+        list            SEQUENCE OF Station
+    },
+    setNameUTF8 UnicodeText OPTIONAL
+}
+
+-- A LINE in Transmodel (EN 12896-2:2016 § 5.3.7.4)
+LineId ::= CHOICE {
+    publicIdentifier    VisibleString (FROM ("A".."Z"|"0".."9")), -- e.g. "RE1"
+    generic             GenericCode{GenericId}
+}
+
+-- A SERVICE JOURNEY in Transmodel (EN 12896-3:2016 § 5.3.2)
+TransportId ::= CHOICE {
+    publicIdentifier    VisibleString (FROM ("A".."Z"|"0".."9")), -- e.g. "ICE107"
+    generic             GenericCode{GenericId}
+}
+
+-- A geographic area defined under the Nomenclature of Territorial Units for Statistics (Regulation EC 1059/2003).
+-- Divisions all the way down to the Local Administrative Unit are permitted.
+-- NUTS codes are only defined for members of the EU, the EFTA, and EU candidate countries.
+-- FAUs are permitted standalone, e.g. DE025F (Freiburg im Breisgau) is coded with the subdivision "025F".
+-- LAUs must be appended to their NUTS3 code, e.g. DE13308316011 for Emmendingen, Stadt.
+-- For those countries outside the NUTS system:
+--   - the UK maintains a compatible system since Brexit called the International Territorial Level;
+--   - otherwise, use the the OECD Territorial Region codes (http://oe.cd/geostats).
+--   - if none of the above applies for a country, a choice of suitable system MUST be defined by UIC,
+--      users MUST NOT define bilateral subdivisions.
+NUTSArea ::= SEQUENCE {
+    -- ISO 3166-1 numeric code
+    country         INTEGER (0..999),
+    subdivision     VisibleString (FROM ("A".."Z"|"1".."9")) OPTIONAL
+}
+
+-- One or more areas of geographic validity
+AreaSet ::= CHOICE {
+    -- European NUTS code.
+    nuts    SEQUENCE OF NUTSArea,
+    generic GenericCode{CHOICE {
+        -- Sequence of area/zone identifiers
+        idNum    SEQUENCE OF INTEGER,       -- e.g. sequence of allowed area/zone numbers such as {1,5,23}
+        idIA5    SEQUENCE OF VisibleString, -- e.g. areas/zones described with text such as {"M","1-3"}
+        idOct    SEQUENCE OF OCTET STRING,  -- e.g. sequence of Calypso NetworkIds such as {'250901'H,'250072'H}
+        -- Bit representation of areas/zones.
+        -- Recommended encoding if applicable: bit n (considering that bit 0 = right-most bit) encodes area/zone n+1, bit value 1 = area/zone is allowed, bit value 0 = area/zone is forbidden.
+        idBit    BIT STRING                -- e.g. bitmap of allowed areas/zones such as '10101110010'B for areas/zones 2, 5, 6, 7, 9 and 11
+    }}
+}
+
+-- Place data according to TEL TSI B.5
+-- placeString = place number ranges in case of groups
+CoachPlaces ::= SEQUENCE {
+    coach               VisibleString               OPTIONAL,
+
+    -- Printable place string  (e.g. "15-18, 21, 22")
+    placeString         VisibleString               OPTIONAL,
+
+    -- Printable place description
+    placeDescription    UnicodeText                 OPTIONAL,
+
+    -- Individual places
+    placeNumber         SEQUENCE OF PlaceNumber     OPTIONAL,
+
+    details             PlaceDetails            OPTIONAL
+}
+
+-- Identification of an individual place
+PlaceNumber ::= CHOICE {
+    placeNum      INTEGER (1..999),
+    placeIA5      VisibleString
+}
+
+-- Compartment details according to TEL TSI B.5
+PlaceDetails ::= SEQUENCE {
+    -- Per TEL TSI Code List B.5.51.1
+    coachType       INTEGER (0..99),
+    -- Per TEL TSI Code List B.5.51.2
+    compartmentType INTEGER (0..99),
+    -- Per TEL TSI Code List B.5.51.3
+    specialOffers   INTEGER (0..99),
+    description     UnicodeText     OPTIONAL
+}
+
+-- A TRANSPORT ORGANIZATION in Transmodel (EN 12896-1:2016 § 5.6.8)
+CompanyCode ::= CHOICE {
+    -- For companies within the EU this field SHALL be their ERA assigned Organisation Code.
+    -- For others this field SHALL be their UIC assed RICS Code.
+    -- If a company has no such code, otherCode MAY be used.
+    -- ERA Organisation Codes are available from https://teleref.era.europa.eu/
+    -- UIC RICS Codes are available from https://uic.org/support-activities/it/rics
+    orgCode     VisibleString (SIZE (4) ^ FROM ("A".."Z"|"0".."9")),
+
+	otherCode   SEQUENCE {
+		--  The value of 'codeTable' identifies the company identifier format according to the following:
+		--    "+" + [2-letter uppercase ISO 3166 country code] + [addon, chosen by the national standards body of that country]
+		--    "_" + [RICS or ERA Organisation Code] + [addon, chosen by this company]
+		--    "*" + [addon] - private use, not guaranteed to avoid clashes
+		--    Compressed company form (i.e. "!I", "!C", "!P") are not permitted here.
+		--    Any other value only after registration in the company_code.csv registry.
+		--    The use of unregistered values (outside of the national, company, and private use ranges) is strictly forbidden.
+		--    All values should be registered via the UIC Github repository.
+		codeTable   VisibleString,
+		code        VisibleString
+	}
+}
+
+-- Compressed Unicode text
+UnicodeText ::= SEQUENCE {
+    -- SCSU encoding of the textual data
+    text        OCTET STRING,
+    -- ISO 639-1 coding (lower case) of the text's language
+    language    VisibleString (SIZE(2) ^ FROM ("a".."z"))   OPTIONAL
+}
+
+-- Generic types for geo coordinates
+GeoCoordinate ::= SEQUENCE {
+    position            GeoUnit,
+    coordinateSystem    GeoCoordinateSystem   DEFAULT wgs84,
+    accuracy            GeoUnitType           OPTIONAL  -- If omitted the accuracy is unknown
+}
+
+GeoCoordinateSystem ::= ENUMERATED {
+    wgs84   (0), -- WGS 84 standard system
+    grs80   (1)  -- (outdated) GRS 80 coordinate system
+}
+
+GeoUnitType ::= ENUMERATED {
+    tenthMilliDegree    (0), -- 1 / 10000 degree is approx. 11 meter on earth surface
+    milliDegree         (1), -- approx 110 meter on earth surface
+    centiDegree         (2),
+    deciDegree          (3)
+}
+
+GeoUnit ::= CHOICE {
+  tenthMilliDegree SEQUENCE {
+    longitude INTEGER (-1800000..1800000),
+    latitude  INTEGER (-900000..900000)
+  },
+  milliDegree SEQUENCE {
+    longitude INTEGER (-180000..180000),
+    latitude  INTEGER (-90000..90000)
+  },
+  centiDegree SEQUENCE {
+    longitude INTEGER (-18000..18000),
+    latitude  INTEGER (-9000..9000)
+  },
+  deciDegree SEQUENCE {
+    longitude INTEGER (-1800..1800),
+    latitude  INTEGER (-900..900)
+  }
+}
+
+-- Generic timestamp, expressed in UTC
+Timestamp ::= SEQUENCE {
+    year INTEGER (2016..2269),
+    -- The number of the day in the year (1st Jan = 1)
+    day INTEGER (1..366),
+    -- The number of the minutes of the day
+    time INTEGER (0..1439)
+}
+
+--  Generic data container.
+--
+--  The value of 'dataFormat' identifies how 'data' is encoded:
+--    "+" + [2-letters uppercase ISO 3166 country code] + [addon, chosen by the national standards body of that country]
+--    "_" + [RICS or ERA Organisation Code] + [addon, chosen by this company]
+--    "!I" + [addon, chosen by the issuer] - equivalent to the _RICS format, without repetition of the issuer's code
+--    "!C" + [addon, chosen by the carrier] - equivalent to the _RICS format, without repetition of the carriers's code
+--    "!P" + [addon, chosen by the product owner] - equivalent to the _RICS format, without repetition of the product owner's code
+--    "*" + [addon] - private use, not guaranteed to avoid clashes
+--    Any other value only after registration in the extension_data.csv registry
+--    The use of unregistered values (outside of the national, company, and private use ranges) is strictly forbidden.
+--    All values should be registered via the UIC Github repository.
+Data ::= SEQUENCE {
+    dataFormat  VisibleString,
+    data        OCTET STRING
+}
+
+-- Per NeTEx PersonalVehicleCategory (CEN/TS 16614-5:2022 § 10.1.4.3.4.2)
+SharedVehicleVariety ::= ENUMERATED {
+    scooter (0),        -- Scooter - small wheeled low mobile platform
+    bicycle (1),        -- Bicycle.
+    tricycle (2),       -- Tricycle.
+    tandem (3),         -- Tandem bicycle.
+    moped (4),          -- Moped (Small motorbike).
+    motorcycle (5),     -- Motorcycle.
+    quadbike (6),       -- Motorcycle.
+    car (7),            -- Car of any size.
+    microCar (8),       -- Extremely small vehicle.
+    miniCar (9),        -- Very small vehicle.
+    smallCar (10),      -- Small vehicle.
+    mediumCar (11),     -- Compact vehicle.
+    largeCar (12),      -- Large vehicle.
+    minivan (13),       -- Minivan.
+    transporter (14),   -- Large people transporter / minibus.
+    snowmobile (15),    -- Snowmobile.
+    other (16),         -- Other category.
+    ...
+}
+
+-- Per NeTEx PropulsionType (CEN/TS 16614-5:2022 § 10.1.4.3.2.2)
+SharedVehiclePropulsionType ::= ENUMERATED {
+    combustion (0),     -- Combustion of any sort
+    hybrid (1),         -- Electric/Combustion Hybrid
+    human (2),          -- Human powered (pedal, scoot etc)
+    electricAssist (3), -- Human power with electric assistance.
+    other (4),          -- Other power
+    ...
+}
+
+-- As per GBFSv3.0, to be replaced by a NeTEx mapping once standardised
+SharedVehicleReturnConstraint ::= ENUMERATED {
+    freeFloating (0),
+    roundtripStation (1),
+    anyStation (2),
+    hybrid (3),
+    ...
+}
+
+END

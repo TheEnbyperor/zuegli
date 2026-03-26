@@ -1,0 +1,81 @@
+ASN-Module-FixedPointData DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+IMPORTS GenericIdType, CompanyCodeType, StationType, PlaceNumberType, ExtensionData FROM ASN-Module-RailTicketData;
+
+-- Value "FPD1" in element dataFormat of UicBarcodeHeader.
+-- UicBarcodeHeader need not be signed (i.e. level1Signature unset), if the situation does not require it.
+
+-- Optional format for combining a FixedPointData structure with a URL for inclusion in a QR code.
+-- This is useful, for example, in the case of customer feedback barcodes that should link to the operator's website
+-- for reporting faults, or for directing users to download an app to access a shared vehicle.
+--
+-- (1) Encode this structure is the DOSIPAS format in the usual way
+-- (2) Base-42 encode the resultant binary data with the following alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$:*+-."
+-- (3) Append it to the end of a URL with the prefix "$UIC:"
+--
+-- Example: "HTTPS://RAIL.EXAMPLE/QRFB/$UIC:A2I9$QRYBF1D0MDK0J5ANAJ**R1NM090.7-DEIU+L2"
+-- n.b. uppercase should be used in the whole URL, as this is much more efficient to encode in a QR code
+
+FixedPointData ::= SEQUENCE {
+    -- The ID should be eternally unique per issuer
+    id          GenericIdType,
+    -- If different from the security provider
+    -- Required to be set if the barcode is unsigned (i.e. no security provider)
+    issuer      CompanyCodeType             OPTIONAL,
+    specimen    BOOLEAN,
+    affixedTo   Object                      OPTIONAL,
+    -- Additional important information about this fixed point
+    infoText    UTF8String                  OPTIONAL,
+    extension   SEQUENCE OF ExtensionData   OPTIONAL,
+    ...
+}
+
+Object ::= CHOICE {
+    station         Station, -- for check-in/check-out by scanning
+    vehicle     	RailVehicle, -- e.g. for at-seat ordering, customer reporting of vehicle defects
+    sharedVehicle   SharedVehicle, -- e.g. bike, e-scooter, car sharing
+    proprietary     GenericIdType, -- defined by the issuer
+    ...
+}
+
+Station ::= SEQUENCE {
+    station                 StationType,
+    platform                VisibleString   OPTIONAL,
+    subLocationProprietary  GenericIdType   OPTIONAL -- values defined by the issuer
+}
+
+RailVehicle ::= SEQUENCE {
+    id                      RailVehicleIdentifier,
+    place                   PlaceNumberType OPTIONAL, -- for identifying at which seat/compartment this barcode is placed, if at a seat
+    subLocationProprietary  GenericIdType   OPTIONAL, -- when affixed non-seat items or sub-items within a compartment, values defined by the issuer
+    ...
+}
+
+RailVehicleIdentifier ::= CHOICE {
+    evn             INTEGER (0..999999999999), -- ERA European Vehicle Number, including the check digit
+    proprietary     GenericIdType,
+    ...
+}
+
+-- Built upon GBFSv3.0
+-- Reference: https://github.com/MobilityData/gbfs-json-schema/blob/master/v3.0/vehicle_types.json
+SharedVehicle ::= SEQUENCE {
+    vehicleType     SharedVehicleType,
+    id              GenericIdType, -- defined by the issuer
+    ...
+}
+
+-- Values taken from GBFS
+SharedVehicleType ::= ENUMERATED {
+    bicycle (0),
+    cargoBicycle (1),
+    car (2),
+    moped (3),
+    scooterStanding (4),
+    scooterSeated (5),
+    other (6),
+    scooter (7),
+    ...
+}
+
+END
