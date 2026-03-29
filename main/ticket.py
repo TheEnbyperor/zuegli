@@ -164,6 +164,7 @@ class UICTicket:
                                     5062,  # Dessauer Verkehrs GmbH
                                     5173,  # Nahverkehrsservice Sachsen-Anhalt GmbH
                                     5197,  # Augsburger Verkehrs- und Tarifverbund GmbH
+                                    5211,  # Vetter GmbH Omnibus- und Mietwagenbetrieb
                             ) or self.dt_ti or self.dt_pa or
                              security_num == 3634  # Deutschlandtarifverbund GmbH
                             ):

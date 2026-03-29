@@ -471,4 +471,4 @@ def intercode_retailer_id(value: int):
 @register.filter(name="format_evn")
 def format_evn(value: int):
     value = f"{value}:012"
-    return f"{value[0:2]} {value[2:4]} {value[4:8]} {value[8:11]}-{value[11:12]}"
+    return f"{value[0:2]} {value[2:4]} {value[4:8]} {value[8:11]} - {value[11:12]}"
