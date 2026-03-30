@@ -410,30 +410,49 @@
                             <div class="govuk-summary-card__content">
                                 {% if journey.coach or journey.seat %}
                                     <dl class="govuk-summary-list">
-                                        {% if journey.coach %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Carriage</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    {{ train.coach }}
-                                                </dd>
-                                            </div>
-                                        {% endif %}
-                                        {% if journey.seats %}
-                                            <div class="govuk-summary-list__row">
-                                                <dt class="govuk-summary-list__key">Seats</dt>
-                                                <dd class="govuk-summary-list__value">
-                                                    <ul>
-                                                        {% for seat in journey.seats %}
-                                                            <li>{{ seat }}</li>
-                                                        {% endfor %}
-                                                    </ul>
-                                                </dd>
-                                            </div>
-                                        {% endif %}
-                                    </dl>
+                                    {% if journey.coach %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Carriage</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                {{ journey.coach }}
+                                            </dd>
+                                        </div>
+                                    {% endif %}
+                                    {% if journey.seats %}
+                                        <div class="govuk-summary-list__row">
+                                            <dt class="govuk-summary-list__key">Seats</dt>
+                                            <dd class="govuk-summary-list__value">
+                                                <ul>
+                                                    {% for seat in journey.seats %}
+                                                        <li>{{ seat }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </dd>
+                                        </div>
+                                    {% endif %}
                                 {% else %}
                                     No seat reservation
+                                    <dl class="govuk-summary-list">
                                 {% endif %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">Transport type</dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% if journey.type == 0 %}
+                                            Unknown
+                                        {% elif journey.type == 1 %}
+                                            Railway
+                                        {% elif journey.type == 2 %}
+                                            Bus
+                                        {% elif journey.type == 3 %}
+                                            Tram
+                                        {% elif journey.type == 4 %}
+                                            Boat
+                                        {% elif journey.type == 5 %}
+                                            Mountain Railway
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                                </dl>
                             </div>
                         </div>
                     {% endfor %}
