@@ -5132,8 +5132,8 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             }
         })
 
-        if ticket_data.data.ticket.ticket_data.train_data:
-            train_number = ", ".join([t.train_id for t in ticket_data.data.ticket.ticket_data.train_data])
+        if ticket_data.data.ticket.ticket_data.transport:
+            train_number = ", ".join([t.journey_number for t in ticket_data.data.ticket.ticket_data.transport])
             pass_fields["headerFields"].append({
                 "key": "train-number",
                 "label": "train-number-label",
@@ -5146,37 +5146,37 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_fields["headerFields"].append({
                 "key": "product",
                 "label": "product-label",
-                "value": ticket_data.data.ticket.ticket_data.trip_data.ticket_type.name
+                "value": ticket_data.data.ticket.ticket_data.tariff.product.name
             })
 
         pass_fields["backFields"].append({
             "key": "product-back",
             "label": "product-label",
-            "value": ticket_data.data.ticket.ticket_data.trip_data.ticket_type.name
+            "value": ticket_data.data.ticket.ticket_data.tariff.product.name
         })
 
-        if ticket_data.data.ticket.ticket_data.trip_data.departure_station or \
-                ticket_data.data.ticket.ticket_data.trip_data.arrival_station:
+        if ticket_data.data.ticket.ticket_data.tariff.departure_station or \
+                ticket_data.data.ticket.ticket_data.tariff.arrival_station:
             pass_type = "boardingPass"
             pass_fields["transitType"] = "PKTransitTypeTrain"
 
-        if ticket_data.data.ticket.ticket_data.trip_data.departure_station:
+        if ticket_data.data.ticket.ticket_data.tariff.departure_station:
             pass_fields["primaryFields"].append({
                 "key": "from-station",
                 "label": "from-station-label",
-                "value": ticket_data.data.ticket.ticket_data.trip_data.departure_station,
+                "value": ticket_data.data.ticket.ticket_data.tariff.departure_station,
                 "semantics": {
-                    "departureStationName": ticket_data.data.ticket.ticket_data.trip_data.departure_station
+                    "departureStationName": ticket_data.data.ticket.ticket_data.tariff.departure_station
                 }
             })
 
-        if ticket_data.data.ticket.ticket_data.trip_data.arrival_station:
+        if ticket_data.data.ticket.ticket_data.tariff.arrival_station:
             pass_fields["primaryFields"].append({
                 "key": "to-station",
                 "label": "to-station-label",
-                "value": ticket_data.data.ticket.ticket_data.trip_data.arrival_station,
+                "value": ticket_data.data.ticket.ticket_data.tariff.arrival_station,
                 "semantics": {
-                    "arrivalStationName": ticket_data.data.ticket.ticket_data.trip_data.arrival_station
+                    "arrivalStationName": ticket_data.data.ticket.ticket_data.tariff.arrival_station
                 }
             })
 
@@ -5212,18 +5212,18 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
 
         pass_json["expirationDate"] = ticket_data.data.valid_until.isoformat()
 
-        if ticket_data.data.ticket.ticket_data.trip_data.route:
+        if ticket_data.data.ticket.ticket_data.tariff.route:
             pass_fields["auxiliaryFields"].append({
                 "key": "route",
                 "label": "route-label",
-                "value": ", ".join(ticket_data.data.ticket.ticket_data.trip_data.route)
+                "value": ", ".join(ticket_data.data.ticket.ticket_data.tariff.route)
             })
 
-        if ticket_data.data.ticket.ticket_data.trip_data.travel_class:
+        if ticket_data.data.ticket.ticket_data.tariff.travel_class:
             pass_fields["auxiliaryFields"].append({
                 "key": "class-code",
                 "label": "class-code-label",
-                "value": f"class-code-{ticket_data.data.ticket.ticket_data.trip_data.travel_class}-label"
+                "value": f"class-code-{ticket_data.data.ticket.ticket_data.tariff.travel_class}-label"
             })
 
         if ticket_data.data.ticket.ticket_data.HasField("traveler"):
@@ -5281,11 +5281,11 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             "value": ticket_data.data.issuing_time.isoformat(),
         })
 
-        if ticket_data.data.ticket.ticket_data.trip_data.article_number:
+        if ticket_data.data.ticket.ticket_data.tariff.product_number:
             pass_fields["backFields"].append({
                 "key": "article-number",
                 "label": "article-number-label",
-                "value": str(ticket_data.data.ticket.ticket_data.trip_data.article_number)
+                "value": str(ticket_data.data.ticket.ticket_data.tariff.product_number)
             })
 
         if ticket_data.data.ticket.ticket_data.HasField("payment"):
@@ -5311,14 +5311,14 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
                     "value": distributor["full_name"],
                 })
 
-        if seller := swisspass.org_id.get_org(ticket_data.data.ticket.ticket_data.ticket_issue.issuing_org):
+        if seller := swisspass.org_id.get_org(ticket_data.data.ticket.ticket_data.sale.issuing_org):
             pass_fields["backFields"].append({
                 "key": "ticket-org",
                 "label": "ticketing-organisation-label",
                 "value": f"{seller['short_name']} - {seller['name']}"
             })
 
-        issuer_id = ticket_data.data.ticket.ticket_data.ticket_issue.issuing_org
+        issuer_id = ticket_data.data.ticket.ticket_data.sale.issuing_org
         if issuer_id in SWISSPASS_LOGO:
             add_pkp_img(pkp, SWISSPASS_LOGO[issuer_id], "logo.png")
             have_logo = True
