@@ -42,7 +42,7 @@ def download_data():
             "short_name": row["Acronym"],
             "full_name": row["Organisation Name / Legal denomination"],
             "country": row["Country"],
-            "add_date": row["Date of allocation"].date().isoformat(),
+            "add_date": row["Date of allocation"].date().isoformat() if row["Date of allocation"] else None,
             "domains": row["Domains of activity"],
             "url": row["Website"] if row["Website"] else None,
         }
