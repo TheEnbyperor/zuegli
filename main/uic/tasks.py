@@ -30,7 +30,7 @@ DTVG_BLOCKLIST_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/bla
 def download_data():
     uic_storage = django.core.files.storage.storages["uic-data"]
 
-    codes_r = niquests.get("https://teleref.era.europa.eu/Download_CompanycodesExcel.aspx", headers={
+    codes_r = niquests.get("https://teleref.era.europa.eu/DownloadOrganizationCodes.aspx", headers={
         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
     })
     codes_r.raise_for_status()
