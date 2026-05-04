@@ -45,3 +45,5 @@ django-solo
 celery
 django-celery-beat
 django-mathfilters
+openpyxl
+openpyxl-dictreader
