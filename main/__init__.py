@@ -15,7 +15,7 @@ retry_strategy = urllib3.util.Retry(
     status_forcelist=[429, 500, 502, 503, 504],
 )
 adapter = niquests.adapters.HTTPAdapter(max_retries=retry_strategy)
-session = niquests.Session()
-session.proxies.update(socks_proxies)
+session = niquests.Session(happy_eyeballs=True, po)
+# session.proxies.update(socks_proxies)
 session.mount("http://", adapter)
 session.mount("https://", adapter)

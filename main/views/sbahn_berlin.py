@@ -11,8 +11,8 @@ from .. import forms, eos, sbahn_berlin, models, adapter, socks_proxies
 def login(username: str, password: str) -> typing.Optional[typing.Tuple[str, str]]:
     device_id = eos.get_device_id()
 
-    session = niquests.Session()
-    session.proxies.update(socks_proxies)
+    session = niquests.Session(happy_eyeballs=True)
+    # session.proxies.update(socks_proxies)
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 

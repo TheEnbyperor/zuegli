@@ -1176,7 +1176,7 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             obj["state"] = "EXPIRED"
             obj["barcode"] = {
                 "type": "TEXT_ONLY",
-                "value": f"VOID - #{ticket_data.data.pnr}"
+                "value": f"VOID - #{ticket_data.ticket_id()}"
             }
         else:
             obj["state"] = "ACTIVE"
