@@ -761,6 +761,12 @@ class SSBTicket:
             hd.update(self.data.pnr.encode("utf-8"))
         return base64.b32encode(hd.digest()).decode("utf-8")
 
+    def ticket_id(self):
+        if isinstance(self.data, ssb.sz.Ticket):
+            return str(self.data.unique_ticket_id)
+        else:
+            return self.data.pnr
+
 
 @dataclasses.dataclass
 class SSB1Ticket:

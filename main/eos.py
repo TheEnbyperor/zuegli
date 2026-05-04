@@ -12,6 +12,8 @@ import bs4
 import urllib.parse
 from Crypto.Cipher import AES
 from django.core.files.storage import storages
+from django.utils import timezone
+
 from . import models, aztec, ticket, apn, session
 
 
