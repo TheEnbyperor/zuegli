@@ -1,5 +1,3 @@
-import time
-
 import niquests
 import secrets
 import hashlib
@@ -12,9 +10,7 @@ import bs4
 import urllib.parse
 from Crypto.Cipher import AES
 from django.core.files.storage import storages
-from django.utils import timezone
-
-from . import models, aztec, ticket, apn, session
+from . import models, aztec, ticket, apn, socks_proxies, adapter
 
 
 logger = logging.getLogger(__name__)
@@ -92,6 +88,11 @@ def map_customer_field(f):
 
 
 def login(account: "models.Account", operator: str, username: str, password: str) -> bool:
+    session = niquests.Session()
+    session.proxies.update(socks_proxies)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
     _, license_info = get_eos_instance(operator)
     device_id = get_device_id()
     r = session.post(f"{license_info['url_base']}/index.php/mobileService/login", json={
@@ -122,6 +123,11 @@ def login(account: "models.Account", operator: str, username: str, password: str
 
 
 def get_customer_account(account: "models.Account", operator: str):
+    session = niquests.Session()
+    session.proxies.update(socks_proxies)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
     _, license_info = get_eos_instance(operator)
     account_token = models.AccountOAuth.objects.get(account=account, provider=operator)
 
@@ -137,6 +143,11 @@ def get_customer_account(account: "models.Account", operator: str):
 
 
 def update_eos_tickets(account: "models.Account", operator: str):
+    session = niquests.Session()
+    session.proxies.update(socks_proxies)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
     _, license_info = get_eos_instance(operator)
     account_token = models.AccountOAuth.objects.filter(account=account, provider=operator).first()
     if not account_token:

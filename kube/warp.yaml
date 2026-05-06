@@ -53,9 +53,17 @@ spec:
               gost -L :1080 -F=127.0.0.1:40000
           livenessProbe:
             exec:
-              command: ["bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/40000"]
+              command: ["bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/1080"]
             initialDelaySeconds: 60
             periodSeconds: 5
+        - name: clatd
+          image: as207960/clatd
+          command: [
+            "/bin/bash", "-c",
+            "/clatd/clatd clat-v6-addr=fd2e:ae7d:58e3:f6ab::1 v4-conncheck-enable=no 'script-up=ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE'"
+          ]
+          securityContext:
+            privileged: true
 ---
 apiVersion: v1
 kind: Service
