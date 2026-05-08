@@ -76,7 +76,7 @@
     {% elif ticket.dosipas_envelope %}
         <dl class="govuk-summary-list summary-list-always-break">
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">{% trans "Barcode version" %}</dt>
+                <dt class="govuk-summary-list__key">{% trans "DOSIPAS Barcode version" %}</dt>
                 <dd class="govuk-summary-list__value">{{ ticket.dosipas_envelope.version }}</dd>
             </div>
             {% if ticket.dosipas_envelope.level_2_data.level1Data.securityProviderNum %}
