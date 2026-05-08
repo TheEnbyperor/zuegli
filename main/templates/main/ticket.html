@@ -265,7 +265,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.ticket.ticket_id %}VDV Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 <span>{{ instance.validity_start|date:"F d, Y H:i:s e" }} - {{ instance.validity_end|date:"F d, Y H:i:s e" }}</span>
                             </summary>
@@ -305,7 +305,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.ticket_id %}UIC Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
@@ -324,7 +324,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=instance.reference %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=instance.reference %}RSP Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% trans "Type" %} {{ instance.ticket_type }} - {{ instance.issuer_id }}
                             </summary>
@@ -339,7 +339,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.ticket_data.E_TICKET_NUMBER %}Ticket #
+                                    {% blocktrans with id=ticket_obj.ticket_data.E_TICKET_NUMBER %}FlexiTicket #
                                         {{ id }}{% endblocktrans %}
                                 </span>
                                 - {{ instance.issuer_id }}
@@ -355,7 +355,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.pnr %}SNCF Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -374,7 +374,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.pnr %}ELB Ticket #{{ id }}{% endblocktrans %}
                                     -
                                     {% blocktrans with seq=ticket_obj.data.sequence_number %}sequence #
                                         {{ seq }}{% endblocktrans %}
@@ -391,7 +391,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.pnr %}SSB Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.envelope.issuer %}
                                     {% if distributor %}
@@ -410,7 +410,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.pnr %}SSBv1 Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.ticket.issuer %}
                                     {% if distributor %}
@@ -429,7 +429,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_number %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_number %}HŽPP Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -443,7 +443,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket.ticket_data.ticket_id %}SwissPass Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                             </summary>
                             <div class="govuk-details__text">
@@ -457,7 +457,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.pnr %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.pnr %}IATA Ticket #{{ id }}{% endblocktrans %}
                                     -
                                     {% blocktrans with seq=ticket_obj.data.sequence %}sequence #
                                         {{ seq }}{% endblocktrans %}
@@ -486,7 +486,7 @@
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
                                 <span class="govuk-details__summary-text">
-                                    {% blocktrans with id=ticket_obj.data.ticket_id %}Ticket #{{ id }}{% endblocktrans %}
+                                    {% blocktrans with id=ticket_obj.data.ticket_id %}TS2 Ticket #{{ id }}{% endblocktrans %}
                                 </span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
@@ -516,7 +516,7 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">{% blocktrans with id=ticket_obj.ticket_ref %}Ticket #{{ id }}{% endblocktrans %}</span>
+                                <span class="govuk-details__summary-text">{% blocktrans with id=ticket_obj.ticket_ref %}ADIF Ticket #{{ id }}{% endblocktrans %}</span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
                                         <span>{{ distributor.full_name }} - {{ distributor.country }}</span>
@@ -533,7 +533,7 @@
                     {% with ticket_obj=instance.as_ticket %}
                         <details class="govuk-details">
                             <summary class="govuk-details__summary">
-                                <span class="govuk-details__summary-text">{% blocktrans with id=ticket_obj.envelope.ticket_id %}Ticket #{{ id }}{% endblocktrans %}</span>
+                                <span class="govuk-details__summary-text">{% blocktrans with id=ticket_obj.envelope.ticket_id %}MÁV Ticket #{{ id }}{% endblocktrans %}</span>
                                 {% with distributor=ticket_obj.distributor %}
                                     {% if distributor %}
                                         <span>{{ distributor.full_name }} - {{ distributor.country }}</span>

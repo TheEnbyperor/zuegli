@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-09 13:43+0000\n"
+"POT-Creation-Date: 2026-05-08 13:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,13 +71,12 @@ msgstr "Abonnementsnummer"
 
 #: forms.py:96 forms.py:136 templates/main/account/index.html:18
 #: templates/main/account/index.html:204
-#: templates/main/account/sbahn_berlin.html:21
-#: templates/main/ssb_ticket_details.html:316
+#: templates/main/account/sbahn_berlin.html:21 templates/main/ssb/nrt.html:138
 #: templates/main/vdv_elements.html:208 templates/main/vdv_elements.html:515
 msgid "Surname"
 msgstr "Achternaam"
 
-#: forms.py:98
+#: forms.py:98 templates/main/mav.html:52
 msgid "Date of Birth"
 msgstr "Geboortedatum"
 
@@ -101,47 +100,47 @@ msgstr "Boekingsreferentie"
 msgid "Booking number"
 msgstr "Boekingsnummer"
 
-#: models.py:144
+#: models.py:145
 msgid "Deutschlandticket"
 msgstr "Deutschlandticket"
 
-#: models.py:145
+#: models.py:146
 msgid "Klimaticket"
 msgstr "Klimaticket"
 
-#: models.py:146
+#: models.py:147
 msgid "Bahncard"
 msgstr "Bahncard"
 
-#: models.py:147
+#: models.py:148
 msgid "Travel ticket"
 msgstr "Reisticket"
 
-#: models.py:148
+#: models.py:149
 msgid "Boarding card"
 msgstr "Boardingpass"
 
-#: models.py:149
+#: models.py:150
 msgid "Reservation"
 msgstr "Reservering"
 
-#: models.py:150
+#: models.py:151
 msgid "Interrail"
 msgstr "Interrail"
 
-#: models.py:151
+#: models.py:152
 msgid "Railcard"
 msgstr "Railcard"
 
-#: models.py:152
+#: models.py:153
 msgid "Keycard"
 msgstr "Keycard"
 
-#: models.py:153
+#: models.py:154
 msgid "BahnBonus"
 msgstr "BahnBonus"
 
-#: models.py:154
+#: models.py:155
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -198,17 +197,13 @@ msgid "Back"
 msgstr "Terug"
 
 #: templates/main/account/hvv_login.html:4
-#, fuzzy
-#| msgid "Vestische Login"
 msgid "HVV Switch Login"
-msgstr "Inloggen bij Vestische"
+msgstr "Inloggen bij HVV Switch"
 
 #: templates/main/account/hvv_login.html:8
 #: templates/main/account/index.html:185
-#, fuzzy
-#| msgid "Login with AVV"
 msgid "Login with HVV Switch"
-msgstr "Inloggen bij AVV"
+msgstr "Inloggen bij HVV Switch"
 
 #: templates/main/account/index.html:4 templates/main/base.html:91
 msgid "Account"
@@ -227,8 +222,7 @@ msgid "New password"
 msgstr "Nieuw wachtwoord"
 
 #: templates/main/account/index.html:14 templates/main/account/index.html:203
-#: templates/main/account/sbahn_berlin.html:17
-#: templates/main/ssb_ticket_details.html:305
+#: templates/main/account/sbahn_berlin.html:17 templates/main/ssb/nrt.html:127
 #: templates/main/vdv_elements.html:201 templates/main/vdv_elements.html:507
 msgid "Forename"
 msgstr "Voornaam"
@@ -282,16 +276,12 @@ msgstr "Inloggen bij S-Bahn Berlin"
 
 #: templates/main/account/index.html:84 templates/main/account/mvv.html:4
 #: templates/main/base.html:155
-#, fuzzy
-#| msgid "AVV Account"
 msgid "MVV Account"
-msgstr "AVV-account"
+msgstr "MVV-account"
 
 #: templates/main/account/index.html:94 templates/main/account/mvv_login.html:8
-#, fuzzy
-#| msgid "Login with AVV"
 msgid "Login with MVV"
-msgstr "Inloggen bij AVV"
+msgstr "Inloggen bij MVV"
 
 #: templates/main/account/index.html:109
 msgid "Login with AVV"
@@ -329,10 +319,8 @@ msgid "Login with Raileasy"
 msgstr "Inloggen bij Raileasy"
 
 #: templates/main/account/index.html:175
-#, fuzzy
-#| msgid "AVV Account"
 msgid "HVV Account"
-msgstr "AVV-account"
+msgstr "HVV-account"
 
 #: templates/main/account/index.html:197
 msgid "Alternate Name Expansions"
@@ -361,10 +349,8 @@ msgid "Subscribe to your trains as a calendar:"
 msgstr "Abonneer op uw treinen als kalender:"
 
 #: templates/main/account/mvv_login.html:4
-#, fuzzy
-#| msgid "AVV Login"
 msgid "MVV Login"
-msgstr "Inloggen bij AVV"
+msgstr "Inloggen bij MVV"
 
 #: templates/main/account/new_alternate_expansion.html:4
 #: templates/main/account/new_alternate_expansion.html:9
@@ -417,11 +403,35 @@ msgstr "NMBS-ticket toevoegen"
 msgid "Vestische Login"
 msgstr "Inloggen bij Vestische"
 
+#: templates/main/adif.html:6 templates/main/mav.html:6
+#: templates/main/uic/ticket_details.html:270
+msgid "Distributing RICS"
+msgstr "Distribuerende RICS"
+
+#: templates/main/adif.html:12 templates/main/mav.html:12
+#: templates/main/uic/ticket_details.html:276
+msgid "Distributor"
+msgstr "Distributeur"
+
+#: templates/main/adif.html:20 templates/main/mav.html:24
+#: templates/main/uic/ticket_details.html:284
+#: templates/main/vdv_ticket_details.html:10
+msgid "Ticket ID"
+msgstr "Ticket-ID"
+
+#: templates/main/adif.html:24 templates/main/ssb/irt.html:82
+msgid "Train number"
+msgstr "Treinnummer"
+
+#: templates/main/adif.html:28 templates/main/ssb/irt.html:77
+msgid "Departure time"
+msgstr "Vertrektijd"
+
 #: templates/main/base.html:19 templates/main/base.html:23
 msgid "Turn your public transport tickets into an Apple/Google Wallet pass."
 msgstr "Maak van uw OV-kaartjes Apple/Google Wallet-kaarten."
 
-#: templates/main/base.html:53 templates/main/uic/ticket_details.html:303
+#: templates/main/base.html:53 templates/main/uic/ticket_details.html:331
 msgid "Language"
 msgstr "Taal"
 
@@ -509,42 +519,72 @@ msgid "minutes"
 msgstr "minuten"
 
 #: templates/main/ft_ticket_details.html:213
-#, fuzzy
-#| msgid "Unknown signing key, can't verify ticket"
 msgid "Unknown signing key, can't read main ticket body"
-msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
+msgstr ""
 
 #: templates/main/ft_ticket_details.html:245
 #: templates/main/hzpp_ticket_details.html:29
-#: templates/main/hzpp_ticket_details.html:39
-#: templates/main/ssb_ticket_details.html:78
-#: templates/main/ssb_ticket_details.html:164
-#: templates/main/ssb_ticket_details.html:198
-#: templates/main/ssb_ticket_details.html:208
-#: templates/main/ssb_ticket_details.html:747
-#: templates/main/uic/ticket_details.html:272
-#: templates/main/uic/ticket_details.html:282
-#: templates/main/uic/ticket_details.html:292
-#: templates/main/vdv_smartcard.html:107 templates/main/vdv_smartcard.html:247
-#: templates/main/vdv_ticket_details.html:42
-#: templates/main/vdv_ticket_details.html:299
+#: templates/main/hzpp_ticket_details.html:39 templates/main/ssb/cd.html:16
+#: templates/main/ssb/cd.html:26 templates/main/ssb/irt.html:16
+#: templates/main/ssb/irt.html:102 templates/main/ssb/nrt.html:16
+#: templates/main/ssb/nrt.html:26 templates/main/ssb/nrt.html:309
+#: templates/main/ssb/sz.html:121
+#: templates/main/swisspass_ticket_details.html:161
+#: templates/main/swisspass_ticket_details.html:210
+#: templates/main/swisspass_ticket_details.html:220
+#: templates/main/swisspass_ticket_details.html:496
+#: templates/main/swisspass_ticket_details.html:514
+#: templates/main/uic/cd.html:210 templates/main/uic/cd_flags.html:7
+#: templates/main/uic/cd_flags.html:17 templates/main/uic/cd_flags.html:27
+#: templates/main/uic/cd_flags.html:37 templates/main/uic/cd_flags.html:47
+#: templates/main/uic/cd_flags.html:57 templates/main/uic/cd_flags.html:67
+#: templates/main/uic/cd_flags.html:77 templates/main/uic/cd_flags.html:87
+#: templates/main/uic/ticket_details.html:68
+#: templates/main/uic/ticket_details.html:255
+#: templates/main/uic/ticket_details.html:300
+#: templates/main/uic/ticket_details.html:310
+#: templates/main/uic/ticket_details.html:320
+#: templates/main/vdv_smartcard.html:108 templates/main/vdv_smartcard.html:250
+#: templates/main/vdv_ticket_details.html:43
+#: templates/main/vdv_ticket_details.html:301 templates/main/x509/cert.html:104
+#: templates/main/x509/cert.html:114 templates/main/x509/cert.html:124
+#: templates/main/x509/cert.html:134 templates/main/x509/cert.html:144
+#: templates/main/x509/cert.html:154 templates/main/x509/cert.html:164
+#: templates/main/x509/cert.html:174 templates/main/x509/cert.html:184
+#: templates/main/x509/cert.html:211
 msgid "Yes"
 msgstr "Ja"
 
 #: templates/main/ft_ticket_details.html:247
 #: templates/main/hzpp_ticket_details.html:31
-#: templates/main/hzpp_ticket_details.html:41
-#: templates/main/ssb_ticket_details.html:80
-#: templates/main/ssb_ticket_details.html:166
-#: templates/main/ssb_ticket_details.html:200
-#: templates/main/ssb_ticket_details.html:210
-#: templates/main/ssb_ticket_details.html:749
-#: templates/main/uic/ticket_details.html:274
-#: templates/main/uic/ticket_details.html:284
-#: templates/main/uic/ticket_details.html:294
-#: templates/main/vdv_smartcard.html:109 templates/main/vdv_smartcard.html:249
-#: templates/main/vdv_ticket_details.html:44
-#: templates/main/vdv_ticket_details.html:301
+#: templates/main/hzpp_ticket_details.html:41 templates/main/ssb/cd.html:18
+#: templates/main/ssb/cd.html:28 templates/main/ssb/irt.html:18
+#: templates/main/ssb/irt.html:104 templates/main/ssb/nrt.html:18
+#: templates/main/ssb/nrt.html:28 templates/main/ssb/nrt.html:311
+#: templates/main/ssb/sz.html:123
+#: templates/main/swisspass_ticket_details.html:163
+#: templates/main/swisspass_ticket_details.html:212
+#: templates/main/swisspass_ticket_details.html:222
+#: templates/main/swisspass_ticket_details.html:498
+#: templates/main/swisspass_ticket_details.html:516
+#: templates/main/uic/cd.html:212 templates/main/uic/cd_flags.html:9
+#: templates/main/uic/cd_flags.html:19 templates/main/uic/cd_flags.html:29
+#: templates/main/uic/cd_flags.html:39 templates/main/uic/cd_flags.html:49
+#: templates/main/uic/cd_flags.html:59 templates/main/uic/cd_flags.html:69
+#: templates/main/uic/cd_flags.html:79 templates/main/uic/cd_flags.html:89
+#: templates/main/uic/ticket_details.html:70
+#: templates/main/uic/ticket_details.html:257
+#: templates/main/uic/ticket_details.html:302
+#: templates/main/uic/ticket_details.html:312
+#: templates/main/uic/ticket_details.html:322
+#: templates/main/vdv_smartcard.html:110 templates/main/vdv_smartcard.html:252
+#: templates/main/vdv_ticket_details.html:45
+#: templates/main/vdv_ticket_details.html:303 templates/main/x509/cert.html:106
+#: templates/main/x509/cert.html:116 templates/main/x509/cert.html:126
+#: templates/main/x509/cert.html:136 templates/main/x509/cert.html:146
+#: templates/main/x509/cert.html:156 templates/main/x509/cert.html:166
+#: templates/main/x509/cert.html:176 templates/main/x509/cert.html:186
+#: templates/main/x509/cert.html:213
 msgid "No"
 msgstr "Nee"
 
@@ -567,7 +607,7 @@ msgstr "Sleutelverificatie"
 #: templates/main/ssb_ticket_details.html:55
 #: templates/main/ts2_ticket_details.html:55
 #: templates/main/uic/ticket_details.html:57
-#: templates/main/uic/ticket_details.html:174
+#: templates/main/uic/ticket_details.html:190
 msgid "Unknown signing key, can't verify ticket"
 msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
 
@@ -575,8 +615,8 @@ msgstr "Onbekende ondertekeningssleutel, kan ticket niet verifiëren"
 #: templates/main/ssb_ticket_details.html:37
 #: templates/main/ts2_ticket_details.html:37
 #: templates/main/uic/ticket_details.html:39
-#: templates/main/uic/ticket_details.html:151
-#: templates/main/uic/ticket_details.html:210
+#: templates/main/uic/ticket_details.html:167
+#: templates/main/uic/ticket_details.html:226
 msgid "Valid"
 msgstr "Geldig"
 
@@ -584,16 +624,14 @@ msgstr "Geldig"
 #: templates/main/ssb_ticket_details.html:42
 #: templates/main/ts2_ticket_details.html:42
 #: templates/main/uic/ticket_details.html:44
-#: templates/main/uic/ticket_details.html:156
-#: templates/main/uic/ticket_details.html:215
+#: templates/main/uic/ticket_details.html:172
+#: templates/main/uic/ticket_details.html:231
 msgid "Signature verification failed, this is likely a forged ticket"
 msgstr "Sleutelverificatie mislukt, dit is waarschijnlijk een vals ticket"
 
 #: templates/main/impressum.html:12
-#, fuzzy
-#| msgid "This ticket is invalid"
 msgid "This service is provided by:"
-msgstr "Dit ticket is ongeldig"
+msgstr ""
 
 #: templates/main/index.html:10
 msgid "Turn your public transport tickets into Apple/Google Wallet passes."
@@ -639,10 +677,8 @@ msgid "SwissPass/NOVA - SBB, ZVV, and other Swiss operators (VöV)"
 msgstr "SwissPass/NOVA - SBB, ZVV, en andere Zwitserse operators (VöV)"
 
 #: templates/main/index.html:24
-#, fuzzy
-#| msgid "Add ticket"
 msgid "HŽPP tickets"
-msgstr "Ticket toevoegen"
+msgstr "HŽPP tickets"
 
 #: templates/main/index.html:25
 msgid "IATA Barcoded Boarding Pass"
@@ -697,9 +733,9 @@ msgstr "Uw ticket scannen"
 
 #: templates/main/index.html:100
 msgid ""
-"If you're having trouble scanning your ticket, uploading a picture/screenshot "
-"of your ticket usually works better. The decoder on the server is better "
-"than the one in your browser."
+"If you're having trouble scanning your ticket, uploading a picture/"
+"screenshot of your ticket usually works better. The decoder on the server is "
+"better than the one in your browser."
 msgstr ""
 "Als het scannen van uw ticket niet lukt dan werkt het uploaden van een  foto "
 "of schermadruk vaak beter. De lezer op de server is beter dan die  in uw "
@@ -752,11 +788,16 @@ msgid "Privacy"
 msgstr "Privacy"
 
 #: templates/main/index.html:175
+#, fuzzy
+#| msgid ""
+#| "Your ticket barcode will be stored to allow automatic updates to "
+#| "subscription tickets. Tickets commonly include your name and date of "
+#| "birth - this information is not processed except to generate the pass. "
+#| "Ticket data may be inspected by a human if you ask for help."
 msgid ""
 "Your ticket barcode will be stored to allow automatic updates to "
 "subscription tickets. Tickets commonly include your name and date of birth - "
-"this information is not processed except to generate the pass. Ticket data "
-"may be inspected by a human if you ask for help."
+"this information is not processed except to generate the pass."
 msgstr ""
 "De barcode van uw ticket wordt bewaard om automatische updates aan "
 "abbonementen mogelijk te maken. Tickets bevatten vaak uw naam en "
@@ -764,11 +805,19 @@ msgstr ""
 "niet verwerkt. Ticket data kan door een mens doorgelicht worden als u om "
 "hulp vraagt."
 
-#: templates/main/index.html:184
+#: templates/main/index.html:182
+msgid ""
+"We conduct aggregate analysis on tickets uploaded to better understand how "
+"people use Zügli and as part of efforts to combat ticketing fraud. "
+"Individual detailed ticket data may be inspected by a human if you ask for "
+"help, or if fraud is suspected."
+msgstr ""
+
+#: templates/main/index.html:191
 msgid "API"
 msgstr "API"
 
-#: templates/main/index.html:186
+#: templates/main/index.html:193
 msgid ""
 "You can send scanned Aztec barcode contents to this service's API and "
 "retrieve PKPass files from it."
@@ -776,171 +825,231 @@ msgstr ""
 "U kunt inhoud van Aztecbarcodes naar de API van deze dienst sturen en PKPass-"
 "bestanden ophalen."
 
-#: templates/main/index.html:192
+#: templates/main/index.html:199
 msgid "API details"
 msgstr "API-details"
+
+#: templates/main/mav.html:20 templates/main/ssb_ticket_details.html:24
+#: templates/main/ts2_ticket_details.html:24
+#: templates/main/uic/ticket_details.html:26
+#: templates/main/uic/ticket_details.html:110
+msgid "Signature key ID"
+msgstr "Sleutel-ID ondertekening"
+
+#: templates/main/mav.html:28 templates/main/uic/ticket_details.html:288
+msgid "Issuing time"
+msgstr "Uitgiftetijd"
+
+#: templates/main/mav.html:32 templates/main/ssb/nrt.html:158
+#: templates/main/ssb/nrt.html:276 templates/main/vdv_elements.html:125
+msgid "Price"
+msgstr "Prijs"
+
+#: templates/main/mav.html:36
+msgid "Ticket medium"
+msgstr ""
+
+#: templates/main/mav.html:41
+msgid "Passenger"
+msgstr "Passagier"
+
+#: templates/main/mav.html:46 templates/main/vdv_ticket_details.html:58
+msgid "Name"
+msgstr "Naam"
+
+#: templates/main/mav.html:58
+msgid "ID Card Number"
+msgstr ""
+
+#: templates/main/mav.html:68
+msgid "Trip"
+msgstr ""
+
+#: templates/main/mav.html:72 templates/main/mav.html:171
+#: templates/main/ssb/irt.html:23 templates/main/uic/cd.html:187
+msgid "Ticket type"
+msgstr "Ticketsoort"
+
+#: templates/main/mav.html:77 templates/main/mav.html:175
+msgid "Origin station"
+msgstr ""
+
+#: templates/main/mav.html:89 templates/main/mav.html:187
+msgid "Destination station"
+msgstr ""
+
+#: templates/main/mav.html:102
+msgid "Via stations - outbound"
+msgstr ""
+
+#: templates/main/mav.html:122
+msgid "Via stations - return"
+msgstr ""
+
+#: templates/main/mav.html:141 templates/main/ssb/cd.html:42
+#: templates/main/ssb/irt.html:46 templates/main/ssb/nrt.html:42
+msgid "Travel class"
+msgstr "Reisklasse"
+
+#: templates/main/mav.html:145 templates/main/mav.html:251
+#: templates/main/ssb/cd.html:59 templates/main/ssb/nrt.html:59
+msgid "Valid from"
+msgstr "Geldig van"
+
+#: templates/main/mav.html:149 templates/main/mav.html:255
+#: templates/main/ssb/cd.html:63 templates/main/ssb/nrt.html:63
+msgid "Valid until"
+msgstr "Geldigheid tot"
+
+#: templates/main/mav.html:153 templates/main/mav.html:222
+#: templates/main/mav.html:259
+msgid "Number of passengers"
+msgstr ""
+
+#: templates/main/mav.html:157
+msgid "Passengers type"
+msgstr "Passagierstype"
+
+#: templates/main/mav.html:167
+msgid "Seat reservation"
+msgstr ""
+
+#: templates/main/mav.html:201
+msgid "Operator"
+msgstr ""
+
+#: templates/main/mav.html:208
+msgid "Operator RICS"
+msgstr ""
+
+#: templates/main/mav.html:214
+msgid "Train"
+msgstr ""
+
+#: templates/main/mav.html:218
+msgid "Departure"
+msgstr "Vertrektijd"
+
+#: templates/main/mav.html:227 templates/main/ssb/irt.html:88
+msgid "Coach"
+msgstr "Rijtuig"
+
+#: templates/main/mav.html:233 templates/main/ssb/irt.html:94
+msgid "Seat"
+msgstr "Stoel"
+
+#: templates/main/mav.html:243
+msgid "Pass"
+msgstr ""
+
+#: templates/main/mav.html:247
+msgid "Pass type"
+msgstr ""
 
 #: templates/main/nfc_index.html:4
 msgid "NFC Bridge"
 msgstr "NFC Bridge"
 
-#: templates/main/ssb_ticket_details.html:3
-#: templates/main/ts2_ticket_details.html:3
-#: templates/main/uic/ticket_details.html:4
-msgid "Security"
-msgstr "Beveiliging"
-
-#: templates/main/ssb_ticket_details.html:6
-#: templates/main/ts2_ticket_details.html:6
-#: templates/main/uic/ticket_details.html:8
-#: templates/main/uic/ticket_details.html:67
-msgid "Barcode version"
-msgstr "Barcodeversie"
-
-#: templates/main/ssb_ticket_details.html:10
-msgid "Issuer RICS"
-msgstr "Uitgevende RICS"
-
-#: templates/main/ssb_ticket_details.html:16
-msgid "Issuer"
-msgstr "Uitgever"
-
-#: templates/main/ssb_ticket_details.html:24
-#: templates/main/ts2_ticket_details.html:24
-#: templates/main/uic/ticket_details.html:26
-#: templates/main/uic/ticket_details.html:95
-msgid "Signature key ID"
-msgstr "Sleutel-ID ondertekening"
-
-#: templates/main/ssb_ticket_details.html:50
-#: templates/main/ts2_ticket_details.html:50
-#: templates/main/uic/ticket_details.html:52
-msgid "Signing key"
-msgstr "Ondertekeningssleutel"
-
-#: templates/main/ssb_ticket_details.html:64
-msgid "Integrated reservation ticket"
-msgstr "Geïntegreerd reserveringsticker"
-
-#: templates/main/ssb_ticket_details.html:71
-#: templates/main/ssb_ticket_details.html:191
+#: templates/main/ssb/cd.html:9 templates/main/ssb/irt.html:9
+#: templates/main/ssb/nrt.html:9
 msgid "Issuing date"
 msgstr "Uitgiftedatum"
 
-#: templates/main/ssb_ticket_details.html:75
-#: templates/main/ssb_ticket_details.html:195
-#: templates/main/uic/ticket_details.html:289
+#: templates/main/ssb/cd.html:13 templates/main/ssb/irt.html:13
+#: templates/main/ssb/nrt.html:13 templates/main/uic/fpd.html:42
+#: templates/main/uic/ticket_details.html:317
 msgid "Specimen"
 msgstr "Specimen"
 
-#: templates/main/ssb_ticket_details.html:85
-msgid "Ticket type"
-msgstr "Ticketsoort"
-
-#: templates/main/ssb_ticket_details.html:88
-msgid "Reservation only"
-msgstr "Alleen reservering"
-
-#: templates/main/ssb_ticket_details.html:90
-msgid "Reservation + ticket"
-msgstr "Reservering + ticket"
-
-#: templates/main/ssb_ticket_details.html:92
-msgid "Boarding pass"
-msgstr "Boardingpass"
-
-#: templates/main/ssb_ticket_details.html:99
-#: templates/main/ssb_ticket_details.html:215
-msgid "Number of adults"
-msgstr "Aantal volwassenen"
-
-#: templates/main/ssb_ticket_details.html:103
-#: templates/main/ssb_ticket_details.html:219
-msgid "Number of children"
-msgstr "Aantal kinderen"
-
-#: templates/main/ssb_ticket_details.html:108
-#: templates/main/ssb_ticket_details.html:224
-msgid "Travel class"
-msgstr "Reisklasse"
-
-#: templates/main/ssb_ticket_details.html:111
-#: templates/main/ssb_ticket_details.html:227
-msgid "First"
-msgstr "Eerste"
-
-#: templates/main/ssb_ticket_details.html:113
-#: templates/main/ssb_ticket_details.html:229
-msgid "Second"
-msgstr "Tweede"
-
-#: templates/main/ssb_ticket_details.html:122
-#: templates/main/ssb_ticket_details.html:246
-msgid "Station code table"
-msgstr "Stationscode-tabel"
-
-#: templates/main/ssb_ticket_details.html:127
-#: templates/main/ssb_ticket_details.html:251
-msgid "From station"
-msgstr "Van station"
-
-#: templates/main/ssb_ticket_details.html:133
-#: templates/main/ssb_ticket_details.html:257
-msgid "To station"
-msgstr "Naar station"
-
-#: templates/main/ssb_ticket_details.html:139
-msgid "Departure time"
-msgstr "Vertrektijd"
-
-#: templates/main/ssb_ticket_details.html:144
-msgid "Train number"
-msgstr "Treinnummer"
-
-#: templates/main/ssb_ticket_details.html:150
-msgid "Coach"
-msgstr "Rijtuig"
-
-#: templates/main/ssb_ticket_details.html:156
-msgid "Seat"
-msgstr "Stoel"
-
-#: templates/main/ssb_ticket_details.html:161
-msgid "Overbooked"
-msgstr "Overgeboekt"
-
-#: templates/main/ssb_ticket_details.html:172
-#: templates/main/ssb_ticket_details.html:264
-msgid "Information message"
-msgstr "Informatiebericht"
-
-#: templates/main/ssb_ticket_details.html:178
-#: templates/main/ssb_ticket_details.html:270
-msgid "Extra text"
-msgstr "Extra tekst"
-
-#: templates/main/ssb_ticket_details.html:184
-msgid "Non-reservation ticket"
-msgstr "Niet-reserveringsticket"
-
-#: templates/main/ssb_ticket_details.html:205
+#: templates/main/ssb/cd.html:23 templates/main/ssb/nrt.html:23
 msgid "Return included"
 msgstr "Inclusief retour"
 
-#: templates/main/ssb_ticket_details.html:237
-msgid "Valid from"
-msgstr "Geldig van"
+#: templates/main/ssb/cd.html:33 templates/main/ssb/irt.html:37
+#: templates/main/ssb/nrt.html:33
+msgid "Number of adults"
+msgstr "Aantal volwassenen"
 
-#: templates/main/ssb_ticket_details.html:241
-msgid "Valid until"
-msgstr "Geldigheid tot"
+#: templates/main/ssb/cd.html:37 templates/main/ssb/irt.html:41
+#: templates/main/ssb/nrt.html:37
+msgid "Number of children"
+msgstr "Aantal kinderen"
 
-#: templates/main/ssb_ticket_details.html:276
+#: templates/main/ssb/cd.html:45 templates/main/ssb/cd.html:49
+#: templates/main/ssb/irt.html:49 templates/main/ssb/nrt.html:45
+#: templates/main/ssb/nrt.html:49
+msgid "First"
+msgstr "Eerste"
+
+#: templates/main/ssb/cd.html:47 templates/main/ssb/cd.html:51
+#: templates/main/ssb/irt.html:51 templates/main/ssb/nrt.html:47
+#: templates/main/ssb/nrt.html:51
+msgid "Second"
+msgstr "Tweede"
+
+#: templates/main/ssb/cd.html:68 templates/main/ssb/irt.html:60
+#: templates/main/ssb/nrt.html:68
+msgid "Station code table"
+msgstr "Stationscode-tabel"
+
+#: templates/main/ssb/cd.html:73 templates/main/ssb/irt.html:65
+#: templates/main/ssb/nrt.html:73
+msgid "From station"
+msgstr "Van station"
+
+#: templates/main/ssb/cd.html:79 templates/main/ssb/irt.html:71
+#: templates/main/ssb/nrt.html:79
+msgid "To station"
+msgstr "Naar station"
+
+#: templates/main/ssb/cd.html:85
+msgid "SJT Timestamp"
+msgstr ""
+
+#: templates/main/ssb/cd.html:89 templates/main/uic/cd.html:199
+#: templates/main/uic/ticket_details.html:292
+msgid "Flags"
+msgstr "Instellingen"
+
+#: templates/main/ssb/cd.html:96 templates/main/ssb/irt.html:116
+#: templates/main/ssb/nrt.html:92
+msgid "Extra text"
+msgstr "Extra tekst"
+
+#: templates/main/ssb/irt.html:2
+msgid "Integrated reservation ticket"
+msgstr "Geïntegreerd reserveringsticker"
+
+#: templates/main/ssb/irt.html:26
+msgid "Reservation only"
+msgstr "Alleen reservering"
+
+#: templates/main/ssb/irt.html:28
+msgid "Reservation + ticket"
+msgstr "Reservering + ticket"
+
+#: templates/main/ssb/irt.html:30
+msgid "Boarding pass"
+msgstr "Boardingpass"
+
+#: templates/main/ssb/irt.html:99
+msgid "Overbooked"
+msgstr "Overgeboekt"
+
+#: templates/main/ssb/irt.html:110 templates/main/ssb/nrt.html:86
+msgid "Information message"
+msgstr "Informatiebericht"
+
+#: templates/main/ssb/nrt.html:2
+msgid "Non-reservation ticket"
+msgstr "Niet-reserveringsticket"
+
+#: templates/main/ssb/nrt.html:98
 msgid "SNCB Data"
 msgstr "SNCB-gegevens"
 
-#: templates/main/ssb_ticket_details.html:280
-#: templates/main/vdv_elements.html:193 templates/main/vdv_elements.html:498
+#: templates/main/ssb/nrt.html:102 templates/main/vdv_elements.html:193
+#: templates/main/vdv_elements.html:498
 #, python-format
 msgid ""
 "Partially redacted name? <a href=\"%(account_edit_url)s\" class=\"govuk-"
@@ -951,29 +1060,95 @@ msgstr ""
 "class=\"govuk-link\">Voeg uw naam toe aan uw account</a> om uw volledige "
 "naam op uw ticket te tonen"
 
-#: templates/main/ssb_ticket_details.html:289
-#: templates/main/vdv_ticket_details.html:50
+#: templates/main/ssb/nrt.html:111 templates/main/vdv_ticket_details.html:52
 msgid "Product"
 msgstr "Product"
 
-#: templates/main/ssb_ticket_details.html:297
+#: templates/main/ssb/nrt.html:119
 msgid "Product code"
 msgstr "Productcode"
 
-#: templates/main/ssb_ticket_details.html:331
-#, fuzzy
-#| msgid "Data"
+#: templates/main/ssb/nrt.html:153
 msgid "ČD Data"
-msgstr "Data"
+msgstr "ČD Data"
 
-#: templates/main/ssb_ticket_details.html:336
-#: templates/main/vdv_elements.html:125
-msgid "Price"
-msgstr "Prijs"
-
-#: templates/main/ssb_ticket_details.html:344
+#: templates/main/ssb/nrt.html:166
 msgid "Distance"
 msgstr ""
+
+#: templates/main/ssb/nrt.html:196
+msgid "SNCF Data"
+msgstr "SNCF-gegevens"
+
+#: templates/main/ssb/nrt.html:200
+msgid "Network"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:232
+msgid "Contract provider"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:237
+msgid "Contract provider ID"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:244
+msgid "Tariff"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:251
+msgid "Via"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:265
+msgid "Validity zones"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:282
+msgid "Payment method"
+msgstr "Betaalmethode"
+
+#: templates/main/ssb/nrt.html:288
+msgid "Retail channel"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:294
+msgid "Travel distance"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:300
+msgid "Terminal ID"
+msgstr ""
+
+#: templates/main/ssb/nrt.html:306
+msgid "Route constraint"
+msgstr ""
+
+#: templates/main/ssb_ticket_details.html:3
+#: templates/main/ts2_ticket_details.html:3
+#: templates/main/uic/ticket_details.html:4
+msgid "Security"
+msgstr "Beveiliging"
+
+#: templates/main/ssb_ticket_details.html:6
+#: templates/main/ts2_ticket_details.html:6
+#: templates/main/uic/ticket_details.html:8
+msgid "Barcode version"
+msgstr "Barcodeversie"
+
+#: templates/main/ssb_ticket_details.html:10
+msgid "Issuer RICS"
+msgstr "Uitgevende RICS"
+
+#: templates/main/ssb_ticket_details.html:16 templates/main/uic/fpd.html:15
+msgid "Issuer"
+msgstr "Uitgever"
+
+#: templates/main/ssb_ticket_details.html:50
+#: templates/main/ts2_ticket_details.html:50
+#: templates/main/uic/ticket_details.html:52
+msgid "Signing key"
+msgstr "Ondertekeningssleutel"
 
 #: templates/main/ticket.html:4
 #, python-format
@@ -984,12 +1159,7 @@ msgstr ""
 "Ticket\n"
 "    %(id)s"
 
-#: templates/main/ticket.html:18 templates/main/ticket.html:258
-#: templates/main/ticket.html:298 templates/main/ticket.html:317
-#: templates/main/ticket.html:348 templates/main/ticket.html:367
-#: templates/main/ticket.html:384 templates/main/ticket.html:403
-#: templates/main/ticket.html:422 templates/main/ticket.html:436
-#: templates/main/ticket.html:450
+#: templates/main/ticket.html:18
 #, python-format
 msgid "Ticket #%(id)s"
 msgstr "Ticket #%(id)s"
@@ -1113,23 +1283,27 @@ msgstr "Foto uploaden"
 msgid "Download your pass"
 msgstr "Uw pass downloaden"
 
-#: templates/main/ticket.html:220
+#: templates/main/ticket.html:230
 msgid "Add to Calendar"
 msgstr "Aan kalender toevoegen"
 
-#: templates/main/ticket.html:248
+#: templates/main/ticket.html:258
 msgid "Ticket details"
 msgstr "Ticketdetails"
 
-#: templates/main/ticket.html:250
+#: templates/main/ticket.html:260
 msgid "No instances found for this ticket."
 msgstr "Geen inhouden in dit ticket."
 
-#: templates/main/ticket.html:274
+#: templates/main/ticket.html:268
+msgid "VDV Ticket #%(id)s"
+msgstr "VDV-Ticket #%(id)s"
+
+#: templates/main/ticket.html:284
 msgid "This ticket is invalid"
 msgstr "Dit ticket is ongeldig"
 
-#: templates/main/ticket.html:279
+#: templates/main/ticket.html:289
 msgid ""
 "The key used to sign this ticket has been revoked due to misuse. Travelling "
 "on this ticket is likely to result in a penalty fare. More details: <a "
@@ -1143,22 +1317,37 @@ msgstr ""
 "dodgers-against-their-will-10280040.html\" target=\"_blank\">Engelse versie</"
 "a>."
 
-#: templates/main/ticket.html:319 templates/main/vdv_elements.html:159
-#: templates/main/vdv_ticket_details.html:149
-#: templates/main/vdv_ticket_details.html:194
+#: templates/main/ticket.html:308
+msgid "UIC Ticket #%(id)s"
+msgstr "UIC-Ticket #%(id)s"
+
+#: templates/main/ticket.html:327
+msgid "RSP Ticket #%(id)s"
+msgstr "RSP-Ticket #%(id)s"
+
+#: templates/main/ticket.html:329 templates/main/vdv_elements.html:159
+#: templates/main/vdv_ticket_details.html:151
+#: templates/main/vdv_ticket_details.html:196
 msgid "Type"
 msgstr "Soort"
 
-#: templates/main/ticket.html:332
-#, python-format
+#: templates/main/ticket.html:342
 msgid ""
-"Ticket #\n"
+"FlexiTicket #\n"
 "                                        %(id)s"
 msgstr ""
-"Ticket #\n"
+"FlexiTicket #\n"
 "                                        %(id)s"
 
-#: templates/main/ticket.html:369 templates/main/ticket.html:452
+#: templates/main/ticket.html:358
+msgid "SNCF Ticket #%(id)s"
+msgstr "SNCF-Ticket #%(id)s"
+
+#: templates/main/ticket.html:377
+msgid "ELB Ticket #%(id)s"
+msgstr "ELB-Ticket #%(id)s"
+
+#: templates/main/ticket.html:379 templates/main/ticket.html:462
 #, python-format
 msgid ""
 "sequence #\n"
@@ -1167,11 +1356,37 @@ msgstr ""
 "reeks #\n"
 "                                        %(seq)s"
 
-#: templates/main/ticket.html:479
-#, fuzzy
-#| msgid "Ticket #%(id)s"
-msgid "Ticket #{ id }}"
-msgstr "Ticket #%(id)s"
+#: templates/main/ticket.html:394
+msgid "SSB Ticket #%(id)s"
+msgstr "SSB-Ticket #%(id)s"
+
+#: templates/main/ticket.html:413
+msgid "SSBv1 Ticket #%(id)s"
+msgstr "SSBv1-Ticket #%(id)s"
+
+#: templates/main/ticket.html:432
+msgid "HŽPP Ticket #%(id)s"
+msgstr "HŽPP-Ticket #%(id)s"
+
+#: templates/main/ticket.html:446
+msgid "SwissPass Ticket #%(id)s"
+msgstr "SwissPass-Ticket #%(id)s"
+
+#: templates/main/ticket.html:460
+msgid "IATA Ticket #%(id)s"
+msgstr "IATA-Ticket #%(id)s"
+
+#: templates/main/ticket.html:489
+msgid "TS2 Ticket #%(id)s"
+msgstr "TS2-Ticket #%(id)s"
+
+#: templates/main/ticket.html:519
+msgid "ADIF Ticket #%(id)s"
+msgstr "ADIF-Ticket #%(id)s"
+
+#: templates/main/ticket.html:536
+msgid "MÁV Ticket #%(id)s"
+msgstr "MÁV-Ticket #%(id)s"
 
 #: templates/main/ticket_delete.html:4 templates/main/ticket_delete.html:9
 msgid "Delete ticket"
@@ -1211,120 +1426,178 @@ msgstr "Ondertekenende RICS"
 msgid "Signer"
 msgstr "Ondertekenaar"
 
-#: templates/main/uic/ticket_details.html:72
+#: templates/main/uic/cd.html:193
+msgid "Travel type"
+msgstr ""
+
+#: templates/main/uic/cd.html:207
+msgid "Linked validation required"
+msgstr ""
+
+#: templates/main/uic/cd.html:219
+msgid "Tariffs"
+msgstr ""
+
+#: templates/main/uic/delay_confirmation.html:43
+msgid "Train cancelled"
+msgstr ""
+
+#: templates/main/uic/fpd.html:6 templates/main/vdv_ticket_details.html:14
+#: templates/main/vdv_ticket_details.html:252
+msgid "ID"
+msgstr "ID"
+
+#: templates/main/uic/fpd.html:22
+msgid "Issuer organisation code"
+msgstr ""
+
+#: templates/main/uic/fpd.html:29
+msgid "Issuer ERA code"
+msgstr "Uitgevende ERA-code"
+
+#: templates/main/uic/fpd.html:34
+msgid "Issuer code"
+msgstr "Uitgever code"
+
+#: templates/main/uic/fpd.html:53
+msgid "Affixed to"
+msgstr ""
+
+#: templates/main/uic/fpd.html:59
+msgid "Vehicle"
+msgstr ""
+
+#: templates/main/uic/fpd.html:65
+msgid "European Vehicle Number"
+msgstr ""
+
+#: templates/main/uic/fpd.html:72
+msgid "Proprietary Vehicle Number"
+msgstr ""
+
+#: templates/main/uic/fpd.html:81
+msgid "Proprietary Sub-location"
+msgstr ""
+
+#: templates/main/uic/fpd.html:91
+msgid "Proprietary ID"
+msgstr ""
+
+#: templates/main/uic/fpd.html:99
+msgid "Extra info"
+msgstr ""
+
+#: templates/main/uic/ticket_details.html:65
+#: templates/main/uic/ticket_details.html:252
+#: templates/main/vdv_smartcard.html:246
+#: templates/main/vdv_ticket_details.html:39
+msgid "Revoked ticket"
+msgstr ""
+
+#: templates/main/uic/ticket_details.html:79
+msgid "DOSIPAS Barcode version"
+msgstr "DOSIPAS-Barcodeversie"
+
+#: templates/main/uic/ticket_details.html:84
 msgid "Security provider RICS"
 msgstr "RICS beveilingsprovider"
 
-#: templates/main/uic/ticket_details.html:80
-#: templates/main/uic/ticket_details.html:90
+#: templates/main/uic/ticket_details.html:92
+#: templates/main/uic/ticket_details.html:102
 msgid "Security provider"
 msgstr "Beveligingsprovider"
 
-#: templates/main/uic/ticket_details.html:102
+#: templates/main/uic/ticket_details.html:118
 msgid "Expiry"
 msgstr "Vervaldatum"
 
-#: templates/main/uic/ticket_details.html:108
+#: templates/main/uic/ticket_details.html:124
 msgid "Validity duration"
 msgstr "Geldigheidsduur"
 
-#: templates/main/uic/ticket_details.html:111
+#: templates/main/uic/ticket_details.html:127
 msgid "seconds"
 msgstr "seconden"
 
-#: templates/main/uic/ticket_details.html:118
-#: templates/main/uic/ticket_details.html:125
+#: templates/main/uic/ticket_details.html:134
+#: templates/main/uic/ticket_details.html:141
 msgid "Level 1 key algorithm"
 msgstr "Level 1 sleutelalgoritme"
 
-#: templates/main/uic/ticket_details.html:127
+#: templates/main/uic/ticket_details.html:143
 msgid "Unspecified - likely DSA1024"
 msgstr "Niet gespecificeerd - waarschijnlijk DSA1024"
 
-#: templates/main/uic/ticket_details.html:133
-#: templates/main/uic/ticket_details.html:140
+#: templates/main/uic/ticket_details.html:149
+#: templates/main/uic/ticket_details.html:156
 msgid "Level 1 signature algorithm"
 msgstr "Level 1 handtekeningsalgoritme"
 
-#: templates/main/uic/ticket_details.html:142
+#: templates/main/uic/ticket_details.html:158
 msgid "Unspecified - likely DSA with SHA224"
 msgstr "Niet gespecificeerd - waarschijnlijk DSA met SHA224"
 
-#: templates/main/uic/ticket_details.html:148
+#: templates/main/uic/ticket_details.html:164
 msgid "Level 1 signature verification"
 msgstr "Level 1 handtekeningverificatie"
 
-#: templates/main/uic/ticket_details.html:169
-#: templates/main/uic/ticket_details.html:182
+#: templates/main/uic/ticket_details.html:185
 msgid "Level 1 signing key"
 msgstr "Level 1 handtekeningssleutel"
 
-#: templates/main/uic/ticket_details.html:187
+#: templates/main/uic/ticket_details.html:198
+msgid "Level 1 signature"
+msgstr "Level 1 handtekening"
+
+#: templates/main/uic/ticket_details.html:203
 msgid "Ticket is not signed"
 msgstr "Ticket is niet ondertekend"
 
-#: templates/main/uic/ticket_details.html:195
+#: templates/main/uic/ticket_details.html:211
 msgid "Level 2 key algorithm"
 msgstr "Level 2 sleutelalgoritme"
 
-#: templates/main/uic/ticket_details.html:201
+#: templates/main/uic/ticket_details.html:217
 msgid "Level 2 signature algorithm"
 msgstr "Level 2 handtekeningsalgoritme"
 
-#: templates/main/uic/ticket_details.html:207
 #: templates/main/uic/ticket_details.html:223
+#: templates/main/uic/ticket_details.html:239
 msgid "Level 2 signature verification"
 msgstr "Level 2 handtekeningverificatie"
 
-#: templates/main/uic/ticket_details.html:228
+#: templates/main/uic/ticket_details.html:244
 msgid "Level 2 signature missing, this ticket has likely been tampered with"
 msgstr "Level 2-handtekening mist, dit ticket is waarschijnlijk gemanipuleerd"
 
-#: templates/main/uic/ticket_details.html:239
+#: templates/main/uic/ticket_details.html:267
 msgid "Header"
 msgstr "Kopinhoud"
 
-#: templates/main/uic/ticket_details.html:242
-msgid "Distributing RICS"
-msgstr "Distribuerende RICS"
-
-#: templates/main/uic/ticket_details.html:248
-msgid "Distributor"
-msgstr "Distributeur"
-
-#: templates/main/uic/ticket_details.html:256
-#: templates/main/vdv_ticket_details.html:10
-msgid "Ticket ID"
-msgstr "Ticket-ID"
-
-#: templates/main/uic/ticket_details.html:260
-msgid "Issuing time"
-msgstr "Uitgiftetijd"
-
-#: templates/main/uic/ticket_details.html:264
-msgid "Flags"
-msgstr "Instellingen"
-
-#: templates/main/uic/ticket_details.html:269
+#: templates/main/uic/ticket_details.html:297
 msgid "International ticket"
 msgstr "Internationaal ticket"
 
-#: templates/main/uic/ticket_details.html:279
+#: templates/main/uic/ticket_details.html:307
 msgid "Edited by agent"
 msgstr "Door vertegenwoordiger bewerkt"
 
-#: templates/main/uic/ticket_details.html:308
+#: templates/main/uic/ticket_details.html:336
 msgid "Second language"
 msgstr "Tweede taal"
 
-#: templates/main/uic/ticket_details.html:393
-#: templates/main/uic/ticket_details.html:407
+#: templates/main/uic/ticket_details.html:425
+#: templates/main/uic/ticket_details.html:439
 msgid "Unknown record"
 msgstr "Onbekend record"
 
-#: templates/main/uic/ticket_details.html:394
+#: templates/main/uic/ticket_details.html:426
 msgid "version"
 msgstr "versie"
+
+#: templates/main/uic_ndef_read.html:4
+msgid "Read UIC NDEF"
+msgstr ""
 
 #: templates/main/vdv_elements.html:7
 msgid "Basic data"
@@ -1385,8 +1658,8 @@ msgid "Identification medium"
 msgstr "Identificatiemedium"
 
 #: templates/main/vdv_elements.html:166
-#: templates/main/vdv_ticket_details.html:156
-#: templates/main/vdv_ticket_details.html:201
+#: templates/main/vdv_ticket_details.html:158
+#: templates/main/vdv_ticket_details.html:203
 msgid "Type Code"
 msgstr "Typecode"
 
@@ -1395,9 +1668,9 @@ msgid "Phone number"
 msgstr "Telefoonnummer"
 
 #: templates/main/vdv_elements.html:178
-#: templates/main/vdv_ticket_details.html:63
-#: templates/main/vdv_ticket_details.html:163
-#: templates/main/vdv_ticket_details.html:208
+#: templates/main/vdv_ticket_details.html:65
+#: templates/main/vdv_ticket_details.html:165
+#: templates/main/vdv_ticket_details.html:210
 msgid "Number"
 msgstr "Nummer"
 
@@ -1421,16 +1694,16 @@ msgstr ""
 #: templates/main/vdv_elements.html:242 templates/main/vdv_elements.html:352
 #: templates/main/vdv_elements.html:427
 #: templates/main/vdv_ticket_details.html:20
-#: templates/main/vdv_ticket_details.html:72
-#: templates/main/vdv_ticket_details.html:128
+#: templates/main/vdv_ticket_details.html:74
+#: templates/main/vdv_ticket_details.html:130
 msgid "Organisation"
 msgstr "Organisatie"
 
 #: templates/main/vdv_elements.html:249 templates/main/vdv_elements.html:359
 #: templates/main/vdv_elements.html:434
 #: templates/main/vdv_ticket_details.html:27
-#: templates/main/vdv_ticket_details.html:79
-#: templates/main/vdv_ticket_details.html:135
+#: templates/main/vdv_ticket_details.html:81
+#: templates/main/vdv_ticket_details.html:137
 msgid "Organisation ID"
 msgstr "Organisatie-ID"
 
@@ -1463,7 +1736,7 @@ msgid "Tariff points"
 msgstr "Tariefpunten"
 
 #: templates/main/vdv_elements.html:326
-#: templates/main/vdv_ticket_details.html:90
+#: templates/main/vdv_ticket_details.html:92
 msgid "Validity"
 msgstr "Geldigheid"
 
@@ -1512,136 +1785,118 @@ msgid "Read Smartcard"
 msgstr "Smartcard lezen"
 
 #: templates/main/vdv_smartcard.html:104
-#, fuzzy
-#| msgid "Add ticket"
 msgid "Revoked application"
-msgstr "Ticket toevoegen"
-
-#: templates/main/vdv_smartcard.html:244
-#: templates/main/vdv_ticket_details.html:39
-#, fuzzy
-#| msgid "Add ticket"
-msgid "Revoked ticket"
-msgstr "Ticket toevoegen"
+msgstr ""
 
 #: templates/main/vdv_ticket_details.html:3
 msgid "Ticket Data"
 msgstr "Ticketdata"
 
 #: templates/main/vdv_ticket_details.html:6
-#: templates/main/vdv_ticket_details.html:246
-#: templates/main/vdv_ticket_details.html:272
+#: templates/main/vdv_ticket_details.html:248
+#: templates/main/vdv_ticket_details.html:274
 msgid "Version"
 msgstr "Versie"
 
-#: templates/main/vdv_ticket_details.html:14
-#: templates/main/vdv_ticket_details.html:250
-msgid "ID"
-msgstr "ID"
-
-#: templates/main/vdv_ticket_details.html:56
-msgid "Name"
-msgstr "Naam"
-
-#: templates/main/vdv_ticket_details.html:94
+#: templates/main/vdv_ticket_details.html:96
 msgid "Start"
 msgstr "Begin"
 
-#: templates/main/vdv_ticket_details.html:100
+#: templates/main/vdv_ticket_details.html:102
 msgid "End"
 msgstr "Einde"
 
-#: templates/main/vdv_ticket_details.html:110
+#: templates/main/vdv_ticket_details.html:112
 msgid "Product Data"
 msgstr "Productdata"
 
-#: templates/main/vdv_ticket_details.html:113
+#: templates/main/vdv_ticket_details.html:115
 msgid "Transaction Data"
 msgstr "Transactiedata"
 
-#: templates/main/vdv_ticket_details.html:116
+#: templates/main/vdv_ticket_details.html:118
 msgid "Time"
 msgstr "Tijd"
 
-#: templates/main/vdv_ticket_details.html:143
+#: templates/main/vdv_ticket_details.html:145
 msgid "Terminal"
 msgstr "Terminal"
 
-#: templates/main/vdv_ticket_details.html:169
-#: templates/main/vdv_ticket_details.html:214
+#: templates/main/vdv_ticket_details.html:171
+#: templates/main/vdv_ticket_details.html:216
 msgid "Owner"
 msgstr "Eigenaar"
 
-#: templates/main/vdv_ticket_details.html:176
-#: templates/main/vdv_ticket_details.html:221
+#: templates/main/vdv_ticket_details.html:178
+#: templates/main/vdv_ticket_details.html:223
 msgid "Owner ID"
 msgstr "Eigenaar-ID"
 
-#: templates/main/vdv_ticket_details.html:188
+#: templates/main/vdv_ticket_details.html:190
 msgid "Location"
 msgstr "Locatie"
 
-#: templates/main/vdv_ticket_details.html:234
+#: templates/main/vdv_ticket_details.html:236
 msgid "Product Transaction Data"
 msgstr "Producttransactie-data"
 
-#: templates/main/vdv_ticket_details.html:243
+#: templates/main/vdv_ticket_details.html:245
 msgid "Issuing SAM Data"
 msgstr "SAM-uitgeverdata"
 
-#: templates/main/vdv_ticket_details.html:254
+#: templates/main/vdv_ticket_details.html:256
 msgid "Sequence number 1"
 msgstr "Eerste reeksgetal"
 
-#: templates/main/vdv_ticket_details.html:258
+#: templates/main/vdv_ticket_details.html:260
 msgid "Sequence number 2"
 msgstr "Tweede reeksgetal"
 
-#: templates/main/vdv_ticket_details.html:265
+#: templates/main/vdv_ticket_details.html:267
 msgid "Motics"
 msgstr "Motics"
 
-#: templates/main/vdv_ticket_details.html:268
+#: templates/main/vdv_ticket_details.html:270
 msgid "Identifier"
 msgstr "Identifier"
 
-#: templates/main/vdv_ticket_details.html:276
+#: templates/main/vdv_ticket_details.html:278
 msgid "Timestamp"
 msgstr "Datum/tijd"
 
-#: templates/main/vdv_ticket_details.html:281
+#: templates/main/vdv_ticket_details.html:283
 msgid "Time offset"
 msgstr "Tijdsverschil"
 
-#: templates/main/vdv_ticket_details.html:286
+#: templates/main/vdv_ticket_details.html:288
 msgid "Signature algorithm"
 msgstr "Handtekeningsalgoritme"
 
-#: templates/main/vdv_ticket_details.html:291
+#: templates/main/vdv_ticket_details.html:293
 msgid "Random data"
 msgstr "Willikeurige data"
 
-#: templates/main/vdv_ticket_details.html:296
+#: templates/main/vdv_ticket_details.html:298
 msgid "Signature verifies"
 msgstr "Handtekening gecontroleerd"
 
-#: templates/main/vdv_ticket_details.html:306
+#: templates/main/vdv_ticket_details.html:308
 msgid "Certificate"
 msgstr "Certificaat"
 
-#: templates/main/vdv_ticket_details.html:315
+#: templates/main/vdv_ticket_details.html:317
 msgid "Certificate chain"
 msgstr "Certificaatketen"
 
-#: templates/main/vdv_ticket_details.html:318
+#: templates/main/vdv_ticket_details.html:320
 msgid "Root CA"
 msgstr "Root-CA"
 
-#: templates/main/vdv_ticket_details.html:326
+#: templates/main/vdv_ticket_details.html:328
 msgid "Issuing CA"
 msgstr "Uitgevende CA"
 
-#: templates/main/vdv_ticket_details.html:334
+#: templates/main/vdv_ticket_details.html:336
 msgid "Envelope Certificate"
 msgstr "Envelope-certificaat"
 
@@ -1683,7 +1938,3 @@ msgstr "Uw account is geüpdatet"
 #: views/account.py:82
 msgid "Invalid username or password"
 msgstr "Ongeldige gebruikersnaam of wachtwoord"
-
-#, python-format
-#~ msgid "sequence #%(seq)s"
-#~ msgstr "reeks #%(seq)s"
