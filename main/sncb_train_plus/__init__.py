@@ -4,7 +4,8 @@ from .util import SNCBTrainPlusException
 
 def is_sncb_train_plus_code(code: bytes) -> bool:
     try:
-        return "advantageCardNumber" in json.loads(code)
+        v = json.loads(code)
+        return isinstance(v, dict) and "advantageCardNumber" in v
     except (json.JSONDecodeError, UnicodeDecodeError):
         return False
 

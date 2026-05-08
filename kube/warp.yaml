@@ -53,7 +53,7 @@ spec:
               gost -L :1080 -F=127.0.0.1:40000
           livenessProbe:
             exec:
-              command: ["bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/1080"]
+              command: ["bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/40000"]
             initialDelaySeconds: 60
             periodSeconds: 5
         - name: clatd
