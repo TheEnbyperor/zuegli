@@ -271,7 +271,10 @@ def make_ticket_obj(ticket: "models.Ticket", object_id: str) -> typing.Tuple[dic
             })
 
         revoked = False
-        if issuing_rics in passes.KNOWN_VALID_SIGNATURE_RICS and not ticket_data.envelope.verify_signature():
+        if issuing_rics in passes.KNOWN_VALID_SIGNATURE_RICS and (
+                (ticket_data.envelope and not ticket_data.envelope.verify_signature()) or
+                (ticket_data.dosipas_envelope and not ticket_data.dosipas_envelope.verify_level_1_signature())
+        ):
             revoked = True
         elif ticket_data.dtvg_revoked():
             revoked = True
