@@ -849,7 +849,7 @@ class SpatialValidity:
                 start_station=area_ids[0],
                 tariff_points=[b for b in (bitlist & (1 << i) for i in range(bitlist.bit_length() - 1, -1, -1)) if b]
             )
-        elif variant:
+        elif variant is not None:
             return cls(
                 variant=variant,
                 organization_id=area_org_id,

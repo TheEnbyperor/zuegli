@@ -22,7 +22,7 @@ class CDData:
 
         for block in blocks:
             block_id = block[0]
-            block_data = block[1:]
+            block_data = block[1:].lstrip("=")
 
             if block_id == "C":
                 try:
