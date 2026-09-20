@@ -72,7 +72,10 @@ def get_station(value, code_type):
 
 @register.filter(name="iso3166")
 def get_country(value):
-    return iso3166.countries.get(value).name
+    try:
+        return iso3166.countries.get(value).name
+    except KeyError:
+        return f"Unknown ({value})"
 
 @register.filter(name="uic_country")
 def get_country_uic(value):
