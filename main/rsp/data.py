@@ -172,7 +172,7 @@ class TicketData:
                 discounted=d.read_bool(offset+46),
                 restriction=d.read_string(offset+47, offset+59),
                 purchase_reference=d.read_string(offset+59, offset+107),
-                days_of_validity=d.read_int(offset+107, offset+116),
+                days_of_validity=d.read_int(offset+107, offset+116)+1,
                 additional_adults=d.read_int(offset+116, offset+119),
                 additional_children=d.read_int(offset+119, offset+122),
             )
