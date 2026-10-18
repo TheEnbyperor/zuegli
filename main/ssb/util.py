@@ -50,10 +50,10 @@ class SSBException(Exception):
 
 
 class BitStream:
-    data: bitstring.ConstBitStream
+    data: bitstring.Bits
 
     def __init__(self, data: bytes):
-        self.data = bitstring.ConstBitStream(data)
+        self.data = bitstring.Bits(data)
 
     def read_bool(self, index: int) -> bool:
         return bool(self.data[index])
