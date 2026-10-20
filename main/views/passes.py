@@ -5388,6 +5388,10 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             pass_json["semantics"]["departureAirportSecurityPrograms"] = []
             if leg.date:
                 pass_json["semantics"]["originalDepartureDate"] = f"{leg.date.isoformat()}T00:00:00Z"
+                pass_json["relevantDates"].append({
+                    "startDate": datetime.datetime.combine(leg.date, datetime.time.min).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "endDate": datetime.datetime.combine(leg.date, datetime.time.max).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
             pass_json["semantics"]["airlineCode"] = leg.operating_carrier
             pass_json["semantics"]["flightNumber"] = int(leg.flight_number)
 
