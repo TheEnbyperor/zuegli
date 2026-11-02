@@ -5782,7 +5782,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
         ticket_data: ticket.MavTicket = ticket_instance.as_ticket
 
         pass_json["barcodes"] = [{
-            "format": "PKBarcodeFormatAztec",
+            "format": "PKBarcodeFormatPDF417",
             "message": bytes(ticket_instance.barcode_data).decode("iso-8859-1"),
             "messageEncoding": "iso-8859-1",
             "altText": ticket_data.envelope.ticket_id
