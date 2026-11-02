@@ -6401,6 +6401,7 @@ RICS_LOGO = {
     3697: "pass/logo-cendis.png",
     3703: "pass/logo-grand-est.png",
     3780: "pass/logo-ouigo.png",
+    3896: "pass/logo-pft-tsp.png", # Tickets of TSP/PFT asbl are signed by Train Charter Services B.V.
     3906: "pass/logo-mdv.png",
     5008: "pass/logo-vrn.png",
     5173: "pass/logo-nasa.png",
@@ -6428,6 +6429,7 @@ RICS_BG = {
     3697: "#0f173e",
     3703: "#191998",
     3780: "#00aedf",
+    3896: "#060270",
     5188: "#40002c",
     8999: "#0b828e",
 }
@@ -6453,6 +6455,7 @@ RICS_FG = {
     3697: "#ffffff",
     3703: "#ffffff",
     3780: "#ffffff",
+    3896: "#ffffff",
     5188: "#ffffff",
     8999: "#ffffff",
 }
@@ -6485,6 +6488,7 @@ RICS_FG_SECONDARY = {
     3697: "rgb(110, 193, 228)",
     3703: "#ffc94f",
     3780: "#e3006a",
+    3896: "#9C5346",
     5188: "rgb(255, 54, 0)",
     5245: "rgb(211, 2, 64)",
     8999: "rgb(226, 1, 112)",
