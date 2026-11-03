@@ -197,7 +197,8 @@ def sync_dtvg_blocklist():
         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
         "Authorization": settings.DTVG_KEY
     }, params={
-        "lastVersion": str(blocklist_meta.current_version or 0)
+        "lastVersion": str(blocklist_meta.current_version or 0),
+        "productOwner": "0"
     })
 
     if r.status_code == 304:
