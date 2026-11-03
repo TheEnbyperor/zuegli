@@ -19,8 +19,7 @@ from .. import models, apn, gwallet
 xml_parser = xsdata.formats.dataclass.parsers.XmlParser()
 
 
-DTVG_BLOCKLIST_VERSION_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/versionuic.txt"
-DTVG_BLOCKLIST_URL = "https://dt-ion-prod.s3.eu-central-1.amazonaws.com/prod/blacklistuic.zip"
+DTVG_BLOCKLIST_URL = "https://sicherheitsportal.deutschlandtarifverbund.de/api/v1/blacklist/latest"
 PKMW_URLS = [
     "https://railpublickey.uic.org/download.php",
     "https://bxilhjozizfsvtzslnds.supabase.co/storage/v1/object/public/wp-pkmw/keys.xml"
@@ -194,33 +193,24 @@ def download_db_stations():
 def sync_dtvg_blocklist():
     blocklist_meta = models.DTVGBlocklistMeta.get_solo()
 
-    r = niquests.get(DTVG_BLOCKLIST_VERSION_URL, headers={
+    r = niquests.get(DTVG_BLOCKLIST_URL, headers={
         "User-Agent": "Zuegli (q@magicalcodewit.ch)",
+        "Authorization": settings.DTVG_KEY
+    }, params={
+        "lastVersion": str(blocklist_meta.current_version or 0)
     })
-    r.raise_for_status()
-    latest_blocklist_version = int(r.json()["blacklistId"])
 
-    if blocklist_meta.current_version >= latest_blocklist_version:
+    if r.status_code == 304:
         print("Blocklist already up to date")
         return
 
-    db_file = tempfile.NamedTemporaryFile(delete_on_close=False)
-
-    r = niquests.get(DTVG_BLOCKLIST_URL, headers={
-        "User-Agent": "Zuegli (q@magicalcodewit.ch)",
-    }, stream=True)
     r.raise_for_status()
+    blocklist = r.json()
 
-    for chunk in r.iter_content(chunk_size=128):
-        db_file.write(chunk)
-
-    db_file.seek(0)
-    zip_file = zipfile.ZipFile(db_file)
-    blocklist = csv.DictReader(io.TextIOWrapper(zip_file.open("blacklistuic.csv"), "utf-8-sig"))
     now = timezone.now()
     total_entries = 0
     new_entries_count = 0
-    for chunk in batch(blocklist, 2500):
+    for chunk in batch(blocklist["tickets"], 2500):
         total_entries += len(chunk)
         values = [(int(block["rics"]), block["ticketId"], now) for block in chunk]
         value_placeholders = ", ".join(["(%s, %s, %s)" for _ in chunk])
@@ -249,7 +239,7 @@ def sync_dtvg_blocklist():
 
     print(f"Processed {total_entries} items - {new_entries_count} new", flush=True)
 
-    blocklist_meta.current_version = latest_blocklist_version
+    blocklist_meta.current_version = blocklist["blacklistId"]
     blocklist_meta.save()
 
 

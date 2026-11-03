@@ -401,7 +401,7 @@ def make_pkpass_file(ticket_obj: "models.Ticket", part: typing.Optional[str] = N
             issued_at = None
         issuing_rics = ticket_data.issuing_rics()
 
-        if issuing_rics in KNOWN_VALID_SIGNATURE_RICS and (
+        if ticket_data.security_provider_rics() in KNOWN_VALID_SIGNATURE_RICS and (
                 (ticket_data.envelope and not ticket_data.envelope.verify_signature()) or
                 (ticket_data.dosipas_envelope and not ticket_data.dosipas_envelope.verify_level_1_signature())
         ):

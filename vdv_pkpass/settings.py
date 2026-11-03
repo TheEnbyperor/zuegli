@@ -271,6 +271,8 @@ HZPP_KEY = base64.b64decode(os.getenv("HZPP_KEY"))
 
 HVV_APPLICATION_KEY = os.getenv("HVV_APPLICATION_KEY")
 
+DTVG_KEY = os.getenv("DTVG_KEY")
+
 MAV_GTFS_USERNAME = os.getenv("MAV_GTFS_USERNAME")
 MAV_GTFS_PASSWORD = os.getenv("MAV_GTFS_PASSWORD")
 

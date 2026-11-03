@@ -364,6 +364,15 @@ class UICTicket:
 
         return 0
 
+    def security_provider_rics(self):
+        if self.envelope:
+            return self.envelope.issuer_rics
+        if self.dosipas_envelope and "securityProviderNum" in self.dosipas_envelope.level_2_data["level1Data"]:
+            return self.dosipas_envelope.level_2_data["level1Data"]["securityProviderNum"]
+        if self.flex:
+            return self.flex.security_provider_rics()
+        return 0
+
     def issuer_id(self) -> bytes:
         if rics := self.issuing_rics():
             return rics.to_bytes(8, "big")

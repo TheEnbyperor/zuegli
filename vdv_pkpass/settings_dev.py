@@ -224,6 +224,13 @@ except FileNotFoundError:
     HVV_APPLICATION_KEY = None
 
 try:
+    with open(BASE_DIR / "priv" / "dtvg.json") as f:
+        d = json.load(f)
+        DTVG_KEY = d["api_key"]
+except FileNotFoundError:
+    DTVG_KEY = None
+
+try:
     with open(BASE_DIR / "priv" / "mav.json") as f:
         d = json.load(f)
         MAV_GTFS_USERNAME = d["username"]
